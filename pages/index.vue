@@ -5,30 +5,30 @@ import type {GameContainer, PackedDayData} from "~/types/models";
 
 const query = useRoute().query
 
-// if(query.r) {
-//   definePageMeta({
-//     title: 'hardstyle.gg',
-//     ogTitle: 'hardstyle.gg',
-//     description: 'Daily hardstyle challenge to compete with friends.',
-//     ogDescription: 'Daily hardstyle challenge to compete with friends.',
-//     ogImage: 'https://hardstylegg.redslime.xyz/api/og?r=' + query.r,
-//   })
-// }
-
 if(query.r) {
-  useHead({
+  definePageMeta({
     title: 'hardstyle.gg',
-    meta: [
-      { name: 'description', content: 'Daily hardstyle challenge to compete with friends.' },
-      { name: 'og:title', content: 'hardstyle.gg' },
-      { name: 'og:description', content: 'Daily hardstyle challenge to compete with friends.' },
-      { name: 'og:image', content: 'https://hardstylegg.redslime.xyz/api/og?r=' + query.r },
-    ],
-    link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-    ],
+    ogTitle: 'hardstyle.gg',
+    description: 'Daily hardstyle challenge to compete with friends.',
+    ogDescription: 'Daily hardstyle challenge to compete with friends.',
+    ogImage: 'https://hardstylegg.redslime.xyz/api/og?r=' + query.r,
   })
 }
+
+// if(query.r) {
+//   useHead({
+//     title: 'hardstyle.gg',
+//     meta: [
+//       { name: 'description', content: 'Daily hardstyle challenge to compete with friends.' },
+//       { name: 'og:title', content: 'hardstyle.gg' },
+//       { name: 'og:description', content: 'Daily hardstyle challenge to compete with friends.' },
+//       { name: 'og:image', content: 'https://hardstylegg.redslime.xyz/api/og?r=' + query.r },
+//     ],
+//     link: [
+//       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+//     ],
+//   })
+// }
 
 useRouter().replace({ query: {} })
 

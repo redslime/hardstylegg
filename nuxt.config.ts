@@ -2,7 +2,7 @@ import tailwindcss from "@tailwindcss/vite";
 
 export default defineNuxtConfig({
     compatibilityDate: '2025-05-15',
-    ssr: false,
+    ssr: true,
     // Tailwind v4: use the Vite plugin and CSS entry; no Nuxt Tailwind module needed
     devtools: { enabled: true },
     vite: {
