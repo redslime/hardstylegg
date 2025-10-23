@@ -3,6 +3,10 @@ import {html} from 'satori-html';
 import sharp from 'sharp';
 import {readFile} from 'fs/promises';
 import {getFriendlyName, getTypeIdsForDay} from "~/server/utils/schedule";
+import RegularTTF from '~/assets/fonts/Regular.ttf'
+import BoldTTF from '~/assets/fonts/Bold.ttf'
+import AntonTTF from '~/assets/fonts/Anton-Regular.ttf'
+import {fileURLToPath} from "node:url";
 
 function hexToBits(hex: string, length: number): string {
     const bits = parseInt(hex, 16).toString(2).padStart(length, "0");
@@ -94,9 +98,6 @@ export default defineEventHandler(async (event) => {
     </div>
   `);
 
-    // Load fonts
-    const fontPath = 'assets/fonts/'; // Adjust to your font path
-
     // Generate SVG with satori
     const svg = await satori(markup, {
         width: 550,
@@ -104,19 +105,19 @@ export default defineEventHandler(async (event) => {
         fonts: [
             {
                 name: 'Inter',
-                data: await readFile(`${fontPath}Regular.ttf`), // Adjust font name
+                data: await readFile(fileURLToPath(new URL(RegularTTF, import.meta.url))),
                 weight: 400,
                 style: 'normal',
             },
             {
                 name: 'Inter',
-                data: await readFile(`${fontPath}Bold.ttf`), // Adjust font name
+                data: await readFile(fileURLToPath(new URL(BoldTTF, import.meta.url))),
                 weight: 700,
                 style: 'normal',
             },
             {
-                name: "Anton",
-                data: await readFile(`${fontPath}Anton-Regular.ttf`), // Adjust font name
+                name: 'Anton',
+                data: await readFile(fileURLToPath(new URL(AntonTTF, import.meta.url))),
                 weight: 400,
                 style: 'normal',
             }
