@@ -1,12 +1,12 @@
 import satori from 'satori';
 import {html} from 'satori-html';
 import sharp from 'sharp';
-import {readFile} from 'fs/promises';
 import {getFriendlyName, getTypeIdsForDay} from "~/server/utils/schedule";
-import RegularTTF from '~/assets/fonts/Regular.ttf'
-import BoldTTF from '~/assets/fonts/Bold.ttf'
-import AntonTTF from '~/assets/fonts/Anton-Regular.ttf'
-import {fileURLToPath} from "node:url";
+import {readFileSync} from "node:fs";
+import {join} from "node:path";
+
+const interRegular = readFileSync(join(process.cwd(), 'assets', 'fonts', 'Regular.ttf'))
+const interBold = readFileSync(join(process.cwd(), 'assets', 'fonts', 'Bold.ttf'))
 
 function hexToBits(hex: string, length: number): string {
     const bits = parseInt(hex, 16).toString(2).padStart(length, "0");
@@ -105,20 +105,14 @@ export default defineEventHandler(async (event) => {
         fonts: [
             {
                 name: 'Inter',
-                data: await readFile(fileURLToPath(new URL(RegularTTF, import.meta.url))),
+                data: interRegular,
                 weight: 400,
                 style: 'normal',
             },
             {
                 name: 'Inter',
-                data: await readFile(fileURLToPath(new URL(BoldTTF, import.meta.url))),
+                data: interBold,
                 weight: 700,
-                style: 'normal',
-            },
-            {
-                name: 'Anton',
-                data: await readFile(fileURLToPath(new URL(AntonTTF, import.meta.url))),
-                weight: 400,
                 style: 'normal',
             }
         ],
