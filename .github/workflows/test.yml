@@ -25,6 +25,9 @@ jobs:
       - name: Generate prisma client
         run: npx prisma generate
 
+      - name: Copy platform specific prisma client
+        run: cp generated/prisma/libquery_engine-debian-openssl-1.0.x.so.node .output/server
+
       - name: Build Nuxt
         run: npm run build
 
