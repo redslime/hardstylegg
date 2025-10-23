@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import ListBullet from "~/components/icons/game/ListBullet.vue";
-import {GameState, type Track} from "~/types/models";
+import {GameState, type ShallowTrack, type Track} from "~/types/models";
 
 export interface NameXContainer {
   goal: number
@@ -18,7 +18,7 @@ const state = computed(() => props.state)
 const finished = computed(() => state.value == GameState.SUCCEEDED || state.value == GameState.FAILED)
 const goal = computed(() => props.container.goal)
 const title = computed(() => props.container.title)
-const items = ref(
+const items = ref<{track: Track, guessed: boolean}[]>(
     props.container.items.map(item => ({
       track: item,
       guessed: false
@@ -49,6 +49,12 @@ function validate(selected: ShallowTrack, flashError: () => void, flashSuccess: 
     flashError()
   }
 }
+
+function censor(text: string, guessed: boolean): string {
+  if(guessed)
+    return text
+  return "".padEnd(text.length, "*")
+}
 </script>
 
 <template>
@@ -78,13 +84,13 @@ function validate(selected: ShallowTrack, flashError: () => void, flashSuccess: 
       <div class="flex-1">
         <div class="flex items-center gap-2 font-semibold">
           <div :class="{'blur-sm': !item.guessed && guessed < goal && !finished}">
-            {{ item.track.title }}
+            {{ censor(item.track.title, item.guessed) }}
           </div>
         </div>
 
         <div class="text-xs opacity-60">
           <div :class="{'blur-sm': !item.guessed && guessed < goal && !finished}">
-            {{ item.track.artists }}
+            {{ censor(item.track.artists, item.guessed) }}
           </div>
         </div>
       </div>
