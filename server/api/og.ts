@@ -95,7 +95,7 @@ export default defineEventHandler(async (event) => {
   `);
 
     // Load fonts
-    const fontPath = 'public/fonts/'; // Adjust to your font path
+    const fontPath = 'assets/fonts/'; // Adjust to your font path
 
     // Generate SVG with satori
     const svg = await satori(markup, {
