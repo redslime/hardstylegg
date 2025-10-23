@@ -48,7 +48,9 @@ if(query.g) {
 }
 
 
-navigateTo('/')
+onMounted(() => {
+  navigateTo('/')
+})
 </script>
 
 <template>
