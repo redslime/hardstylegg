@@ -50,10 +50,10 @@ function validate(selected: ShallowTrack, flashError: () => void, flashSuccess: 
   }
 }
 
-function censor(text: string, guessed: boolean): string {
-  if(guessed)
-    return text
-  return "".padEnd(text.length, "*")
+function censor(text: string, censor: boolean): string {
+  if(censor)
+    return "".padEnd(text.length, "*")
+  return text
 }
 </script>
 
@@ -84,13 +84,13 @@ function censor(text: string, guessed: boolean): string {
       <div class="flex-1">
         <div class="flex items-center gap-2 font-semibold">
           <div :class="{'blur-sm': !item.guessed && guessed < goal && !finished}">
-            {{ censor(item.track.title, item.guessed) }}
+            {{ censor(item.track.title, !item.guessed && guessed < goal && !finished) }}
           </div>
         </div>
 
         <div class="text-xs opacity-60">
           <div :class="{'blur-sm': !item.guessed && guessed < goal && !finished}">
-            {{ censor(item.track.artists, item.guessed) }}
+            {{ censor(item.track.artists, !item.guessed && guessed < goal && !finished) }}
           </div>
         </div>
       </div>
