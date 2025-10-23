@@ -3,7 +3,7 @@ import {onMounted, ref} from 'vue'
 import {Howl} from 'howler'
 import PlayIcon from "~/components/icons/PlayIcon.vue";
 import SpeakerWave from "~/components/icons/game/SpeakerWave.vue";
-import {GameState, type Track} from "~/types/models";
+import {GameState, type ShallowTrack, type Track} from "~/types/models";
 import {getSpotifyArtwork} from "~/utils/utils";
 import {getName} from "~/utils/tracks";
 
@@ -194,6 +194,7 @@ function validate(selected: ShallowTrack, flashError: () => void, flashSuccess: 
       <p class="text-2xl font-bold drop-shadow-lg text-white bg-black/30 p-2">
         {{ track.artists }} - {{ track.title }}
       </p>
+      <SpotifyButton :track="track" class="absolute bottom-4 right-4" />
     </div>
   </div>
 

@@ -163,7 +163,10 @@ onMounted(() => {
   </div>
 
   <div class="invisible md:visible mt-8 text-center" v-if="!summary && (currentState == GameState.FAILED || currentState == GameState.SUCCEEDED)">
-    <button class="btn btn-lg bg-accent text-accent-content" @click="next">Next</button>
+    <button class="btn btn-lg bg-accent text-accent-content" @click="next">
+      Next
+      <MicroChevronDoubleRightIcon />
+    </button>
   </div>
 
   <Teleport :to="teleportTo" v-if="mounted">

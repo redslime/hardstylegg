@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import {GameState, type Track} from "~/types/models";
+import {GameState, type ShallowTrack, type Track} from "~/types/models";
 import Pencil from "~/components/icons/game/Pencil.vue";
 import {getLocalArtwork, getSpotifyArtwork} from "~/utils/utils";
+import SpotifyButton from "~/components/SpotifyButton.vue";
 
 export interface ArtworkContainer {
   track: Track
@@ -63,6 +64,9 @@ async function validate(selected: ShallowTrack, flashError: () => void, flashSuc
         }">
         {{ track.artists }} - {{ track.title }}
       </p>
+      <div class="mt-4 text-center">
+        <SpotifyButton :track="track" />
+      </div>
     </div>
     <div class="flex w-full justify-center items-center" v-else>
       <TrackInput class="w-2/3" @onTrackSelected="validate" />

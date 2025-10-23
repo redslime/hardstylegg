@@ -42,7 +42,7 @@ const lines = computed(() => {
       }
 
       // Input placeholder
-      const key = name.trim() || `input_${index}`
+      const key = name!!.trim() || `input_${index}`
 
       // ✅ Answer initialisieren, falls noch nicht vorhanden
       if (!(key in answers)) {
