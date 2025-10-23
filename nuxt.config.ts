@@ -5,6 +5,10 @@ export default defineNuxtConfig({
     ssr: true,
     // Tailwind v4: use the Vite plugin and CSS entry; no Nuxt Tailwind module needed
     devtools: { enabled: true },
+    routeRules: {
+        '/': { ssr: false },
+        '/play': { ssr: true },
+    },
     vite: {
         plugins: [tailwindcss()],
         server: {
