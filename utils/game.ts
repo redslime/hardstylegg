@@ -7,17 +7,26 @@ import ArrowsRightLeft from "~/components/icons/game/ArrowsRightLeft.vue";
 import CheckCircle from "~/components/icons/game/CheckCircle.vue";
 import Calendar from "~/components/icons/game/Calendar.vue";
 import {type GameContainer, type GameData, GameState, type PackedDayData} from "~/types/models";
+import Artwork from "~/components/games/Artwork.vue";
+import CompleteAlbum from "~/components/games/CompleteAlbum.vue";
+import CompleteLyrics from "~/components/games/CompleteLyrics.vue";
+import Heardle from "~/components/games/Heardle.vue";
+import NameX from "~/components/games/NameX.vue";
+import Order from "~/components/games/Order.vue";
+import Quiz from "~/components/games/Quiz.vue";
+import Timeline from "~/components/games/Timeline.vue";
+import Timetable from "~/components/games/Timetable.vue";
 
 export const gameComps = {
-    Artwork: { id: 1, comp: defineAsyncComponent(() => import("~/components/games/Artwork.vue")), icon: Pencil },
-    CompleteAlbum: { id: 2, comp: defineAsyncComponent(() => import("~/components/games/CompleteAlbum.vue")), icon: PencilSquare },
-    CompleteLyrics: { id: 3, comp: defineAsyncComponent(() => import("~/components/games/CompleteLyrics.vue")), icon: ChatBubble },
-    Heardle: { id: 4, comp: defineAsyncComponent(() => import("~/components/games/Heardle.vue")), icon: SpeakerWave },
-    NameX: { id: 5, comp: defineAsyncComponent(() => import("~/components/games/NameX.vue")), icon: ListBullet },
-    Order: { id: 6, comp: defineAsyncComponent(() => import("~/components/games/Order.vue")), icon: ArrowsRightLeft },
-    Quiz: { id: 7, comp: defineAsyncComponent(() => import("~/components/games/Quiz.vue")), icon: CheckCircle },
-    Timeline: { id: 8, comp: defineAsyncComponent(() => import("~/components/games/Timeline.vue")), icon: Calendar },
-    Timetable: { id: 9, comp: defineAsyncComponent(() => import("~/components/games/Timetable.vue")), icon: PencilSquare },
+    Artwork: { id: 1, comp: Artwork, icon: Pencil },
+    CompleteAlbum: { id: 2, comp: CompleteAlbum, icon: PencilSquare },
+    CompleteLyrics: { id: 3, comp: CompleteLyrics, icon: ChatBubble },
+    Heardle: { id: 4, comp: Heardle, icon: SpeakerWave },
+    NameX: { id: 5, comp: NameX, icon: ListBullet },
+    Order: { id: 6, comp: Order, icon: ArrowsRightLeft },
+    Quiz: { id: 7, comp: Quiz, icon: CheckCircle },
+    Timeline: { id: 8, comp: Timeline, icon: Calendar },
+    Timetable: { id: 9, comp: Timetable, icon: PencilSquare },
 }
 
 export function transform(data: PackedDayData): GameContainer {
