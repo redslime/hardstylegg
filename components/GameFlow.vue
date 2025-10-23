@@ -116,7 +116,7 @@ onMounted(() => {
     </div>
   </div>
 
-  <div class="flex flex-col base-content items-center w-full" id="state-playing">
+  <div class="flex flex-col items-center w-full" id="state-playing">
 
   </div>
 

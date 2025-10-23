@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {computed, ref} from 'vue'
 import Draggable from 'vuedraggable'
-import {GameState} from "~/types/models";
+import {GameState, type Track} from "~/types/models";
 import {shuffleArray} from "~/utils/utils";
 import ArrowsRightLeft from "~/components/icons/game/ArrowsRightLeft.vue";
 
@@ -76,7 +76,7 @@ function isWrong(item: OrderItem, index: number) {
         v-model="items"
         item-key="name"
         :animation="200"
-        class="flex gap-4 overflow-x-auto p-4 lg:flex-row flex-row"
+        class="flex flex-wrap gap-4 overflow-x-auto md:p-4 flex-row"
         :component-data="{
           name: 'flip-list',
           tag: 'div',
@@ -96,7 +96,7 @@ function isWrong(item: OrderItem, index: number) {
               :alt="element.track.title"
               class="object-cover rounded-xl shadow-md"
               :class="{
-                'hover:scale-105 transition-transform duration-200 ease-in-out': !finished,
+                'md:hover:scale-105 transition-transform duration-200 ease-in-out': !finished,
                 'border-1 border-success': isCorrect(element, index),
                 'border-1 border-error': isWrong(element, index)
               }"
@@ -121,7 +121,7 @@ function isWrong(item: OrderItem, index: number) {
       <div class="text-2xl text-center text-base-content text-bold">
         Correct order:
       </div>
-      <div class="flex justify-center gap-4 overflow-x-auto p-4">
+      <div class="flex justify-center gap-4 overflow-x-auto md:p-4">
         <div v-for="item in goalItems" :key="item.index"
              class="flex-1 flex-shrink active:cursor-grabbing transform transition-transform duration-300 ease-in-out">
           <img
