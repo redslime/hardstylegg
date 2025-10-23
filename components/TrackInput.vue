@@ -1,0 +1,301 @@
+<script setup lang="ts">
+import Fuse from 'fuse.js'
+import {computed, onMounted, ref} from 'vue'
+import {getName, getTracks, type ShallowTrack} from "~/utils/tracks";
+import {containsSubstring, delay} from "~/utils/utils";
+
+interface SearchResult {
+  item: ShallowTrack;
+  score: number | undefined;
+  matches: ReadonlyArray<Fuse.FuseResultMatch> | undefined;
+  highlighted: string
+}
+
+const query = ref('')
+const allOptions = await getTracks()
+let fuse: Fuse<typeof allOptions[0]>
+const hoverIndex = ref<number>(-1)
+const debouncedQuery = ref('')
+const filtered = ref<SearchResult[]>([])
+const selected = ref<boolean>(false)
+const errorFlash = ref<boolean>(false)
+const successFlash = ref<boolean>(false)
+const props = defineProps({
+  xl: { type: Boolean, required: false }
+})
+const visible = computed(() => query.value.length > 3 && filtered.value.length > 0)
+const emit = defineEmits(['onTrackSelected'])
+
+// debounce
+let timeout: number
+watch(query, (val) => {
+  clearTimeout(timeout)
+  timeout = window.setTimeout(() => {
+    debouncedQuery.value = val
+  }, 300)
+})
+
+watch(debouncedQuery, async (val) => {
+  if(selected.value) filtered.value = []
+  if(val.length < 3) filtered.value = []
+  if(val.length < 3 || !fuse) filtered.value = []
+
+  // First try: exact substring match
+  const exactMatches: SearchResult[] = allOptions.filter(st => {
+    const name = st.artists + " - " + st.title
+    return name.toLowerCase().includes(val.toLowerCase())
+  }).map(st => {
+    const name = st.artists + " - " + st.title
+    return {
+      item: st,
+      score: 0,
+      matches: undefined,
+      highlighted: highlightExact(name, containsSubstring(name, val))
+    }
+  }).slice(0, 5)
+
+  if(exactMatches.length > 0) {
+    filtered.value = exactMatches
+  } else {
+    // Second try: multi-keyword search
+    const keywords = val.toLowerCase().split(/\s+/).filter(k => k.length > 2)
+    
+    const keywordMatches: SearchResult[] = allOptions
+      .map(st => {
+        const name = (st.artists + " - " + st.title).toLowerCase()
+        const matchedKeywords = keywords.filter(keyword => name.includes(keyword))
+        
+        return {
+          track: st,
+          matchCount: matchedKeywords.length,
+          matchScore: matchedKeywords.length / keywords.length
+        }
+      })
+      .filter(result => result.matchCount >= Math.min(2, keywords.length)) // At least 2 keywords or all if fewer
+      .sort((a, b) => b.matchScore - a.matchScore)
+      .slice(0, 5)
+      .map(result => {
+        const name = result.track.artists + " - " + result.track.title
+        // Highlight all matched keywords
+        let highlighted = name
+        keywords.forEach(keyword => {
+          const regex = new RegExp(`(${keyword})`, 'gi')
+          highlighted = highlighted.replace(regex, '<span class=""><b>$1</b></span>')
+        })
+        
+        return {
+          item: result.track,
+          score: 1 - result.matchScore,
+          matches: undefined,
+          highlighted
+        }
+      })
+
+    // Third try: fill up with Fuse.js results if we have fewer than 5
+    if (keywordMatches.length < 5) {
+      const fuseResults = fuse.search(val)
+          .filter(r => val.toLowerCase() !== getName(r.item).toLowerCase())
+          .map(i => {
+            const {item, score, matches} = i
+            const artistMatch = matches?.filter(m => m.key === 'artists') ?? []
+            const titleMatch = matches?.filter(m => m.key === 'title') ?? []
+            const artistHtml = highlight(item.artists, artistMatch)
+            const titleHtml = highlight(item.title, titleMatch)
+            const highlighted = `${artistHtml} - ${titleHtml}`
+
+            return {
+              item, score, matches, highlighted
+            }
+          })
+
+      // Combine keyword matches with fuse results, avoiding duplicates
+      const combined = [...keywordMatches]
+      fuseResults.forEach(fr => {
+        if (combined.length < 5 && !combined.find(km => getName(km.item) === getName(fr.item))) {
+          combined.push(fr)
+        }
+      })
+      
+      filtered.value = combined
+    } else {
+      filtered.value = keywordMatches
+    }
+  }
+})
+
+function select(item: ShallowTrack) {
+  query.value = getName(item)
+  selected.value = true
+  hoverIndex.value = -1
+  emit('onTrackSelected', item, flashError, flashSuccess, clear)
+}
+
+function enter() {
+  if(visible.value) {
+    if(hoverIndex.value != -1) {
+      select(filtered.value[hoverIndex.value ?? 0].item)
+    } else {
+      const match = allOptions.filter(st => {
+        const name = getName(st)
+        return query.value.toLowerCase() == name.toLowerCase()
+      })
+
+      if(match.length === 1) {
+        select(match[0])
+      } else {
+        flashError()
+      }
+    }
+  }
+}
+
+function down() {
+  if(visible.value) {
+    hoverIndex.value = Math.min(hoverIndex.value+1, filtered.value.length-1)
+  }
+}
+
+function up() {
+  if(visible.value) {
+    hoverIndex.value = Math.max(hoverIndex.value-1, 0)
+  }
+}
+
+async function unfocused() {
+  await delay(500)
+  selected.value = true
+}
+
+const flashError = async () => {
+  errorFlash.value = true
+  await delay(400)
+  errorFlash.value = false
+}
+
+const flashSuccess = async () => {
+  successFlash.value = true
+  await delay(400)
+  successFlash.value = false
+}
+
+const clear = () => {
+  query.value = ""
+  debouncedQuery.value = ""
+  hoverIndex.value = -1
+}
+
+function highlight(text: string, matches: readonly Fuse.FuseResultMatch[] = []): string {
+  if (!matches || matches.length === 0) return text
+
+  // Collect all index ranges from Fuse
+  const indices = matches
+      .flatMap(m => m.indices)
+      .sort((a, b) => a[0] - b[0])
+
+  // Merge overlapping or adjacent highlight regions
+  const merged: [number, number][] = []
+  for (const [start, end] of indices) {
+    if (!merged.length || start > merged[merged.length - 1][1] + 1) {
+      merged.push([start, end])
+    } else {
+      merged[merged.length - 1][1] = Math.max(merged[merged.length - 1][1], end)
+    }
+  }
+
+  // Build final HTML with highlights
+  let result = ''
+  let lastIndex = 0
+
+  for (const [start, end] of merged) {
+    result += text.slice(lastIndex, start)
+    result += `<span class=""><b>${text.slice(start, end + 1)}</b></span>`
+    lastIndex = end + 1
+  }
+
+  result += text.slice(lastIndex)
+
+  return result
+}
+
+function highlightExact(text: string, region: number[] = []): string {
+  if (!region || region.length < 2) return text
+
+  let [start, end] = region
+  if (start > end) [start, end] = [end, start]
+
+  // Clamp to text bounds
+  start = Math.max(0, Math.min(start, text.length))
+  end = Math.max(0, Math.min(end, text.length - 1))
+
+  if (start > end) return text
+
+  const before = text.slice(0, start)
+  const middle = text.slice(start, end + 1)
+  const after = text.slice(end + 1)
+
+  return `${before}<span class=""><b>${middle}</b></span>${after}`
+}
+
+onMounted(() => {
+  fuse = new Fuse(allOptions, {
+    includeScore: true,
+    includeMatches: true,
+    keys: ['title', 'artists']
+  })
+})
+
+// Expose input bindings and event handlers for slot
+const inputBindings = computed(() => ({
+  value: query.value,  // Changed from modelValue to value
+  class: [
+    'input w-full focus:outline-none focus:ring-0',
+    {
+      'md:input-xl': props?.xl ?? false,
+      'border-error': errorFlash.value,
+      'border-success': successFlash.value
+    }
+  ],
+  placeholder: 'Track...'
+}))
+
+const inputEvents = {
+  input: (e: Event) => {  // Changed from onUpdate:modelValue to input
+    query.value = (e.target as HTMLInputElement).value
+    hoverIndex.value = -1
+    selected.value = false
+  },
+  keyup: (e: KeyboardEvent) => {
+    if (e.key === 'Enter') enter()
+    else if (e.key === 'ArrowUp') up()
+    else if (e.key === 'ArrowDown') down()
+  },
+  focusout: unfocused
+}
+</script>
+
+<template>
+  <div class="relative">
+    <slot
+        :inputBindings="inputBindings"
+        :inputEvents="inputEvents"
+        :errorFlash="errorFlash"
+        :successFlash="successFlash"
+    >
+      <input
+          v-bind="inputBindings"
+          v-on="inputEvents"
+      />
+    </slot>
+
+    <div class="absolute z-10 w-full bg-base-100 border mt-1 rounded-lg shadow overflow-hidden
+        py-2 divide-dashed divide-y divide-neutral" v-if="visible && !selected">
+      <div v-for="(item, index) in filtered" :key="index"
+           class="px-3 hover:bg-base-300 cursor-pointer font-xs md:font-3xl"
+           :class="{'bg-base-300': hoverIndex === index}"
+           @click="select(item.item)"
+           v-html="item.highlighted"
+      >
+      </div>
+    </div>
+  </div>
+</template>

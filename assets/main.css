@@ -1,0 +1,6 @@
+@import "tailwindcss";
+@import 'vue-advanced-cropper/dist/style.css';
+
+@plugin "daisyui" {
+  themes: light --default, night --prefersdark;
+}
