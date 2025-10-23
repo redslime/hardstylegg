@@ -23,9 +23,7 @@ jobs:
         run: npm ci --omit=dev
 
       - name: Prisma setup
-        run: |
-          npx prisma db pull
-          npx prisma generate
+        run: npx prisma generate
 
       - name: Build Nuxt
         run: npm run build
