@@ -91,8 +91,8 @@ watch(answers, (newAnswers) => {
   </GameTitle>
 
   <div class="flex flex-col items-center">
-    <div class="text-xl text-base-content/80 mb-4">{{ description }}</div>
-    <div class="bg-base-300 p-3 text-center whitespace-pre w-2/3 rounded-lg">
+    <div class="text-xl text-center text-base-content/80 mb-4">{{ description }}</div>
+    <div class="bg-base-300 p-3 text-center whitespace-pre-wrap rounded-lg">
       <div class="space-y-2">
         <template v-for="(line, lineIndex) in lines" :key="lineIndex">
           <p>

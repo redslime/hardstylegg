@@ -16,6 +16,7 @@ export interface OrderItem {
   track: Track
 }
 
+const isMobile = inject<boolean>('isMobile')
 const emit = defineEmits(['onFinish'])
 const props = defineProps({
   state: { type: Number as PropType<GameState>, required: true },
@@ -110,9 +111,11 @@ function isWrong(item: OrderItem, index: number) {
         {{ items.map(i => i.track.title).join(' → ') }}
       </span>
     </div>
-    <div class="text-center mt-3" v-if="!finished">
-      <button class="btn btn-outline btn-primary btn-lg" @click="submit">Submit</button>
-    </div>
+    <Teleport to="#side-dock" :disabled="!isMobile">
+      <div class="text-center" v-if="!finished">
+        <button class="btn btn-outline btn-primary btn-lg" @click="submit">Submit</button>
+      </div>
+    </Teleport>
 
     <div class="mt-3" v-if="finished && state == GameState.FAILED">
       <div class="text-2xl text-center text-base-content text-bold">

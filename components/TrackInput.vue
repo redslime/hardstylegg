@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import Fuse from 'fuse.js'
 import {computed, onMounted, ref} from 'vue'
-import {getName, getTracks, type ShallowTrack} from "~/utils/tracks";
+import {getName, getTracks} from "~/utils/tracks";
 import {containsSubstring, delay} from "~/utils/utils";
+import type {ShallowTrack} from "~/types/models";
 
 interface SearchResult {
   item: ShallowTrack;
@@ -11,6 +12,7 @@ interface SearchResult {
   highlighted: string
 }
 
+const isMobile = inject<boolean>("isMobile")
 const query = ref('')
 const allOptions = await getTracks()
 let fuse: Fuse<typeof allOptions[0]>
@@ -275,27 +277,32 @@ const inputEvents = {
 
 <template>
   <div class="relative">
-    <slot
-        :inputBindings="inputBindings"
-        :inputEvents="inputEvents"
-        :errorFlash="errorFlash"
-        :successFlash="successFlash"
-    >
-      <input
-          v-bind="inputBindings"
-          v-on="inputEvents"
-      />
-    </slot>
-
-    <div class="absolute z-10 w-full bg-base-100 border mt-1 rounded-lg shadow overflow-hidden
-        py-2 divide-dashed divide-y divide-neutral" v-if="visible && !selected">
-      <div v-for="(item, index) in filtered" :key="index"
-           class="px-3 hover:bg-base-300 cursor-pointer font-xs md:font-3xl"
-           :class="{'bg-base-300': hoverIndex === index}"
-           @click="select(item.item)"
-           v-html="item.highlighted"
+    <Teleport to="#top-dock" :disabled="!isMobile">
+      <slot
+          :inputBindings="inputBindings"
+          :inputEvents="inputEvents"
+          :errorFlash="errorFlash"
+          :successFlash="successFlash"
       >
+        <input
+            v-bind="inputBindings"
+            v-on="inputEvents"
+        />
+      </slot>
+
+      <div class="absolute z-10 w-full bg-base-100 border mt-1 rounded-lg shadow overflow-hidden
+          py-2 divide-dashed divide-y divide-neutral" v-if="visible && !selected"
+           :class="[
+              isMobile ? 'bottom-full mb-1' : 'top-full mt-1'
+            ]">
+        <div v-for="(item, index) in filtered" :key="index"
+             class="px-3 hover:bg-base-300 cursor-pointer font-xs md:font-3xl"
+             :class="{'bg-base-300': hoverIndex === index}"
+             @click="select(item.item)"
+             v-html="item.highlighted"
+        >
+        </div>
       </div>
-    </div>
+    </Teleport>
   </div>
 </template>

@@ -97,11 +97,11 @@ function validate(selected: ShallowTrack, flashError: () => void, flashSuccess: 
         v-slot="{ inputBindings, inputEvents, errorFlash, successFlash }"
     >
       <label
-          class="w-full input mt-8 focus-within:outline-none focus-within:ring-0"
+          class="w-full input focus-within:outline-none focus-within:ring-0"
           :class="{
-          'border-error': errorFlash,
-          'border-success': successFlash
-        }"
+        'border-error': errorFlash,
+        'border-success': successFlash
+      }"
       >
         <input
             v-bind="inputBindings"
@@ -112,8 +112,8 @@ function validate(selected: ShallowTrack, flashError: () => void, flashSuccess: 
             class="badge badge-neutral"
             :class="{'badge-success': guessed >= goal}"
         >
-          {{ Math.min(goal, guessed) }}/{{ goal }}
-        </span>
+        {{ Math.min(goal, guessed) }}/{{ goal }}
+      </span>
       </label>
     </TrackInput>
   </div>

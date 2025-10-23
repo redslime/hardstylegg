@@ -63,7 +63,6 @@ onMounted(() => {
 
   howl = new Howl({
     src: [`/heardle/${src.value}`],
-    html5: true, // ensures large file streaming
     preload: true,
     volume: 0.2
   });

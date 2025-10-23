@@ -19,6 +19,12 @@ export interface Track {
     cover_art: string
 }
 
+export interface ShallowTrack {
+    sid: string
+    title: string
+    artists: string
+}
+
 export interface GameContainer {
     dayId: number
     data: GameData[]

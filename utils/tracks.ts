@@ -1,20 +1,14 @@
-export interface ShallowTrack {
-    sid: string
-    title: string
-    artists: string
-}
+import type {ShallowTrack} from "~/types/models"
+
+let tracks: ShallowTrack[] | null = null
 
 export function getName(track: ShallowTrack): string {
     return `${track.artists} - ${track.title}`
 }
 
 export async function getTracks(): Promise<ShallowTrack[]> {
-    console.log("fetching all tracks...")
-    const tracks = await $fetch<ShallowTrack[]>('/api/tracks')
-    console.log(`fetched ${tracks.length} tracks`)
+    if(tracks !== null) return tracks
+    console.log('fetching tracks')
+    tracks = await $fetch<ShallowTrack[]>('/api/tracks')
     return tracks
-    // return tracks.map((t) => ({
-    //     sid: t.sid,
-    //     name: `${t.artists} - ${t.title}`
-    // }))
 }

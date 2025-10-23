@@ -11,6 +11,7 @@ export interface TimelineContainer {
   goal: number
 }
 
+const isMobile = inject<boolean>('isMobile')
 const emit = defineEmits(['onFinish'])
 const props = defineProps({
   state: { type: Number as PropType<GameState>, required: true },
@@ -65,7 +66,7 @@ function submit() {
 </script>
 
 <template>
-  <div>
+  <div class="w-full">
     <GameTitle>
       <template #icon>
         <Calendar />
@@ -75,7 +76,7 @@ function submit() {
       </template>
     </GameTitle>
 
-    <div class="max-w-3xl place-items-center" @wheel.prevent="onWheel">
+    <div class="place-items-center" @wheel.prevent="onWheel">
       <div class="flex flex-wrap gap-4 w-50 mb-2 place-items-center justify-center">
         <div v-if="selectedYear>2000">
           {{ Math.max(2000, selectedYear-1) }}
@@ -88,26 +89,30 @@ function submit() {
         </div>
       </div>
 
-      <input
-        v-model.number="selectedYear"
-        type="range"
-        :min="minYear"
-        :max="maxYear"
-        step="1"
-        list="years-list"
-        class="slider w-full"
-        aria-label="Year selector"
-        :aria-valuemin="minYear"
-        :aria-valuemax="maxYear"
-        :aria-valuenow="selectedYear"
-        :disabled="finished"
-        :style="{'--thumb-color': thumbColor}"
-      />
+      <div class="w-4/5 md:w-2/3">
+        <input
+            v-model.number="selectedYear"
+            type="range"
+            :min="minYear"
+            :max="maxYear"
+            step="1"
+            list="years-list"
+            class="slider mb-5"
+            aria-label="Year selector"
+            :aria-valuemin="minYear"
+            :aria-valuemax="maxYear"
+            :aria-valuenow="selectedYear"
+            :disabled="finished"
+            :style="{'--thumb-color': thumbColor}"
+        />
+      </div>
     </div>
 
-    <div class="text-center mt-5" v-if="!finished">
-      <button class="btn btn-outline btn-primary btn-lg" @click="submit">Submit</button>
-    </div>
+    <Teleport to="#side-dock" :disabled="!isMobile">
+      <div class="text-center" v-if="!finished">
+        <button class="btn btn-outline btn-primary btn-lg" @click="submit">Submit</button>
+      </div>
+    </Teleport>
   </div>
 </template>
 

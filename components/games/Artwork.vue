@@ -65,7 +65,7 @@ async function validate(selected: ShallowTrack, flashError: () => void, flashSuc
       </p>
     </div>
     <div class="flex w-full justify-center items-center" v-else>
-      <TrackInput class="w-2/3" :xl="true" @onTrackSelected="validate" />
+      <TrackInput class="w-2/3" @onTrackSelected="validate" />
     </div>
   </div>
 </template>
