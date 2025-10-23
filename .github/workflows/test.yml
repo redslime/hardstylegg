@@ -22,7 +22,7 @@ jobs:
       - name: Install dependencies
         run: npm ci --omit=dev
 
-      - name: Prisma setup
+      - name: Generate prisma client
         run: npx prisma generate
 
       - name: Build Nuxt
@@ -30,3 +30,12 @@ jobs:
 
       - name: Archive build
         run: zip -r output.zip .output
+
+      - name: Upload to VPS via SFTP
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          source: "output.zip"
+          target: "/home/hardstylegg/deploy"
