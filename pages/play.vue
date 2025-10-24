@@ -1,28 +1,11 @@
 <script setup lang="ts">
-const query = useRoute().query
+import {getGameContainer} from "~/utils/game";
 
-if(query.r) {
-  useHead({
-    meta: [
-      {name: 'og:description', content: 'Daily hardstyle challenge to compete with friends.'},
-      {name: 'twitter:description', content: 'Daily hardstyle challenge to compete with friends.'},
-      {name: 'twitter:image:src', content: 'https://hardstylegg.redslime.xyz/api/og?r=' + query.r},
-      {name: 'twitter:image:alt', content: 'hardstyle.gg'},
-      {name: 'twitter:image:width', content: '550'},
-      {name: 'twitter:image:height', content: '140'},
-      {name: 'twitter:card', content: 'summary_large_image'},
-      {name: 'theme-color', content: '#3ABDF8'},
-    ]
-  })
-}
-
-onMounted(() => {
-  navigateTo('/')
-})
+const gameData = await getGameContainer()
 </script>
 
 <template>
-
+  <GameFlow :gameData="gameData" />
 </template>
 
 <style scoped>

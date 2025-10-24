@@ -86,7 +86,7 @@ watch(answers, (newAnswers) => {
       <ChatBubble />
     </template>
     <template #title>
-      Fill in the missing words:
+      Fill in the missing lyrics:
     </template>
   </GameTitle>
 

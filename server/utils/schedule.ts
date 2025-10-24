@@ -25,6 +25,7 @@ export async function getPackedDayData(): Promise<PackedDayData> {
     await checkDay()
     return packedCache ?? {
         dayId: -1,
+        dayFriendly: "",
         typeIds: [],
         data: []
     }
@@ -103,12 +104,15 @@ async function onNewDay(newDayId: number) {
                 const type_id = typeIds[i]
                 const instance_id = gameIds[i]
 
-                packed.push(await getGameFlattenedInstance(prisma, type_id, instance_id))
+                if(type_id && instance_id) {
+                    packed.push(await getGameFlattenedInstance(prisma, type_id, instance_id))
+                }
             }
         }
 
         packedCache = {
             dayId,
+            dayFriendly: getFriendlyName(dayId),
             typeIds,
             data: packed
         }

@@ -8,7 +8,6 @@ export function getName(track: ShallowTrack): string {
 
 export async function getTracks(): Promise<ShallowTrack[]> {
     if(tracks !== null) return tracks
-    console.log('fetching tracks')
     tracks = await $fetch<ShallowTrack[]>('/api/tracks')
     return tracks
 }

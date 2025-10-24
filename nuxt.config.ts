@@ -7,7 +7,8 @@ export default defineNuxtConfig({
     devtools: { enabled: true },
     routeRules: {
         '/': { ssr: false },
-        '/play': { ssr: true },
+        '/play': { ssr: false },
+        '/share': { ssr: true },
     },
     vite: {
         plugins: [tailwindcss()],

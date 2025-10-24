@@ -97,7 +97,7 @@ const validateGuess = (item: TimetableItem) => {
       <PencilSquare />
     </template>
     <template #title>
-      Fill in the missing artists:
+      Complete the timetable:
     </template>
   </GameTitle>
 

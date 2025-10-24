@@ -5,7 +5,7 @@ import HeartIcon from "~/components/icons/HeartIcon.vue";
 import Countdown from "~/components/Countdown.vue";
 import {bitsToHex, copyToClipboard} from "~/utils/utils";
 import ResultShareButton from "~/components/ResultShareButton.vue";
-import {gameComps} from "~/utils/game";
+import {gameComps, getPreviewTitle} from "~/utils/game";
 import {type GameContainer, type GameData, GameState} from "~/types/models";
 
 useHead({
@@ -65,7 +65,7 @@ function next() {
 }
 
 const copyResult = () => {
-  copyToClipboard(`I scored ${gamesWon.value}/${gameData.length} on hardstyle.gg today. Join me!\nhttps://hardstylegg.redslime.xyz/play?r=${shareCode.value}`)
+  copyToClipboard(`I scored ${gamesWon.value}/${gameData.length} on hardstyle.gg today. Join me!\nhttps://hardstylegg.redslime.xyz/share?r=${shareCode.value}`)
 }
 
 onMounted(() => {
@@ -96,7 +96,8 @@ onMounted(() => {
   <div class="relative w-full">
     <div class="flex justify-center flex-wrap gap-2 mb-8" v-if="!details">
       <div v-for="game in gameData" :key="game.name"
-           class="p-3 rounded-md"
+           class="p-3 rounded-md tooltip"
+           :data-tip="getPreviewTitle(game)"
            :class="{
           'bg-base-100': game.props.state === GameState.UPCOMING,
           'bg-primary text-primary-content': game.props.state === GameState.PLAYING,
@@ -159,7 +160,8 @@ onMounted(() => {
   <div class="flex flex-col w-full md:w-2/3 my-5 pb-5 border-secondary/50 border-1 rounded-md" v-if="summary && details">
     <div class="flex justify-center bg-base-300 flex-wrap gap-2 border-b-1 py-4 mb-4 border-secondary/50">
       <div v-for="(game, index) in gameData" :key="game.name"
-           class="p-3 rounded-md cursor-pointer"
+           class="p-3 rounded-md cursor-pointer tooltip"
+           :data-tip="getPreviewTitle(game)"
            :class="{
               'outline-2 outline-primary': currentIndex === index,
               'bg-base-100': game.props.state === GameState.UPCOMING,

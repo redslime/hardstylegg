@@ -1,5 +1,6 @@
 export interface PackedDayData {
     dayId: number
+    dayFriendly: string
     typeIds: number[]
     data: any[]
 }
@@ -27,6 +28,7 @@ export interface ShallowTrack {
 
 export interface GameContainer {
     dayId: number
+    dayFriendly: string
     data: GameData[]
 }
 
