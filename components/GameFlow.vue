@@ -23,6 +23,7 @@ const currentIndex = ref(0)
 const currentGameData = computed<GameData>(() => gameData[currentIndex.value])
 const currentGameComp = computed(() => gameComps[currentGameData.value.name as keyof typeof gameComps])
 const currentState = computed<GameState>(() => currentGameData.value.props.state)
+const beginnerNote = ref<boolean>(true)
 const summary = ref<boolean>(false)
 const details = ref<boolean>(false)
 const mounted = ref<boolean>(false)
@@ -116,7 +117,22 @@ onMounted(() => {
     </div>
   </div>
 
-  <div class="flex flex-col items-center w-full" id="state-playing">
+  <div class="flex flex-col text-center justify-center items-center w-full" v-if="beginnerNote">
+    <GameTitle>
+      <template #title>
+        Before we begin...
+      </template>
+    </GameTitle>
+    <p>Please note that this is a preview.</p>
+    <p>It contains a fixed set of questions which doesn't represent final difficulty or length.</p>
+    <p>Have fun!</p>
+    <button class="btn btn-lg bg-accent mt-4 text-accent-content" @click="beginnerNote = false">
+      Start
+      <MicroChevronDoubleRightIcon />
+    </button>
+  </div>
+
+  <div class="flex flex-col items-center w-full" id="state-playing" v-show="!beginnerNote">
 
   </div>
 
