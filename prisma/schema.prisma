@@ -173,8 +173,8 @@ model track {
 
 model user {
   id                   Int                    @id @default(autoincrement())
-  name                 String                 @unique(map: "user_name_uindex") @db.VarChar(32)
-  password             String                 @db.Char(60)
+  discord_id           String                 @unique(map: "user_pk") @db.Char(18)
+  name                 String                 @db.VarChar(32)
   admin                Boolean                @default(dbgenerated("b'0'")) @db.Bit(1)
   game_artwork         game_artwork[]
   game_complete_album  game_complete_album[]

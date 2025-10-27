@@ -2,6 +2,12 @@
 import {type Track} from "~/types/models";
 import DuplicateTrackGroup from "~/components/DuplicateTrackGroup.vue";
 
+definePageMeta({
+  middleware: ['authenticated'],
+  layout: 'wide',
+})
+
+const { loggedIn, user, fetch: refreshSession } = useUserSession()
 const tracks = await $fetch<Track[]>('/api/duplicates')
 const albums = await $fetch<Track[]>('/api/albums')
 
@@ -16,10 +22,6 @@ tracks.forEach(track => {
 
 Object.entries(grouped).forEach(([key, value]) => {
   value.sort((a, b) => a.year - b.year)
-})
-
-definePageMeta({
-  layout: 'wide',
 })
 </script>
 
