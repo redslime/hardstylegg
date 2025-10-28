@@ -31,6 +31,7 @@
     "vue-advanced-cropper": "^2.8.9",
     "vue-fuse": "^4.1.1",
     "vue-router": "^4.6.3",
+    "vue-virtual-scroller": "^2.0.0-beta.8",
     "vuedraggable": "^4.1.0",
     "zod": "^4.1.12"
   },
@@ -41,6 +42,7 @@
     "@types/howler": "^2.2.12",
     "@types/infobox-parser": "^3.3.4",
     "@types/luxon": "^3.7.1",
+    "@types/vue-virtual-scroller": "npm:@earltp/vue-virtual-scroller@^1.0.1",
     "@typescript-eslint/eslint-plugin": "^8.46.2",
     "autoprefixer": "^10.4.21",
     "eslint": "^9.38.0",

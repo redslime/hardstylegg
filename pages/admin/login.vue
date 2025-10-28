@@ -14,7 +14,7 @@ if(loggedIn.value) {
     <span class="font-bold">Error!</span> {{ query.error }}. Please try again.
   </div>
 
-  <a href="/auth/discord/login" class="btn btn-discord">
+  <a href="/auth/discord/login" class="btn btn-lg btn-discord">
     <DiscordIcon />
     Login with Discord
   </a>

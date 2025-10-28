@@ -39,3 +39,14 @@ export interface GameData {
         container: any
     }
 }
+
+export interface DashboardGroup {
+    name: string
+    items: DashboardItem[]
+}
+
+export interface DashboardItem {
+    name: string
+    icon: string
+    url: string
+}
