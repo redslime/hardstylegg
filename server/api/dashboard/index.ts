@@ -1,6 +1,9 @@
-import type {DashboardGroup} from "~/types/models";
+import type {DashboardData, DashboardGroup, Editor, Schedule, ScheduleDay} from "~/types/models";
 import type {User} from "#auth-utils";
+import {PrismaClient} from '~/generated/prisma/client'
+import {getBaseDate, getDayIdToday, getFriendlyName, getTimeUntilMidnight} from "~/server/utils/schedule";
 
+const prisma = new PrismaClient()
 let structure: DashboardGroup[] | null = null
 
 function getStructure(user: User): DashboardGroup[] {
@@ -94,7 +97,43 @@ function getStructure(user: User): DashboardGroup[] {
     return structure
 }
 
+async function getEditors(): Promise<Editor[]> {
+    return await prisma.user.findMany()
+}
+
+async function getSchedule(): Promise<Schedule> {
+    const todayId = getDayIdToday()
+    const schedule = await prisma.day_schedule.findMany()
+    const mapped: ScheduleDay[] = schedule.map(item => {
+        const {type_ids, game_ids, ...rest} = item
+        const typeIds = JSON.parse(type_ids) as number[]
+        const gameIds = JSON.parse(game_ids) as number[]
+        return {
+            dayFriendly: getFriendlyName(item.day),
+            typeIds,
+            gameIds,
+            ...rest
+        }
+    })
+
+    return <Schedule>{
+        baseDate: getBaseDate(),
+        todayId,
+        todayFriendly: getFriendlyName(todayId),
+        midnightTimer: getTimeUntilMidnight(),
+        days: mapped
+    }
+}
+
 export default defineEventHandler(async (event) => {
     const { user } = await requireUserSession(event)
-    return getStructure(user)
+    const groups = getStructure(user)
+    const editors = await getEditors()
+    const schedule = await getSchedule()
+
+    return <DashboardData>{
+        groups,
+        editors,
+        schedule,
+    }
 })

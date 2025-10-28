@@ -1,24 +1,20 @@
 <script setup lang="ts">
 import UsersIcon from "~/components/icons/UsersIcon.vue";
+import {getDashboardData} from "~/utils/dashboard";
 
 definePageMeta({
   layout: 'dashboard',
   middleware: ['authenticated-admin'],
 })
 
-const {data: editors, pending, error} = await useAsyncData(() => $fetch('/api/dashboard/editors'), { lazy: true })
+const dashboardData = await getDashboardData()
+const editors = dashboardData.editors
 </script>
 
 <template>
-  <div class="flex items-center gap-2 text-4xl font-bold">
+  <div class="flex items-center gap-2 text-4xl font-bold mb-8">
     <span class="text-primary"><UsersIcon class="size-8" /></span>
     Editors
-  </div>
-
-  <span class="loading loading-spinner loading-xl" v-if="pending"></span>
-
-  <div role="alert" class="alert alert-error alert-soft" v-if="error">
-    <span>Failed to load editors</span>
   </div>
 
   <div class="overflow-x-auto" v-if="editors">

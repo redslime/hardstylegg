@@ -29,9 +29,9 @@ export async function getGameFlattenedInstance(prisma: PrismaClient, type_id: nu
             return {title, show_names, items: flatItems}
         }
         case 7: {
-            const {title, answers} = await getQuizInstance(prisma, instance_id)
-            const flatAnswers = answers.map(({id, parent_id, ...rest}) => ({...rest}))
-            return {title, answers: flatAnswers}
+            const {title, items} = await getQuizInstance(prisma, instance_id)
+            const flatAnswers = items.map(({id, parent_id, ...rest}) => ({...rest}))
+            return {title, items: flatAnswers}
         }
         case 8: {
             const {title, goal} = await getTimelineInstance(prisma, instance_id)
@@ -111,10 +111,10 @@ export async function getOrderInstance(prisma: PrismaClient, id: number) {
 
 export async function getQuizInstance(prisma: PrismaClient, id: number) {
     const parent = await prisma.game_quiz.findUnique({ where: { id: id } })
-    const answers = await prisma.game_quiz_item.findMany({ where: { parent_id: id } })
+    const items = await prisma.game_quiz_item.findMany({ where: { parent_id: id } })
     return {
         ...parent,
-        answers: answers
+        items
     }
 }
 

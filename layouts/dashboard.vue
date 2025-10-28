@@ -1,17 +1,14 @@
 <script setup lang="ts">
 import type {DashboardItem} from "~/types/models";
 import DashboardMenu from "~/components/dashboard/DashboardMenu.vue";
+import {getAvatarUrl} from "~/server/utils/utils";
 
 const { user, clear: clearSession } = useUserSession()
-const avatarUrl = computed(() => `https://cdn.discordapp.com/avatars/${user.value.discordId}/${user.value.avatar}.png?size=64`)
+const avatarUrl = computed(() => getAvatarUrl(user.value))
 
 async function logout () {
   await clearSession()
   await navigateTo('/admin/login')
-}
-
-function select(item: DashboardItem) {
-  navigateTo(item.url)
 }
 </script>
 
@@ -36,7 +33,7 @@ function select(item: DashboardItem) {
 
     <div class="w-full">
       <div class="flex">
-        <DashboardMenu :select="select" />
+        <DashboardMenu />
 
         <div class="w-full bg-base-100 p-2 lg:p-7">
           <NuxtPage />

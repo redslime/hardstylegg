@@ -1,11 +1,10 @@
 <script setup lang="ts">
 import {getIcon} from "~/utils/icons";
+import type {DashboardData} from "~/types/models";
 
 const route = useRoute()
-const structure = await $fetch<DashboardGroup[]>('/api/dashboard')
-const props = defineProps({
-  select: { type: Function as PropType<(item: DashboardItem) => void>, required: true },
-})
+const dashboardData = await $fetch<DashboardData>('/api/dashboard')
+const structure = dashboardData.groups
 const isActive = (url: string) => route.path === url || route.path === url + "/new"
 </script>
 

@@ -1,3 +1,5 @@
+import type {DateTime} from "luxon";
+
 export interface PackedDayData {
     dayId: number
     dayFriendly: string
@@ -38,6 +40,34 @@ export interface GameData {
         state: GameState
         container: any
     }
+}
+
+export interface Editor {
+    id: number
+    discord_id: string
+    name: string
+    admin: boolean
+}
+
+export interface Schedule {
+    baseDate: DateTime
+    todayId: number
+    todayFriendly: string
+    midnightTimer: number
+    days: ScheduleDay[]
+}
+
+export interface ScheduleDay {
+    dayFriendly: string
+    day: number
+    typeIds: number[]
+    gameIds: number[]
+}
+
+export interface DashboardData {
+    groups: DashboardGroup[]
+    editors: Editor[]
+    schedule: Schedule
 }
 
 export interface DashboardGroup {

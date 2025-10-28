@@ -12,7 +12,7 @@ const {data: tracks, pending, error} = await useAsyncData(() => $fetch('/api/das
 </script>
 
 <template>
-  <div class="flex items-center gap-2 text-4xl font-bold">
+  <div class="flex items-center gap-2 text-4xl font-bold mb-8">
     <span class="text-primary"><CircleStackIcon class="size-8" /></span>
     Track database
   </div>

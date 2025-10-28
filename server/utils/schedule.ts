@@ -16,6 +16,10 @@ export function getTimeUntilMidnight(): number {
     return Math.floor(diff.seconds);
 }
 
+export function getBaseDate(): DateTime {
+    return BASE_DATE
+}
+
 export function getFriendlyName(dayId: number): string {
     const date = BASE_DATE.plus({ days: dayId - 1 });
     return date.toFormat('LLL dd');
@@ -49,6 +53,11 @@ export async function getTypeIdsForDay(dayId: number): Promise<number[]> {
     return []
 }
 
+export function getDayIdToday(): number {
+    const now = DateTime.now().setZone('Europe/Berlin');
+    return getDayId(now.toJSDate())
+}
+
 /**
  * Calculates the day ID relative to the base date (day 1 = base date).
  * @param dateInput - Any date (Date or string)
@@ -64,8 +73,7 @@ export function getDayId(dateInput: Date | string): number {
  * If it has, triggers `onNewDay()` once.
  */
 export async function checkDay() {
-    const now = DateTime.now().setZone('Europe/Berlin');
-    const currentDayId = getDayId(now.toJSDate());
+    const currentDayId = getDayIdToday()
 
     if (lastKnownDayId === null) {
         // First run

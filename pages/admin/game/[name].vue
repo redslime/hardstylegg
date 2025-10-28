@@ -9,7 +9,7 @@ const gameName = useRoute().params.name?.toString()?.replace("-", "")
 
 <template>
   <div>
-
+    generic placeholder for: {{ gameName }}
   </div>
 </template>
 
