@@ -9,6 +9,7 @@ const emit = defineEmits(['onFinish'])
 const details = inject<boolean>('details')
 const props = defineProps({
   state: { type: Number as PropType<GameState>, required: true },
+  position: { type: Number as PropType<number>, required: true },
   container: { type: Object as PropType<ArtworkContainer>, required: true }
 })
 
@@ -16,6 +17,7 @@ const state = computed(() => props.state)
 const finished = computed(() => state.value == GameState.SUCCEEDED || state.value == GameState.FAILED)
 const track = computed<Track>(() => props.container.track)
 const artworkBlank = computed(() => props.container.artwork_blank)
+const currentIndex = inject<number>('currentIndex')
 
 const src = computed(() => {
   if(finished.value) {
@@ -60,7 +62,7 @@ async function validate(selected: ShallowTrack, flashError: () => void, flashSuc
         }">
         {{ track.artists }} - {{ track.title }}
       </p>
-      <div class="mt-4 text-center">
+      <div class="mt-4 text-center" v-if="currentIndex === props.position">
         <SpotifyButton :track="track" />
       </div>
     </div>

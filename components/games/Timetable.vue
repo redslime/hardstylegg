@@ -7,6 +7,7 @@ import type {TimetableContainer, TimetableItem} from "~/types/gameModels";
 const emit = defineEmits(['onFinish'])
 const props = defineProps({
   state: { type: Number as PropType<GameState>, required: true },
+  position: { type: Number as PropType<number>, required: true },
   container: { type: Object as PropType<TimetableContainer>, required: true }
 })
 

@@ -6,11 +6,13 @@ import SpeakerWave from "~/components/icons/game/SpeakerWave.vue";
 import {GameState, type ShallowTrack, type Track} from "~/types/models";
 import {getSpotifyArtwork} from "~/utils/utils";
 import {getName} from "~/utils/tracks";
+import SpotifyButton from "~/components/SpotifyButton.vue";
 import type {HeardleContainer} from "~/types/gameModels";
 
 const emit = defineEmits(['onFinish'])
 const props = defineProps({
   state: { type: Number as PropType<GameState>, required: true },
+  position: { type: Number as PropType<number>, required: true },
   container: { type: Object as PropType<HeardleContainer>, required: true }
 })
 
@@ -19,6 +21,7 @@ const gameFinished = computed(() => state.value == GameState.SUCCEEDED || state.
 const track = computed<Track>(() => props.container.track)
 const src = computed(() => props.container.src)
 const durations = computed(() => props.container.durations)
+const currentIndex = inject<number>('currentIndex')
 
 interface Guess {
   input: string | undefined
@@ -189,7 +192,9 @@ function validate(selected: ShallowTrack, flashError: () => void, flashSuccess: 
       <p class="text-2xl font-bold drop-shadow-lg text-white bg-black/30 p-2">
         {{ track.artists }} - {{ track.title }}
       </p>
-      <SpotifyButton :track="track" class="absolute bottom-4 right-4" />
+      <div class="absolute bottom-4 right-4" v-if="currentIndex === props.position">
+        <SpotifyButton :track="track" />
+      </div>
     </div>
   </div>
 

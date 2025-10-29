@@ -41,6 +41,8 @@ const shareCode = computed<string>(() => {
 })
 
 provide("details", details)
+provide("summary", summary)
+provide("currentIndex", currentIndex)
 
 const listener = (state: GameState) => {
   if(state === GameState.SUCCEEDED) {
@@ -78,8 +80,11 @@ onMounted(() => {
     <div class="w-full sm:w-2/3" id="top-dock">
 
     </div>
-    <div class="flex flex-row content-baseline gap-4">
-      <div id="side-dock">
+    <div class="w-full flex flex-row justify-around content-baseline gap-4">
+      <div class="[&:empty]:hidden" id="side-dock">
+
+      </div>
+      <div class="[&:empty]:hidden" id="spotify-dock">
 
       </div>
       <button class="flex flex-row content-baseline btn btn-lg btn-accent" @click="next" v-if="currentState !== GameState.PLAYING">

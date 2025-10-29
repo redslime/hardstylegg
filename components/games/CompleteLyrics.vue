@@ -13,6 +13,7 @@ type LinePart = LinePartInput | LinePartText
 const emit = defineEmits(['onFinish'])
 const props = defineProps({
   state: { type: Number as PropType<GameState>, required: true },
+  position: { type: Number as PropType<number>, required: true },
   container: { type: Object as PropType<CompleteLyricsContainer>, required: true }
 })
 
@@ -20,6 +21,7 @@ const state = computed(() => props.state)
 const finished = computed(() => state.value == GameState.SUCCEEDED || state.value == GameState.FAILED)
 const description = computed(() => props.container?.track?.artists + ' - ' + props.container?.track?.title)
 const text = computed(() => props.container.text)
+const currentIndex = inject<number>('currentIndex')
 
 const lines = computed(() => {
   const lineArr = text.value.split('\n').map(lineText => {
@@ -117,6 +119,10 @@ watch(answers, (newAnswers) => {
           </p>
         </template>
       </div>
+    </div>
+
+    <div class="mt-4" v-if="finished && currentIndex === props.position">
+      <SpotifyButton :track="props.container?.track" />
     </div>
   </div>
 </template>

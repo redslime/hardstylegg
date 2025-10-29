@@ -38,6 +38,7 @@ export interface GameData {
     name: string
     props: {
         state: GameState
+        position: number
         container: any
     }
 }

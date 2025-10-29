@@ -58,6 +58,7 @@ export function transform(data: PackedDayData): GameContainer {
                     name: getName(type),
                     props: {
                         state: i === 0 ? GameState.PLAYING : GameState.UPCOMING,
+                        position: i,
                         container: {
                             ...data
                         }
