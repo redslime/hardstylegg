@@ -6,12 +6,7 @@ import SpeakerWave from "~/components/icons/game/SpeakerWave.vue";
 import {GameState, type ShallowTrack, type Track} from "~/types/models";
 import {getSpotifyArtwork} from "~/utils/utils";
 import {getName} from "~/utils/tracks";
-
-export interface HeardleContainer {
-  track: Track
-  src: string
-  durations: number[]
-}
+import type {HeardleContainer} from "~/types/gameModels";
 
 const emit = defineEmits(['onFinish'])
 const props = defineProps({

@@ -1,13 +1,9 @@
 <script setup lang="ts">
 import {GameState} from "~/types/models";
-import { computed, reactive, watch } from 'vue'
-import type { PropType } from 'vue'
+import type {PropType} from 'vue'
+import {computed, reactive, watch} from 'vue'
 import ChatBubble from "~/components/icons/game/ChatBubble.vue";
-
-export interface CompleteLyricsContainer {
-  description: string
-  text: string
-}
+import type {CompleteLyricsContainer} from "~/types/gameModels";
 
 // Discriminated union for line parts to enable safe narrowing in the template
 interface LinePartInput { isInput: true; name: string }
@@ -22,7 +18,7 @@ const props = defineProps({
 
 const state = computed(() => props.state)
 const finished = computed(() => state.value == GameState.SUCCEEDED || state.value == GameState.FAILED)
-const description = computed(() => props.container.description)
+const description = computed(() => props.container?.track?.artists + ' - ' + props.container?.track?.title)
 const text = computed(() => props.container.text)
 
 const lines = computed(() => {

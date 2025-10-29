@@ -1,20 +1,10 @@
 <script setup lang="ts">
 import {computed, ref} from 'vue'
 import Draggable from 'vuedraggable'
-import {GameState, type Track} from "~/types/models";
+import {GameState} from "~/types/models";
 import {shuffleArray} from "~/utils/utils";
 import ArrowsRightLeft from "~/components/icons/game/ArrowsRightLeft.vue";
-
-export interface OrderContainer {
-  title: string
-  showNames: boolean
-  items: OrderItem[]
-}
-
-export interface OrderItem {
-  index: number
-  track: Track
-}
+import type {OrderContainer, OrderItem} from "~/types/gameModels";
 
 const isMobile = inject<boolean>('isMobile')
 const emit = defineEmits(['onFinish'])
@@ -40,7 +30,7 @@ const items = ref<OrderItem[]>(shuffleArray(props.container.items))
 
 function submit() {
   for(let i = 0; i < items.value.length; i++) {
-    if(items.value[i].index !== i) {
+    if(items.value[i]?.index !== i) {
       emit("onFinish", GameState.FAILED)
       return
     }

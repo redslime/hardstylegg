@@ -1,18 +1,7 @@
 <script setup lang="ts">
 import PencilSquare from "~/components/icons/game/PencilSquare.vue";
 import {GameState} from "~/types/models";
-
-export interface CompleteAlbumContainer {
-  items: CompleteAlbumItem[]
-}
-
-export interface CompleteAlbumItem {
-  name: string
-  artist: string
-  hidden: boolean
-  guess?: string
-  correct?: boolean | null
-}
+import type {CompleteAlbumContainer, CompleteAlbumItem} from "~/types/gameModels";
 
 const emit = defineEmits(['onFinish'])
 const props = defineProps({

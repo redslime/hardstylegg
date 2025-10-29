@@ -2,22 +2,7 @@
 import {computed} from 'vue'
 import PencilSquare from "~/components/icons/game/PencilSquare.vue";
 import {GameState} from "~/types/models";
-
-export interface TimetableContainer {
-  description: string
-  color_bg: string
-  color_text: string
-  items: TimetableItem[]
-}
-
-export interface TimetableItem {
-  name: string
-  begin: string
-  end: string
-  hidden: boolean
-  guess?: string
-  correct?: boolean | null
-}
+import type {TimetableContainer, TimetableItem} from "~/types/gameModels";
 
 const emit = defineEmits(['onFinish'])
 const props = defineProps({
@@ -27,7 +12,7 @@ const props = defineProps({
 
 const state = computed(() => props.state)
 const finished = computed(() => state.value == GameState.SUCCEEDED || state.value == GameState.FAILED)
-const description = computed(() => props.container.description)
+const title = computed(() => props.container.title)
 const items = computed<TimetableItem[]>(() => props.container.items)
 const colorBg = computed(() => props.container.color_bg)
 const colorText = computed(() => props.container.color_text)
@@ -56,7 +41,7 @@ const blockGap = 8 // Abstand zwischen Blöcken (px)
 // ⏱ Hilfsfunktionen
 const getMinutes = (time: string) => {
   const [h, m] = time.split(':').map(Number)
-  return h * 60 + m
+  return h!! * 60 + m!!
 }
 
 const startTime = computed(() => {
@@ -102,7 +87,7 @@ const validateGuess = (item: TimetableItem) => {
   </GameTitle>
 
   <div class="w-full flex flex-col items-center justify-center">
-    <div class="text-xl text-base-content/80 mb-2">{{ description }}</div>
+    <div class="text-xl text-base-content/80 mb-2">{{ title }}</div>
 
     <div class="flex items-center justify-center w-3/5">
       <div class="relative border-l border-base-300">

@@ -1,6 +1,6 @@
 import {DateTime} from 'luxon';
 import {PrismaClient} from '~/generated/prisma/client'
-import {getGameFlattenedInstance} from "~/server/utils/games";
+import {getGameInstance} from "~/server/utils/games";
 import type {PackedDayData} from "~/types/models";
 
 const prisma = new PrismaClient()
@@ -113,7 +113,7 @@ async function onNewDay(newDayId: number) {
                 const instance_id = gameIds[i]
 
                 if(type_id && instance_id) {
-                    packed.push(await getGameFlattenedInstance(prisma, type_id, instance_id))
+                    packed.push(await getGameInstance(prisma, type_id, instance_id))
                 }
             }
         }

@@ -1,98 +1,113 @@
 import {PrismaClient} from '~/generated/prisma/client'
+import type {
+    ArtworkContainer,
+    CompleteAlbumContainer,
+    CompleteLyricsContainer,
+    HeardleContainer,
+    NameXContainer,
+    OrderContainer,
+    OrderItem,
+    QuizContainer,
+    TimelineContainer,
+    TimetableContainer
+} from "~/types/gameModels";
 
-export async function getGameFlattenedInstance(prisma: PrismaClient, type_id: number, instance_id: number) {
+export async function getGameInstance(prisma: PrismaClient, type_id: number, instance_id: number) {
     switch (type_id) {
         case 1: {
-            const {track, artwork_blank} = await getArtworkInstance(prisma, instance_id)
-            return {track, artwork_blank}
+            return await getArtworkInstance(prisma, instance_id)
         }
         case 2: {
-            const {items} = await getCompleteAlbumInstance(prisma, instance_id)
-            const flatItems = items.map(({id, parent_id, ...rest}) => ({...rest}))
-            return {items: flatItems}
+            return await getCompleteAlbumInstance(prisma, instance_id)
         }
         case 3: {
-            const {description, text} = await getCompleteLyricsInstance(prisma, instance_id)
-            return {description, text}
+            return await getCompleteLyricsInstance(prisma, instance_id)
         }
         case 4: {
-            const {track, src, durations} = await getHeardleInstance(prisma, instance_id)
-            return {track, src, durations}
+            return await getHeardleInstance(prisma, instance_id)
         }
         case 5: {
-            const {title, goal, items} = await getNameXInstance(prisma, instance_id)
-            return {title, goal, items}
+            return await getNameXInstance(prisma, instance_id)
         }
         case 6: {
-            const {title, show_names, items} = await getOrderInstance(prisma, instance_id)
-            const flatItems = items.map(({parent_id, ...rest}) => ({...rest}))
-            return {title, show_names, items: flatItems}
+            return await getOrderInstance(prisma, instance_id)
         }
         case 7: {
-            const {title, items} = await getQuizInstance(prisma, instance_id)
-            const flatAnswers = items.map(({id, parent_id, ...rest}) => ({...rest}))
-            return {title, items: flatAnswers}
+            return await getQuizInstance(prisma, instance_id)
         }
         case 8: {
-            const {title, goal} = await getTimelineInstance(prisma, instance_id)
-            return {title, goal}
+            return await getTimelineInstance(prisma, instance_id)
         }
         case 9: {
-            const {description, color_bg, color_text, items} = await getTimetableInstance(prisma, instance_id)
-            const flatItems = items.map(({id, parent_id, ...rest}) => ({...rest}))
-            return {description, color_bg, color_text, items: flatItems}
+            return await getTimetableInstance(prisma, instance_id)
         }
     }
 }
 
-export async function getArtworkInstance(prisma: PrismaClient, id: number) {
+export async function getArtworkInstance(prisma: PrismaClient, id: number): Promise<ArtworkContainer> {
     const parent = await prisma.game_artwork.findUnique({ where: { id: id } })
     const track = await prisma.track.findUnique({ where: { sid: parent!!.track_id } })
 
-    return {
-        ...parent,
-        track: track
+    return <ArtworkContainer>{
+        id: parent!!.id,
+        created_by: parent!!.created_by,
+        track: track,
+        artwork_blank: parent!!.artwork_blank
     }
 }
 
-export async function getCompleteAlbumInstance(prisma: PrismaClient, id: number) {
+export async function getCompleteAlbumInstance(prisma: PrismaClient, id: number): Promise<CompleteAlbumContainer> {
     const parent = await prisma.game_complete_album.findUnique({ where: { id: id } })
+    const album = await prisma.album.findUnique({ where: { sid: parent!!.album_id ?? "" } })
     const items = await prisma.game_complete_album_item.findMany({ where: { parent_id: id } })
-    return {
-        ...parent,
+    return <CompleteAlbumContainer>{
+        id: parent!!.id,
+        created_by: parent!!.created_by,
+        album: album,
         items: items
     }
 }
 
-export async function getCompleteLyricsInstance(prisma: PrismaClient, id: number) {
-    return {...await prisma.game_complete_lyrics.findUnique({ where: { id: id } })}
-}
-
-export async function getHeardleInstance(prisma: PrismaClient, id: number) {
-    const parent = (await prisma.game_heardle.findUnique({ where: { id: id } }))
-    const {durations, ...rest} = parent!!
-    const flattenDurations: number[] = JSON.parse(durations)
+export async function getCompleteLyricsInstance(prisma: PrismaClient, id: number): Promise<CompleteLyricsContainer> {
+    const parent = await prisma.game_complete_lyrics.findUnique({ where: { id: id } })
     const track = await prisma.track.findUnique({ where: { sid: parent!!.track_id } })
-    return {
-        ...rest,
-        durations: flattenDurations,
+    return <CompleteLyricsContainer>{
+        id: parent!!.id,
+        created_by: parent!!.created_by,
+        text: parent!!.text,
         track: track
     }
 }
 
-export async function getNameXInstance(prisma: PrismaClient, id: number) {
-    const {items, ...rest} = (await prisma.game_namex.findUnique({ where: { id: id } }))!!
-    const trackIds: string[] = JSON.parse(items)
+export async function getHeardleInstance(prisma: PrismaClient, id: number): Promise<HeardleContainer> {
+    const parent = (await prisma.game_heardle.findUnique({ where: { id: id } }))
+    const flattenDurations: number[] = JSON.parse(parent!!.durations)
+    const track = await prisma.track.findUnique({ where: { sid: parent!!.track_id } })
+    return <HeardleContainer>{
+        id: parent!!.id,
+        created_by: parent!!.created_by,
+        track: track,
+        src: parent!!.src,
+        durations: flattenDurations,
+    }
+}
+
+export async function getNameXInstance(prisma: PrismaClient, id: number): Promise<NameXContainer> {
+    const parent = await prisma.game_namex.findUnique({ where: { id: id } })
+    const trackIds: string[] = JSON.parse(parent!!.items)
     const tracks = await prisma.track.findMany({ where: { sid: { in: trackIds } } })
     const trackById = new Map(tracks.map(t => [t.sid, t]))
     const orderedTracks = trackIds.map(id => trackById.get(id)).filter(Boolean) as typeof tracks
-    return {
-        ...rest,
+    return <NameXContainer>{
+        id: parent!!.id,
+        created_by: parent!!.created_by,
+        goal: parent!!.goal,
+        title: parent!!.title,
         items: orderedTracks
     }
 }
 
-export async function getOrderInstance(prisma: PrismaClient, id: number) {
+export async function getOrderInstance(prisma: PrismaClient, id: number): Promise<OrderContainer> {
     const parent = await prisma.game_order.findUnique({ where: { id: id } })
     const items = await prisma.game_order_item.findMany({ where: { parent_id: id } })
     const trackIds: string[] = items.map(i => i.track_id)
@@ -100,33 +115,51 @@ export async function getOrderInstance(prisma: PrismaClient, id: number) {
     const itemsFat = items.map(i => {
         const trackId = i.track_id
         const track = tracks.find(i => i.sid == trackId)
-        const {track_id, ...rest} = i
-        return {...rest, track}
+        return <OrderItem>{
+            parent_id: i.parent_id,
+            index: i.index,
+            track: track
+        }
     })
-    return {
-        ...parent,
+    return <OrderContainer>{
+        id: parent!!.id,
+        created_by: parent!!.created_by,
+        title: parent!!.title,
+        showNames: parent!!.show_names,
         items: itemsFat
     }
 }
 
-export async function getQuizInstance(prisma: PrismaClient, id: number) {
+export async function getQuizInstance(prisma: PrismaClient, id: number): Promise<QuizContainer> {
     const parent = await prisma.game_quiz.findUnique({ where: { id: id } })
     const items = await prisma.game_quiz_item.findMany({ where: { parent_id: id } })
-    return {
-        ...parent,
-        items
+    return <QuizContainer>{
+        id: parent!!.id,
+        created_by: parent!!.created_by,
+        title: parent!!.title,
+        items: items
     }
 }
 
-export async function getTimelineInstance(prisma: PrismaClient, id: number) {
-    return {...await prisma.game_timeline.findUnique({ where: { id: id } })}
+export async function getTimelineInstance(prisma: PrismaClient, id: number): Promise<TimelineContainer> {
+    const parent = await prisma.game_timeline.findUnique({ where: { id: id } })
+    return <TimelineContainer>{
+        id: parent!!.id,
+        created_by: parent!!.created_by,
+        title: parent!!.title,
+        goal: parent!!.goal
+    }
 }
 
-export async function getTimetableInstance(prisma: PrismaClient, id: number) {
+export async function getTimetableInstance(prisma: PrismaClient, id: number): Promise<TimetableContainer> {
     const parent = await prisma.game_timetable.findUnique({ where: { id: id } })
     const items = await prisma.game_timetable_item.findMany({ where: { parent_id: id } })
-    return {
-        ...parent,
+    return <TimetableContainer>{
+        id: parent!!.id,
+        created_by: parent!!.created_by,
+        title: parent!!.title,
+        color_bg: parent!!.color_bg,
+        color_text: parent!!.color_text,
         items: items
     }
 }

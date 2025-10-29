@@ -3,11 +3,7 @@ import {GameState, type ShallowTrack, type Track} from "~/types/models";
 import Pencil from "~/components/icons/game/Pencil.vue";
 import {getLocalArtwork, getSpotifyArtwork} from "~/utils/utils";
 import SpotifyButton from "~/components/SpotifyButton.vue";
-
-export interface ArtworkContainer {
-  track: Track
-  artwork_blank: string
-}
+import type {ArtworkContainer} from "~/types/gameModels";
 
 const emit = defineEmits(['onFinish'])
 const details = inject<boolean>('details')

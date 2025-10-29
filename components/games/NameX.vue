@@ -1,12 +1,7 @@
 <script setup lang="ts">
 import ListBullet from "~/components/icons/game/ListBullet.vue";
 import {GameState, type ShallowTrack, type Track} from "~/types/models";
-
-export interface NameXContainer {
-  goal: number
-  title: string
-  items: Track[]
-}
+import type {NameXContainer} from "~/types/gameModels";
 
 const emit = defineEmits(['onFinish'])
 const props = defineProps({
