@@ -3,10 +3,6 @@ import type {QuizContainer} from "~/types/gameModels";
 import type {ScheduleDay} from "~/types/models";
 import {getScheduleForGame} from "~/utils/dashboard";
 
-definePageMeta({
-  middleware: ['authenticated'],
-})
-
 const emit = defineEmits(['deleted'])
 const { user } = useUserSession()
 const confirmed = ref<boolean>(false)

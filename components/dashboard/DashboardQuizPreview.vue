@@ -3,10 +3,6 @@ import type {QuizContainer} from "~/types/gameModels";
 import {getDashboardData, getScheduleForGame} from "~/utils/dashboard";
 import type {ScheduleDay} from "~/types/models";
 
-definePageMeta({
-  middleware: ['authenticated'],
-})
-
 const emit = defineEmits(['clicked'])
 const { quiz } = defineProps({
   quiz: { type: Object as PropType<QuizContainer>, required: true }

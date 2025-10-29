@@ -12,7 +12,8 @@ definePageMeta({
 })
 
 const { user } = useUserSession()
-const instances = await getQuizData()
+const { data, pending, error } = await useAsyncData<QuizContainer[]>(() => getQuizData(), { lazy: true })
+const instances = computed<QuizContainer[] | undefined>(() => data.value)
 const savingModal = ref<HTMLDialogElement | undefined>()
 const editing = ref<QuizContainer | undefined>()
 const savingResponse = ref<boolean | String[] | undefined>()
@@ -48,9 +49,9 @@ async function save() {
       if(data.value) {
         if(!Array.isArray(data.value)) {
           const fetchedQuiz = data.value
-          instances.splice(0, instances.length, ...instances!!.filter(i => i.id !== fetchedQuiz.id));
-          instances.push(fetchedQuiz)
-          instances.sort((a, b) => (a.id ?? 100) - (b.id ?? 100))
+          instances.value?.splice(0, instances.value.length, ...instances.value.filter(i => i.id !== fetchedQuiz.id));
+          instances.value?.push(fetchedQuiz)
+          instances.value?.sort((a, b) => (a.id ?? 100) - (b.id ?? 100))
           savingResponse.value = true
           editing.value = undefined
           savingModal.value?.close()
@@ -67,7 +68,7 @@ async function save() {
 }
 
 function onDelete(quiz: QuizContainer) {
-  instances.splice(0, instances.length, ...instances!!.filter(i => i.id !== quiz.id));
+  instances.value?.splice(0, instances.value.length, ...instances.value.filter(i => i.id !== quiz.id));
   editing.value = undefined
 }
 </script>
@@ -88,6 +89,12 @@ function onDelete(quiz: QuizContainer) {
     <div v-else>
       Creating new quiz instance
     </div>
+  </div>
+
+  <span class="loading loading-spinner loading-xl" v-if="pending"></span>
+
+  <div role="alert" class="alert alert-error alert-soft" v-if="error">
+    <span>Failed to load quiz instances</span>
   </div>
 
   <div class="flex flex-wrap gap-3" v-if="editing === undefined && instances">
