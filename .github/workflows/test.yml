@@ -41,4 +41,4 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           source: "output.zip"
-          target: "/home/hardstylegg/deploy"
+          target: ${{ secrets.VPS_DEPLOY_PATH }}
