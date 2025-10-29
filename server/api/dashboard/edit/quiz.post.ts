@@ -1,4 +1,5 @@
-import {type QuizContainer, validateQuiz} from "~/types/gameModels";
+import {type QuizContainer} from "~/types/gameModels";
+import {validateQuiz} from "~/utils/gameValidators"
 import {defineEventHandler, readBody} from 'h3'
 import prisma from "~/lib/prisma";
 

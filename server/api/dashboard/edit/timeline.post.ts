@@ -1,6 +1,7 @@
 import {defineEventHandler, readBody} from 'h3'
 import prisma from "~/lib/prisma";
-import {type TimelineContainer, validateTimeline} from "~/types/gameModels";
+import {type TimelineContainer} from "~/types/gameModels";
+import {validateTimeline} from "~/utils/gameValidators"
 
 export default defineEventHandler(async (event) => {
     const { user } = await requireUserSession(event)

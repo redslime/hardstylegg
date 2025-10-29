@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import {type TimelineContainer, validateTimeline} from "~/types/gameModels";
+import {type TimelineContainer} from "~/types/gameModels";
 import {getTimelineData} from "~/utils/dashboard";
+import {validateTimeline} from "~/utils/gameValidators"
 import Calendar from "~/components/icons/game/Calendar.vue";
 import DashboardGameLoadingSpinner from "~/components/dashboard/DashboardGameLoadingSpinner.vue";
 
@@ -12,7 +13,6 @@ definePageMeta({
 const { data, pending, error } = await useAsyncData<TimelineContainer[]>(() => getTimelineData(), { lazy: true })
 const instances = computed<TimelineContainer[] | undefined>(() => data.value)
 const editing = ref<TimelineContainer | undefined>()
-const typeId = 8
 </script>
 
 <template>
@@ -24,7 +24,7 @@ const typeId = 8
         v-model:editing="editing"
         :validator="() => validateTimeline(editing!!)"
         :editUrl="'/api/dashboard/edit/timeline'"
-        :typeId="typeId"
+        :typeId="8"
         :typeName="'Timeline'"
         :icon="Calendar"
         :title="t => t.title"

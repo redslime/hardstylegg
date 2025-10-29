@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import CheckCircle from "~/components/icons/game/CheckCircle.vue";
-import {type QuizContainer, validateQuiz} from "~/types/gameModels";
+import {type QuizContainer} from "~/types/gameModels";
+import {validateQuiz} from "~/utils/gameValidators"
 import {getQuizData} from "~/utils/dashboard";
 import DashboardGameLoadingSpinner from "~/components/dashboard/DashboardGameLoadingSpinner.vue";
 
@@ -12,7 +13,6 @@ definePageMeta({
 const { data, pending, error } = await useAsyncData<QuizContainer[]>(() => getQuizData(), { lazy: true })
 const instances = computed<QuizContainer[] | undefined>(() => data.value)
 const editing = ref<QuizContainer | undefined>()
-const typeId = 7
 </script>
 
 <template>
@@ -24,7 +24,7 @@ const typeId = 7
         v-model:editing="editing"
         :validator="() => validateQuiz(editing!!)"
         :editUrl="'/api/dashboard/edit/quiz'"
-        :typeId="typeId"
+        :typeId="7"
         :typeName="'Quiz'"
         :icon="CheckCircle"
         :title="t => t.title"
