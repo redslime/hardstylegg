@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type {QuizContainer} from "~/types/gameModels";
 import type {ScheduleDay} from "~/types/models";
 import {getScheduleForGame} from "~/utils/dashboard";
 
@@ -9,10 +8,10 @@ const confirmed = ref<boolean>(false)
 const deletingModal = ref<HTMLDialogElement | undefined>()
 const deletingResponse = ref<boolean | undefined>()
 const { editing, typeId } = defineProps({
-  editing: { type: Object as PropType<QuizContainer | undefined>, required: true },
+  editing: { type: Object as PropType<{ id?: number, created_by?: number }>, required: true },
   typeId: { type: Number , required: true },
 })
-const scheduleData = computed<ScheduleDay | undefined>(() => getScheduleForGame(7, editing?.id))
+const scheduleData = computed<ScheduleDay | undefined>(() => getScheduleForGame(typeId, editing?.id))
 const disabled = computed<boolean>(() => scheduleData.value !== undefined)
 
 function canDelete(): boolean {
@@ -28,7 +27,7 @@ function showModal() {
 async function del() {
   confirmed.value = true
 
-  const { data, error } = await useFetch<QuizContainer>('/api/dashboard/deleteInstance', {
+  const { data, error } = await useFetch('/api/dashboard/deleteInstance', {
     method: 'POST',
     body: {
       typeId,
@@ -40,8 +39,8 @@ async function del() {
     deletingResponse.value = false
     return
   } else if (data.value) {
-    const fetchedQuiz = data.value
-    emit('deleted', fetchedQuiz)
+    const fetchedInstance = data.value
+    emit('deleted', fetchedInstance)
     deletingResponse.value = true
     deletingModal.value?.close()
     return
@@ -59,7 +58,7 @@ async function del() {
   <dialog ref="deletingModal" id="deletingModal" class="modal">
     <div class="modal-box" v-if="!confirmed">
       <div class="text-xl font-bold text-center">
-        Are you sure you want to delete this quiz?
+        Are you sure you want to delete?
       </div>
       <div class="flex justify-center mt-5 gap-3">
         <button class="btn btn-outline btn-lg btn-error" @click="del()">Delete</button>
