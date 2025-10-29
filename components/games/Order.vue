@@ -96,12 +96,13 @@ function isWrong(item: OrderItem, index: number) {
       </template>
     </Draggable>
 
-    <div class="mt-3 text-center text-sm text-base-content/40" v-if="showNames && !finished">
+    <div class="my-3 text-center text-sm text-base-content/40" v-if="showNames && !finished">
       Current order:
       <span class="font-semibold text-base-content/45">
         {{ items.map(i => i.track.title).join(' → ') }}
       </span>
     </div>
+
     <Teleport to="#side-dock" :disabled="!isMobile">
       <div class="text-center" v-if="!finished">
         <button class="btn btn-outline btn-primary btn-lg" @click="submit">Submit</button>

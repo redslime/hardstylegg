@@ -77,7 +77,7 @@ onMounted(() => {
 
 <template>
   <div class="flex flex-col gap-2 p-1.5 w-full items-center justify-center bg-base-100 fixed right-0 bottom-0 left-0 z-1 md:hidden" v-if="!summary">
-    <div class="w-full sm:w-2/3" id="top-dock">
+    <div class="w-full sm:w-7/8" id="top-dock">
 
     </div>
     <div class="w-full flex flex-row justify-around content-baseline gap-4">

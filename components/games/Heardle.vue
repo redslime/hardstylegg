@@ -8,6 +8,7 @@ import {getSpotifyArtwork} from "~/utils/utils";
 import {getName} from "~/utils/tracks";
 import SpotifyButton from "~/components/SpotifyButton.vue";
 import type {HeardleContainer} from "~/types/gameModels";
+import ForwardIcon from "~/components/icons/ForwardIcon.vue";
 
 const emit = defineEmits(['onFinish'])
 const props = defineProps({
@@ -21,6 +22,7 @@ const gameFinished = computed(() => state.value == GameState.SUCCEEDED || state.
 const track = computed<Track>(() => props.container.track)
 const src = computed(() => props.container.src)
 const durations = computed(() => props.container.durations)
+const hasPlayed = ref<boolean>(false)
 const currentIndex = inject<number>('currentIndex')
 
 interface Guess {
@@ -73,6 +75,8 @@ onDeactivated(() => {
 })
 
 function playSnippet() {
+  hasPlayed.value = true
+
   if (!howl) return
   const duration = durations.value[guessStage.value]
   const start = 0
@@ -106,6 +110,17 @@ function playSnippet() {
   }, duration * 1000)
 }
 
+function nextStage() {
+  guesses.value[guessStage.value] = {input: "", correct: false}
+
+  if (guessStage.value >= durations.value.length - 1) {
+    emit('onFinish', GameState.FAILED)
+  }
+
+  playbackProgress.value = 0 // Reset progress when moving to next stage
+  guessStage.value++
+}
+
 function validate(selected: ShallowTrack, flashError: () => void, flashSuccess: () => void, clear: () => void) {
   if(selected.sid === track.value.sid) {
     guesses.value[guessStage.value] = {input: getName(selected), correct: true}
@@ -122,6 +137,7 @@ function validate(selected: ShallowTrack, flashError: () => void, flashSuccess: 
     playbackProgress.value = 0 // Reset progress when moving to next stage
   }
 
+  hasPlayed.value = false
   guessStage.value++
 }
 </script>
@@ -150,8 +166,13 @@ function validate(selected: ShallowTrack, flashError: () => void, flashSuccess: 
             v-on="inputEvents"
             class="join-item"
             type="text"
-            placeholder="Enter track to progress"
+            placeholder="Guess track to progress"
         />
+        <button class="btn btn-warning btn-soft join-item tooltip" v-if="hasPlayed && guessStage < durations.length-1" @click="nextStage"
+          data-tip="No idea what to guess? Go to next stage now">
+          Next stage
+          <ForwardIcon />
+        </button>
       </div>
     </TrackInput>
 
