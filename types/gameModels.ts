@@ -15,12 +15,8 @@ export interface QuizAnswer {
 export function validateQuiz(quiz: QuizContainer): string[] {
     const errors: string[] = []
 
-    if(quiz.title.trim().length === 0) {
-        errors.push("Title is required")
-    }
-    if(quiz.title.length > 128) {
-        errors.push("Title is too long")
-    }
+    validateTitle(quiz.title, errors)
+
     if(quiz.items.length < 2) {
         errors.push("At least 2 answer options are required")
     }
@@ -42,4 +38,36 @@ export function validateQuiz(quiz: QuizContainer): string[] {
     }
 
     return errors
+}
+
+export interface TimelineContainer {
+    id?: number
+    created_by?: number
+    title: string
+    goal: number
+}
+
+export function validateTimeline(timeline: TimelineContainer): string[] {
+    const errors: string[] = []
+
+    validateTitle(timeline.title, errors)
+
+    if(!timeline.goal) {
+        errors.push("Year is required")
+    } else if(timeline.goal > 2025) {
+        errors.push("Year can't be higher than 2025")
+    } else if(timeline.goal < 2000) {
+        errors.push("Year can't be lower than 2000")
+    }
+
+    return errors
+}
+
+function validateTitle(title: string, errors: string[]) {
+    if(title.trim().length === 0) {
+        errors.push("Title is required")
+    }
+    if(title.length > 128) {
+        errors.push("Title is too long")
+    }
 }

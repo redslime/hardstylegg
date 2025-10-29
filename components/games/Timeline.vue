@@ -2,14 +2,10 @@
 import {ref} from 'vue'
 import Calendar from "~/components/icons/game/Calendar.vue";
 import {GameState} from "~/types/models";
+import type {TimelineContainer} from "~/types/gameModels";
 
 const minYear = 2000
 const maxYear = 2025
-
-export interface TimelineContainer {
-  title: string
-  goal: number
-}
 
 const isMobile = inject<boolean>('isMobile')
 const emit = defineEmits(['onFinish'])

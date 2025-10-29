@@ -1,8 +1,9 @@
 import type {DashboardData, ScheduleDay} from "~/types/models";
-import type {QuizContainer} from "~/types/gameModels";
+import type {QuizContainer, TimelineContainer} from "~/types/gameModels";
 
 let dashboardData: DashboardData | null = null;
 let quizData: QuizContainer[] | null = null;
+let timelineData: TimelineContainer[] | null = null;
 
 export async function getDashboardData(): Promise<DashboardData> {
     if(dashboardData !== null) return dashboardData
@@ -14,6 +15,12 @@ export async function getQuizData(): Promise<QuizContainer[]> {
     if(quizData !== null) return quizData
     quizData = await $fetch<QuizContainer[]>('/api/dashboard/quiz')
     return quizData
+}
+
+export async function getTimelineData(): Promise<TimelineContainer[]> {
+    if(timelineData !== null) return timelineData
+    timelineData = await $fetch<TimelineContainer[]>('/api/dashboard/timeline')
+    return timelineData
 }
 
 export function getScheduleForGame(typeId: number, gameId: number | undefined): ScheduleDay | undefined {
