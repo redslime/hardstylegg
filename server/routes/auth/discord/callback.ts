@@ -1,5 +1,5 @@
 import {defineEventHandler, getCookie, getQuery, setCookie} from 'h3'
-import {PrismaClient} from '~/generated/prisma/client'
+import prisma from "~/lib/prisma";
 
 export default defineEventHandler(async (event) => {
     const config = useRuntimeConfig()
@@ -64,7 +64,6 @@ export default defineEventHandler(async (event) => {
         return errorRedirect('Failed to fetch user info')
     }
 
-    const prisma = new PrismaClient()
     const userData = await prisma.user.findUnique({
         where: {
             discord_id: userInfo.id

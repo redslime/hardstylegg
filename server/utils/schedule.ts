@@ -1,10 +1,9 @@
 import {DateTime} from 'luxon';
-import {PrismaClient} from '~/generated/prisma/client'
+import prisma from "~/lib/prisma";
 import {getGameInstance} from "~/server/utils/games";
 import type {PackedDayData} from "~/types/models";
 
-const prisma = new PrismaClient()
-const BASE_DATE = DateTime.fromISO('2025-10-20', { zone: 'Europe/Berlin' });
+const BASE_DATE = DateTime.fromISO('2025-10-29', { zone: 'Europe/Berlin' });
 
 let lastKnownDayId: number | null = null;
 let packedCache: PackedDayData | null = null
@@ -22,7 +21,7 @@ export function getBaseDate(): DateTime {
 
 export function getFriendlyName(dayId: number): string {
     const date = BASE_DATE.plus({ days: dayId - 1 });
-    return date.toFormat('LLL dd');
+    return date.toFormat('LLL d');
 }
 
 export async function getPackedDayData(): Promise<PackedDayData> {

@@ -1,4 +1,5 @@
 import {PrismaClient} from '~/generated/prisma/client'
+
 import type {
     ArtworkContainer,
     CompleteAlbumContainer,

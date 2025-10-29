@@ -1,7 +1,5 @@
-import {PrismaClient} from '~/generated/prisma/client'
+import prisma from "~/lib/prisma";
 import type {QuizContainer} from "~/types/gameModels";
-
-const prisma = new PrismaClient()
 
 export default defineEventHandler(async (event) => {
     setHeader(event, 'Cache-Control', 'public, max-age=60') // 1 min todo remove

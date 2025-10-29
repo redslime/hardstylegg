@@ -1,9 +1,8 @@
 import type {DashboardData, DashboardGroup, Editor, Schedule, ScheduleDay} from "~/types/models";
 import type {User} from "#auth-utils";
-import {PrismaClient} from '~/generated/prisma/client'
+import prisma from "~/lib/prisma";
 import {getBaseDate, getDayIdToday, getFriendlyName, getTimeUntilMidnight} from "~/server/utils/schedule";
 
-const prisma = new PrismaClient()
 let structure: DashboardGroup[] | null = null
 
 function getStructure(user: User): DashboardGroup[] {
