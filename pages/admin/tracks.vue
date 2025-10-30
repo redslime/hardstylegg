@@ -1,14 +1,13 @@
 <script setup lang="ts">
-import {getSpotifyArtwork} from "~/utils/utils";
 import CircleStackIcon from "~/components/icons/CircleStackIcon.vue";
-import { RecycleScroller } from 'vue-virtual-scroller'
+import {getDashboardTracks} from "~/utils/dashboard";
 
 definePageMeta({
   layout: 'dashboard',
   middleware: ['authenticated'],
 })
 
-const {data: tracks, pending, error} = await useAsyncData(() => $fetch('/api/dashboard/tracks'), { lazy: true })
+const { data: tracks, pending, error } = await useAsyncData(() => getDashboardTracks(), { lazy: true })
 </script>
 
 <template>
@@ -24,26 +23,7 @@ const {data: tracks, pending, error} = await useAsyncData(() => $fetch('/api/das
   </div>
 
   <div class="w-full" v-if="tracks">
-    <RecycleScroller
-        :items="tracks"
-        key-field="sid"
-        :item-size="10"
-        class="scroller"
-    >
-      <template #default="{ item: track }">
-        <div class="card bg-base-200 shadow-md w-60 max-w-sm mx-auto">
-          <img
-              :src="getSpotifyArtwork(track.cover_art!!)"
-              alt="artwork"
-              class="rounded-t-lg w-60 h-30 object-cover"
-          />
-          <div class="p-3">
-            <h2 class="card-title text-base">{{ track.title }}</h2>
-            <p class="text-sm text-base-content/50">{{ track.artists }}</p>
-          </div>
-        </div>
-      </template>
-    </RecycleScroller>
+
   </div>
 </template>
 

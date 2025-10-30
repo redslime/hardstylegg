@@ -30,7 +30,7 @@ const editing = ref<TimelineContainer | undefined>()
         :title="t => t.title"
     >
       <template #previewBody="{ instance }">
-        <div class="badge badge-outline badge-success">{{ instance.goal }}</div>
+        <div class="badge badge-outline badge-info">{{ instance.goal }}</div>
       </template>
 
       <template #editTitle>

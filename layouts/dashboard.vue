@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type {DashboardItem} from "~/types/models";
 import DashboardMenu from "~/components/dashboard/DashboardMenu.vue";
 import {getAvatarUrl} from "~/server/utils/utils";
 

@@ -34,15 +34,12 @@ const lines = computed(() => {
     while ((match = regex.exec(lineText)) !== null) {
       const [full, name] = match
 
-      // Text davor
       if (match.index > lastIndex) {
         parts.push({ isInput: false, text: lineText.slice(lastIndex, match.index) })
       }
 
-      // Input placeholder
       const key = name!!.trim() || `input_${index}`
 
-      // ✅ Answer initialisieren, falls noch nicht vorhanden
       if (!(key in answers)) {
         answers[key] = ''
       }
@@ -56,7 +53,6 @@ const lines = computed(() => {
       index++
     }
 
-    // Resttext
     if (lastIndex < lineText.length) {
       parts.push({ isInput: false, text: lineText.slice(lastIndex) })
     }

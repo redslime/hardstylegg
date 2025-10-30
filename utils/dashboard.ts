@@ -1,7 +1,10 @@
-import type {DashboardData, ScheduleDay} from "~/types/models";
-import type {QuizContainer, TimelineContainer} from "~/types/gameModels";
+import type {DashboardData, ScheduleDay, Track} from "~/types/models";
+import type {CompleteLyricsContainer, QuizContainer, TimelineContainer} from "~/types/gameModels";
 
 let dashboardData: DashboardData | null = null;
+let tracks: Track[] | null = null;
+let albums: Track[] | null = null;
+let completeLyricsData: CompleteLyricsContainer[] | null = null;
 let quizData: QuizContainer[] | null = null;
 let timelineData: TimelineContainer[] | null = null;
 
@@ -9,6 +12,24 @@ export async function getDashboardData(): Promise<DashboardData> {
     if(dashboardData !== null) return dashboardData
     dashboardData = await $fetch<DashboardData>('/api/dashboard')
     return dashboardData
+}
+
+export async function getDashboardTracks(): Promise<Track[]> {
+    if(tracks !== null) return tracks
+    tracks = await $fetch<Track[]>('/api/dashboard/tracks')
+    return tracks
+}
+
+export async function getDashboardAlbums(): Promise<Track[]> {
+    if(albums !== null) return albums
+    albums = await $fetch<Track[]>('/api/dashboard/albums')
+    return albums
+}
+
+export async function getCompleteLyricsData(): Promise<CompleteLyricsContainer[]> {
+    if(completeLyricsData !== null) return completeLyricsData
+    completeLyricsData = await $fetch<CompleteLyricsContainer[]>('/api/dashboard/complete-lyrics')
+    return completeLyricsData
 }
 
 export async function getQuizData(): Promise<QuizContainer[]> {

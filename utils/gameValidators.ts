@@ -1,4 +1,30 @@
-import type {QuizContainer, TimelineContainer} from "~/types/gameModels";
+import type {CompleteLyricsContainer, QuizContainer, TimelineContainer} from "~/types/gameModels";
+
+export function validateCompleteLyrics(lyrics: CompleteLyricsContainer): string[] {
+    const regex = /\[\[(.+?)\]\]/g
+    const errors: string[] = []
+
+    if(!lyrics.track) {
+        errors.push("Track is required")
+    }
+    if(!lyrics.text) {
+        errors.push("Lyrics are required")
+    }
+    if(lyrics.text?.length > 1024) {
+        errors.push("Lyrics are too long")
+    }
+    if(lyrics.text?.trim().length === 0) {
+        errors.push("Lyrics can't be empty")
+    }
+    if(lyrics.text?.split('\n').length < 2) {
+        errors.push("Lyrics must have at least 2 lines")
+    }
+    if(lyrics.text?.split('\n').filter(l => regex.test(l)).length === 0) {
+        errors.push("Lyrics must contain at least one input")
+    }
+
+    return errors
+}
 
 export function validateQuiz(quiz: QuizContainer): string[] {
     const errors: string[] = []

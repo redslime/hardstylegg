@@ -5,7 +5,11 @@ export default defineEventHandler(async (event) => {
     setHeader(event, 'Cache-Control', 'public, max-age=60') // 1 min todo remove
 
     const { user } = await requireUserSession(event)
-    const parents = await prisma.game_quiz.findMany()
+    const parents = await prisma.game_quiz.findMany({
+        where: {
+            ...(user.admin ? {} : { created_by: user.id })
+        }
+    })
     const items = await prisma.game_quiz_item.findMany()
 
     const mapped = parents.map(parent => {

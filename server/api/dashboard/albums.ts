@@ -2,9 +2,5 @@ import prisma from "~/lib/prisma";
 
 export default defineEventHandler(async (event) => {
     const { user } = await requireUserSession(event)
-    return await prisma.game_timeline.findMany({
-        where: {
-            ...(user.admin ? {} : { created_by: user.id })
-        }
-    })
+    return await prisma.album.findMany()
 })
