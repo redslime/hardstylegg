@@ -1,7 +1,7 @@
 import type {DashboardData, ScheduleDay, Track} from "~/types/models";
 import type {
     CompleteAlbumContainer,
-    CompleteLyricsContainer,
+    CompleteLyricsContainer, NameXContainer,
     QuizContainer,
     TimelineContainer
 } from "~/types/gameModels";
@@ -11,6 +11,7 @@ let tracks: Track[] | null = null;
 let albums: Track[] | null = null;
 let completeAlbumData: CompleteAlbumContainer[] | null = null;
 let completeLyricsData: CompleteLyricsContainer[] | null = null;
+let nameXData: NameXContainer[] | null = null;
 let quizData: QuizContainer[] | null = null;
 let timelineData: TimelineContainer[] | null = null;
 
@@ -42,6 +43,12 @@ export async function getCompleteLyricsData(): Promise<CompleteLyricsContainer[]
     if(completeLyricsData !== null) return completeLyricsData
     completeLyricsData = await $fetch<CompleteLyricsContainer[]>('/api/dashboard/complete-lyrics')
     return completeLyricsData
+}
+
+export async function getNameXData(): Promise<NameXContainer[]> {
+    if(nameXData !== null) return nameXData
+    nameXData = await $fetch<NameXContainer[]>('/api/dashboard/name-x')
+    return nameXData
 }
 
 export async function getQuizData(): Promise<QuizContainer[]> {

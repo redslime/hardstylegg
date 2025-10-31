@@ -1,6 +1,6 @@
 import type {
     CompleteAlbumContainer,
-    CompleteLyricsContainer,
+    CompleteLyricsContainer, NameXContainer,
     QuizContainer,
     TimelineContainer
 } from "~/types/gameModels";
@@ -51,6 +51,31 @@ export function validateCompleteLyrics(lyrics: CompleteLyricsContainer): string[
     }
     if(lyrics.text?.split('\n').filter(l => regex.test(l)).length === 0) {
         errors.push("Lyrics must contain at least one input")
+    }
+
+    return errors
+}
+
+export function validateNameX(namex : NameXContainer): string[] {
+    const errors: string[] = []
+
+    if(!namex.goal) {
+        errors.push("Goal is required")
+    }
+    if(namex.goal === 0 || namex.goal > namex.items.length) {
+        errors.push("Goal must be between 1 and " + namex.items.length)
+    }
+    if(!namex.title || namex.title.trim().length === 0) {
+        errors.push("Title is required")
+    }
+    if(namex.title.trim().length > 128) {
+        errors.push("Title is too long")
+    }
+    if(!namex.items || namex.items.length === 0) {
+        errors.push("At least one track is required")
+    }
+    if(new Set(namex.items.map(t => t.sid)).size < namex.items.length) {
+        errors.push("Each track must be unique")
     }
 
     return errors
