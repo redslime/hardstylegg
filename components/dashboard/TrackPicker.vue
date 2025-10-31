@@ -5,6 +5,7 @@ import Fuse from "fuse.js";
 import {onMounted, ref} from "vue";
 import Grid from "vue-virtual-scroll-grid"
 import {getDashboardAlbums, getDashboardTracks} from "~/utils/dashboard";
+import {getName} from "~/utils/tracks";
 
 const { albums, title } = defineProps({
   albums: { type: Boolean, default: false },
@@ -14,7 +15,7 @@ const emit = defineEmits(['selected'])
 const mode = albums ? "album" : "track"
 const modal = ref<HTMLDialogElement | null>();
 const query = ref<string>("");
-const allOptions: Track[] = await(mode === "album" ? getDashboardAlbums() : getDashboardTracks())
+const { data: allOptions, pending, error } = await useAsyncData(() => (mode === "album" ? getDashboardAlbums() : getDashboardTracks()), { lazy: true })
 
 function select(result: SearchResult) {
   modal.value?.close()
@@ -22,7 +23,7 @@ function select(result: SearchResult) {
   emit("selected", result.item)
 }
 
-let fuse: Fuse<typeof allOptions[0]>
+let fuse: Fuse<Track>
 const filtered = ref<SearchResult[]>([])
 const filteredLength = ref<number>(0)
 const debouncedQuery = ref('')
@@ -50,7 +51,7 @@ watch(debouncedQuery, async (val) => {
   }
 
   // First try: exact substring match
-  const exactMatches: SearchResult[] = allOptions.filter(st => {
+  const exactMatches: SearchResult[] = allOptions.value!!.filter(st => {
     const name = st.artists + " - " + st.title
     return name.toLowerCase().includes(val.toLowerCase())
   }).map(st => {
@@ -68,7 +69,7 @@ watch(debouncedQuery, async (val) => {
     // Second try: multi-keyword search
     const keywords = val.toLowerCase().split(/\s+/).filter(k => k.length > 2)
 
-    const keywordMatches: SearchResult[] = allOptions
+    const keywordMatches: SearchResult[] = allOptions.value!!
         .map(st => {
           const name = (st.artists + " - " + st.title).toLowerCase()
           const matchedKeywords = keywords.filter(keyword => name.includes(keyword))
@@ -134,7 +135,7 @@ const computedPageProvider = computed(() => {
 })
 
 onMounted(() => {
-  fuse = new Fuse(allOptions, {
+  fuse = new Fuse(allOptions.value!!, {
     includeScore: true,
     includeMatches: true,
     keys: ['title', 'artists']
@@ -143,62 +144,70 @@ onMounted(() => {
 </script>
 
 <template>
-  <button class="btn btn-soft btn-primary" @click="modal?.showModal()">{{ title }} {{ mode }}</button>
+  <template v-if="pending">
+    <button class="btn btn-soft btn-primary" disabled><span class="loading loading-dots loading-md"></span> Loading {{ mode }} database</button>
+  </template>
+  <template v-else-if="error">
+    <button class="btn btn-soft btn-error" disabled>Failed to load {{ mode }} database</button>
+  </template>
+  <template v-else-if="allOptions">
+    <button class="btn btn-soft btn-primary" @click="modal?.showModal()">{{ title }} {{ mode }}</button>
 
-  <dialog id="trackPickerModal" ref="modal" class="modal">
-    <div class="modal-box max-w-4/5 bg-base-300">
-      <h3 class="text-2xl font-bold">{{ title }} {{ mode }}</h3>
+    <dialog id="trackPickerModal" ref="modal" class="modal">
+      <div class="modal-box max-w-4/5 bg-base-300">
+        <h3 class="text-2xl font-bold">{{ title }} {{ mode }}</h3>
 
-      <label class="input focus-within:outline-none focus-within:ring-0 my-3">
-        <SearchIcon />
-        <input type="text" class="grow" placeholder="Search" v-model="query" />
-        {{ filteredLength }}
-      </label>
+        <label class="input focus-within:outline-none focus-within:ring-0 my-3">
+          <SearchIcon />
+          <input type="text" class="grow" placeholder="Search" v-model="query" />
+          {{ filteredLength }}
+        </label>
 
-      <div class="w-full bg-base-100 rounded-md p-3 h-[1000px] overflow-auto">
-        <div v-if="(query?.length ?? 0) < 5">
-          Begin searching to see results...
+        <div class="w-full bg-base-100 rounded-md p-3 h-[1000px] overflow-auto">
+          <div v-if="(query?.length ?? 0) < 5">
+            Begin searching to see results...
+          </div>
+
+          <Grid
+              v-else
+              class="h-full grid 2xl:grid-cols-5 xl:grid-cols-5 lg:grid-cols-3 md:grid-cols-2 grid-cols-1"
+              :length="filteredLength"
+              :pageProvider="computedPageProvider"
+              :pageSize="100"
+          >
+            <template v-slot:placeholder="{ index, style }">
+              <div :style="style" class="p-2">
+                <div class="h-full bg-base-200 rounded-lg animate-pulse p-3"></div>
+              </div>
+            </template>
+
+            <template v-slot:default="{ item, style, index }">
+              <div :style="style" class="p-2">
+                <div
+                    class="h-full bg-base-200 rounded-lg shadow hover:shadow-lg cursor-pointer p-2 flex flex-col justify-start"
+                    @click="select(item)"
+                >
+                  <img class="w-full overflow-hidden object-contain max-h-[200px]" :src="`https://i.scdn.co/image/${item.item.cover_art}`" alt="" />
+                  <div class="text-lg font-semibold">{{ item.item.title }}</div>
+                  <div class="text-sm opacity-70">{{ item.item.artists }}</div>
+                </div>
+              </div>
+            </template>
+
+            <template v-slot:probe>
+              <div class="">Probe</div>
+            </template>
+          </Grid>
         </div>
 
-        <Grid
-            v-else
-            class="h-full grid 2xl:grid-cols-5 xl:grid-cols-5 lg:grid-cols-3 md:grid-cols-2 grid-cols-1"
-            :length="filteredLength"
-            :pageProvider="computedPageProvider"
-            :pageSize="100"
-        >
-          <template v-slot:placeholder="{ index, style }">
-            <div :style="style" class="p-2">
-              <div class="h-full bg-base-200 rounded-lg animate-pulse p-3"></div>
-            </div>
-          </template>
-
-          <template v-slot:default="{ item, style, index }">
-            <div :style="style" class="p-2">
-              <div
-                  class="h-full bg-base-200 rounded-lg shadow hover:shadow-lg cursor-pointer p-2 flex flex-col justify-start"
-                  @click="select(item)"
-              >
-                <img class="w-full overflow-hidden object-contain max-h-[200px]" :src="`https://i.scdn.co/image/${item.item.cover_art}`" alt="" />
-                <div class="text-lg font-semibold">{{ item.item.title }}</div>
-                <div class="text-sm opacity-70">{{ item.item.artists }}</div>
-              </div>
-            </div>
-          </template>
-
-          <template v-slot:probe>
-            <div class="">Probe</div>
-          </template>
-        </Grid>
+        <div class="modal-action">
+          <form method="dialog">
+            <button class="btn">Close</button>
+          </form>
+        </div>
       </div>
-
-      <div class="modal-action">
-        <form method="dialog">
-          <button class="btn">Close</button>
-        </form>
-      </div>
-    </div>
-  </dialog>
+    </dialog>
+  </template>
 </template>
 
 <style scoped>
