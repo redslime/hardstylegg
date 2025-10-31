@@ -9,7 +9,4 @@
 </template>
 
 <style scoped>
-svg {
-  stroke: var(--color-success)
-}
 </style>

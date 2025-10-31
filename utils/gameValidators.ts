@@ -1,4 +1,34 @@
-import type {CompleteLyricsContainer, QuizContainer, TimelineContainer} from "~/types/gameModels";
+import type {
+    CompleteAlbumContainer,
+    CompleteLyricsContainer,
+    QuizContainer,
+    TimelineContainer
+} from "~/types/gameModels";
+
+export function validateCompleteAlbum(album: CompleteAlbumContainer): string[] {
+    const errors: string[] = []
+
+    album.items.forEach(item => {
+        if(!item.name || item.name.trim().length === 0) {
+            errors.push("Track name is required")
+        }
+        if(item.name.trim().length > 128) {
+            errors.push("Track name is too long")
+        }
+        if(!item.artist || item.artist.trim().length === 0) {
+            errors.push("Track artist is required")
+        }
+        if(item.artist.trim().length > 128) {
+            errors.push("Track artist is too long")
+        }
+    })
+
+    if(album.items.filter(i => i.hidden).length === 0) {
+        errors.push("At least one track must be hidden")
+    }
+
+    return errors
+}
 
 export function validateCompleteLyrics(lyrics: CompleteLyricsContainer): string[] {
     const regex = /\[\[(.+?)\]\]/g

@@ -15,7 +15,7 @@ defineProps<{
     Share result
   </button>
   <button class="btn btn-disabled border-success" v-else>
-    <Checkmark />
+    <Checkmark class="text-success" />
     Copied result
   </button>
 </template>
