@@ -1,6 +1,8 @@
 import type {
     CompleteAlbumContainer,
-    CompleteLyricsContainer, NameXContainer,
+    CompleteLyricsContainer,
+    NameXContainer,
+    OrderContainer,
     QuizContainer,
     TimelineContainer
 } from "~/types/gameModels";
@@ -59,23 +61,34 @@ export function validateCompleteLyrics(lyrics: CompleteLyricsContainer): string[
 export function validateNameX(namex : NameXContainer): string[] {
     const errors: string[] = []
 
+    validateTitle(namex.title, errors)
+
     if(!namex.goal) {
         errors.push("Goal is required")
     }
     if(namex.goal === 0 || namex.goal > namex.items.length) {
         errors.push("Goal must be between 1 and " + namex.items.length)
     }
-    if(!namex.title || namex.title.trim().length === 0) {
-        errors.push("Title is required")
-    }
-    if(namex.title.trim().length > 128) {
-        errors.push("Title is too long")
-    }
     if(!namex.items || namex.items.length === 0) {
         errors.push("At least one track is required")
     }
     if(new Set(namex.items.map(t => t.sid)).size < namex.items.length) {
         errors.push("Each track must be unique")
+    }
+
+    return errors
+}
+
+export function validateOrder(order: OrderContainer): string[] {
+    const errors: string[] = []
+
+    validateTitle(order.title, errors)
+
+    if(!order.items || order.items.length < 2) {
+        errors.push("At least two tracks are required")
+    }
+    if(order.items.length > 6) {
+        errors.push("Maximum of 6 tracks are allowed")
     }
 
     return errors
@@ -126,7 +139,7 @@ export function validateTimeline(timeline: TimelineContainer): string[] {
 }
 
 function validateTitle(title: string, errors: string[]) {
-    if(title.trim().length === 0) {
+    if(!title || title.trim().length === 0) {
         errors.push("Title is required")
     }
     if(title.length > 128) {

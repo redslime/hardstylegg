@@ -7,9 +7,10 @@ import Grid from "vue-virtual-scroll-grid"
 import {getDashboardAlbums, getDashboardTracks} from "~/utils/dashboard";
 import {getName} from "~/utils/tracks";
 
-const { albums, title } = defineProps({
+const { albums, title, disabled } = defineProps({
   albums: { type: Boolean, default: false },
-  title: { type: String, default: "Select" }
+  title: { type: String, default: "Select" },
+  disabled: { type: Boolean, default: false }
 })
 const emit = defineEmits(['selected'])
 const mode = albums ? "album" : "track"
@@ -151,7 +152,7 @@ onMounted(() => {
     <button class="btn btn-soft btn-error" disabled>Failed to load {{ mode }} database</button>
   </template>
   <template v-else-if="allOptions">
-    <button class="btn btn-soft btn-primary" @click="modal?.showModal()">{{ title }} {{ mode }}</button>
+    <button class="btn btn-soft btn-primary" :disabled="disabled" @click="modal?.showModal()">{{ title }} {{ mode }}</button>
 
     <dialog id="trackPickerModal" ref="modal" class="modal">
       <div class="modal-box max-w-4/5 bg-base-300">

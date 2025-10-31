@@ -48,7 +48,7 @@ export default defineEventHandler(async (event) => {
                     },
                     // upsert all new/updated items
                     upsert: quiz.items.map((item) => ({
-                        where: { id: item.id ?? 0 }, // if id missing, won't match existing
+                        where: { id: item.id!! }, // if id missing, won't match existing
                         create: {
                             text: item.text,
                             correct: item.correct,
