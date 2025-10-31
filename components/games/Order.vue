@@ -67,7 +67,7 @@ function isWrong(item: OrderItem, index: number) {
         v-model="items"
         item-key="name"
         :animation="200"
-        class="flex flex-wrap gap-4 overflow-x-auto md:p-4 flex-row"
+        class="grid grid-cols-2 md:flex md:flex-row md:flex-wrap md:justify-center gap-4 overflow-x-auto md:p-4"
         :component-data="{
           name: 'flip-list',
           tag: 'div',
@@ -77,7 +77,7 @@ function isWrong(item: OrderItem, index: number) {
       <template #item="{ element, index }">
         <div
             :key="element.index"
-            class="flex-1 flex-shrink active:cursor-grabbing transform transition-transform duration-300 ease-in-out"
+            class="relative md:flex-1 md:flex-shrink active:cursor-grabbing transform transition-transform duration-300 ease-in-out"
             :class="{
               'cursor-grab': !finished
             }"
@@ -92,6 +92,9 @@ function isWrong(item: OrderItem, index: number) {
                 'border-1 border-error': isWrong(element, index)
               }"
           />
+          <div class="absolute top-1 left-1 md:hidden">
+            <div class="badge badge-info badge-soft">{{ index+1 }}</div>
+          </div>
         </div>
       </template>
     </Draggable>
