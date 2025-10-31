@@ -1,10 +1,9 @@
 <script setup lang="ts">
 import {gameComps, getGameContainer, getPreviewTitle} from "~/utils/game";
-import {type GameContainer, type GameData, GameState} from "~/types/models";
+import {type GameData, GameState} from "~/types/models";
 
-const gameData: GameContainer = await getGameContainer()
-const valid = gameData.dayId !== -1 && gameData.data.length > 0
-const played = computed(() => gameData.data.filter(gd => gd.props.state === GameState.UPCOMING).length === 0)
+const { data: gameData, pending, error } = await useAsyncData(() => getGameContainer(), { lazy: true })
+const played = computed(() => gameData.value?.data.filter(gd => gd.props.state === GameState.UPCOMING).length === 0)
 
 // todo also feed played and state from cookie data, not just cached components
 
@@ -23,34 +22,39 @@ function play() {
 
 <template>
   <div class="hero bg-base-300">
-    <div class="hero-content flex flex-col text-center" v-if="valid">
+    <div class="hero-content flex flex-col text-center">
       <div class="max-w-md">
         <h1 class="text-5xl font-bold">Daily challenge</h1>
-        <h4 class="text-xl mt-2">{{ gameData.dayFriendly }}</h4>
+        <h4 class="text-xl mt-2" v-if="gameData">{{ gameData.dayFriendly }}</h4>
       </div>
-      <div class="flex justify-center flex-wrap gap-2 mb-3">
-        <div v-for="(game, index) in gameData.data" :key="index" class="p-3 rounded-md tooltip" :data-tip="getPreviewTitle(game)"
-             :class="{
+
+      <template v-if="pending">
+        <span class="loading loading-spinner loading-xl"></span>
+      </template>
+      <template v-else-if="gameData">
+        <div class="flex justify-center flex-wrap gap-2 mb-3">
+          <div v-for="(game, index) in gameData.data" :key="index" class="p-3 rounded-md tooltip" :data-tip="getPreviewTitle(game)"
+               :class="{
           'bg-base-100': getState(game) === GameState.UPCOMING,
           'bg-primary text-primary-content': getState(game) === GameState.PLAYING,
           'bg-success': getState(game) === GameState.SUCCEEDED,
           'bg-error': getState(game) === GameState.FAILED,
         }">
-          <component :is="gameComps[game.name as keyof typeof gameComps].icon" :state="getState(game)" />
+            <component :is="gameComps[game.name as keyof typeof gameComps].icon" :state="getState(game)" />
+          </div>
         </div>
-      </div>
-      <button class="btn btn-primary btn-xl" v-if="!played" @click="play">Play</button>
+        <button class="btn btn-primary btn-xl" v-if="!played" @click="play">Play</button>
 
-      <div class="text-lg" v-if="played">
-        You already played today! Next challenge starts in <Countdown />
-      </div>
-    </div>
-
-    <div class="hero-content flex flex-col text-center" v-else>
-      <div class="max-w-md">
-        <h1 class="text-4xl font-bold">No active challenge</h1>
-        <h4 class="text-xl mt-2">Nothing to play right now, check back later!</h4>
-      </div>
+        <div class="text-lg" v-if="played">
+          You already played today! Next challenge starts in <Countdown />
+        </div>
+      </template>
+      <template v-else>
+        <div class="max-w-md">
+          <h1 class="text-4xl font-bold">No active challenge</h1>
+          <h4 class="text-xl mt-2">Nothing to play right now, check back later!</h4>
+        </div>
+      </template>
     </div>
   </div>
 </template>

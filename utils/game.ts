@@ -33,11 +33,8 @@ export const gameComps = {
 
 export async function getGameContainer(): Promise<GameContainer> {
     if(packedGameData === null) {
-        const { data, pending, error, refresh } = await useAsyncData(
-            () => $fetch('/api/today')
-            // ,{ lazy: true } // ensures it fetches client-side only
-        )
-        packedGameData = transform(data.value as PackedDayData)
+        const data = await $fetch<PackedDayData>('/api/today')
+        packedGameData = transform(data)
     }
 
     return packedGameData
