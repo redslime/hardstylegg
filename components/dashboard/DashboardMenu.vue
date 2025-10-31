@@ -3,14 +3,16 @@ import {getIcon} from "~/utils/icons";
 import type {DashboardData} from "~/types/models";
 
 const route = useRoute()
-const dashboardData = await $fetch<DashboardData>('/api/dashboard')
-const structure = dashboardData.groups
+const { dashboardData } = defineProps({
+  dashboardData: { type: Object as PropType<DashboardData>, required: true },
+})
+const groups = dashboardData.groups
 const isActive = (url: string) => route.path === url || route.path === url + "/new"
 </script>
 
 <template>
   <ul class="menu w-56 min-h-screen bg-base-300">
-    <template v-for="group in structure" :key="group.name">
+    <template v-for="group in groups" :key="group.name">
       <li class="menu-title">{{ group.name }}</li>
       <li v-for="item in group.items" :key="item.name">
         <NuxtLink :to="item.url" class="transition-colors duration-200" exact-active-class="menu-active text-primary"

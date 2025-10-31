@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import DashboardMenu from "~/components/dashboard/DashboardMenu.vue";
 import {getAvatarUrl} from "~/server/utils/utils";
+import {getDashboardData} from "~/utils/dashboard";
 
 const { user, clear: clearSession } = useUserSession()
+const { data, pending, error } = await useAsyncData(() => getDashboardData(), { lazy: true })
 const avatarUrl = computed(() => getAvatarUrl(user.value))
 
 async function logout () {
@@ -30,9 +32,17 @@ async function logout () {
       </div>
     </div>
 
-    <div class="w-full">
+    <div class="w-full text-center" v-if="pending">
+      <span class="loading loading-spinner loading-xl mt-5"></span>
+    </div>
+    <div class="w-full text-center" v-else-if="error">
+      <div role="alert" class="alert alert-error alert-outline">
+        <span>Failed to load dashboard data, please try again!</span>
+      </div>
+    </div>
+    <div class="w-full" v-else-if="data">
       <div class="flex">
-        <DashboardMenu />
+        <DashboardMenu :dashboardData="data" />
 
         <div class="w-full bg-base-100 p-2 lg:p-7">
           <NuxtPage />
