@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
                     }
                 })
 
-                const imgPath = join(process.cwd(), 'public', 'img', deleted.artwork_blank + '.png')
+                const imgPath = join(process.cwd(), 'public', 'artwork', deleted.artwork_blank + '.png')
                 await unlink(imgPath)
                 return deleted
             }

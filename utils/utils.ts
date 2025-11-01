@@ -40,7 +40,7 @@ export function getSpotifyArtwork(id: string) {
 }
 
 export function getLocalArtwork(id: string) {
-    return `/img/${id}.png`
+    return `/artwork/${id}.png`
 }
 
 export function shuffleArray<T>(arr: T[]): T[] {
