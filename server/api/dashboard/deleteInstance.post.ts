@@ -1,6 +1,8 @@
 import prisma from "~/lib/prisma";
 import {readBody} from "h3";
 import type {QuizContainer} from "~/types/gameModels";
+import {join} from "pathe";
+import {unlink} from "node:fs/promises";
 
 export default defineEventHandler(async (event) => {
     const { user } = await requireUserSession(event)
@@ -10,11 +12,15 @@ export default defineEventHandler(async (event) => {
 
         switch (typeId) {
             case 1: {
-                return await prisma.game_artwork.delete({
+                const deleted = await prisma.game_artwork.delete({
                     where: {
                         id: gameId
                     }
                 })
+
+                const imgPath = join(process.cwd(), 'public', 'img', deleted.artwork_blank + '.png')
+                await unlink(imgPath)
+                return deleted
             }
             case 2: {
                 return await prisma.game_complete_album.delete({

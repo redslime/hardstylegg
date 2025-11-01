@@ -42,7 +42,6 @@ export default defineEventHandler(async (event) => {
         const fetched = await prisma.game_complete_album.update({
             where: { id: album.id },
             data: {
-                created_by: album.created_by!!,
                 album_id: album.album?.sid,
                 game_complete_album_item: {
                     deleteMany: {

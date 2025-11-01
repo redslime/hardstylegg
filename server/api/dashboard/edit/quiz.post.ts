@@ -40,7 +40,6 @@ export default defineEventHandler(async (event) => {
             where: { id: quiz.id },
             data: {
                 title: quiz.title,
-                created_by: quiz.created_by!!,
                 game_quiz_item: {
                     // delete all old items not in new list
                     deleteMany: {

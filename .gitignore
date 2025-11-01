@@ -24,3 +24,7 @@ logs
 !.env.example
 
 /generated/prisma
+
+# Public artwork and heardle files
+/public/heardle/
+/public/img/

@@ -1,4 +1,5 @@
 import type {
+    ArtworkContainer,
     CompleteAlbumContainer,
     CompleteLyricsContainer,
     NameXContainer,
@@ -6,6 +7,29 @@ import type {
     QuizContainer,
     TimelineContainer, TimetableContainer, TimetableItem
 } from "~/types/gameModels";
+
+export function validateArtwork(artwork: ArtworkContainer): string[] {
+    const errors: string[] = []
+
+    if(!artwork.track) {
+        errors.push("Track is required")
+    }
+    if(!artwork.artwork_blank || artwork.artwork_blank.trim().length === 0) {
+        if(!artwork.uploadedName) {
+            if(artwork.blankFile) {
+                errors.push("Upload blank artwork first")
+            } else {
+                errors.push("Blank artwork is required")
+            }
+        }
+    }
+
+    if(artwork.blankFile && artwork.blankFile.type !== 'image/png') {
+        errors.push("Blank artwork must be a PNG file")
+    }
+
+    return errors
+}
 
 export function validateCompleteAlbum(album: CompleteAlbumContainer): string[] {
     const errors: string[] = []

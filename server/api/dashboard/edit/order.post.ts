@@ -17,7 +17,6 @@ export default defineEventHandler(async (event) => {
         const fetched = await prisma.game_order.update({
             where: { id: order.id },
             data: {
-                created_by: order.created_by!!,
                 title: order.title,
                 show_names: order.showNames,
                 game_order_item: {

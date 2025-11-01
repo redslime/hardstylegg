@@ -32,7 +32,6 @@ export default defineEventHandler(async (event) => {
         const fetched = await prisma.game_namex.update({
             where: { id: game.id },
             data: {
-                created_by: game.created_by,
                 title: game.title,
                 goal: game.goal,
                 items: JSON.stringify(game.items.map(i => i.sid))

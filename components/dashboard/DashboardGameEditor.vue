@@ -22,6 +22,8 @@ const { validator, editUrl, typeId, typeName, icon } = defineProps({
   title: { type: Function as PropType<(game: T) => string>, required: true }
 })
 
+const emit = defineEmits(['saved', 'cancelled'])
+
 const { user } = useUserSession()
 const savingModal = ref<HTMLDialogElement | undefined>()
 const savingResponse = ref<boolean | String[] | undefined>()
@@ -29,6 +31,7 @@ const editingErrors = computed<string[]>(() => validator())
 
 function cancel() {
   editing.value = undefined
+  emit('cancelled')
 }
 
 async function save() {
@@ -60,6 +63,7 @@ async function save() {
         savingResponse.value = true
         editing.value = undefined
         savingModal.value?.close()
+        emit('saved')
       } else {
         savingResponse.value = data.value
       }

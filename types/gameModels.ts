@@ -5,6 +5,8 @@ export interface ArtworkContainer {
     created_by?: number
     track: Track
     artwork_blank: string
+    blankFile?: File
+    uploadedName?: string
 }
 
 export interface CompleteAlbumContainer {

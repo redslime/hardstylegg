@@ -1,5 +1,6 @@
 import type {DashboardData, ScheduleDay, Track} from "~/types/models";
 import type {
+    ArtworkContainer,
     CompleteAlbumContainer,
     CompleteLyricsContainer, NameXContainer, OrderContainer,
     QuizContainer,
@@ -9,6 +10,7 @@ import type {
 let dashboardData: DashboardData | null = null;
 let tracks: Track[] | null = null;
 let albums: Track[] | null = null;
+let artworkData: ArtworkContainer[] | null = null;
 let completeAlbumData: CompleteAlbumContainer[] | null = null;
 let completeLyricsData: CompleteLyricsContainer[] | null = null;
 let nameXData: NameXContainer[] | null = null;
@@ -33,6 +35,12 @@ export async function getDashboardAlbums(): Promise<Track[]> {
     if(albums !== null) return albums
     albums = await $fetch<Track[]>('/api/dashboard/albums')
     return albums
+}
+
+export async function getArtworkData(): Promise<ArtworkContainer[]> {
+    if(artworkData !== null) return artworkData
+    artworkData = await $fetch<ArtworkContainer[]>('/api/dashboard/artwork')
+    return artworkData
 }
 
 export async function getCompleteAlbumData(): Promise<CompleteAlbumContainer[]> {
