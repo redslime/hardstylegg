@@ -7,6 +7,10 @@ const { user, clear: clearSession } = useUserSession()
 const { data, pending, error } = await useAsyncData(() => getDashboardData(), { lazy: true })
 const avatarUrl = computed(() => getAvatarUrl(user.value))
 
+function home() {
+  navigateTo('/admin')
+}
+
 async function logout () {
   await clearSession()
   await navigateTo('/admin/login')
@@ -17,7 +21,7 @@ async function logout () {
   <div class="w-full">
     <div class="navbar bg-base-300 shadow-lg">
       <div class="flex-1">
-        <a class="btn btn-ghost text-xl">hardstyle.gg Dashboard</a>
+        <a class="btn btn-ghost text-xl" @click="home">hardstyle.gg Dashboard</a>
       </div>
       <div class="flex-none">
         <div class="w-10">
