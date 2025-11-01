@@ -2,8 +2,6 @@ import prisma from "~/lib/prisma";
 import type {QuizContainer} from "~/types/gameModels";
 
 export default defineEventHandler(async (event) => {
-    setHeader(event, 'Cache-Control', 'public, max-age=60') // 1 min todo remove
-
     const { user } = await requireUserSession(event)
     const parents = await prisma.game_quiz.findMany({
         where: {

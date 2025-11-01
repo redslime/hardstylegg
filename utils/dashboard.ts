@@ -3,7 +3,7 @@ import type {
     CompleteAlbumContainer,
     CompleteLyricsContainer, NameXContainer, OrderContainer,
     QuizContainer,
-    TimelineContainer
+    TimelineContainer, TimetableContainer
 } from "~/types/gameModels";
 
 let dashboardData: DashboardData | null = null;
@@ -15,6 +15,7 @@ let nameXData: NameXContainer[] | null = null;
 let orderData: OrderContainer[] | null = null;
 let quizData: QuizContainer[] | null = null;
 let timelineData: TimelineContainer[] | null = null;
+let timetableData: TimetableContainer[] | null = null;
 
 export async function getDashboardData(): Promise<DashboardData> {
     if(dashboardData !== null) return dashboardData
@@ -68,6 +69,12 @@ export async function getTimelineData(): Promise<TimelineContainer[]> {
     if(timelineData !== null) return timelineData
     timelineData = await $fetch<TimelineContainer[]>('/api/dashboard/timeline')
     return timelineData
+}
+
+export async function getTimetableData(): Promise<TimetableContainer[]> {
+    if(timetableData !== null) return timetableData
+    timetableData = await $fetch<TimetableContainer[]>('/api/dashboard/timetable')
+    return timetableData
 }
 
 export function getScheduleForGame(typeId: number, gameId: number | undefined): ScheduleDay | undefined {

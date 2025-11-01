@@ -19,8 +19,8 @@ const getMinutes = (time: string) => {
   return h! * 60 + m!
 }
 
-const startTime = computed(() => items.value[0]!.begin)
-const endTime = computed(() => items.value.at(-1)!.end)
+const startTime = computed(() => items.value[0]?.begin ?? '00:00')
+const endTime = computed(() => items.value.at(-1)?.end ?? '00:00')
 
 const startMinutes = computed(() => getMinutes(startTime.value))
 const endMinutes = computed(() => {
@@ -45,8 +45,8 @@ function getItemStyle(item: TimetableItem) {
   if (endAbs < beginAbs) endAbs += 24 * 60
 
   return {
-    backgroundColor: "#" + colorBg.value,
-    color: "#" + colorText.value,
+    backgroundColor: colorBg.value,
+    color: colorText.value,
     top: ((beginAbs - startMinutes.value) / 60) * hourHeight + "px",
     height: ((endAbs - beginAbs) / 60) * hourHeight - blockGap + "px",
     marginTop: blockGap / 2 + "px",

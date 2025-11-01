@@ -10,6 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@cyhnkckali/vue3-color-picker": "^2.1.5",
     "@prisma/client": "^6.18.0",
     "@tailwindcss/vite": "^4.1.15",
     "canvas-confetti": "^1.9.3",

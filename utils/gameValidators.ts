@@ -4,7 +4,7 @@ import type {
     NameXContainer,
     OrderContainer,
     QuizContainer,
-    TimelineContainer
+    TimelineContainer, TimetableContainer, TimetableItem
 } from "~/types/gameModels";
 
 export function validateCompleteAlbum(album: CompleteAlbumContainer): string[] {
@@ -136,6 +136,46 @@ export function validateTimeline(timeline: TimelineContainer): string[] {
     }
 
     return errors
+}
+
+export function validateTimetable(timetable: TimetableContainer): string[] {
+    const errors: string[] = []
+    const rgbRegex = /^#(?:[0-9a-fA-F]{3}){1,2}$/
+
+    validateTitle(timetable.title, errors)
+    timetable.items.forEach(item => validateTimetableItem(item, errors))
+
+    if(!timetable.color_bg || !rgbRegex.test(timetable.color_bg)) {
+        errors.push("Background color is invalid")
+    }
+    if(!timetable.color_text || !rgbRegex.test(timetable.color_text)) {
+        errors.push("Text color is invalid")
+    }
+    if(!timetable.items || timetable.items.length === 0) {
+        errors.push("Timetable cannot be empty")
+    }
+    if(timetable.items.filter(i => i.hidden).length === 0) {
+        errors.push("At least one act must be hidden")
+    }
+
+    return errors
+}
+
+export function validateTimetableItem(item: TimetableItem, errors: string[]) {
+    const regex = /^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$/
+    
+    if(!item.name || item.name.trim().length === 0) {
+        errors.push("Act name cannot be empty")
+    }
+    if(!regex.test(item.begin)) {
+        errors.push("Begin time is invalid")
+    }
+    if(!regex.test(item.end)) {
+        errors.push("End time is invalid")
+    }
+    if(item.begin === item.end) {
+        errors.push("Begin and end time must be different")
+    }
 }
 
 function validateTitle(title: string, errors: string[]) {
