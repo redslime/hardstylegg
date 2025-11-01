@@ -44,7 +44,7 @@ function del(index: number) {
       </template>
 
       <template #editTitle v-if="editing">
-        <input type="text" placeholder="Quiz title" required maxlength="128"
+        <input type="text" placeholder="Title" required maxlength="128"
                class="input input-lg validator w-[80ch] focus:outline-none focus:ring-0"
                v-model="editing.title" />
       </template>
