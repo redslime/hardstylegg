@@ -2,8 +2,8 @@
 import { ref } from 'vue'
 import ArrowUpTrayIcon from "~/components/icons/ArrowUpTrayIcon.vue";
 
-const selectedFile = defineModel<File | null>('selectedFile', { required: true })
-const previewUrl = defineModel<string | null>('previewUrl', { required: true })
+const selectedFile = defineModel<File | null | undefined>('selectedFile', { required: true })
+const previewUrl = defineModel<string | null | undefined>('previewUrl', { required: true })
 const emit = defineEmits(['selected'])
 const isDragging = ref(false)
 
@@ -56,20 +56,14 @@ function handleDragLeave() {
       >
         <ArrowUpTrayIcon v-if="!previewUrl" class="size-8" />
         <div v-if="!previewUrl" class="text-base-content/80 text-center">
-          <p class="font-medium">Blank artwork</p>
-          <p class="text-sm text-base-content/50">Click or drop .png file</p>
+          <p class="font-medium">Upload track</p>
+          <p class="text-sm text-base-content/50">Click or drop .mp3 file</p>
         </div>
-        <img
-            v-else
-            :src="previewUrl"
-            alt="Preview"
-            class="h-full object-contain rounded-lg"
-        />
       </label>
       <input
           id="file-input"
           type="file"
-          accept="image/png"
+          accept=".mp3"
           class="hidden"
           @change="handleFileChange"
       />

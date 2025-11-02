@@ -39,6 +39,8 @@ export interface HeardleContainer {
     track: Track
     src: string
     durations: number[]
+    tempFile?: File
+    previewUrl?: string
 }
 
 export interface NameXContainer {

@@ -22,6 +22,9 @@ export default defineNuxtConfig({
           ignored: ['**/data/**/*']
         }
       },
+      optimizeDeps: {
+          exclude: ['@ffmpeg/ffmpeg', '@ffmpeg/util'],
+      },
   },
 
   css: ["~/assets/main.css"],

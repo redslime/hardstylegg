@@ -1,7 +1,7 @@
 import type {
     ArtworkContainer,
     CompleteAlbumContainer,
-    CompleteLyricsContainer,
+    CompleteLyricsContainer, HeardleContainer,
     NameXContainer,
     OrderContainer,
     QuizContainer,
@@ -80,6 +80,51 @@ export function validateCompleteLyrics(lyrics: CompleteLyricsContainer): string[
     }
 
     return errors
+}
+
+export function validateHeardle(heardle: HeardleContainer): string[] {
+    const errors: string[] = []
+
+    if(!heardle.track) {
+        errors.push("Track is required")
+    }
+    if(!heardle.src || heardle.src.trim().length === 0) {
+        errors.push("Track file is required")
+    }
+    if(!heardle.durations || heardle.durations.length === 0) {
+        errors.push("Track segments are required")
+    }
+    if(heardle.durations) {
+        validateHeardleDurations(heardle.durations, errors)
+    }
+
+    return errors
+}
+
+export function validateHeardleDurations(durations: number[], errors: string[]) {
+    if(durations.length < 3) {
+        errors.push("At least 3 track segments are required")
+    }
+    if(durations.length > 6) {
+        errors.push("Maximum of 6 track segments are allowed")
+    }
+    if(durations.filter(d => d > 15).length > 0) {
+        errors.push("Track segments can't be longer than 15 seconds")
+    }
+    if(new Set(durations).size !== durations.length) {
+        errors.push("Track segments must be unique")
+    }
+    if(durations[durations.length - 1]!! !== 15) {
+        errors.push("Last track segment must be 15 seconds")
+    }
+    if(durations.length > 1) {
+        for(let i = 1; i < durations.length; i++) {
+            if(durations[i]!! <= durations[i - 1]!!) {
+                errors.push("Track segments must be increasing in duration")
+                break
+            }
+        }
+    }
 }
 
 export function validateNameX(namex : NameXContainer): string[] {

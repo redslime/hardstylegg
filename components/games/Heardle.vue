@@ -62,7 +62,7 @@ onMounted(() => {
   });
 
   howl = new Howl({
-    src: [`/heardle/${src.value}`],
+    src: [`/heardle/${src.value}.mp3`],
     preload: true,
     volume: 0.2
   });

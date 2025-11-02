@@ -2,9 +2,13 @@ import type {DashboardData, ScheduleDay, Track} from "~/types/models";
 import type {
     ArtworkContainer,
     CompleteAlbumContainer,
-    CompleteLyricsContainer, NameXContainer, OrderContainer,
+    CompleteLyricsContainer,
+    HeardleContainer,
+    NameXContainer,
+    OrderContainer,
     QuizContainer,
-    TimelineContainer, TimetableContainer
+    TimelineContainer,
+    TimetableContainer
 } from "~/types/gameModels";
 
 let dashboardData: DashboardData | null = null;
@@ -13,6 +17,7 @@ let albums: Track[] | null = null;
 let artworkData: ArtworkContainer[] | null = null;
 let completeAlbumData: CompleteAlbumContainer[] | null = null;
 let completeLyricsData: CompleteLyricsContainer[] | null = null;
+let heardleData: HeardleContainer[] | null = null;
 let nameXData: NameXContainer[] | null = null;
 let orderData: OrderContainer[] | null = null;
 let quizData: QuizContainer[] | null = null;
@@ -53,6 +58,12 @@ export async function getCompleteLyricsData(): Promise<CompleteLyricsContainer[]
     if(completeLyricsData !== null) return completeLyricsData
     completeLyricsData = await $fetch<CompleteLyricsContainer[]>('/api/dashboard/complete-lyrics')
     return completeLyricsData
+}
+
+export async function getHeardleData(): Promise<HeardleContainer[]> {
+    if(heardleData !== null) return heardleData
+    heardleData = await $fetch<HeardleContainer[]>('/api/dashboard/heardle')
+    return heardleData
 }
 
 export async function getNameXData(): Promise<NameXContainer[]> {

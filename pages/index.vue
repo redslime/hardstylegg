@@ -51,7 +51,6 @@ function play() {
       </template>
       <template v-else>
         <div class="max-w-md">
-          <h1 class="text-4xl font-bold">No active challenge</h1>
           <h4 class="text-xl mt-2">Nothing to play right now, check back later!</h4>
         </div>
       </template>
