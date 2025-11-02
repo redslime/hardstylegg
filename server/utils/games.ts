@@ -159,8 +159,8 @@ export async function getTimetableInstance(prisma: PrismaClient, id: number): Pr
         id: parent!!.id,
         created_by: parent!!.created_by,
         title: parent!!.title,
-        color_bg: parent!!.color_bg,
-        color_text: parent!!.color_text,
+        color_bg: "#" + parent!!.color_bg,
+        color_text: "#" + parent!!.color_text,
         items: items
     }
 }

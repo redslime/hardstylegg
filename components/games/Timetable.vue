@@ -48,7 +48,7 @@ const validateGuess = (item: TimetableItem) => {
               class="input input-xs md:input-sm ring-1 w-full focus:outline-none focus:ring-0"
               @input="validateGuess(item)"
               :class="{'input-error': item.correct === false}"
-              :style="{backgroundColor: '#' + props.container.color_bg}"
+              :style="{backgroundColor: props.container.color_bg}"
           />
         </template>
 
