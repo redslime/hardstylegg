@@ -27,23 +27,23 @@ function showModal() {
 async function del() {
   confirmed.value = true
 
-  const { data, error } = await useFetch('/api/dashboard/deleteInstance', {
-    method: 'POST',
-    body: {
-      typeId,
-      gameId: editing?.id,
-    }
-  })
+  try {
+    const data = await $fetch('/api/dashboard/deleteInstance', {
+      method: 'POST',
+      body: {
+        typeId,
+        gameId: editing?.id,
+      }
+    })
 
-  if(error.value) {
+    if(data) {
+      emit('deleted', data)
+      deletingResponse.value = true
+      deletingModal.value?.close()
+      return
+    }
+  } catch (e) {
     deletingResponse.value = false
-    return
-  } else if (data.value) {
-    const fetchedInstance = data.value
-    emit('deleted', fetchedInstance)
-    deletingResponse.value = true
-    deletingModal.value?.close()
-    return
   }
 }
 </script>

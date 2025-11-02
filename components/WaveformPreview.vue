@@ -11,6 +11,7 @@ const containerRef = ref<HTMLElement | null>(null)
 
 const options = ref({
   height: 60,
+  width: 500,
   waveColor: '#3ABDF7',
   cursorWidth: 0,
   interact: false,

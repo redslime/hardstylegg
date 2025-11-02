@@ -37,11 +37,15 @@ export default defineEventHandler(async (event) => {
                 })
             }
             case 4: {
-                return await prisma.game_heardle.delete({
+                const deleted = await prisma.game_heardle.delete({
                     where: {
                         id: gameId
                     }
                 })
+
+                const mp3Path = join(process.cwd(), 'public', 'heardle', deleted.src + '.mp3')
+                await unlink(mp3Path)
+                return deleted
             }
             case 5: {
                 return await prisma.game_namex.delete({

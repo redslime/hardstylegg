@@ -34,15 +34,13 @@ async function upload() {
     const formData = new FormData()
     formData.append('file', editing.value.blankFile)
 
-    const { data, error } = await useFetch<{ success: boolean, fileName: string }>('/api/dashboard/edit/artworkFile', {
+    const data = await $fetch<{ success: boolean, fileName: string }>('/api/dashboard/edit/artworkFile', {
       method: 'POST',
       body: formData,
     })
 
-    if(error.value) {
-       uploadError.value = error.value.message || 'Upload failed'
-    } else if(data.value && data.value.success) {
-      editing.value.artwork_blank = data.value.fileName
+    if(data && data.success) {
+      editing.value.artwork_blank = data.fileName
       uploadDone.value = true
       editing.value.blankFile = undefined
       editing.value.uploadedName = undefined

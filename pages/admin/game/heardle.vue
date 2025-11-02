@@ -70,15 +70,13 @@ async function uploadMp3() {
     const formData = new FormData()
     formData.append('file', editing.value.tempFile)
 
-    const {data, error} = await useFetch<{ success: boolean, fileName: string }>('/api/dashboard/edit/heardleFile', {
+    const data = await $fetch<{ success: boolean, fileName: string }>('/api/dashboard/edit/heardleFile', {
       method: 'POST',
       body: formData,
     })
 
-    if(error.value) {
-      uploadError.value = error.value.message || 'Upload failed'
-    } else if(data.value && data.value.success) {
-      editing.value.src = data.value.fileName
+    if(data && data.success) {
+      editing.value.src = data.fileName
       uploadDone.value = true
       editing.value.tempFile = undefined
 
@@ -92,6 +90,12 @@ async function uploadMp3() {
   } finally {
     isUploading.value = false
   }
+}
+
+function reset() {
+  isUploading.value = false
+  uploadError.value = null
+  uploadDone.value = false
 }
 </script>
 
@@ -108,6 +112,8 @@ async function uploadMp3() {
         :typeName="'Heardle'"
         :icon="SpeakerWave"
         :title="t => getName(t.track)"
+        @saved="reset()"
+        @cancelled="reset()"
     >
       <template #previewBody="{ instance }">
         <WaveformPreview class="w-full" :container="instance" />

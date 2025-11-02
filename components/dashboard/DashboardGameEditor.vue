@@ -42,31 +42,29 @@ async function save() {
     const gameInstance = editing.value!
     gameInstance.created_by = user.value.id
 
-    const asyncData = await useFetch(editUrl, {
-      method: 'POST',
-      body: gameInstance,
-    }) as AsyncData<string[] | T, FetchError | null>
-    const { data, error } = asyncData
+    try {
+      const data = await $fetch<string[] | T>(editUrl, {
+        method: 'POST',
+        body: gameInstance,
+      })
 
-    if (error.value) {
-      savingResponse.value = [error.value.message]
-      return
-    }
+      if (data) {
+        if (!Array.isArray(data)) {
+          const fetchedGameInstance = data as T
+          instances.value?.splice(0, instances.value.length, ...instances.value.filter((i) => i.id !== fetchedGameInstance.id))
+          instances.value?.push(fetchedGameInstance)
+          instances.value?.sort((a, b) => (a.id ?? 0) - (b.id ?? 0))
 
-    if (data.value) {
-      if (!Array.isArray(data.value)) {
-        const fetchedGameInstance = data.value
-        instances.value?.splice(0, instances.value.length, ...instances.value.filter((i) => i.id !== fetchedGameInstance.id))
-        instances.value?.push(fetchedGameInstance)
-        instances.value?.sort((a, b) => (a.id ?? 100) - (b.id ?? 100))
-
-        savingResponse.value = true
-        editing.value = undefined
-        savingModal.value?.close()
-        emit('saved')
-      } else {
-        savingResponse.value = data.value
+          savingResponse.value = true
+          editing.value = undefined
+          savingModal.value?.close()
+          emit('saved')
+        } else {
+          savingResponse.value = data
+        }
       }
+    } catch (e: any) {
+      savingResponse.value = [e.message]
     }
   } else {
     savingResponse.value = ["Invalid editing state"]
