@@ -7,6 +7,7 @@ import {bitsToHex, copyToClipboard} from "~/utils/utils";
 import ResultShareButton from "~/components/ResultShareButton.vue";
 import {gameComps, getPreviewTitle} from "~/utils/game";
 import {type GameContainer, type GameData, GameState} from "~/types/models";
+import {getTracks} from "~/utils/tracks";
 
 useHead({
   meta: [
@@ -20,7 +21,7 @@ const props = defineProps({
 const dayId = ref<number>(props.gameData.dayId)
 const gameData = reactive<GameData[]>(props.gameData.data)
 const currentIndex = ref(0)
-const currentGameData = computed<GameData>(() => gameData[currentIndex.value])
+const currentGameData = computed<GameData>(() => gameData[currentIndex.value]!!)
 const currentGameComp = computed(() => gameComps[currentGameData.value.name as keyof typeof gameComps])
 const currentState = computed<GameState>(() => currentGameData.value.props.state)
 const beginnerNote = ref<boolean>(true)
@@ -72,6 +73,8 @@ const copyResult = () => {
 
 onMounted(() => {
   mounted.value = true
+
+  void getTracks() // preload tracks
 })
 </script>
 
@@ -81,9 +84,6 @@ onMounted(() => {
 
     </div>
     <div class="w-full flex flex-row justify-around content-baseline gap-4">
-      <div class="[&:empty]:hidden" id="side-dock">
-
-      </div>
       <div class="[&:empty]:hidden" id="spotify-dock">
 
       </div>
@@ -95,6 +95,9 @@ onMounted(() => {
         Skip
         <MicroChevronDoubleRightIcon />
       </button>
+      <div class="[&:empty]:hidden" id="side-dock">
+
+      </div>
     </div>
   </div>
 

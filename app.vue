@@ -19,7 +19,7 @@ provide("isMobile", isMobile)
 
 <template>
   <NuxtLayout>
-    <div class="flex justify-center min-h-screen mb-20 md:mb-0">
+    <div class="flex justify-center min-h-screen mb-20 md:mb-0 overflow-x-hidden">
       <div class="base w-4xl bg-primary-content shadow-xl">
         <Header />
         <div class="flex base-content items-center flex-col my-4 lg:m-4 p-4 rounded-sm">

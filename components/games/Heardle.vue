@@ -24,6 +24,7 @@ const src = computed(() => props.container.src)
 const durations = computed(() => props.container.durations)
 const hasPlayed = ref<boolean>(false)
 const currentIndex = inject<number>('currentIndex')
+const isMobile = inject<boolean>('isMobile')
 
 interface Guess {
   input: string | undefined
@@ -159,7 +160,8 @@ function validate(selected: ShallowTrack, flashError: () => void, flashSuccess: 
     >
       <div class="join flex justify-center items-center">
         <button class="btn btn-primary join-item" :disabled="isPlaying" @click="playSnippet">
-          <PlayIcon/> Play snippet
+          <PlayIcon/>
+          {{ isMobile ? "Play" : "Play snippet" }}
         </button>
         <input
             v-bind="inputBindings"
@@ -170,7 +172,7 @@ function validate(selected: ShallowTrack, flashError: () => void, flashSuccess: 
         />
         <button class="btn btn-warning btn-soft join-item tooltip" v-if="hasPlayed && guessStage < durations.length-1" @click="nextStage"
           data-tip="No idea what to guess? Go to next stage now">
-          Next stage
+          {{ isMobile ? "Next" : "Next stage" }}
           <ForwardIcon />
         </button>
       </div>
