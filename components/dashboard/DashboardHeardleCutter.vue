@@ -37,6 +37,7 @@ async function cut() {
       '-ss', String(segment.value.start),
       '-t', String(duration),
       '-i', 'input.mp3',
+      '-map_metadata', '-1',
       '-acodec', 'copy',
       'output.mp3']
   )
