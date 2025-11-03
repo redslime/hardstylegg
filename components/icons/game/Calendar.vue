@@ -4,7 +4,7 @@ import {getStrokeColor} from "~/utils/icons";
 
 const props = defineProps({
   state: { type: Number as PropType<GameState>, required: false },
-  size: { type: String, required: false, default: 6 }
+  size: { type: Number, required: false, default: 6 }
 })
 
 const size = computed(() => "size-" + props.size)
