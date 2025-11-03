@@ -3,7 +3,7 @@ import prisma from "~/lib/prisma";
 import {getGameInstance} from "~/server/utils/games";
 import type {PackedDayData} from "~/types/models";
 
-const BASE_DATE = DateTime.fromISO('2025-11-02', { zone: 'Europe/Berlin' });
+const BASE_DATE = DateTime.fromISO('2025-11-03', { zone: 'Europe/Berlin' });
 
 let lastKnownDayId: number | null = null;
 let packedCache: PackedDayData | null = null
@@ -91,12 +91,10 @@ export async function checkDay() {
     }
 }
 
-async function onNewDay(newDayId: number) {
-    packedCache = null
-
+export async function getPackedDayDataForDay(dayId: number): Promise<PackedDayData> {
     const data = await prisma.day_schedule.findUnique({
         where: {
-            day: newDayId
+            day: dayId
         }
     })
     if(data) {
@@ -117,11 +115,22 @@ async function onNewDay(newDayId: number) {
             }
         }
 
-        packedCache = {
+        return {
             dayId,
             dayFriendly: getFriendlyName(dayId),
             typeIds,
             data: packed
         }
+    } else {
+        return {
+            dayId: -1,
+            dayFriendly: getFriendlyName(dayId),
+            typeIds: [],
+            data: []
+        }
     }
+}
+
+async function onNewDay(newDayId: number) {
+    packedCache = await getPackedDayDataForDay(newDayId)
 }

@@ -7,6 +7,7 @@ import PencilSquare from "~/components/icons/game/PencilSquare.vue";
 import InfoIcon from "~/components/icons/InfoIcon.vue";
 import {Vue3ColorPicker} from '@cyhnkckali/vue3-color-picker';
 import '@cyhnkckali/vue3-color-picker/dist/style.css';
+import TimetablePreview from "~/components/dashboard/preview/TimetablePreview.vue";
 
 definePageMeta({
   layout: 'dashboard',
@@ -96,11 +97,8 @@ export default {
         :icon="PencilSquare"
         :title="t => t.title"
     >
-      <template #previewBody="{ instance }">
-        <div v-for="item in instance.items" :key="item.id" class="badge badge-outline"
-          :class="{'badge-info': item.hidden}">
-          {{ item.name }}
-        </div>
+      <template #previewBody="{ instance, clicked }">
+        <TimetablePreview :instance="instance" @click="clicked()" />
       </template>
 
       <template #editTitle v-if="editing">

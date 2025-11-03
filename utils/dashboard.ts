@@ -1,4 +1,4 @@
-import type {DashboardData, ScheduleDay, Track} from "~/types/models";
+import type {DashboardData, PackedDayData, ScheduleDay, ScheduleEntry, Track} from "~/types/models";
 import type {
     ArtworkContainer,
     CompleteAlbumContainer,
@@ -10,6 +10,9 @@ import type {
     TimelineContainer,
     TimetableContainer
 } from "~/types/gameModels";
+import {DateTime} from "luxon";
+
+export const GAMES_PER_DAY = 5
 
 let dashboardData: DashboardData | null = null;
 let tracks: Track[] | null = null;
@@ -113,5 +116,30 @@ export function getScheduleForGame(typeId: number, gameId: number | undefined): 
                 }
             }
         }
+    })
+}
+
+export async function getFriendlyName(dayId: number, format: string = 'LLL d'): Promise<string> {
+    const schedule = (await getDashboardData()).schedule
+    const baseDate: DateTime = DateTime.fromISO(schedule.baseDate.toString())
+    const nextDay = baseDate.plus({ days: dayId - 1 });
+    return nextDay.toFormat(format);
+}
+
+export async function updateScheduleDay(day: ScheduleDay) {
+    const schedule = (await getDashboardData()).schedule
+    const scheduledDay = schedule.days.find(d => d.day === day.day)
+
+    if(scheduledDay) {
+        scheduledDay.typeIds = day.typeIds
+        scheduledDay.gameIds = day.gameIds
+    } else {
+        schedule.days.push(day)
+        schedule.days.sort((a, b) => a.day - b.day)
+    }
+
+    await $fetch("/api/dashboard/edit/schedule", {
+        method: "POST",
+        body: day
     })
 }

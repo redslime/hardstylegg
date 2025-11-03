@@ -3,7 +3,12 @@ import {gameComps, getGameContainer, getPreviewTitle} from "~/utils/game";
 import {type GameData, GameState} from "~/types/models";
 
 const { data: gameData, pending, error } = await useAsyncData(() => getGameContainer(), { lazy: true })
-const played = computed(() => gameData.value?.data.filter(gd => gd.props.state === GameState.UPCOMING).length === 0)
+const exists = computed(() => gameData.value !== undefined && gameData.value.dayId !== -1)
+const played = computed(() => {
+  const games = (gameData.value?.data.length ?? 0) > 0
+  const progress = gameData.value?.data.filter(gd => gd.props.state === GameState.UPCOMING).length === 0
+  return games && progress
+})
 
 // todo also feed played and state from cookie data, not just cached components
 
@@ -31,7 +36,7 @@ function play() {
       <template v-if="pending">
         <span class="loading loading-spinner loading-xl"></span>
       </template>
-      <template v-else-if="gameData">
+      <template v-else-if="gameData && exists">
         <div class="flex justify-center flex-wrap gap-2 mb-3">
           <div v-for="(game, index) in gameData.data" :key="index" class="p-3 rounded-md tooltip" :data-tip="getPreviewTitle(game)"
                :class="{

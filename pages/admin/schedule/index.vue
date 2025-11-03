@@ -1,14 +1,49 @@
 <script setup lang="ts">
 import CalendarDaysIcon from "~/components/icons/CalendarDaysIcon.vue";
-import {getDashboardData} from "~/utils/dashboard";
+import {getDashboardData, getFriendlyName} from "~/utils/dashboard";
+import {type ScheduleDay} from "~/types/models";
+import DashboardScheduleDaySummary from "~/components/dashboard/DashboardScheduleDaySummary.vue";
 
 definePageMeta({
   layout: 'dashboard',
-  middleware: ['authenticated'],
+  middleware: ['authenticated-admin'],
 })
 
 const dashboardData = await getDashboardData();
 const schedule = dashboardData.schedule;
+const days = ref<ScheduleDay[]>(schedule.days)
+
+async function addEmptyDay() {
+  const lastDay = days.value[days.value.length - 1]
+  const newId = (lastDay?.day ?? 0) + 1
+  const dayFriendly = await getFriendlyName(newId)
+
+  days.value.push({
+    day: newId,
+    dayFriendly: dayFriendly,
+    gameIds: [],
+    typeIds: []
+  })
+}
+
+useOnce(async () => {
+  for(let i = 0; i < 3; i++) {
+    await addEmptyDay()
+  }
+
+  // make sure today is always in the schedule
+  // (shouldnt really happen unless the schedule was forgotten about for a few days)
+  const todayId = schedule.todayId
+
+  if(days.value.filter(d => d.day === todayId).length === 0) {
+    days.value.push({
+      day: todayId,
+      dayFriendly: await getFriendlyName(todayId),
+      gameIds: [],
+      typeIds: []
+    })
+  }
+})
 </script>
 
 <template>
@@ -19,8 +54,8 @@ const schedule = dashboardData.schedule;
 
   <div v-if="schedule">
     <div class="flex flex-col gap-3">
-      <template v-for="day in schedule.days" :key="day.day">
-        <div class="flex h-40">
+      <template v-for="day in days" :key="day.day">
+        <div class="flex">
           <div class="w-40 text-center content-center  rounded-l-lg"
               :class="{
                  'bg-black/70': day.day !== schedule.todayId,
@@ -37,7 +72,7 @@ const schedule = dashboardData.schedule;
             </p>
           </div>
           <div class="w-full bg-base-200 p-3 rounded-r-lg">
-            moini
+            <DashboardScheduleDaySummary :day="day" :schedule="schedule" />
           </div>
         </div>
       </template>

@@ -8,6 +8,7 @@ import {getName} from "~/utils/tracks";
 import {computed} from "vue";
 import TrackPicker from "~/components/dashboard/TrackPicker.vue";
 import InfoIcon from "~/components/icons/InfoIcon.vue";
+import CompleteLyricsPreview from "~/components/dashboard/preview/CompleteLyricsPreview.vue";
 
 definePageMeta({
   layout: 'dashboard',
@@ -76,24 +77,8 @@ function toggle(word: string, lineIndex: number) {
       :icon="ChatBubble"
       :title="cl => getName(cl.track)"
       >
-      <template #previewBody="{ instance }">
-        <div class="whitespace-pre-wrap">
-          <template v-for="(line, lineIndex) in getLines(instance)" :key="lineIndex">
-            <p class="flex items-center gap-1">
-              <template v-for="(part, i) in line.parts" :key="i">
-                <template v-if="!part.isInput">
-                  <span>{{ part.text }}</span>
-                </template>
-
-                <template v-else>
-                  <span class="badge badge-outline badge-info badge-sm">
-                    {{ part.text }}
-                  </span>
-                </template>
-              </template>
-            </p>
-          </template>
-        </div>
+      <template #previewBody="{ instance, clicked }">
+        <CompleteLyricsPreview :instance="instance" @click="clicked()" />
       </template>
 
       <template #editTitle v-if="editing">

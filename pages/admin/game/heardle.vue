@@ -10,6 +10,7 @@ import TrackPicker from "~/components/dashboard/TrackPicker.vue";
 import TrashIcon from "~/components/icons/TrashIcon.vue";
 import InfoIcon from "~/components/icons/InfoIcon.vue";
 import DashboardHeardleCutter from "~/components/dashboard/DashboardHeardleCutter.vue";
+import HeardlePreview from "~/components/dashboard/preview/HeardlePreview.vue";
 
 definePageMeta({
   layout: 'dashboard',
@@ -115,8 +116,8 @@ function reset() {
         @saved="reset()"
         @cancelled="reset()"
     >
-      <template #previewBody="{ instance }">
-        <WaveformPreview class="w-full" :container="instance" />
+      <template #previewBody="{ instance, clicked }">
+        <HeardlePreview :instance="instance" @click="clicked()" />
       </template>
 
       <template #editTitle v-if="editing">

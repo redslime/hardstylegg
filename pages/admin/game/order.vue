@@ -8,6 +8,7 @@ import ArrowsRightLeft from "~/components/icons/game/ArrowsRightLeft.vue";
 import Draggable from "vuedraggable";
 import TrackPicker from "~/components/dashboard/TrackPicker.vue";
 import type {Track} from "~/types/models";
+import OrderPreview from "~/components/dashboard/preview/OrderPreview.vue";
 
 definePageMeta({
   layout: 'dashboard',
@@ -28,7 +29,6 @@ function add(track: Track) {
 
 function update() {
   for(let i = 0; i < editing.value!!.items.length; i++) {
-    console.log(editing.value!!.items[i]!!.track.title + " is at " + i);
     editing.value!!.items[i]!!.index = i;
   }
 }
@@ -48,16 +48,8 @@ function update() {
         :icon="ArrowsRightLeft"
         :title="t => t.title"
     >
-      <template #previewBody="{ instance }">
-        <div class="w-full flex gap-2">
-          <div class="shrink w-1/4 sm:w-1/3 xs:w-1/2" v-for="item in instance.items" :key="item.track.sid">
-            <img
-                :src="`${getSpotifyArtwork(item.track.cover_art)}`"
-                :alt="item.track.title"
-                class="w-full h-auto rounded-xl shrink shadow-md"
-            />
-          </div>
-        </div>
+      <template #previewBody="{ instance, clicked }">
+        <OrderPreview :instance="instance" @click="clicked()" />
       </template>
 
       <template #editTitle v-if="editing">

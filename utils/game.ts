@@ -52,7 +52,7 @@ export function transform(data: PackedDayData): GameContainer {
 
             if(type && data) {
                 transformed.push({
-                    name: getName(type),
+                    name: getGameName(type),
                     props: {
                         state: i === 0 ? GameState.PLAYING : GameState.UPCOMING,
                         position: i,
@@ -76,7 +76,7 @@ export function getPreviewTitle(data: GameData): string {
     return gameComps[data.name as keyof typeof gameComps].preview(data.props)
 }
 
-function getName(type_id: number): string {
+export function getGameName(type_id: number): string {
     for(const [name, comp] of Object.entries(gameComps)) {
         if(comp.id == type_id) {
             return name

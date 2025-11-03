@@ -12,6 +12,7 @@ import Pencil from "~/components/icons/game/Pencil.vue";
 import TrashIcon from "~/components/icons/TrashIcon.vue";
 import {GameState} from "~/types/models";
 import Checkmark from "~/components/icons/Checkmark.vue";
+import CompleteAlbumPreview from "~/components/dashboard/preview/CompleteAlbumPreview.vue";
 
 definePageMeta({
   layout: 'dashboard',
@@ -47,11 +48,8 @@ function add() {
         :icon="PencilSquare"
         :title="a => getName(a.album!!)"
     >
-      <template #previewBody="{ instance }">
-        <div v-for="item in instance.items" :key="item.id" class="badge badge-outline"
-          :class="{'badge-info': item.hidden}">
-          {{ item.name }}
-        </div>
+      <template #previewBody="{ instance, clicked }">
+        <CompleteAlbumPreview :instance="instance" @click="clicked()" />
       </template>
 
       <template #editTitle v-if="editing">

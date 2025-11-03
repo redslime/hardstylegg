@@ -4,6 +4,7 @@ import {getTimelineData} from "~/utils/dashboard";
 import {validateTimeline} from "~/utils/gameValidators"
 import Calendar from "~/components/icons/game/Calendar.vue";
 import DashboardGameLoadingSpinner from "~/components/dashboard/DashboardGameLoadingSpinner.vue";
+import TimelinePreview from "~/components/dashboard/preview/TimelinePreview.vue";
 
 definePageMeta({
   layout: 'dashboard',
@@ -29,8 +30,8 @@ const editing = ref<TimelineContainer | undefined>()
         :icon="Calendar"
         :title="t => t.title"
     >
-      <template #previewBody="{ instance }">
-        <div class="badge badge-outline badge-info">{{ instance.goal }}</div>
+      <template #previewBody="{ instance, clicked }">
+        <TimelinePreview :instance="instance" @click="clicked()" />
       </template>
 
       <template #editTitle>

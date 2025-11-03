@@ -23,9 +23,7 @@ async function cut() {
   ffmpeg.on('log', (message) => {
     console.log(message.message)
   })
-  console.log("loading")
   await ffmpeg.load()
-  console.log("loaded")
 
   // Write uploaded file into virtual FS
   await ffmpeg.writeFile('input.mp3', await fetchFile(file.value))

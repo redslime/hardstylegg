@@ -65,6 +65,11 @@ export interface ScheduleDay {
     gameIds: number[]
 }
 
+export interface ScheduleEntry {
+    typeId: number | undefined
+    gameData: any | undefined
+}
+
 export interface DashboardData {
     groups: DashboardGroup[]
     editors: Editor[]

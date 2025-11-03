@@ -8,6 +8,7 @@ import ListBullet from "~/components/icons/game/ListBullet.vue";
 import {getName} from "~/utils/tracks";
 import TrashIcon from "~/components/icons/TrashIcon.vue";
 import TrackPicker from "~/components/dashboard/TrackPicker.vue";
+import NameXPreview from "~/components/dashboard/preview/NameXPreview.vue";
 
 definePageMeta({
   layout: 'dashboard',
@@ -37,10 +38,8 @@ function del(index: number) {
         :icon="ListBullet"
         :title="t => t.title"
     >
-      <template #previewBody="{ instance }">
-        <div v-for="track in instance.items" :key="track.sid" class="badge badge-outline">
-          {{ getName(track) }}
-        </div>
+      <template #previewBody="{ instance, clicked }">
+        <NameXPreview :instance="instance" @click="clicked()" />
       </template>
 
       <template #editTitle v-if="editing">

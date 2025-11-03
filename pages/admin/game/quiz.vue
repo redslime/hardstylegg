@@ -4,6 +4,7 @@ import {type QuizContainer} from "~/types/gameModels";
 import {validateQuiz} from "~/utils/gameValidators"
 import {getQuizData} from "~/utils/dashboard";
 import DashboardGameLoadingSpinner from "~/components/dashboard/DashboardGameLoadingSpinner.vue";
+import QuizPreview from "~/components/dashboard/preview/QuizPreview.vue";
 
 definePageMeta({
   layout: 'dashboard',
@@ -29,14 +30,8 @@ const editing = ref<QuizContainer | undefined>()
         :icon="CheckCircle"
         :title="t => t.title"
     >
-      <template #previewBody="{ instance }">
-        <div v-for="item in instance.items" :key="item.id" class="badge badge-outline"
-             :class="{
-              'badge-success': item.correct,
-              'badge-error': !item.correct
-            }">
-          {{ item.text }}
-        </div>
+      <template #previewBody="{ instance, clicked }">
+        <QuizPreview :instance="instance" @click="clicked()" />
       </template>
 
       <template #editTitle v-if="editing">

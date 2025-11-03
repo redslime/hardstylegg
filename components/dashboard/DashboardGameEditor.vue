@@ -2,8 +2,6 @@
 
 import {deepCopy} from "~/utils/utils";
 import DashboardGameDeleteButton from "~/components/dashboard/DashboardGameDeleteButton.vue";
-import type {AsyncData} from "#app";
-import {FetchError} from "ofetch";
 
 const instances = defineModel<T[] | undefined>('instances', {
   required: true,
@@ -97,11 +95,11 @@ function onDelete(container: T) {
 
   <div class="flex flex-wrap gap-3" v-if="editing === undefined && instances">
     <template v-for="instance in instances" :key="instance.id">
-      <DashboardGamePreview :typeId="typeId" :container="instance" :title="title(instance)" @clicked="editing = deepCopy(instance)">
-        <slot name="previewBody" :instance="instance">
+<!--      <DashboardGamePreviewHeader :typeId="typeId" :container="instance" :title="title(instance)" @clicked="editing = deepCopy(instance)">-->
+        <slot name="previewBody" :instance="instance" :clicked="() => editing = deepCopy(instance)">
 
         </slot>
-      </DashboardGamePreview>
+<!--      </DashboardGamePreviewHeader>-->
     </template>
   </div>
 

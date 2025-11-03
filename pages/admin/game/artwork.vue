@@ -10,6 +10,7 @@ import TrackPicker from "~/components/dashboard/TrackPicker.vue";
 import ImageUploader from "~/components/ImageUploader.vue";
 import {ref} from "vue";
 import Checkmark from "~/components/icons/Checkmark.vue";
+import ArtworkPreview from "~/components/dashboard/preview/ArtworkPreview.vue";
 
 definePageMeta({
   layout: 'dashboard',
@@ -89,17 +90,8 @@ function clearUpload() {
         @saved="reset()"
         @cancelled="reset()"
     >
-      <template #previewBody="{ instance }">
-        <div class="w-full flex gap-2">
-          <div class="shrink w-1/4 sm:w-1/3 xs:w-1/2">
-            <img :src="`${getSpotifyArtwork(instance.track.cover_art)}`" :alt="instance.track.title"
-                 class="w-full h-auto rounded-xl shrink shadow-md"/>
-          </div>
-          <div class="shrink w-1/4 sm:w-1/3 xs:w-1/2">
-            <img :src="`${getLocalArtwork(instance.artwork_blank)}`" alt="Blank artwork"
-                 class="w-full h-auto rounded-xl shrink shadow-md"/>
-          </div>
-        </div>
+      <template #previewBody="{ instance, clicked }">
+        <ArtworkPreview :instance="instance" @click="clicked()" />
       </template>
 
       <template #editTitle v-if="editing">

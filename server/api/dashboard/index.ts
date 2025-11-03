@@ -14,11 +14,15 @@ function getStructure(user: User): DashboardGroup[] {
             icon: "HomeIcon",
             url: "/admin"
         })
-        overviewItems.push({
-            name: "Schedule",
-            icon: "CalendarDaysIcon",
-            url: "/admin/schedule"
-        })
+
+        if(user.admin) {
+            overviewItems.push({
+                name: "Schedule",
+                icon: "CalendarDaysIcon",
+                url: "/admin/schedule"
+            })
+        }
+
         overviewItems.push({
             name: "Track database",
             icon: "CircleStackIcon",
