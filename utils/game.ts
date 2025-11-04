@@ -6,7 +6,14 @@ import ListBullet from "~/components/icons/game/ListBullet.vue";
 import ArrowsRightLeft from "~/components/icons/game/ArrowsRightLeft.vue";
 import CheckCircle from "~/components/icons/game/CheckCircle.vue";
 import Calendar from "~/components/icons/game/Calendar.vue";
-import {type GameContainer, type GameData, GameState, type PackedDayData} from "~/types/models";
+import {
+    type GameContainer,
+    type GameData,
+    type GameReport,
+    GameState,
+    type PackedDayData,
+    type ReportContainer
+} from "~/types/models";
 import Artwork from "~/components/games/Artwork.vue";
 import CompleteAlbum from "~/components/games/CompleteAlbum.vue";
 import CompleteLyrics from "~/components/games/CompleteLyrics.vue";
@@ -17,6 +24,9 @@ import Quiz from "~/components/games/Quiz.vue";
 import Timeline from "~/components/games/Timeline.vue";
 import Timetable from "~/components/games/Timetable.vue";
 
+let currentTypeId: number | null = null
+let currentGameId: number | null = null
+let report: ReportContainer | null = null
 let packedGameData: GameContainer | null = null
 
 export const gameComps = {
@@ -84,4 +94,84 @@ export function getGameName(type_id: number): string {
     }
 
     return "invalid"
+}
+
+export function updateState(typeId: number | null, gameId: number | null) {
+    currentTypeId = typeId
+    currentGameId = gameId
+}
+
+export function startGame() {
+    getGameContainer().then(gameData => {
+        $fetch<string>("/api/report/start").then(code => {
+            report = {
+                code,
+                dayId: gameData.dayId,
+                dayFriendly: gameData.dayFriendly,
+                successes: 0,
+                completed: false,
+                data: []
+            }
+        }).catch(_ => {})
+    })
+}
+
+export function countAttempt() {
+    reportResult(r => {
+        if(r.attempts) {
+            r.attempts++
+        } else {
+            r.attempts = 1
+        }
+    })
+}
+
+export function countItem(id: number | undefined, success: boolean) {
+    if(id === undefined) return
+
+    reportResult(r => {
+        if(r.itemsCompleted) {
+            r.itemsCompleted[id] = success
+        } else {
+            r.itemsCompleted = {}
+            r.itemsCompleted[id] = success
+        }
+    })
+}
+
+export function countOption(id: number | undefined) {
+    if(id === undefined) return
+
+    reportResult(r => {
+        if(r.itemsClicked) {
+            r.itemsClicked.push(id)
+        } else {
+            r.itemsClicked = [id]
+        }
+    })
+}
+
+export function reportResult(consumer: (report: GameReport) => void) {
+    if(report && currentTypeId && currentGameId) {
+        const gr = report.data.find(r => r.typeId === currentTypeId && r.gameId === currentGameId)
+
+        if(gr) {
+            consumer(gr)
+        } else {
+            const gr = {
+                typeId: currentTypeId,
+                gameId: currentGameId,
+                success: false
+            }
+            consumer(gr)
+            report.data.push(gr)
+        }
+    }
+}
+
+export function sendReport() {
+    $fetch("/api/report/submit", {
+        method: "POST",
+        body: report
+    }).catch(err => console.error("Failed to send report", err))
 }

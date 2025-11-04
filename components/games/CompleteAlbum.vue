@@ -2,6 +2,7 @@
 import PencilSquare from "~/components/icons/game/PencilSquare.vue";
 import {GameState} from "~/types/models";
 import type {CompleteAlbumContainer, CompleteAlbumItem} from "~/types/gameModels";
+import {countItem} from "~/utils/game";
 
 const emit = defineEmits(['onFinish'])
 const props = defineProps({
@@ -20,7 +21,12 @@ const validateGuess = (item: CompleteAlbumItem) => {
     item.correct = null
     return
   }
+
   item.correct = item.guess.trim().toLowerCase() === item.name.toLowerCase()
+
+  if(item.correct) {
+    countItem(item.id, item.correct)
+  }
 
   if(items.value.filter(i => i.hidden === true).length === items.value.filter(i => i.correct === true).length) {
     emit('onFinish', GameState.SUCCEEDED)

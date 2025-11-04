@@ -3,6 +3,7 @@ import CheckCircle from "~/components/icons/game/CheckCircle.vue";
 import {GameState} from "~/types/models";
 import {shuffleArray} from "~/utils/utils";
 import type {QuizAnswer, QuizContainer} from "~/types/gameModels";
+import {countOption} from "~/utils/game";
 
 const emit = defineEmits(['onFinish'])
 const props = defineProps({
@@ -24,12 +25,14 @@ const click = (answer: QuizAnswer) => {
       if(correctAnswers > 1) { // multiple choice!
         if(!selected.value.includes(answer)) {
           selected.value.push(answer)
+          countOption(answer.id)
         }
 
         if(correctAnswers === selected.value.length) {
           emit("onFinish", GameState.SUCCEEDED)
         }
       } else {
+        countOption(answer.id)
         emit("onFinish", GameState.SUCCEEDED)
       }
     } else {

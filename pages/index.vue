@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import {gameComps, getGameContainer, getPreviewTitle} from "~/utils/game";
+import {gameComps, getGameContainer, getPreviewTitle, startGame} from "~/utils/game";
 import {type GameData, GameState} from "~/types/models";
 
 const { data: gameData, pending, error } = await useAsyncData(() => getGameContainer(), { lazy: true })
 const exists = computed(() => gameData.value !== undefined && gameData.value.dayId !== -1)
 const played = computed(() => {
   const games = (gameData.value?.data.length ?? 0) > 0
-  const progress = gameData.value?.data.filter(gd => gd.props.state === GameState.UPCOMING).length === 0
+  const progress = gameData.value?.data
+      .filter(gd => gd.props.state === GameState.UPCOMING || gd.props.state === GameState.PLAYING).length === 0
   return games && progress
 })
 
@@ -20,7 +21,7 @@ function getState(game: GameData): GameState {
   }
 }
 
-function play() {
+async function play() {
   navigateTo('/play')
 }
 </script>

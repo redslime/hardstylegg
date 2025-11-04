@@ -2,6 +2,7 @@ import {defineEventHandler, readBody} from "h3";
 import type {ScheduleDay} from "~/types/models";
 import prisma from "~/lib/prisma";
 import {getDayIdToday} from "~/server/utils/schedule";
+import {GAMES_PER_DAY} from "~/utils/dashboard";
 
 export default defineEventHandler(async (event) => {
     const {user} = await requireUserSession(event)
@@ -14,7 +15,7 @@ export default defineEventHandler(async (event) => {
         })
     }
 
-    if(schedule.day > getDayIdToday()) {
+    if(schedule.day > getDayIdToday() || (schedule.day === getDayIdToday() && schedule.typeIds.length < GAMES_PER_DAY)) {
         // only allow updating future entries
         return await prisma.day_schedule.upsert({
             where: {

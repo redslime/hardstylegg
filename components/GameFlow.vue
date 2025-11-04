@@ -5,7 +5,7 @@ import HeartIcon from "~/components/icons/HeartIcon.vue";
 import Countdown from "~/components/Countdown.vue";
 import {bitsToHex, copyToClipboard} from "~/utils/utils";
 import ResultShareButton from "~/components/ResultShareButton.vue";
-import {gameComps, getPreviewTitle} from "~/utils/game";
+import {gameComps, getPreviewTitle, reportResult, sendReport, startGame, updateState} from "~/utils/game";
 import {type GameContainer, type GameData, GameState} from "~/types/models";
 import {getTracks} from "~/utils/tracks";
 
@@ -24,7 +24,6 @@ const currentIndex = ref(0)
 const currentGameData = computed<GameData>(() => gameData[currentIndex.value]!!)
 const currentGameComp = computed(() => gameComps[currentGameData.value.name as keyof typeof gameComps])
 const currentState = computed<GameState>(() => currentGameData.value.props.state)
-const beginnerNote = ref<boolean>(true)
 const summary = ref<boolean>(false)
 const details = ref<boolean>(false)
 const mounted = ref<boolean>(false)
@@ -41,6 +40,9 @@ const shareCode = computed<string>(() => {
   return dayId.value + ";" + bitsToHex(bits).hex
 })
 
+const currentTypeId = computed<number>(() => currentGameComp.value.id)
+const currentGameId = computed<number>(() => currentGameData.value.props.container.id)
+
 provide("details", details)
 provide("summary", summary)
 provide("currentIndex", currentIndex)
@@ -48,6 +50,13 @@ provide("currentIndex", currentIndex)
 const listener = (state: GameState) => {
   if(state === GameState.SUCCEEDED) {
     confetti()
+    reportResult(rep => {
+      rep.success = true
+    })
+  } else if(state === GameState.FAILED) {
+    reportResult(rep => {
+      rep.success = false
+    })
   }
 
   currentGameData.value.props.state = state
@@ -55,15 +64,23 @@ const listener = (state: GameState) => {
 
 function skip() {
   currentGameData.value.props.state = GameState.FAILED
+
+  reportResult(report => {
+    report.success = false
+  })
 }
 
 function next() {
   if(currentIndex.value+1 >= gameData.length) {
     summary.value = true
     currentIndex.value = 0
+
+    updateState(null, null)
+    sendReport()
   } else {
     currentIndex.value++
     currentGameData.value.props.state = GameState.PLAYING
+    updateState(currentTypeId.value, currentGameId.value)
   }
 }
 
@@ -73,9 +90,12 @@ const copyResult = () => {
 
 onMounted(() => {
   mounted.value = true
+  updateState(currentTypeId.value, currentGameId.value)
 
   void getTracks() // preload tracks
 })
+
+useOnce(() => startGame())
 </script>
 
 <template>
@@ -126,22 +146,7 @@ onMounted(() => {
     </div>
   </div>
 
-  <div class="flex flex-col text-center justify-center items-center w-full" v-if="beginnerNote">
-    <GameTitle>
-      <template #title>
-        Before we begin...
-      </template>
-    </GameTitle>
-    <p>Please note that this is a preview.</p>
-    <p>It contains a fixed set of questions which doesn't represent final difficulty or length.</p>
-    <p>Have fun!</p>
-    <button class="btn btn-lg bg-accent mt-4 text-accent-content" @click="beginnerNote = false">
-      Start
-      <MicroChevronDoubleRightIcon />
-    </button>
-  </div>
-
-  <div class="flex flex-col items-center w-full" id="state-playing" v-show="!beginnerNote">
+  <div class="flex flex-col items-center w-full" id="state-playing">
 
   </div>
 
@@ -155,7 +160,7 @@ onMounted(() => {
       You scored <b>{{ gamesWon }} / {{ gameData.length }}</b> today!
     </div>
     <div>
-      Next daily challenge in <Countdown /> (not really, this game is still in development!)
+      Next daily challenge in <Countdown />
     </div>
     <div class="flex flex-wrap justify-center mt-8 gap-2">
       <ResultShareButton :action="copyResult" />

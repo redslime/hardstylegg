@@ -128,15 +128,29 @@ async function getSchedule(): Promise<Schedule> {
     }
 }
 
+async function getReports(): Promise<{ completed: boolean, successes: number }[]> {
+    return await prisma.report.findMany({
+        where: {
+            dayId: getDayIdToday()
+        },
+        select: {
+            completed: true,
+            successes: true
+        }
+    })
+}
+
 export default defineEventHandler(async (event) => {
     const { user } = await requireUserSession(event)
     const groups = getStructure(user)
     const editors = await getEditors()
     const schedule = await getSchedule()
+    const reports = await getReports()
 
     return <DashboardData>{
         groups,
         editors,
         schedule,
+        reports
     }
 })

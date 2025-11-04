@@ -196,3 +196,25 @@ model day_schedule {
   type_ids String @db.VarChar(32)
   game_ids String @db.VarChar(32)
 }
+
+model report {
+  code        String        @id @db.Char(15)
+  dayId       Int
+  completed   Boolean       @default(dbgenerated("b'0'")) @db.Bit(1)
+  successes   Int           @default(0)
+  report_item report_item[]
+}
+
+model report_item {
+  parent_code     String  @db.Char(15)
+  typeId          Int
+  gameId          Int
+  success         Boolean @default(dbgenerated("b'0'")) @db.Bit(1)
+  attempts        Int?
+  items_completed String? @db.VarChar(128)
+  items_clicked   String? @db.VarChar(32)
+  report          report  @relation(fields: [parent_code], references: [code], onDelete: Cascade, map: "report_item_report_code_fk")
+
+  @@id([parent_code, typeId, gameId])
+  @@index([typeId, gameId], map: "report_item_typeId_gameId_index")
+}

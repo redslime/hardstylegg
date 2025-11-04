@@ -4,6 +4,7 @@ import Pencil from "~/components/icons/game/Pencil.vue";
 import {getLocalArtwork, getSpotifyArtwork} from "~/utils/utils";
 import SpotifyButton from "~/components/SpotifyButton.vue";
 import type {ArtworkContainer} from "~/types/gameModels";
+import {countAttempt} from "~/utils/game";
 
 const emit = defineEmits(['onFinish'])
 const details = inject<boolean>('details')
@@ -28,6 +29,8 @@ const src = computed(() => {
 })
 
 async function validate(selected: ShallowTrack, flashError: () => void, flashSuccess: () => void, clear: () => void) {
+  countAttempt()
+
   if(selected.sid === track.value.sid) {
     flashSuccess()
     emit("onFinish", GameState.SUCCEEDED)

@@ -9,6 +9,7 @@ import {getName} from "~/utils/tracks";
 import SpotifyButton from "~/components/SpotifyButton.vue";
 import type {HeardleContainer} from "~/types/gameModels";
 import ForwardIcon from "~/components/icons/ForwardIcon.vue";
+import {countAttempt} from "~/utils/game";
 
 const emit = defineEmits(['onFinish'])
 const props = defineProps({
@@ -123,6 +124,8 @@ function nextStage() {
 }
 
 function validate(selected: ShallowTrack, flashError: () => void, flashSuccess: () => void, clear: () => void) {
+  countAttempt()
+
   if(selected.sid === track.value.sid) {
     guesses.value[guessStage.value] = {input: getName(selected), correct: true}
     emit('onFinish', GameState.SUCCEEDED)

@@ -13,9 +13,20 @@ const { user } = await useUserSession()
 const dashboard = await getDashboardData()
 const schedule = dashboard.schedule
 const friendly = await getFriendlyName(schedule.todayId, "LLLL d")
+const timesPlayed = dashboard.reports.length
+const completionRate = Math.round((dashboard.reports.filter(r => r.completed).length / timesPlayed) * 100)
+const gameCount = schedule.days.find(d => d.day === schedule.todayId)?.gameIds.length ?? 0
 const tomorrowSchedule = schedule.days.find(d => d.day === schedule.todayId + 1)
 const tomorrowReady = tomorrowSchedule && tomorrowSchedule.gameIds.length > 0
 const daysAhead = schedule.days.filter(d => d.day > schedule.todayId).filter(d => d.gameIds.length > 0).length
+const averageScore = computed(() => {
+  if (gameCount === 0) {
+    return 0
+  }
+  const sum = dashboard.reports.reduce((acc, item) => acc + item.successes, 0)
+  const avg = sum / (gameCount * dashboard.reports.filter(r => r.completed).length)
+  return Math.round(avg * 100) / 100
+})
 
 function getTypeIds(day: number) {
   const daySchedule = schedule.days.find(d => d.day === day)
@@ -50,17 +61,23 @@ function getTypeIds(day: number) {
 
         <div class="flex flex-col p-3 gap-2 items-center">
           <p class="uppercase font-semibold font-sm">Times Played</p>
-          <div class="text-3xl font-bold">14</div>
+          <div class="text-3xl font-bold">{{ timesPlayed }}</div>
         </div>
 
         <div class="flex flex-col p-3 gap-2 items-center">
-          <p class="uppercase font-semibold font-sm">Completion Rate</p>
-          <div class="text-3xl font-bold">75%</div>
+          <p class="font-sm tooltip" :data-tip="'Rate of players finishing all ' + gameCount + ' of today\'s games'">
+            <span class="uppercase font-semibold">Completion Rate </span>
+            <span class="bg-neutral/50 text-neutral-content rounded-full px-1.5">?</span>
+          </p>
+          <div class="text-3xl font-bold">{{ completionRate }}%</div>
         </div>
 
         <div class="flex flex-col p-3 gap-2 items-center">
-          <p class="uppercase font-semibold font-sm">Average Score</p>
-          <div class="text-3xl font-bold">3.4/5</div>
+          <p class="font-sm tooltip" data-tip="Average score of completed games">
+            <span class="uppercase font-semibold">Average Score </span>
+            <span class="bg-neutral/50 text-neutral-content rounded-full px-1.5">?</span>
+          </p>
+          <div class="text-3xl font-bold">{{ averageScore }}/{{ gameCount }}</div>
         </div>
       </div>
     </div>

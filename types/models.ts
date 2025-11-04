@@ -74,6 +74,7 @@ export interface DashboardData {
     groups: DashboardGroup[]
     editors: Editor[]
     schedule: Schedule
+    reports: { completed: boolean, successes: number }[]
 }
 
 export interface DashboardGroup {
@@ -85,4 +86,22 @@ export interface DashboardItem {
     name: string
     icon: string
     url: string
+}
+
+export interface ReportContainer {
+    code: string
+    dayId: number
+    dayFriendly: string
+    successes: number
+    completed: boolean
+    data: GameReport[]
+}
+
+export interface GameReport {
+    typeId: number
+    gameId: number
+    success: boolean
+    attempts?: number
+    itemsCompleted?: Record<number, boolean>
+    itemsClicked?: number[]
 }

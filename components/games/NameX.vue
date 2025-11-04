@@ -2,6 +2,7 @@
 import ListBullet from "~/components/icons/game/ListBullet.vue";
 import {GameState, type ShallowTrack, type Track} from "~/types/models";
 import type {NameXContainer} from "~/types/gameModels";
+import {countAttempt, countItem} from "~/utils/game";
 
 const emit = defineEmits(['onFinish'])
 const props = defineProps({
@@ -14,8 +15,9 @@ const state = computed(() => props.state)
 const finished = computed(() => state.value == GameState.SUCCEEDED || state.value == GameState.FAILED)
 const goal = computed(() => props.container.goal)
 const title = computed(() => props.container.title)
-const items = ref<{track: Track, guessed: boolean}[]>(
-    props.container.items.map(item => ({
+const items = ref<{index: number, track: Track, guessed: boolean}[]>(
+    props.container.items.map((item, index) => ({
+      index,
       track: item,
       guessed: false
     }))
@@ -24,9 +26,11 @@ const guessed = computed(() => items.value.filter(i => i.guessed).length)
 
 function validate(selected: ShallowTrack, flashError: () => void, flashSuccess: () => void, clear: () => void) {
   let success = false;
+  countAttempt()
 
   for(const [_, item] of Object.entries(items.value)) {
     if(selected.sid === item.track.sid) {
+      countItem(item.index, true)
       item.guessed = true;
       success = true;
     }
