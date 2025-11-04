@@ -28,6 +28,9 @@ jobs:
       - name: Build Nuxt
         run: npm run build
 
+      - name: Create .output/engines
+        run: mkdir -p .output/engines
+
       - name: Copy platform specific prisma client
         run: cp generated/prisma/libquery_engine-debian-openssl-1.0.x.so.node .output/engines/
         
