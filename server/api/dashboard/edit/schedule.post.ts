@@ -7,6 +7,7 @@ import {GAMES_PER_DAY} from "~/utils/dashboard";
 export default defineEventHandler(async (event) => {
     const {user} = await requireUserSession(event)
     const schedule = await readBody<ScheduleDay>(event)
+    let editAnyway = false
 
     if(schedule.typeIds.length !== schedule.gameIds.length) {
         return createError({
@@ -15,7 +16,23 @@ export default defineEventHandler(async (event) => {
         })
     }
 
-    if(schedule.day > getDayIdToday() || (schedule.day === getDayIdToday() && schedule.typeIds.length < GAMES_PER_DAY)) {
+    if(schedule.day === getDayIdToday()) {
+        // editing today is allowed if there are not enough games yet
+        const fetched = await prisma.day_schedule.findUnique({
+            where: { day: schedule.day },
+            select: { game_ids: true }
+        })
+
+        if(fetched) {
+            const ids = JSON.parse(fetched.game_ids) as number[]
+
+            if(ids.length < GAMES_PER_DAY) {
+                editAnyway = true
+            }
+        }
+    }
+
+    if(schedule.day > getDayIdToday() || editAnyway) {
         // only allow updating future entries
         return await prisma.day_schedule.upsert({
             where: {
