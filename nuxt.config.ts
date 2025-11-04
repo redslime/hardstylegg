@@ -43,16 +43,7 @@ export default defineNuxtConfig({
       replace: {
           'import * as process': 'import * as processUnused',
       },
-      publicAssets: [
-          {
-              dir: "/home/hardstylegg/.output/public/artwork",
-              baseURL: "/artwork"
-          },
-          {
-              dir: "/home/hardstylegg/.output/public/heardle",
-              baseURL: "/heardle"
-          }
-      ]
+      serveStatic: 'node'
   },
 
   modules: ['nuxt-auth-utils'],
