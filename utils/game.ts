@@ -185,3 +185,15 @@ export function getCookieMemory(): CookieDayMemory | undefined {
         data: report.data.map(d => d.success)
     }
 }
+
+export function hasPlayedToday(cookie: CookieDayMemory[] | undefined, todayId: number | undefined): boolean {
+    if(cookie) {
+        const today = cookie.find(d => d.day === todayId)
+
+        if(today) {
+            return true
+        }
+    }
+
+    return false
+}

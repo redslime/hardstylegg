@@ -8,7 +8,7 @@ import ResultShareButton from "~/components/ResultShareButton.vue";
 import {
   gameComps,
   getCookieMemory,
-  getPreviewTitle,
+  getPreviewTitle, hasPlayedToday,
   reportResult,
   sendReport,
   startGame,
@@ -48,6 +48,7 @@ const shareCode = computed<string>(() => {
   const bits: string = gameData.map(gd => gd.props.state === GameState.SUCCEEDED ? "1" : "0").join("")
   return dayId.value + ";" + bitsToHex(bits).hex
 })
+const played = computed(() => hasPlayedToday(props.cookie, dayId.value))
 
 const currentTypeId = computed<number>(() => currentGameComp.value.id)
 const currentGameId = computed<number>(() => currentGameData.value.props.container.id)
@@ -105,10 +106,14 @@ const copyResult = () => {
 }
 
 onMounted(() => {
-  mounted.value = true
-  updateState(currentTypeId.value, currentGameId.value)
+  if(played.value) {
+    navigateTo("/")
+  } else {
+    mounted.value = true
+    updateState(currentTypeId.value, currentGameId.value)
 
-  void getTracks() // preload tracks
+    void getTracks() // preload tracks
+  }
 })
 
 useOnce(() => startGame())

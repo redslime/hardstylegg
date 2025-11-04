@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {gameComps, getGameContainer, getPreviewTitle} from "~/utils/game";
+import {gameComps, getGameContainer, getPreviewTitle, hasPlayedToday} from "~/utils/game";
 import {type CookieDayMemory, GameState} from "~/types/models";
 import {getTracks} from "~/utils/tracks";
 import {refreshCookie} from "#app";
@@ -11,18 +11,7 @@ const cookie = useCookie<CookieDayMemory[]>("memory", {
   default: () => []
 })
 const exists = computed(() => gameData.value !== undefined && gameData.value.dayId !== -1)
-const played = computed(() => {
-
-  if(cookie.value) {
-    const today = cookie.value.find(d => d.day === gameData.value?.dayId)
-
-    if(today) {
-      return true
-    }
-  }
-
-  return false
-})
+const played = computed(() => hasPlayedToday(cookie.value, gameData.value?.dayId))
 const dataToday = computed(() => cookie.value?.find(d => d.day === gameData.value?.dayId)?.data)
 
 function getState(index: number): GameState {
