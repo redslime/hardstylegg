@@ -45,16 +45,12 @@ export default defineNuxtConfig({
       },
       publicAssets: [
           {
-              baseURL: '/artwork/',
-              dir: './artwork/'
+              dir: 'public/artwork',
+              baseURL: '/artwork'
           },
           {
-              baseURL: '/artwork1/',
-              dir: '../artwork/'
-          },
-          {
-              baseURL: '/artwork2',
-              dir: '/home/hardstylegg/artwork'
+              dir: 'public/heardle',
+              baseURL: '/heardle'
           }
       ]
   },
