@@ -36,6 +36,7 @@ const click = (answer: QuizAnswer) => {
         emit("onFinish", GameState.SUCCEEDED)
       }
     } else {
+      countOption(answer.id)
       emit("onFinish", GameState.FAILED)
     }
   }

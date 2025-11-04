@@ -1,29 +1,46 @@
 <script setup lang="ts">
-import {gameComps, getGameContainer, getPreviewTitle, startGame} from "~/utils/game";
-import {type GameData, GameState} from "~/types/models";
+import {gameComps, getGameContainer, getPreviewTitle} from "~/utils/game";
+import {type CookieDayMemory, GameState} from "~/types/models";
+import {getTracks} from "~/utils/tracks";
+import {refreshCookie} from "#app";
 
 const { data: gameData, pending, error } = await useAsyncData(() => getGameContainer(), { lazy: true })
+const cookie = useCookie<CookieDayMemory[]>("memory", {
+  maxAge: 60 * 60 * 24 * 365,
+  sameSite: "strict",
+  default: () => []
+})
 const exists = computed(() => gameData.value !== undefined && gameData.value.dayId !== -1)
 const played = computed(() => {
-  const games = (gameData.value?.data.length ?? 0) > 0
-  const progress = gameData.value?.data
-      .filter(gd => gd.props.state === GameState.UPCOMING || gd.props.state === GameState.PLAYING).length === 0
-  return games && progress
+
+  if(cookie.value) {
+    const today = cookie.value.find(d => d.day === gameData.value?.dayId)
+
+    if(today) {
+      return true
+    }
+  }
+
+  return false
 })
+const dataToday = computed(() => cookie.value?.find(d => d.day === gameData.value?.dayId)?.data)
 
-// todo also feed played and state from cookie data, not just cached components
-
-function getState(game: GameData): GameState {
-  if(!played.value) {
+function getState(index: number): GameState {
+  if(dataToday.value === undefined) {
     return GameState.UPCOMING
   } else {
-    return game.props.state
+    return dataToday.value[index] ? GameState.SUCCEEDED : GameState.FAILED
   }
 }
 
 async function play() {
   navigateTo('/play')
 }
+
+onMounted(() => {
+  void getTracks() // preload tracks
+  refreshCookie("memory")
+})
 </script>
 
 <template>
@@ -41,12 +58,12 @@ async function play() {
         <div class="flex justify-center flex-wrap gap-2 mb-3">
           <div v-for="(game, index) in gameData.data" :key="index" class="p-3 rounded-md tooltip" :data-tip="getPreviewTitle(game)"
                :class="{
-          'bg-base-100': getState(game) === GameState.UPCOMING,
-          'bg-primary text-primary-content': getState(game) === GameState.PLAYING,
-          'bg-success': getState(game) === GameState.SUCCEEDED,
-          'bg-error': getState(game) === GameState.FAILED,
-        }">
-            <component :is="gameComps[game.name as keyof typeof gameComps].icon" :state="getState(game)" />
+            'bg-base-100': getState(index) === GameState.UPCOMING,
+            'bg-primary text-primary-content': getState(index) === GameState.PLAYING,
+            'bg-success': getState(index) === GameState.SUCCEEDED,
+            'bg-error': getState(index) === GameState.FAILED,
+          }">
+            <component :is="gameComps[game.name as keyof typeof gameComps].icon" :state="getState(index)" />
           </div>
         </div>
         <button class="btn btn-primary btn-xl" v-if="!played" @click="play">Play</button>

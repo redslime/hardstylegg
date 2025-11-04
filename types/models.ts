@@ -105,3 +105,8 @@ export interface GameReport {
     itemsCompleted?: Record<number, boolean>
     itemsClicked?: number[]
 }
+
+export interface CookieDayMemory {
+    day: number
+    data: boolean[]
+}

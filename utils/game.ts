@@ -7,6 +7,7 @@ import ArrowsRightLeft from "~/components/icons/game/ArrowsRightLeft.vue";
 import CheckCircle from "~/components/icons/game/CheckCircle.vue";
 import Calendar from "~/components/icons/game/Calendar.vue";
 import {
+    type CookieDayMemory,
     type GameContainer,
     type GameData,
     type GameReport,
@@ -174,4 +175,13 @@ export function sendReport() {
         method: "POST",
         body: report
     }).catch(err => console.error("Failed to send report", err))
+}
+
+export function getCookieMemory(): CookieDayMemory | undefined {
+    if(report === null) return undefined
+
+    return {
+        day: report.dayId,
+        data: report.data.map(d => d.success)
+    }
 }

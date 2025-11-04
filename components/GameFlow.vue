@@ -5,8 +5,16 @@ import HeartIcon from "~/components/icons/HeartIcon.vue";
 import Countdown from "~/components/Countdown.vue";
 import {bitsToHex, copyToClipboard} from "~/utils/utils";
 import ResultShareButton from "~/components/ResultShareButton.vue";
-import {gameComps, getPreviewTitle, reportResult, sendReport, startGame, updateState} from "~/utils/game";
-import {type GameContainer, type GameData, GameState} from "~/types/models";
+import {
+  gameComps,
+  getCookieMemory,
+  getPreviewTitle,
+  reportResult,
+  sendReport,
+  startGame,
+  updateState
+} from "~/utils/game";
+import {type CookieDayMemory, type GameContainer, type GameData, GameState} from "~/types/models";
 import {getTracks} from "~/utils/tracks";
 
 useHead({
@@ -17,6 +25,7 @@ useHead({
 
 const props = defineProps({
   gameData: { type: Object as PropType<GameContainer>, required: true },
+  cookie: { type: Object as PropType<CookieDayMemory[]>, required: true }
 })
 const dayId = ref<number>(props.gameData.dayId)
 const gameData = reactive<GameData[]>(props.gameData.data)
@@ -77,6 +86,13 @@ function next() {
 
     updateState(null, null)
     sendReport()
+
+    const data = getCookieMemory()
+
+    if(data) {
+      console.log("pushing data into cookie: ", data)
+      props.cookie.push(data)
+    }
   } else {
     currentIndex.value++
     currentGameData.value.props.state = GameState.PLAYING

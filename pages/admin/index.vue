@@ -20,11 +20,13 @@ const tomorrowSchedule = schedule.days.find(d => d.day === schedule.todayId + 1)
 const tomorrowReady = tomorrowSchedule && tomorrowSchedule.gameIds.length > 0
 const daysAhead = schedule.days.filter(d => d.day > schedule.todayId).filter(d => d.gameIds.length > 0).length
 const averageScore = computed(() => {
-  if (gameCount === 0) {
+  if (gameCount === 0 || dashboard.reports.length === 0 || dashboard.reports.filter(r => r.completed).length === 0) {
     return 0
   }
-  const sum = dashboard.reports.reduce((acc, item) => acc + item.successes, 0)
-  const avg = sum / (gameCount * dashboard.reports.filter(r => r.completed).length)
+
+  const completed = dashboard.reports.filter(r => r.completed)
+  const sum = completed.reduce((acc, item) => acc + item.successes, 0)
+  const avg = sum / completed.length
   return Math.round(avg * 100) / 100
 })
 
@@ -64,7 +66,7 @@ function getTypeIds(day: number) {
           <div class="text-3xl font-bold">{{ timesPlayed }}</div>
         </div>
 
-        <div class="flex flex-col p-3 gap-2 items-center">
+        <div class="flex flex-col p-3 gap-2 items-center" v-if="timesPlayed > 0">
           <p class="font-sm tooltip" :data-tip="'Rate of players finishing all ' + gameCount + ' of today\'s games'">
             <span class="uppercase font-semibold">Completion Rate </span>
             <span class="bg-neutral/50 text-neutral-content rounded-full px-1.5">?</span>
@@ -72,7 +74,7 @@ function getTypeIds(day: number) {
           <div class="text-3xl font-bold">{{ completionRate }}%</div>
         </div>
 
-        <div class="flex flex-col p-3 gap-2 items-center">
+        <div class="flex flex-col p-3 gap-2 items-center" v-if="timesPlayed > 0">
           <p class="font-sm tooltip" data-tip="Average score of completed games">
             <span class="uppercase font-semibold">Average Score </span>
             <span class="bg-neutral/50 text-neutral-content rounded-full px-1.5">?</span>
