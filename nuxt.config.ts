@@ -43,6 +43,16 @@ export default defineNuxtConfig({
       replace: {
           'import * as process': 'import * as processUnused',
       },
+      publicAssets: [
+          {
+              dir: "public/artwork",
+              baseURL: "/artwork"
+          },
+          {
+              dir: "public/heardle",
+              baseURL: "/heardle"
+          }
+      ]
   },
 
   modules: ['nuxt-auth-utils'],
