@@ -16,6 +16,10 @@ definePageMeta({
 const dayId: number = parseInt(useRoute().params.dayId?.toString()!!)
 const friendly = await getFriendlyName(dayId, 'LLLL d')
 const { data: packedGameData, pending, error, clear } = await useAsyncData<PackedDayData>(dayId + "", () => $fetch("/api/day/" + dayId), { lazy: true })
+const editable = computed(() => {
+  return packedGameData.value &&
+      (dayId > packedGameData.value.dayId || (dayId === packedGameData.value.dayId && packedGameData.value.typeIds.length < GAMES_PER_DAY))
+})
 const games = ref<ScheduleEntry[]>([])
 const selectorModal = ref<HTMLDialogElement | null>(null)
 const selectingIndex = ref<number | undefined>(undefined)
@@ -125,7 +129,7 @@ watchOnce(packedGameData, (data) => {
         <div class="relative group w-fit" v-if="game.typeId">
           <DashboardGamePreview :typeId="game.typeId!!" :instance="game.gameData" />
 
-          <div class="absolute z-10 inset-0 backdrop-blur-sm rounded-lg bg-black/50 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div v-if="editable" class="absolute z-10 inset-0 backdrop-blur-sm rounded-lg bg-black/50 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <button class="btn btn-secondary btn-outline" @click="clearSlot(index)">
               <NoSymbolIcon />
               Clear
@@ -138,7 +142,7 @@ watchOnce(packedGameData, (data) => {
         </div>
 
         <template v-else>
-          <div class="mt-2">
+          <div class="mt-2" v-if="editable">
             <!-- change popover-1 and --anchor-1 names. Use unique names for each dropdown -->
             <button class="btn btn-primary btn-soft" :popovertarget="'popover-' + index" :style="'anchor-name:--anchor-' + index">
               <PlusIcon /> Add
@@ -165,7 +169,7 @@ watchOnce(packedGameData, (data) => {
     <button class="btn btn-soft btn-lg mr-2" @click="cancel()">
       Cancel
     </button>
-    <button class="btn btn-success btn-soft btn-lg" v-if="packedGameData && !saving" @click="save()">
+    <button class="btn btn-success btn-soft btn-lg" v-if="packedGameData && !saving && editable" @click="save()">
       Save
     </button>
     <button class="btn btn-sucess btn-soft btn-lg" disabled v-else-if="saving">

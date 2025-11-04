@@ -27,8 +27,13 @@ const isUpcoming = computed(() => day.day > schedule.todayId);
       </div>
     </div>
     <div class="flex flex-row gap-3" v-if="isUpcoming || (isToday && !isReady)" >
-      <button class="btn btn-primary btn-soft"@click="navigateTo('/admin/schedule/' + day.day)">
+      <button class="btn btn-primary btn-soft" @click="navigateTo('/admin/schedule/' + day.day)">
         Edit
+      </button>
+    </div>
+    <div class="flex flex-row gap-3" v-else>
+      <button class="btn btn-primary btn-soft" @click="navigateTo('/admin/schedule/' + day.day)">
+        View
       </button>
     </div>
   </div>
