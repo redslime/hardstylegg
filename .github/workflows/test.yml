@@ -29,7 +29,7 @@ jobs:
         run: npm run build
 
       - name: Copy platform specific prisma client
-        run: cp generated/prisma/libquery_engine-debian-openssl-1.0.x.so.node .output/server/node_modules/.prisma
+        run: cp generated/prisma/libquery_engine-debian-openssl-1.0.x.so.node .output/engines/
         
       - name: Archive build
         run: zip -r output.zip .output
