@@ -3,7 +3,7 @@ import prisma from "~/lib/prisma";
 import {getGameInstance} from "~/server/utils/games";
 import type {PackedDayData} from "~/types/models";
 
-const BASE_DATE = DateTime.fromISO('2025-11-03', { zone: 'Europe/Berlin' });
+const BASE_DATE = DateTime.fromISO('2025-11-04', { zone: 'Europe/Berlin' });
 
 let lastKnownDayId: number | null = null;
 let packedCache: PackedDayData | null = null

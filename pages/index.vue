@@ -4,6 +4,10 @@ import {type CookieDayMemory, GameState} from "~/types/models";
 import {getTracks} from "~/utils/tracks";
 import {refreshCookie} from "#app";
 
+definePageMeta({
+  layout: 'hero'
+})
+
 const { data: gameData, pending, error } = await useAsyncData(() => getGameContainer(), { lazy: true })
 const cookie = useCookie<CookieDayMemory[]>("memory", {
   maxAge: 60 * 60 * 24 * 365,
@@ -33,10 +37,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="hero bg-base-300">
+  <div class="hero bg-base-300 rounded-lg">
     <div class="hero-content flex flex-col text-center">
       <div class="max-w-md">
-        <h1 class="text-5xl font-bold">Daily challenge</h1>
+        <h1 class="text-3xl md:text-5xl font-bold">Daily challenge</h1>
         <h4 class="text-xl mt-2" v-if="gameData">{{ gameData.dayFriendly }}</h4>
       </div>
 

@@ -102,6 +102,10 @@ function getTypeIds(day: number) {
             </div>
           </div>
         </div>
+
+        <button class="btn btn-primary mt-2 btn-outline btn-sm" v-if="user.admin && !tomorrowReady" @click="navigateTo('/admin/schedule/' + (schedule.todayId + 1))">
+          Edit now
+        </button>
       </div>
 
       <div class="bg-base-200 p-7 rounded-md">

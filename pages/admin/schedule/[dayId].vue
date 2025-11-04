@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import CalendarDaysIcon from "~/components/icons/CalendarDaysIcon.vue";
-import {GAMES_PER_DAY, getFriendlyName, updateScheduleDay} from "~/utils/dashboard";
+import {GAMES_PER_DAY, getDashboardData, getFriendlyName, updateScheduleDay} from "~/utils/dashboard";
 import {gameComps, getGameName} from "~/utils/game";
 import {GameState, type PackedDayData, type ScheduleDay, type ScheduleEntry} from "~/types/models";
 import NoSymbolIcon from "~/components/icons/NoSymbolIcon.vue";
@@ -13,12 +13,14 @@ definePageMeta({
   middleware: ['authenticated-admin'],
 })
 
+const dashboardData = await getDashboardData()
+const todayId = dashboardData.schedule.todayId
 const dayId: number = parseInt(useRoute().params.dayId?.toString()!!)
 const friendly = await getFriendlyName(dayId, 'LLLL d')
 const { data: packedGameData, pending, error, clear } = await useAsyncData<PackedDayData>(dayId + "", () => $fetch("/api/day/" + dayId), { lazy: true })
 const editable = computed(() => {
   return packedGameData.value &&
-      (dayId > packedGameData.value.dayId || (dayId === packedGameData.value.dayId && packedGameData.value.typeIds.length < GAMES_PER_DAY))
+      (dayId > todayId || (dayId === todayId && packedGameData.value.typeIds.length < GAMES_PER_DAY))
 })
 const games = ref<ScheduleEntry[]>([])
 const selectorModal = ref<HTMLDialogElement | null>(null)
@@ -81,6 +83,11 @@ async function save() {
 
 function cancel() {
   navigateTo('/admin/schedule')
+}
+
+function modalClosed() {
+  selectingIndex.value = undefined
+  selectType.value = undefined
 }
 
 watchOnce(packedGameData, (data) => {
@@ -177,7 +184,7 @@ watchOnce(packedGameData, (data) => {
     </button>
   </div>
 
-  <dialog ref="selectorModal" id="selectorModal" class="modal" v-if="selectType">
+  <dialog ref="selectorModal" id="selectorModal" class="modal" v-if="selectType" @close="modalClosed()">
     <div class="modal-box max-w-[600px] overflow-x-hidden">
       <DashboardSelectGame :typeId="selectType" @select="ins => selected(ins.typeId!!, ins.data!!)" />
       <div class="modal-action">

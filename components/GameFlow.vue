@@ -174,7 +174,7 @@ useOnce(() => startGame())
   <div class="bg-base-100 w-full md:w-2/3 p-5 rounded-md text-center" v-if="summary">
     <div class="flex items-center justify-center gap-2 mb-8">
       <HeartIcon class="text-primary" />
-      <div class="text-4xl font-bold">Thanks for playing!</div>
+      <div class="text-3xl md:text-4xl font-bold">Thanks for playing!</div>
     </div>
 
     <div>
