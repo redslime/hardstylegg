@@ -45,11 +45,11 @@ export default defineNuxtConfig({
       },
       publicAssets: [
           {
-              dir: "public/artwork",
+              dir: process.env.PUBLIC_PATH + "/artwork",
               baseURL: "/artwork"
           },
           {
-              dir: "public/heardle",
+              dir: process.env.PUBLIC_PATH + "/heardle",
               baseURL: "/heardle"
           }
       ]
