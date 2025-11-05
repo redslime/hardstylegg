@@ -44,34 +44,11 @@ export default defineNuxtConfig({
       replace: {
           'import * as process': 'import * as processUnused',
       },
+      static: true,
       publicAssets: [
-          {
-              dir:     resolve(__dirname, '/data/artwork'),
-              baseURL: '/artwork1',
-          },
-          {
-              dir:     resolve(__dirname, '../data/artwork'),
-              baseURL: '/artwork2',
-          },
-          {
-              dir:    '../data/artwork',
-              baseURL: '/artwork3',
-          },
-          {
-              dir:    'data/artwork',
-              baseURL: '/artwork4',
-          },
-          {
-              dir:    resolve('data/artwork'),
-              baseURL: '/artwork7',
-          },
           {
               dir:    resolve('./data/artwork'),
               baseURL: '/artwork8',
-          },
-          {
-              dir:    resolve('../data/artwork'),
-              baseURL: '/artwork9',
           },
       ]
   },
