@@ -7,6 +7,7 @@ import type {HeardleContainer} from "~/types/gameModels";
 const { container } = defineProps({
   container: { type: Object as PropType<HeardleContainer>, required: true }
 })
+const config = useRuntimeConfig()
 const containerRef = ref<HTMLElement | null>(null)
 
 const options = ref({
@@ -18,7 +19,7 @@ const options = ref({
   barGap: 1,
   barWidth: 2,
   barRadius: 1,
-  url: 'http://localhost:3000/heardle/' + container.src + ".mp3",
+  url: config.public.appUrl + '/heardle/' + container.src + ".mp3",
 })
 
 // Using core functionality - returns waveSurfer instance and all state

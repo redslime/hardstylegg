@@ -6,6 +6,7 @@ import {onMounted, ref} from "vue";
 import Grid from "vue-virtual-scroll-grid"
 import {getDashboardAlbums, getDashboardTracks} from "~/utils/dashboard";
 import {getName} from "~/utils/tracks";
+import {watchOnce} from "@vueuse/shared";
 
 const { albums, title, disabled } = defineProps({
   albums: { type: Boolean, default: false },
@@ -135,7 +136,7 @@ const computedPageProvider = computed(() => {
   }
 })
 
-onMounted(() => {
+watchOnce(allOptions, () => {
   fuse = new Fuse(allOptions.value!!, {
     includeScore: true,
     includeMatches: true,

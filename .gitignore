@@ -28,3 +28,4 @@ logs
 # Public artwork and heardle files
 /public/heardle/
 /public/artwork/
+/data/
