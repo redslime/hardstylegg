@@ -31,8 +31,11 @@ async function play() {
 }
 
 onMounted(() => {
-  void getTracks() // preload tracks
   refreshCookie("memory")
+})
+
+useOnce(() => {
+  getTracks().then(() => {})
 })
 </script>
 

@@ -111,12 +111,13 @@ onMounted(() => {
   } else {
     mounted.value = true
     updateState(currentTypeId.value, currentGameId.value)
-
-    void getTracks() // preload tracks
   }
 })
 
-useOnce(() => startGame())
+useOnce(() => {
+  getTracks().then(() => {}) // preload tracks
+  startGame()
+})
 </script>
 
 <template>
