@@ -5,8 +5,8 @@ import {getFriendlyName, getTypeIdsForDay} from "~/server/utils/schedule";
 import {readFileSync} from "node:fs";
 import {join} from "pathe";
 
-const interRegular = readFileSync(join(process.cwd(), 'public', 'fonts', 'Regular.ttf'))
-const interBold = readFileSync(join(process.cwd(), 'public', 'fonts', 'Bold.ttf'))
+const interRegular = readFileSync(join(process.cwd(), '.output', 'public', 'fonts', 'Regular.ttf'))
+const interBold = readFileSync(join(process.cwd(), '.output', 'public', 'fonts', 'Bold.ttf'))
 
 function hexToBits(hex: string, length: number): string {
     const bits = parseInt(hex, 16).toString(2).padStart(length, "0");
