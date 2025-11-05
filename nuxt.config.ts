@@ -46,44 +46,32 @@ export default defineNuxtConfig({
       },
       publicAssets: [
           {
-              dir:     resolve(__dirname, '/public/artwork'),
+              dir:     resolve(__dirname, '/data/artwork'),
               baseURL: '/artwork1',
           },
           {
-              dir:     resolve(__dirname, '../public/artwork'),
+              dir:     resolve(__dirname, '../data/artwork'),
               baseURL: '/artwork2',
           },
           {
-              dir:    '../public/artwork',
+              dir:    '../data/artwork',
               baseURL: '/artwork3',
           },
           {
-              dir:    'public/artwork',
+              dir:    'data/artwork',
               baseURL: '/artwork4',
           },
           {
-              dir:    'server/public/artwork',
-              baseURL: '/artwork5',
-          },
-          {
-              dir:    '.output/server/public/artwork',
-              baseURL: '/artwork6',
-          },
-          {
-              dir:    resolve('public/artwork'),
+              dir:    resolve('data/artwork'),
               baseURL: '/artwork7',
           },
           {
-              dir:    resolve('./public/artwork'),
+              dir:    resolve('./data/artwork'),
               baseURL: '/artwork8',
           },
           {
-              dir:    resolve('../public/artwork'),
+              dir:    resolve('../data/artwork'),
               baseURL: '/artwork9',
-          },
-          {
-              dir:     '../public/heardle',
-              baseURL: '/heardle3',
           },
       ]
   },
