@@ -28,7 +28,7 @@ export default defineEventHandler(async (event) => {
 
     // generate random uuid file name
     const fileName = crypto.randomUUID()
-    const uploadPath = join(process.cwd(), 'public', 'heardle', fileName + '.mp3')
+    const uploadPath = join(process.cwd(), 'data', 'heardle', fileName + '.mp3')
 
     await writeFile(uploadPath, file.data)
     console.log("User " + user.name + " uploaded file " + fileName + ".mp3 for Heardle")

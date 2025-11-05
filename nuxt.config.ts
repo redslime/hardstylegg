@@ -1,5 +1,4 @@
 import tailwindcss from "@tailwindcss/vite";
-import {resolve} from "pathe";
 
 export default defineNuxtConfig({
   compatibilityDate: '2025-05-15',
@@ -44,13 +43,6 @@ export default defineNuxtConfig({
       replace: {
           'import * as process': 'import * as processUnused',
       },
-      static: true,
-      publicAssets: [
-          {
-              dir:    resolve('./data/artwork'),
-              baseURL: '/artwork8',
-          },
-      ]
   },
 
   modules: ['nuxt-auth-utils'],

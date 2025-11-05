@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
                     }
                 })
 
-                const imgPath = join(process.cwd(), 'public', 'artwork', deleted.artwork_blank + '.png')
+                const imgPath = join(process.cwd(), 'data', 'artwork', deleted.artwork_blank + '.png')
                 await unlink(imgPath)
                 return deleted
             }
@@ -43,7 +43,7 @@ export default defineEventHandler(async (event) => {
                     }
                 })
 
-                const mp3Path = join(process.cwd(), 'public', 'heardle', deleted.src + '.mp3')
+                const mp3Path = join(process.cwd(), 'data', 'heardle', deleted.src + '.mp3')
                 await unlink(mp3Path)
                 return deleted
             }
