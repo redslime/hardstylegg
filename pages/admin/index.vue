@@ -120,5 +120,24 @@ function getTypeIds(day: number) {
         </button>
       </div>
     </div>
+
+    <div class="flex gap-5">
+      <div class="bg-secondary/30 p-7 rounded-md">
+        <h1 class="text-2xl font-bold mb-5 text-center">Welcome, {{ user.name }}</h1>
+
+        <p>This is the dashboard with some fun overview stats.</p>
+        <p>On the left handside you can navigate to different game dashboards,</p>
+        <p>from where you can create new games and edit your own.</p>
+        <p>An admin (redje) can then schedule your creation for an upcoming</p>
+        <p>challenge, which is also visible on the preview for your information.</p>
+        <p>Once a game is scheduled, it can no longer be edited or deleted.</p>
+        <br>
+        <p>Much of this dashboard is still pretty barebones and sometimes buggy,</p>
+        <p>if you run into any issues please first try reloading the page once,</p>
+        <p>otherwise just let me know, of course.</p>
+        <br>
+        <p>Oh yeah and this is probably pretty atrocious to use on mobile lmao</p>
+      </div>
+    </div>
   </div>
 </template>

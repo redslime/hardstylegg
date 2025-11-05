@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import CircleStackIcon from "~/components/icons/CircleStackIcon.vue";
 import {getDashboardTracks} from "~/utils/dashboard";
+import TrackPicker from "~/components/dashboard/TrackPicker.vue";
 
 definePageMeta({
   layout: 'dashboard',
@@ -23,7 +24,8 @@ const { data: tracks, pending, error } = await useAsyncData(() => getDashboardTr
   </div>
 
   <div class="w-full" v-if="tracks">
-
+    hi, this is kinda scuffed at the moment but you can click this button:
+    <TrackPicker /> and <TrackPicker :albums="true" />
   </div>
 </template>
 

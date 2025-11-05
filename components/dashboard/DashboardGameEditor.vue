@@ -2,6 +2,7 @@
 
 import {deepCopy} from "~/utils/utils";
 import DashboardGameDeleteButton from "~/components/dashboard/DashboardGameDeleteButton.vue";
+import type {ScheduleDay} from "~/types/models";
 
 const instances = defineModel<T[] | undefined>('instances', {
   required: true,
@@ -73,6 +74,15 @@ function onDelete(container: T) {
   instances.value?.splice(0, instances.value.length, ...instances.value?.filter(i => i.id !== container.id))
   editing.value = undefined
 }
+
+function tryEdit(instance: T) {
+  const scheduleData = computed<ScheduleDay | undefined>(() => getScheduleForGame(typeId, instance.id))
+  const editable = user.admin || !scheduleData || !scheduleData.value
+
+  if(editable) {
+    editing.value = deepCopy(instance)
+  }
+}
 </script>
 
 <template>
@@ -95,11 +105,9 @@ function onDelete(container: T) {
 
   <div class="flex flex-wrap gap-3" v-if="editing === undefined && instances">
     <template v-for="instance in instances" :key="instance.id">
-<!--      <DashboardGamePreviewHeader :typeId="typeId" :container="instance" :title="title(instance)" @clicked="editing = deepCopy(instance)">-->
-        <slot name="previewBody" :instance="instance" :clicked="() => editing = deepCopy(instance)">
+      <slot name="previewBody" :instance="instance" :clicked="() => tryEdit(instance)">
 
-        </slot>
-<!--      </DashboardGamePreviewHeader>-->
+      </slot>
     </template>
   </div>
 

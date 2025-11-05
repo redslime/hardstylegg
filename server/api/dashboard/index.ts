@@ -29,13 +29,11 @@ function getStructure(user: User): DashboardGroup[] {
             url: "/admin/tracks"
         })
 
-        if(user.admin) {
-            overviewItems.push({
-                name: "Editors",
-                icon: "UsersIcon",
-                url: "/admin/editors"
-            })
-        }
+        overviewItems.push({
+            name: "Editors",
+            icon: "UsersIcon",
+            url: "/admin/editors"
+        })
         
         const gameItems = []
 

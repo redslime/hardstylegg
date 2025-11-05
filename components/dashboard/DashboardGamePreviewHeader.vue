@@ -10,8 +10,10 @@ const { typeId, container, title, pointer } = defineProps({
   pointer: { type: Boolean, default: true }
 })
 
+const { user } = useUserSession()
 const dashboardData = await getDashboardData()
 const scheduleData = computed<ScheduleDay | undefined>(() => getScheduleForGame(typeId, container.id))
+const editable = user.admin || !scheduleData || !scheduleData.value
 const editor = computed(() => dashboardData.editors.find(e => e.id === container.created_by))
 
 function click() {
@@ -22,7 +24,7 @@ function click() {
 </script>
 
 <template>
-  <div class="bg-base-200 p-3 max-w-[600px] rounded-lg" :class="{'cursor-pointer': pointer}" @click="click()">
+  <div class="bg-base-200 p-3 max-w-[600px] rounded-lg" :class="{'cursor-pointer': pointer && editable}" @click="click()">
     <div class="text-2xl font-bold">{{ title }}</div>
     <div class="flex flex-wrap gap-1 mb-4">
       <div class="badge badge-success badge-soft badge-xs font-mono" v-if="scheduleData">Scheduled: {{ scheduleData.dayFriendly }}</div>

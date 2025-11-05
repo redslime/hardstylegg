@@ -17,7 +17,7 @@ const emit = defineEmits(['selected'])
 const mode = albums ? "album" : "track"
 const modal = ref<HTMLDialogElement | null>();
 const query = ref<string>("");
-const { data: allOptions, pending, error } = await useAsyncData(() => (mode === "album" ? getDashboardAlbums() : getDashboardTracks()), { lazy: true })
+const { data: allOptions, pending, error } = await useAsyncData(mode, () => (mode === "album" ? getDashboardAlbums() : getDashboardTracks()), { lazy: true })
 
 function select(result: SearchResult) {
   modal.value?.close()

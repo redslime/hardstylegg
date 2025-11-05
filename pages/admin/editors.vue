@@ -4,7 +4,7 @@ import {getDashboardData} from "~/utils/dashboard";
 
 definePageMeta({
   layout: 'dashboard',
-  middleware: ['authenticated-admin'],
+  middleware: ['authenticated'],
 })
 
 const dashboardData = await getDashboardData()
