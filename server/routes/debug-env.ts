@@ -1,6 +1,9 @@
+
 export default defineEventHandler((event) => {
+    const env = process.env
+    const runtimeConfig = useRuntimeConfig()
+
     return {
-        env: process.env,
-        runtimeConfig: useRuntimeConfig()
+        env, runtimeConfig
     }
 })

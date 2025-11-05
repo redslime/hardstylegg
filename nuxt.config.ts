@@ -48,10 +48,10 @@ export default defineNuxtConfig({
   modules: ['nuxt-auth-utils'],
 
   runtimeConfig: {
-      discordClientSecret: process.env.NUXT_OAUTH_DISCORD_CLIENT_SECRET,
+      discordClientSecret: process.env.NUXT_DISCORD_CLIENT_SECRET,
       public: {
           appUrl: process.env.NUXT_PUBLIC_APP_URL,
-          discordClientId: process.env.NUXT_PUBLIC_OAUTH_DISCORD_CLIENT_ID
+          discordClientId: process.env.NUXT_PUBLIC_DISCORD_CLIENT_ID
       }
   }
 })
