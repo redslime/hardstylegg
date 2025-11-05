@@ -62,6 +62,14 @@ export default defineNuxtConfig({
               baseURL: '/artwork4',
           },
           {
+              dir:    'server/public/artwork',
+              baseURL: '/artwork5',
+          },
+          {
+              dir:    '.output/server/public/artwork',
+              baseURL: '/artwork6',
+          },
+          {
               dir:     '../public/heardle',
               baseURL: '/heardle3',
           },
