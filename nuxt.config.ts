@@ -50,8 +50,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
       discordClientSecret: process.env.NUXT_OAUTH_DISCORD_CLIENT_SECRET,
       public: {
-          appUrl: process.env.APP_URL,
-          discordClientId: process.env.NUXT_OAUTH_DISCORD_CLIENT_ID
+          appUrl: process.env.NUXT_PUBLIC_APP_URL,
+          discordClientId: process.env.NUXT_PUBLIC_OAUTH_DISCORD_CLIENT_ID
       }
   }
 })
