@@ -77,7 +77,7 @@ function onDelete(container: T) {
 
 function tryEdit(instance: T) {
   const scheduleData = computed<ScheduleDay | undefined>(() => getScheduleForGame(typeId, instance.id))
-  const editable = user.admin || !scheduleData || !scheduleData.value
+  const editable = user.value.admin || !scheduleData || !scheduleData.value
 
   if(editable) {
     editing.value = deepCopy(instance)

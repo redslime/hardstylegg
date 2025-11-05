@@ -121,7 +121,7 @@ function getTypeIds(day: number) {
       </div>
     </div>
 
-    <div class="flex gap-5">
+    <div class="flex gap-5" v-if="!user.admin">
       <div class="bg-secondary/30 p-7 rounded-md">
         <h1 class="text-2xl font-bold mb-5 text-center">Welcome, {{ user.name }}</h1>
 

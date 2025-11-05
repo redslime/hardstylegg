@@ -13,7 +13,7 @@ const { typeId, container, title, pointer } = defineProps({
 const { user } = useUserSession()
 const dashboardData = await getDashboardData()
 const scheduleData = computed<ScheduleDay | undefined>(() => getScheduleForGame(typeId, container.id))
-const editable = user.admin || !scheduleData || !scheduleData.value
+const editable = user.value.admin || !scheduleData || !scheduleData.value
 const editor = computed(() => dashboardData.editors.find(e => e.id === container.created_by))
 
 function click() {
