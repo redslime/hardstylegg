@@ -40,7 +40,7 @@ export default defineNuxtConfig({
   },
 
   nitro: {
-      preset: 'node',
+      preset: 'node-server',
       replace: {
           'import * as process': 'import * as processUnused',
       },
