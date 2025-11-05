@@ -153,3 +153,9 @@ export function deepCopy(obj: any): any {
 
     throw new Error("Unable to copy obj! Its type isn't supported.");
 }
+
+export function debug(...args: any[]) {
+    if (import.meta.env.DEV) {
+        console.log('[DEBUG]', ...args)
+    }
+}

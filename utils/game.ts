@@ -24,6 +24,7 @@ import Order from "~/components/games/Order.vue";
 import Quiz from "~/components/games/Quiz.vue";
 import Timeline from "~/components/games/Timeline.vue";
 import Timetable from "~/components/games/Timetable.vue";
+import {debug} from "~/utils/utils";
 
 let currentTypeId: number | null = null
 let currentGameId: number | null = null
@@ -103,8 +104,11 @@ export function updateState(typeId: number | null, gameId: number | null) {
 }
 
 export function startGame() {
+    debug("Starting game...")
     getGameContainer().then(gameData => {
+        debug("got game container")
         $fetch<string>("/api/report/start").then(code => {
+            debug("got code", code)
             report = {
                 code,
                 dayId: gameData.dayId,
@@ -171,6 +175,8 @@ export function reportResult(consumer: (report: GameReport) => void) {
 }
 
 export function sendReport() {
+    if(report === null) return
+
     $fetch("/api/report/submit", {
         method: "POST",
         body: report

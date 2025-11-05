@@ -3,7 +3,7 @@ import confetti from "canvas-confetti";
 import MicroChevronDoubleRightIcon from "~/components/icons/MicroChevronDoubleRightIcon.vue";
 import HeartIcon from "~/components/icons/HeartIcon.vue";
 import Countdown from "~/components/Countdown.vue";
-import {bitsToHex, copyToClipboard} from "~/utils/utils";
+import {bitsToHex, copyToClipboard, debug} from "~/utils/utils";
 import ResultShareButton from "~/components/ResultShareButton.vue";
 import {
   gameComps,
@@ -91,7 +91,7 @@ function next() {
     const data = getCookieMemory()
 
     if(data) {
-      console.log("pushing data into cookie: ", data)
+      debug("pushing data into cookie: ", data)
       props.cookie.push(data)
     }
   } else {
@@ -105,6 +105,11 @@ const copyResult = () => {
   copyToClipboard(`I scored ${gamesWon.value}/${gameData.length} on hardstyle.gg today. Join me!\nhttps://hardstylegg.redslime.xyz/share?r=${shareCode.value}`)
 }
 
+useOnce(() => {
+  startGame()
+  getTracks().then(() => {}) // preload tracks
+})
+
 onMounted(() => {
   if(played.value) {
     navigateTo("/")
@@ -112,11 +117,6 @@ onMounted(() => {
     mounted.value = true
     updateState(currentTypeId.value, currentGameId.value)
   }
-})
-
-useOnce(() => {
-  getTracks().then(() => {}) // preload tracks
-  startGame()
 })
 </script>
 
