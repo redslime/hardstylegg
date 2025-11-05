@@ -1,5 +1,5 @@
 import tailwindcss from "@tailwindcss/vite";
-import {resolve} from "node:path";
+import {resolve} from "pathe";
 
 export default defineNuxtConfig({
   compatibilityDate: '2025-05-15',
@@ -68,6 +68,18 @@ export default defineNuxtConfig({
           {
               dir:    '.output/server/public/artwork',
               baseURL: '/artwork6',
+          },
+          {
+              dir:    resolve('public/artwork'),
+              baseURL: '/artwork7',
+          },
+          {
+              dir:    resolve('./public/artwork'),
+              baseURL: '/artwork8',
+          },
+          {
+              dir:    resolve('../public/artwork'),
+              baseURL: '/artwork9',
           },
           {
               dir:     '../public/heardle',
