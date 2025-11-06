@@ -1,7 +1,7 @@
 import satori from 'satori';
 import {html} from 'satori-html';
 import sharp from 'sharp';
-import {getFriendlyName, getTypeIdsForDay} from "~/server/utils/schedule";
+import {getFriendlyName, getIdsForDay, getTypeIdsForDay} from "~/server/utils/schedule";
 import {readFileSync} from "node:fs";
 import {join} from "pathe";
 import type {EventHandlerRequest, H3Event} from "h3";
@@ -214,12 +214,13 @@ async function replyCode(code: string, event: H3Event<EventHandlerRequest>) {
     })
 
     if(report) {
-        const types = await getTypeIdsForDay(report.dayId)
+        const ids = await getIdsForDay(report.dayId)
         const dayFriendly = getFriendlyName(report.dayId)
 
         // Generate icon elements
-        const iconElements = await Promise.all(types.map(async (type, index): Promise<string> => {
-            const reportItem = report.report_item.find(ri => ri.typeId === type)
+        const iconElements = await Promise.all(ids.typeIds.map(async (typeId, index): Promise<string> => {
+            const gameId = ids.gameIds[index]
+            const reportItem = report.report_item.find(ri => ri.typeId === typeId && ri.gameId === gameId)
             const isSuccess = reportItem && reportItem.success === true;
             const isError = reportItem && reportItem.success === false;
             const details = await getDetails(reportItem)
@@ -239,7 +240,7 @@ async function replyCode(code: string, event: H3Event<EventHandlerRequest>) {
     <div style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start">
       <div style="display: flex; padding: 8px; border-radius: 6px; background-color: ${bgColor};">
         <svg width="24" height="24" viewBox="0 0 24 24" stroke-width="1" style="color: ${textColor}">
-          ${getIconSvg(type)}
+          ${getIconSvg(typeId)}
         </svg>
       </div>
       <p style="color: darkgray; margin-top: 0; padding: 0; font-size: 13px;">${details}</p>    
@@ -261,7 +262,7 @@ async function replyCode(code: string, event: H3Event<EventHandlerRequest>) {
                     ${dayFriendly}
                   </div>
                   <div style="font-size: 24px; color: #9ca3af;">
-                    ${report.successes}/${types.length}
+                    ${report.successes}/${ids.typeIds.length}
                   </div>
                 </div>
                 <div style="display: flex; justify-content: center; gap: 16px;">

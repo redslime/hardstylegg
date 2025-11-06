@@ -52,6 +52,32 @@ export async function getTypeIdsForDay(dayId: number): Promise<number[]> {
     return []
 }
 
+export async function getIdsForDay(dayId: number): Promise<{ typeIds: number[], gameIds: number[] }> {
+    if(dayId === packedCache?.dayId) {
+        return {
+            typeIds: packedCache?.typeIds ?? [],
+            gameIds: packedCache?.data.map(i => i.id) ?? []
+        }
+    }
+
+    const schedule = await prisma.day_schedule.findUnique({
+        where: {
+            day: dayId
+        }
+    })
+
+    if(schedule) {
+        const typeIds = JSON.parse(schedule.type_ids) as number[]
+        const gameIds = JSON.parse(schedule.game_ids) as number[]
+        return { typeIds, gameIds }
+    }
+
+    return {
+        typeIds: [],
+        gameIds: []
+    }
+}
+
 export function getDayIdToday(): number {
     const now = DateTime.now().setZone('Europe/Berlin');
     return getDayId(now.toJSDate())
