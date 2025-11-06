@@ -95,7 +95,7 @@ function advanceStreak() {
     streak.value.streak++
     streak.value.lastDayId = today
   } else if(streak.value.lastDayId < today - 1) {
-    streak.value.streak = 0
+    streak.value.streak = 1
     streak.value.lastDayId = today
   }
 }
