@@ -32,7 +32,7 @@ let report: ReportContainer | null = null
 let packedGameData: GameContainer | null = null
 
 export const gameComps = {
-    Artwork: { id: 1, comp: Artwork, icon: Pencil, preview: (props: any) => "What is the name of this track?" },
+    Artwork: { id: 1, comp: Artwork, icon: Pencil, preview: (props: any) => "Which track does this artwork belong to?" },
     CompleteAlbum: { id: 2, comp: CompleteAlbum, icon: PencilSquare, preview: (props: any) => "Fill in the missing tracks" },
     CompleteLyrics: { id: 3, comp: CompleteLyrics, icon: ChatBubble, preview: (props: any) => "Fill in the missing lyrics" },
     Heardle: { id: 4, comp: Heardle, icon: SpeakerWave, preview: (props: any) => "What is the name of this track?" },
