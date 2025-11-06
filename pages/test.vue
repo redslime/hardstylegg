@@ -3,6 +3,7 @@ import {onMounted} from "vue";
 import {Howl} from "howler";
 
 const playing = ref(false)
+const silence = ref<HTMLAudioElement | null>(null)
 let howl: Howl | null = null
 
 onMounted(() => {
@@ -14,21 +15,20 @@ onMounted(() => {
 })
 
 function unlockIOSAudio() {
-  const silent = document.getElementById("silent-audio") as HTMLAudioElement
-  silent.volume = 0
-  silent.play().catch(() => {})
+  silence.value?.play().catch(() => {})
 }
 
-function play() {
+async function play() {
   unlockIOSAudio()
+  await nextTick()
   howl?.play()
   playing.value = true
 }
 </script>
 
 <template>
-  <audio id="silent-audio" playsinline preload="auto">
-    <source src="data:audio/mp3;base64,//uQxAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAACcQCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" type="audio/mp3">
+  <audio ref="silence" id="silent-audio" preload="auto">
+    <source src="/silence.mp3" type="audio/mp3">
   </audio>
   <button class="btn btn-primary btn-outline" @click="play()">play very cool song</button>
   <p v-if="playing">ya hear it?</p>
