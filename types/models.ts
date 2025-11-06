@@ -113,3 +113,8 @@ export interface CookieDayMemory {
     day: number
     data: boolean[]
 }
+
+export interface CookieStreakMemory {
+    streak: number
+    lastDayId: number
+}

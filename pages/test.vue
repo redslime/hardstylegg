@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <CookieChart />
+
 </template>
 
 <style scoped>

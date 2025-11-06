@@ -14,8 +14,15 @@ import {
   startGame,
   updateState
 } from "~/utils/game";
-import {type CookieDayMemory, type GameContainer, type GameData, GameState} from "~/types/models";
+import {
+  type CookieDayMemory,
+  type CookieStreakMemory,
+  type GameContainer,
+  type GameData,
+  GameState
+} from "~/types/models";
 import {getTracks} from "~/utils/tracks";
+import {useLocalStorage} from "@vueuse/core";
 
 useHead({
   meta: [
@@ -27,6 +34,7 @@ const props = defineProps({
   gameData: { type: Object as PropType<GameContainer>, required: true },
   cookie: { type: Object as PropType<CookieDayMemory[]>, required: true }
 })
+const streak = useLocalStorage<CookieStreakMemory>("streak", { streak: 0, lastDayId: -1 })
 const dayId = ref<number>(props.gameData.dayId)
 const gameData = reactive<GameData[]>(props.gameData.data)
 const currentIndex = ref(0)
@@ -80,6 +88,18 @@ function skip() {
   })
 }
 
+function advanceStreak() {
+  const today = dayId.value
+
+  if(streak.value.lastDayId === today - 1) {
+    streak.value.streak++
+    streak.value.lastDayId = today
+  } else if(streak.value.lastDayId < today - 1) {
+    streak.value.streak = 0
+    streak.value.lastDayId = today
+  }
+}
+
 function next() {
   if(currentIndex.value+1 >= gameData.length) {
     summary.value = true
@@ -87,6 +107,7 @@ function next() {
 
     updateState(null, null)
     sendReport()
+    advanceStreak()
 
     const data = getCookieMemory()
 
@@ -188,6 +209,10 @@ onMounted(() => {
     <div class="flex items-center justify-center gap-2 mb-8">
       <HeartIcon class="text-primary" />
       <div class="text-3xl md:text-4xl font-bold">Thanks for playing!</div>
+    </div>
+
+    <div class="flex flex-col w-full items-center">
+      <CookieStreakBanner class="w-fit" :streak="streak.streak" />
     </div>
 
     <div>
