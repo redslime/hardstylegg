@@ -6,7 +6,7 @@ if(query.r) {
     meta: [
       {name: 'og:description', content: 'Daily hardstyle challenge to compete with friends.'},
       {name: 'twitter:description', content: 'Daily hardstyle challenge to compete with friends.'},
-      {name: 'twitter:image:src', content: 'https://hardstylegg.redslime.xyz/api/og?r=' + query.r},
+      {name: 'twitter:image:src', content: 'https://hardstyle.gg/api/og?r=' + query.r},
       {name: 'twitter:image:alt', content: 'hardstyle.gg'},
       {name: 'twitter:image:width', content: '550'},
       {name: 'twitter:image:height', content: '140'},

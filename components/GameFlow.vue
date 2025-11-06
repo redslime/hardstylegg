@@ -102,7 +102,7 @@ function next() {
 }
 
 const copyResult = () => {
-  copyToClipboard(`I scored ${gamesWon.value}/${gameData.length} on hardstyle.gg today. Join me!\nhttps://hardstylegg.redslime.xyz/share?r=${shareCode.value}`)
+  copyToClipboard(`I scored ${gamesWon.value}/${gameData.length} on hardstyle.gg today. Join me!\nhttps://hardstyle.gg/share?r=${shareCode.value}`)
 }
 
 useOnce(() => {

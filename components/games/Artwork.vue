@@ -47,7 +47,7 @@ async function validate(selected: ShallowTrack, flashError: () => void, flashSuc
       <Pencil />
     </template>
     <template #title>
-      What is the name of this track?
+      Which track does this artwork belong to?
     </template>
   </GameTitle>
 

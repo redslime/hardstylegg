@@ -3,99 +3,93 @@ import type {User} from "#auth-utils";
 import prisma from "~/lib/prisma";
 import {getBaseDate, getDayIdToday, getFriendlyName, getTimeUntilMidnight} from "~/server/utils/schedule";
 
-let structure: DashboardGroup[] | null = null
-
 function getStructure(user: User): DashboardGroup[] {
-    if(structure === null) {
-        const overviewItems = []
+    const overviewItems = []
 
+    overviewItems.push({
+        name: "Home",
+        icon: "HomeIcon",
+        url: "/admin"
+    })
+
+    if(user.admin) {
         overviewItems.push({
-            name: "Home",
-            icon: "HomeIcon",
-            url: "/admin"
+            name: "Schedule",
+            icon: "CalendarDaysIcon",
+            url: "/admin/schedule"
         })
-
-        if(user.admin) {
-            overviewItems.push({
-                name: "Schedule",
-                icon: "CalendarDaysIcon",
-                url: "/admin/schedule"
-            })
-        }
-
-        overviewItems.push({
-            name: "Track database",
-            icon: "CircleStackIcon",
-            url: "/admin/tracks"
-        })
-
-        overviewItems.push({
-            name: "Editors",
-            icon: "UsersIcon",
-            url: "/admin/editors"
-        })
-        
-        const gameItems = []
-
-        gameItems.push({
-            name: "Artwork",
-            icon: "Pencil",
-            url: "/admin/game/artwork"
-        })
-        gameItems.push({
-            name: "Complete Album",
-            icon: "PencilSquare",
-            url: "/admin/game/complete-album"
-        })
-        gameItems.push({
-            name: "Complete Lyrics",
-            icon: "ChatBubble",
-            url: "/admin/game/complete-lyrics"
-        })
-        gameItems.push({
-            name: "Heardle",
-            icon: "SpeakerWave",
-            url: "/admin/game/heardle"
-        })
-        gameItems.push({
-            name: "Name X",
-            icon: "ListBullet",
-            url: "/admin/game/name-x"
-        })
-        gameItems.push({
-            name: "Order",
-            icon: "ArrowsRightLeft",
-            url: "/admin/game/order"
-        })
-        gameItems.push({
-            name: "Quiz",
-            icon: "CheckCircle",
-            url: "/admin/game/quiz"
-        })
-        gameItems.push({
-            name: "Timeline",
-            icon: "Calendar",
-            url: "/admin/game/timeline"
-        })
-        gameItems.push({
-            name: "Timetable",
-            icon: "PencilSquare",
-            url: "/admin/game/timetable"
-        })
-
-        structure = [
-            {
-                name: "Overview",
-                items: overviewItems
-            },
-            {
-                name: "Games",
-                items: gameItems
-            }
-        ]
     }
 
-    return structure
+    overviewItems.push({
+        name: "Track database",
+        icon: "CircleStackIcon",
+        url: "/admin/tracks"
+    })
+
+    overviewItems.push({
+        name: "Editors",
+        icon: "UsersIcon",
+        url: "/admin/editors"
+    })
+
+    const gameItems = []
+
+    gameItems.push({
+        name: "Artwork",
+        icon: "Pencil",
+        url: "/admin/game/artwork"
+    })
+    gameItems.push({
+        name: "Complete Album",
+        icon: "PencilSquare",
+        url: "/admin/game/complete-album"
+    })
+    gameItems.push({
+        name: "Complete Lyrics",
+        icon: "ChatBubble",
+        url: "/admin/game/complete-lyrics"
+    })
+    gameItems.push({
+        name: "Heardle",
+        icon: "SpeakerWave",
+        url: "/admin/game/heardle"
+    })
+    gameItems.push({
+        name: "Name X",
+        icon: "ListBullet",
+        url: "/admin/game/name-x"
+    })
+    gameItems.push({
+        name: "Order",
+        icon: "ArrowsRightLeft",
+        url: "/admin/game/order"
+    })
+    gameItems.push({
+        name: "Quiz",
+        icon: "CheckCircle",
+        url: "/admin/game/quiz"
+    })
+    gameItems.push({
+        name: "Timeline",
+        icon: "Calendar",
+        url: "/admin/game/timeline"
+    })
+    gameItems.push({
+        name: "Timetable",
+        icon: "PencilSquare",
+        url: "/admin/game/timetable"
+    })
+
+    return [
+        {
+            name: "Overview",
+            items: overviewItems
+        },
+        {
+            name: "Games",
+            items: gameItems
+        }
+    ]
 }
 
 async function getEditors(): Promise<Editor[]> {
