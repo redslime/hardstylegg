@@ -42,8 +42,9 @@ useOnce(() => {
 <template>
   <div class="hero bg-base-300 rounded-lg">
     <div class="hero-content flex flex-col text-center">
-      <div class="max-w-md">
+      <div class="max-w-lg">
         <h1 class="text-3xl md:text-5xl font-bold">Daily challenge</h1>
+        <h2 v-if="gameData && gameData.theme" class="text-xl md:text-2xl mt-1 text-secondary font-medium">{{ gameData.theme }}</h2>
         <h4 class="text-xl mt-2" v-if="gameData">{{ gameData.dayFriendly }}</h4>
       </div>
 

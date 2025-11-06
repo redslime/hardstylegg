@@ -145,7 +145,8 @@ export async function getPackedDayDataForDay(dayId: number): Promise<PackedDayDa
             dayId,
             dayFriendly: getFriendlyName(dayId),
             typeIds,
-            data: packed
+            data: packed,
+            theme: data.theme
         }
     } else {
         return {

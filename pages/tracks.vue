@@ -3,7 +3,7 @@ import {type Track} from "~/types/models";
 import DuplicateTrackGroup from "~/components/DuplicateTrackGroup.vue";
 
 definePageMeta({
-  middleware: ['authenticated'],
+  middleware: ['authenticated-admin'],
   layout: 'wide',
 })
 

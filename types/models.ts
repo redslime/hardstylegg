@@ -5,6 +5,7 @@ export interface PackedDayData {
     dayFriendly: string
     typeIds: number[]
     data: any[]
+    theme?: string | null
 }
 
 export enum GameState {
@@ -31,6 +32,7 @@ export interface ShallowTrack {
 export interface GameContainer {
     dayId: number
     dayFriendly: string
+    theme?: string | null
     data: GameData[]
 }
 
@@ -63,6 +65,7 @@ export interface ScheduleDay {
     day: number
     typeIds: number[]
     gameIds: number[]
+    theme?: string | null
 }
 
 export interface ScheduleEntry {

@@ -192,9 +192,10 @@ model user {
 }
 
 model day_schedule {
-  day      Int    @id @default(autoincrement())
-  type_ids String @db.VarChar(32)
-  game_ids String @db.VarChar(32)
+  day      Int     @id @default(autoincrement())
+  type_ids String  @db.VarChar(32)
+  game_ids String  @db.VarChar(32)
+  theme    String? @db.VarChar(64)
 }
 
 model report {

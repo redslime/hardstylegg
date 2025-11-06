@@ -55,6 +55,7 @@ export async function getGameContainer(): Promise<GameContainer> {
 export function transform(data: PackedDayData): GameContainer {
     const types: number[] = data.typeIds
     const gameData: object[] = data.data
+    const theme: string | null | undefined = data.theme
     const transformed: GameData[] = []
 
     if(types.length === gameData.length) {
@@ -80,6 +81,7 @@ export function transform(data: PackedDayData): GameContainer {
     return {
         dayId: data.dayId,
         dayFriendly: data.dayFriendly,
+        theme,
         data: transformed
     }
 }
@@ -104,11 +106,13 @@ export function updateState(typeId: number | null, gameId: number | null) {
 }
 
 export function startGame() {
-    debug("Starting game...")
+    if(import.meta.env.DEV) {
+        debug("Not creating a performance report in dev mode")
+        return
+    }
+
     getGameContainer().then(gameData => {
-        debug("got game container")
         $fetch<string>("/api/report/start").then(code => {
-            debug("got code", code)
             report = {
                 code,
                 dayId: gameData.dayId,
