@@ -113,6 +113,7 @@ function playSnippet() {
 }
 
 function nextStage() {
+  countAttempt()
   guesses.value[guessStage.value] = {input: "", correct: false}
 
   if (guessStage.value >= durations.value.length - 1) {

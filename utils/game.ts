@@ -183,6 +183,10 @@ export function sendReport() {
     }).catch(err => console.error("Failed to send report", err))
 }
 
+export function getReportCode() {
+    return report?.code
+}
+
 export function getCookieMemory(): CookieDayMemory | undefined {
     if(report === null) return undefined
 

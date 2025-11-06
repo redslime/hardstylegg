@@ -8,7 +8,7 @@ import ResultShareButton from "~/components/ResultShareButton.vue";
 import {
   gameComps,
   getCookieMemory,
-  getPreviewTitle, hasPlayedToday,
+  getPreviewTitle, getReportCode, hasPlayedToday,
   reportResult,
   sendReport,
   startGame,
@@ -102,7 +102,14 @@ function next() {
 }
 
 const copyResult = () => {
-  copyToClipboard(`I scored ${gamesWon.value}/${gameData.length} on hardstyle.gg today. Join me!\nhttps://hardstyle.gg/share?r=${shareCode.value}`)
+  const reportCode = getReportCode()
+  let url = `https://hardstyle.gg/share?r=${shareCode.value}`
+
+  if(reportCode) {
+    url = `https://hardstyle.gg/share?c=${reportCode}`
+  }
+
+  copyToClipboard(`I scored ${gamesWon.value}/${gameData.length} on hardstyle.gg today. Join me!\n${url}`)
 }
 
 useOnce(() => {
