@@ -24,6 +24,7 @@ const track = computed<Track>(() => props.container.track)
 const src = computed(() => props.container.src)
 const durations = computed(() => props.container.durations)
 const hasPlayed = ref<boolean>(false)
+const silence = ref<HTMLAudioElement | null>(null)
 const currentIndex = inject<number>('currentIndex')
 const isMobile = inject<boolean>('isMobile')
 
@@ -76,8 +77,10 @@ onDeactivated(() => {
   if (progressInterval) clearInterval(progressInterval)
 })
 
-function playSnippet() {
+async function playSnippet() {
   hasPlayed.value = true
+  unlockIOSAudio()
+  await nextTick()
 
   if (!howl) return
   const duration = durations.value[guessStage.value]
@@ -145,6 +148,10 @@ function validate(selected: ShallowTrack, flashError: () => void, flashSuccess: 
   hasPlayed.value = false
   guessStage.value++
 }
+
+function unlockIOSAudio() {
+  silence.value?.play().catch(() => {})
+}
 </script>
 
 <template>
@@ -156,6 +163,10 @@ function validate(selected: ShallowTrack, flashError: () => void, flashSuccess: 
       What is the name of this track?
     </template>
   </GameTitle>
+
+  <audio ref="silence" id="silent-audio" preload="auto">
+    <source src="/silence.mp3" type="audio/mp3">
+  </audio>
 
   <div class="w-4/5" v-if="!finished && !gameFinished">
     <TrackInput

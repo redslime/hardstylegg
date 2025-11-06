@@ -91,6 +91,11 @@ function next() {
     const data = getCookieMemory()
 
     if(data) {
+      if(props.cookie.length >= 14) {
+        debug("removing oldest cookie memory data")
+        props.cookie.shift()
+      }
+
       debug("pushing data into cookie: ", data)
       props.cookie.push(data)
     }

@@ -12,6 +12,7 @@ export default defineNuxtConfig({
       '/': { ssr: false },
       '/play': { ssr: false },
       '/tracks': { ssr: false },
+      '/test': { ssr: false },
       '/admin/**': { ssr: false }
   },
 

@@ -5,8 +5,9 @@ import type {PackedDayData} from "~/types/models";
 
 const BASE_DATE = DateTime.fromISO('2025-11-05', { zone: 'Europe/Berlin' });
 
-let lastKnownDayId: number | null = null;
+let lastKnownDayId: number | null = null
 let packedCache: PackedDayData | null = null
+let scoreCache: { dayIds: number[], dayNames: string[], avg: number[] } | null = null
 
 export function getTimeUntilMidnight(): number {
     const now = DateTime.now().setZone('Europe/Berlin');
@@ -160,4 +161,32 @@ export async function getPackedDayDataForDay(dayId: number): Promise<PackedDayDa
 
 async function onNewDay(newDayId: number) {
     packedCache = await getPackedDayDataForDay(newDayId)
+    scoreCache = null
+}
+
+export async function getAvgScores(): Promise<{ dayIds: number[], dayNames: string[], avg: number[] }> {
+    if(scoreCache) {
+        return scoreCache
+    } else {
+        const result = await prisma.report.groupBy({
+            by: ['dayId'],
+            where: {
+                completed: true
+            },
+            _avg: {
+                successes: true
+            },
+            orderBy: {
+                dayId: 'desc'
+            },
+            take: 14
+        })
+
+        result.sort((a, b) => a.dayId - b.dayId)
+        const dayIds = result.map(r => r.dayId)
+        const avg = result.map(r => r._avg.successes ?? 0)
+        const dayNames = result.map(r => getFriendlyName(r.dayId))
+        scoreCache = { dayIds, dayNames, avg }
+        return scoreCache
+    }
 }

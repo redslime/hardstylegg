@@ -3,6 +3,7 @@ import {gameComps, getGameContainer, getPreviewTitle, hasPlayedToday} from "~/ut
 import {type CookieDayMemory, GameState} from "~/types/models";
 import {getTracks} from "~/utils/tracks";
 import {refreshCookie} from "#app";
+import CookieChart from "~/components/CookieChart.vue";
 
 definePageMeta({
   layout: 'hero'
@@ -74,6 +75,15 @@ useOnce(() => {
           <h4 class="text-xl mt-2">Nothing to play right now, check back later!</h4>
         </div>
       </template>
+    </div>
+  </div>
+
+  <div class="hero bg-base-300 rounded-lg mt-7" v-if="cookie.length > 0">
+    <div class="hero-content flex flex-col text-center">
+      <div class="max-w-lg">
+        <h1 class="text-xl md:text-3xl font-bold">Past challenge scores</h1>
+        <CookieChart />
+      </div>
     </div>
   </div>
 </template>

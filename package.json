@@ -17,6 +17,7 @@
     "@meersagor/wavesurfer-vue": "^2.0.0",
     "@prisma/client": "^6.18.0",
     "@tailwindcss/vite": "^4.1.15",
+    "apexcharts": "^5.3.6",
     "canvas-confetti": "^1.9.3",
     "daisyui": "^5.3.8",
     "formidable": "^3.5.4",
@@ -38,6 +39,7 @@
     "vue-fuse": "^4.1.1",
     "vue-router": "^4.6.3",
     "vue-virtual-scroll-grid": "^1.11.0",
+    "vue3-apexcharts": "^1.10.0",
     "vuedraggable": "^4.1.0",
     "zod": "^4.1.12"
   },
