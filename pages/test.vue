@@ -27,7 +27,9 @@ function play() {
 </script>
 
 <template>
-  <audio id="silent-audio" playsinline preload="auto"></audio>
+  <audio id="silent-audio" playsinline preload="auto">
+    <source src="data:audio/mp3;base64,//uQxAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAACcQCAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" type="audio/mp3">
+  </audio>
   <button class="btn btn-primary btn-outline" @click="play()">play very cool song</button>
   <p v-if="playing">ya hear it?</p>
 </template>
