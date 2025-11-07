@@ -45,7 +45,7 @@ const options = {
     tickAmount: 5,
     forceNiceScale: true,
     labels: {
-      formatter: (val: number) => Math.floor(val)
+      formatter: (val: number) => val
     }
   },
   markers: {
