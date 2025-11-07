@@ -41,7 +41,7 @@ const options = {
   },
   yaxis: {
     min: 0,
-    max: 5,
+    max: 5.5,
     labels: {
       formatter: (val: number) => { return val } // remove fractions
     }
