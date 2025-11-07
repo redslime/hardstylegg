@@ -41,10 +41,15 @@ const options = {
   },
   yaxis: {
     min: 0,
-    max: 5.5,
+    max: 5,
+    tickAmount: 5,
+    forceNiceScale: true,
     labels: {
-      formatter: (val: number) => { return val } // remove fractions
+      formatter: (val: number) => Math.floor(val)
     }
+  },
+  markers: {
+    size: 3
   },
   tooltip: {
     enabled: true
