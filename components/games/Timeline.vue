@@ -115,6 +115,7 @@ function submit() {
   </div>
 </template>
 
+<!--suppress CssUnresolvedCustomProperty -->
 <style scoped>
 .slider {
   -webkit-appearance: none;

@@ -18,6 +18,7 @@ const cookie = useCookie<CookieDayMemory[]>("memory", {
 const exists = computed(() => gameData.value !== undefined && gameData.value.dayId !== -1)
 const played = computed(() => hasPlayedToday(cookie.value, gameData.value?.dayId))
 const dataToday = computed(() => cookie.value?.find(d => d.day === gameData.value?.dayId)?.data)
+const dev = import.meta.env.DEV
 
 function getState(index: number): GameState {
   if(dataToday.value === undefined) {
@@ -78,9 +79,9 @@ useOnce(() => {
     </div>
   </div>
 
-  <div class="hero bg-base-300 rounded-lg mt-7" v-if="cookie.length > 0">
-    <div class="hero-content flex flex-col text-center">
-      <div class="max-w-lg">
+  <div class="hero bg-base-300 rounded-lg mt-7" v-if="cookie.length > 0 || dev">
+    <div class="hero-content flex flex-col text-center px-0 sm:px-1 md:px-4 w-full">
+      <div class="w-full md:max-w-lg">
         <h1 class="text-xl md:text-3xl font-bold">Past challenge scores</h1>
         <CookieChart />
       </div>

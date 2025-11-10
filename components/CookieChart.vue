@@ -64,7 +64,17 @@ const options = {
     onItemClick: {
       toggleDataSeries: false
     }
-  }
+  },
+  responsive: [
+    {
+      breakpoint: 768,
+      options: {
+        chart: {
+          width: '100%'
+        },
+      }
+    }
+  ]
 }
 
 const series = [
