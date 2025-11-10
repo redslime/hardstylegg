@@ -103,6 +103,21 @@ async function getDetails(reportItem: {
         } catch (e: any) {
             return ""
         }
+    } else if(reportItem.items_clicked) {
+        try {
+            const array = JSON.parse(reportItem.items_clicked) as number[]
+
+            // Timeline
+            if(array && reportItem.typeId === 8) {
+                // special case: number in array is the amount of years off from goal
+
+                if(array.length === 1 && array[0] && array[0] > 0) {
+                    return array[0] + " off"
+                }
+            }
+        } catch(e: any) {
+            return ""
+        }
     }
 
     return ""

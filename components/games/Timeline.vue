@@ -3,6 +3,7 @@ import {ref} from 'vue'
 import Calendar from "~/components/icons/game/Calendar.vue";
 import {GameState} from "~/types/models";
 import type {TimelineContainer} from "~/types/gameModels";
+import {countOption} from "~/utils/game";
 
 const minYear = 2000
 const maxYear = 2025
@@ -58,6 +59,7 @@ const onWheel = (e: WheelEvent) => {
 }
 
 function submit() {
+  countOption(Math.abs(selectedYear.value - goal.value))
   emit("onFinish", selectedYear.value == goal.value ? GameState.SUCCEEDED : GameState.FAILED)
 }
 </script>
