@@ -46,7 +46,7 @@ const totalDuration = computed(() => Math.max(...durations.value))
 const segmentDurations = computed(() => {
   return durations.value.map((d, i) => {
     if (i === 0) return d
-    return d - durations.value[i - 1]
+    return d - durations.value[i - 1]!!
   })
 })
 
@@ -59,15 +59,17 @@ let howl: Howl | null = null
 let timeout: number | null = null
 let progressInterval: number | null = null
 
-onMounted(() => {
-  durations.value.forEach(_ => {
-    guesses.value.push({input: undefined, correct: undefined})
-  });
-
+if(import.meta.client) {
   howl = new Howl({
     src: [`/heardle/${src.value}.mp3`],
     preload: true,
     volume: 0.2
+  });
+}
+
+onMounted(() => {
+  durations.value.forEach(_ => {
+    guesses.value.push({input: undefined, correct: undefined})
   });
 })
 
@@ -83,7 +85,7 @@ async function playSnippet() {
   await nextTick()
 
   if (!howl) return
-  const duration = durations.value[guessStage.value]
+  const duration = durations.value[guessStage.value] ?? 0
   const start = 0
   howl.stop()
   howl.seek(start)
@@ -127,7 +129,7 @@ function nextStage() {
   guessStage.value++
 }
 
-function validate(selected: ShallowTrack, flashError: () => void, flashSuccess: () => void, clear: () => void) {
+function validate(selected: ShallowTrack, flashError: () => void, _flashSuccess: () => void, clear: () => void) {
   countAttempt()
 
   if(selected.sid === track.value.sid) {
