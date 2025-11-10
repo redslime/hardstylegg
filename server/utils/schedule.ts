@@ -171,7 +171,10 @@ export async function getAvgScores(): Promise<{ dayIds: number[], dayNames: stri
         const result = await prisma.report.groupBy({
             by: ['dayId'],
             where: {
-                completed: true
+                completed: true,
+                dayId: {
+                    lt: getDayIdToday() // dont include today yet, if for some reason this is called before the day is over
+                },
             },
             _avg: {
                 successes: true
