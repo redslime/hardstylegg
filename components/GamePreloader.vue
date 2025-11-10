@@ -9,18 +9,20 @@ const { gameData } = defineProps({
 
 debug("Preloading...")
 
-gameData.forEach(game => {
-  const comp = gameComps[game.name as keyof typeof gameComps]
+requestIdleCallback(() => {
+  gameData.forEach(game => {
+    const comp = gameComps[game.name as keyof typeof gameComps]
 
-  if(comp && comp.comp && comp.comp.getPreloadUrls) {
-    const urls: string[] = comp.comp.getPreloadUrls(game.props.container)
+    if(comp && comp.comp && comp.comp.getPreloadUrls) {
+      const urls: string[] = comp.comp.getPreloadUrls(game.props.container)
 
-    debug(`Preloading ${urls.length} images for ${game.name}`)
-    urls.forEach(url => {
-      const img = new Image()
-      img.src = url
-    })
-  }
+      debug(`Preloading ${urls.length} images for ${game.name}`)
+      urls.forEach(url => {
+        const img = new Image()
+        img.src = url
+      })
+    }
+  })
 })
 </script>
 
