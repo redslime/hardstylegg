@@ -1,13 +1,22 @@
+<script lang="ts">
+import type {HeardleContainer} from "~/types/gameModels";
+import {getSpotifyArtwork} from "~/utils/utils";
+
+export default {
+  getPreloadUrls: (container: HeardleContainer): string[] => {
+    return [getSpotifyArtwork(container.track.cover_art)]
+  }
+}
+</script>
+
 <script setup lang="ts">
 import {onMounted, ref} from 'vue'
 import {Howl} from 'howler'
 import PlayIcon from "~/components/icons/PlayIcon.vue";
 import SpeakerWave from "~/components/icons/game/SpeakerWave.vue";
 import {GameState, type ShallowTrack, type Track} from "~/types/models";
-import {getSpotifyArtwork} from "~/utils/utils";
 import {getName} from "~/utils/tracks";
 import SpotifyButton from "~/components/SpotifyButton.vue";
-import type {HeardleContainer} from "~/types/gameModels";
 import ForwardIcon from "~/components/icons/ForwardIcon.vue";
 import {countAttempt} from "~/utils/game";
 

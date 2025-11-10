@@ -8,7 +8,9 @@ import ResultShareButton from "~/components/ResultShareButton.vue";
 import {
   gameComps,
   getCookieMemory,
-  getPreviewTitle, getReportCode, hasPlayedToday,
+  getPreviewTitle,
+  getReportCode,
+  hasPlayedToday,
   reportResult,
   sendReport,
   startGame,
@@ -154,6 +156,8 @@ onMounted(() => {
 </script>
 
 <template>
+  <GamePreloader :gameData="gameData" />
+
   <div class="flex flex-col gap-2 p-1.5 w-full items-center justify-center bg-base-100 fixed right-0 bottom-0 left-0 z-1 md:hidden" v-if="!summary">
     <div class="w-full sm:w-7/8" id="top-dock">
 

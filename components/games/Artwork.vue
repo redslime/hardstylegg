@@ -1,9 +1,17 @@
+<script lang="ts">
+import type {ArtworkContainer} from "~/types/gameModels";
+import {getLocalArtwork, getSpotifyArtwork} from "~/utils/utils";
+
+export default {
+  getPreloadUrls: (container: ArtworkContainer): string[] => {
+    return [getLocalArtwork(container.artwork_blank), getSpotifyArtwork(container.track.cover_art)]
+  }
+}
+</script>
 <script setup lang="ts">
 import {GameState, type ShallowTrack, type Track} from "~/types/models";
 import Pencil from "~/components/icons/game/Pencil.vue";
-import {getLocalArtwork, getSpotifyArtwork} from "~/utils/utils";
 import SpotifyButton from "~/components/SpotifyButton.vue";
-import type {ArtworkContainer} from "~/types/gameModels";
 import {countAttempt} from "~/utils/game";
 
 const emit = defineEmits(['onFinish'])

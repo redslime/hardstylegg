@@ -1,10 +1,21 @@
+<script lang="ts">
+import {getSpotifyArtwork} from "~/utils/utils";
+import type {OrderContainer} from "~/types/gameModels";
+
+export default {
+  getPreloadUrls: (container: OrderContainer): string[] => {
+    return container.items.map(item => getSpotifyArtwork(item.track.cover_art))
+  }
+}
+</script>
+
 <script setup lang="ts">
 import {computed, ref} from 'vue'
 import Draggable from 'vuedraggable'
 import {GameState} from "~/types/models";
 import {shuffleArray} from "~/utils/utils";
 import ArrowsRightLeft from "~/components/icons/game/ArrowsRightLeft.vue";
-import type {OrderContainer, OrderItem} from "~/types/gameModels";
+import type {OrderItem} from "~/types/gameModels";
 import {countItem} from "~/utils/game";
 
 const isMobile = inject<boolean>('isMobile')
