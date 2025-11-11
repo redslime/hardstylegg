@@ -1,75 +1,56 @@
-# Nuxt Minimal Starter
+# Hardstyle.gg
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+## Easy way (Docker)
 
-## Setup
+1. Install Docker
+2. Populate .env file with valid values (Discord secrets)
+3. Execute following command in the root directory:
 
-Make sure to install dependencies:
 
-```bash
-# npm
-npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
+```shell
+docker compose up -d
 ```
 
-## Development Server
+or to force a build of the Dockerimage
 
-Start the development server on `http://localhost:3000`:
+```shell
+docker compose up -d --build
+```
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare",
+    "generate-prisma": "npx prisma generate",
+    "seed-prisma": "tsx prisma/seed.ts",
+    "push-prisma": "npx prisma db push"
+},
+## Hard way
 
-```bash
-# npm
+1. Populate .env file with valid values (Discord secrets)
+2. Install dependencies
+```shell
+   npm install
+```
+3. Generate prisma files
+```shell
+npm run generate-prisma
+```
+4. Generate nuxt files
+```shell
+npm run generate
+```
+5. Setup MySQL server and edit server string in .env
+
+6. Push Prisma migrations
+```shell
+npm run push-prisma
+```
+7. Seed database
+```shell
+npm run seed-prisma
+```
+8. Run server
+```shell
 npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
 ```
-
-## Production
-
-Build the application for production:
-
-```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
-```
-
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
