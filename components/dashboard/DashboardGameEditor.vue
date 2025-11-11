@@ -27,6 +27,7 @@ const { user } = useUserSession()
 const savingModal = ref<HTMLDialogElement | undefined>()
 const savingResponse = ref<boolean | String[] | undefined>()
 const editingErrors = computed<string[]>(() => validator())
+const editingExample = computed<boolean>(() => editing.value?.id === 1)
 
 function cancel() {
   editing.value = undefined
@@ -77,7 +78,7 @@ function onDelete(container: T) {
 
 function tryEdit(instance: T) {
   const scheduleData = computed<ScheduleDay | undefined>(() => getScheduleForGame(typeId, instance.id))
-  const editable = user.value.admin || !scheduleData || !scheduleData.value
+  const editable = user.value.admin || !scheduleData || !scheduleData.value || instance.id === 1
 
   if(editable) {
     editing.value = deepCopy(instance)
@@ -133,7 +134,7 @@ function tryEdit(instance: T) {
     <div class="flex gap-5">
       <div class="join">
         <button class="btn btn-neutral join-item" @click="cancel">Cancel</button>
-        <button class="btn btn-success join-item" @click="save" :disabled="editingErrors.length > 0">Save</button>
+        <button class="btn btn-success join-item" @click="save" :disabled="editingErrors.length > 0 || editingExample">Save</button>
       </div>
       <DashboardGameDeleteButton :editing="editing" :typeId="typeId" @deleted="onDelete" />
     </div>

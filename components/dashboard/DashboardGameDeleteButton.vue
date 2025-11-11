@@ -13,9 +13,10 @@ const { editing, typeId } = defineProps({
 })
 const scheduleData = computed<ScheduleDay | undefined>(() => getScheduleForGame(typeId, editing?.id))
 const disabled = computed<boolean>(() => scheduleData.value !== undefined)
+const example = computed<boolean>(() => editing?.id === 1)
 
 function canDelete(): boolean {
-  return (editing?.created_by === user.value.id || user.value.admin) && editing?.id !== undefined
+  return (editing?.created_by === user.value.id || user.value.admin) && editing?.id !== undefined && !example.value
 }
 
 function showModal() {

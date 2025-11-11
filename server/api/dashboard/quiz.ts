@@ -5,7 +5,14 @@ export default defineEventHandler(async (event) => {
     const { user } = await requireUserSession(event)
     const parents = await prisma.game_quiz.findMany({
         where: {
-            ...(user.admin ? {} : { created_by: user.id })
+            OR: [
+                {
+                    ...(user.admin ? {} : { created_by: user.id })
+                },
+                {
+                    id: 1
+                }
+            ]
         }
     })
     const items = await prisma.game_quiz_item.findMany()

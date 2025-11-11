@@ -5,7 +5,14 @@ export default defineEventHandler(async (event) => {
     const { user } = await requireUserSession(event)
     const instances = await prisma.game_order.findMany({
         where: {
-            ...(user.admin ? {} : { created_by: user.id })
+            OR: [
+                {
+                    ...(user.admin ? {} : { created_by: user.id })
+                },
+                {
+                    id: 1
+                }
+            ]
         }
     })
     const items = await prisma.game_order_item.findMany()

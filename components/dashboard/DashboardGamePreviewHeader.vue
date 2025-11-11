@@ -13,7 +13,8 @@ const { typeId, container, title, pointer } = defineProps({
 const { user } = useUserSession()
 const dashboardData = await getDashboardData()
 const scheduleData = computed<ScheduleDay | undefined>(() => getScheduleForGame(typeId, container.id))
-const editable = user.value.admin || !scheduleData || !scheduleData.value
+const example = computed(() => container.id === 1)
+const editable = computed(() => user.value.admin || !scheduleData || !scheduleData.value || example.value)
 const editor = computed(() => dashboardData.editors.find(e => e.id === container.created_by))
 
 function click() {
@@ -28,6 +29,7 @@ function click() {
     <div class="text-2xl font-bold">{{ title }}</div>
     <div class="flex flex-wrap gap-1 mb-4">
       <div class="badge badge-success badge-soft badge-xs font-mono" v-if="scheduleData">Scheduled: {{ scheduleData.dayFriendly }}</div>
+      <div class="badge badge-accent badge-soft badge-xs font-mono" v-if="example">Example</div>
       <div class="badge badge-neutral badge-xs font-mono">ID: {{ container.id }}</div>
       <div class="badge badge-neutral badge-xs font-mono">
         Created by {{ editor?.name }}

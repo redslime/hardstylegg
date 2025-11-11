@@ -6,7 +6,14 @@ export default defineEventHandler(async (event) => {
 
     const parents = await prisma.game_timetable.findMany({
         where: {
-            ...(user.admin ? {} : { created_by: user.id })
+            OR: [
+                {
+                    ...(user.admin ? {} : { created_by: user.id })
+                },
+                {
+                    id: 1
+                }
+            ]
         }
     })
     const items = await prisma.game_timetable_item.findMany()
