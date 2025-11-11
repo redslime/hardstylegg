@@ -5,14 +5,16 @@ export default defineEventHandler(async (event) => {
     const {user} = await requireUserSession(event)
     const instances = await prisma.game_artwork.findMany({
         where: {
-            OR: [
-                {
-                    ...(user.admin ? {} : { created_by: user.id })
-                },
-                {
-                    id: 1
-                }
-            ]
+            ...(user.admin ? { } : {
+                OR: [
+                    {
+                        created_by: user.id
+                    },
+                    {
+                        id: 1
+                    }
+                ]
+            })
         }
     })
     const trackIds = instances.map(i => i.track_id)

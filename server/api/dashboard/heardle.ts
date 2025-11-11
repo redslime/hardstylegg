@@ -5,14 +5,16 @@ export default defineEventHandler(async (event) => {
 
     const instances = await prisma.game_heardle.findMany({
         where: {
-            OR: [
-                {
-                    ...(user.admin ? {} : { created_by: user.id })
-                },
-                {
-                    id: 1
-                }
-            ]
+            ...(user.admin ? { } : {
+                OR: [
+                    {
+                        created_by: user.id
+                    },
+                    {
+                        id: 1
+                    }
+                ]
+            })
         }
     })
     const trackIds = instances.map(i => i.track_id)
