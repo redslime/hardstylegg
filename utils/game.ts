@@ -82,6 +82,7 @@ export function transform(data: PackedDayData): GameContainer {
         dayId: data.dayId,
         dayFriendly: data.dayFriendly,
         theme,
+        editors: data.editors,
         data: transformed
     }
 }

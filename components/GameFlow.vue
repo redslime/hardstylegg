@@ -219,6 +219,9 @@ onMounted(() => {
     <div>
       Next daily challenge in <Countdown />
     </div>
+    <div class="text-sm mt-2 text-base-content/70">
+      Today's editors: {{ props.gameData.editors }}
+    </div>
     <div class="flex flex-wrap justify-center mt-8 gap-2">
       <ResultShareButton :action="copyResult" />
       <button class="btn btn-soft btn-secondary" @click="details=!details">

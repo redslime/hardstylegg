@@ -31,6 +31,7 @@ export async function getPackedDayData(): Promise<PackedDayData> {
         dayId: -1,
         dayFriendly: "",
         typeIds: [],
+        editors: "nobody",
         data: []
     }
 }
@@ -119,6 +120,13 @@ export async function checkDay() {
 }
 
 export async function getPackedDayDataForDay(dayId: number): Promise<PackedDayData> {
+    const editorData = await prisma.user.findMany({
+        select: {
+            id: true,
+            name: true
+        }
+    })
+    const editors: Set<string> = new Set()
     const data = await prisma.day_schedule.findUnique({
         where: {
             day: dayId
@@ -137,7 +145,9 @@ export async function getPackedDayDataForDay(dayId: number): Promise<PackedDayDa
                 const instance_id = gameIds[i]
 
                 if(type_id && instance_id) {
-                    packed.push(await getGameInstance(prisma, type_id, instance_id))
+                    const game = await getGameInstance(prisma, type_id, instance_id)
+                    editors.add(editorData.find(e => e.id === game?.created_by)?.name ?? "Unknown")
+                    packed.push(game)
                 }
             }
         }
@@ -147,6 +157,7 @@ export async function getPackedDayDataForDay(dayId: number): Promise<PackedDayDa
             dayFriendly: getFriendlyName(dayId),
             typeIds,
             data: packed,
+            editors: Array.from(editors).join(", "),
             theme: data.theme
         }
     } else {
@@ -154,6 +165,7 @@ export async function getPackedDayDataForDay(dayId: number): Promise<PackedDayDa
             dayId: -1,
             dayFriendly: getFriendlyName(dayId),
             typeIds: [],
+            editors: "nobody",
             data: []
         }
     }

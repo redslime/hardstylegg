@@ -4,6 +4,7 @@ export interface PackedDayData {
     dayId: number
     dayFriendly: string
     typeIds: number[]
+    editors: string
     data: any[]
     theme?: string | null
 }
@@ -33,6 +34,7 @@ export interface GameContainer {
     dayId: number
     dayFriendly: string
     theme?: string | null
+    editors: string
     data: GameData[]
 }
 
