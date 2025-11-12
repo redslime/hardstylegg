@@ -103,7 +103,7 @@ export default {
 
       <template #editTitle v-if="editing">
         <input type="text" placeholder="Timetable title" required maxlength="128"
-               class="input input-lg validator w-[80ch] focus:outline-none focus:ring-0"
+               class="input input-lg validator w-[80ch]"
                v-model="editing.title" />
       </template>
 
@@ -157,15 +157,15 @@ export default {
       <h3 class="text-lg font-bold mb-3">Edit timetable entry</h3>
       <fieldset class="fieldset">
         <legend class="fieldset-legend">Name</legend>
-        <input type="text" class="input focus:outline-none focus:ring-0" placeholder="Act name" required maxlength="128" v-model="editingItem.name" />
+        <input type="text" class="input" placeholder="Act name" required maxlength="128" v-model="editingItem.name" />
 
         <div class="flex gap-6 mt-2 items-center">
           <div>
-            <input type="time" class="input focus:outline-none focus:ring-0 w-24" placeholder="Start time" required :disabled="editing!!.items.length > 1" v-model="editingItem.begin" />
+            <input type="time" class="input w-24" placeholder="Start time" required :disabled="editing!!.items.length > 1" v-model="editingItem.begin" />
           </div>
           until
           <div>
-            <input type="time" class="input focus:outline-none focus:ring-0 w-24" @keyup.enter="editingItem = undefined; actModal?.close()" placeholder="End time" required v-model="editingItem.end" />
+            <input type="time" class="input w-24" @keyup.enter="editingItem = undefined; actModal?.close()" placeholder="End time" required v-model="editingItem.end" />
           </div>
         </div>
 

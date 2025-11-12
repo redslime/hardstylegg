@@ -50,7 +50,7 @@ const validateGuess = (item: TimetableItem) => {
           <input
               v-model="item.guess"
               type="text"
-              class="input input-xs md:input-sm ring-1 w-full focus:outline-none focus:ring-0"
+              class="input input-xs md:input-sm ring-1 w-full"
               @input="validateGuess(item)"
               :class="{'input-error': item.correct === false}"
               :style="{backgroundColor: props.container.color_bg}"

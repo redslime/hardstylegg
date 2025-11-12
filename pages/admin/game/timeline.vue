@@ -36,12 +36,12 @@ const editing = ref<TimelineContainer | undefined>()
 
       <template #editTitle>
         <input type="text" placeholder="Title" required maxlength="128"
-               class="input input-lg validator w-[80ch] focus:outline-none focus:ring-0"
+               class="input input-lg validator w-[80ch]"
                v-model="editing!!.title" />
       </template>
 
       <template #editBody>
-        <input class="input validator focus:outline-none focus:ring-0" type="number" min="2000" max="2025" placeholder="Answer option"
+        <input class="input validator" type="number" min="2000" max="2025" placeholder="Answer option"
                required v-model="editing!!.goal" />
       </template>
     </DashboardGameEditor>

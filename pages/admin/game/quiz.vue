@@ -36,14 +36,14 @@ const editing = ref<QuizContainer | undefined>()
 
       <template #editTitle v-if="editing">
         <input type="text" placeholder="Title" required maxlength="128"
-               class="input input-lg validator w-[80ch] focus:outline-none focus:ring-0"
+               class="input input-lg validator w-[80ch]"
                v-model="editing.title" />
       </template>
 
       <template #editBody v-if="editing">
         <div class="flex flex-col gap-2">
           <div v-for="(item, index) in editing.items" :key="item.id">
-            <label class="input min-w-[64ch] validator focus-within:outline-none focus-within:ring-0">
+            <label class="input min-w-[64ch] validator">
           <span v-if="item.correct" class="badge badge-success badge-xs min-w-[40px] join-item cursor-pointer"
                 @click="item.correct=!item.correct">True</span>
               <span v-else class="badge badge-error badge-xs min-w-[40px] join-item cursor-pointer"

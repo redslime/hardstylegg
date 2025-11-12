@@ -54,7 +54,7 @@ function update() {
 
       <template #editTitle v-if="editing">
         <input type="text" placeholder="Title" required maxlength="128"
-               class="input input-lg validator w-[50ch] focus:outline-none focus:ring-0"
+               class="input input-lg validator w-[50ch]"
                v-model="editing.title" />
       </template>
 

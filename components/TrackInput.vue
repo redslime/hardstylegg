@@ -250,7 +250,7 @@ onMounted(() => {
 const inputBindings = computed(() => ({
   value: query.value,  // Changed from modelValue to value
   class: [
-    'input w-full focus:outline-none focus:ring-0',
+    'input w-full',
     {
       'md:input-xl': props?.xl ?? false,
       'border-error': errorFlash.value,

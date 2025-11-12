@@ -76,12 +76,12 @@ function add() {
                   <input
                       v-model="item.name"
                       type="text"
-                      class="input input-sm focus:outline-none focus:ring-0"
+                      class="input input-sm"
                   />
                 </template>
 
                 <template v-else>
-                  <div class="badge badge-outline badge-info badge-sm hover:badge-primary  cursor-pointer" v-if="item.hidden" @click="item.hidden = !item.hidden">
+                  <div class="badge badge-outline badge-info badge-sm hover:badge-primary cursor-pointer" v-if="item.hidden" @click="item.hidden = !item.hidden">
                     {{ item.name }}
                   </div>
                   <div class="hover:bg-white/10 rounded-md cursor-pointer" @click="item.hidden = !item.hidden" v-else>
@@ -96,7 +96,7 @@ function add() {
                     <input
                         v-model="item.artist"
                         type="text"
-                        class="input input-xs focus:outline-none focus:ring-0"
+                        class="input input-xs"
                         @keyup.enter="editingIndex = -1"
                     />
                   </template>

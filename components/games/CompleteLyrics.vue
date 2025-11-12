@@ -106,7 +106,7 @@ watch(answers, (newAnswers) => {
                 <input
                     v-else
                     v-model="answers[part.name]"
-                    class="input input-xs focus:outline-none focus:ring-0"
+                    class="input input-xs"
                     :style="{ width: `${Math.max(3, 4 + part.name.length)}ch` }"
                 />
               </template>

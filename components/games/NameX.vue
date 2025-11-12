@@ -103,7 +103,7 @@ function censor(text: string, censor: boolean): string {
         v-slot="{ inputBindings, inputEvents, errorFlash, successFlash }"
     >
       <label
-          class="w-full input focus-within:outline-none focus-within:ring-0"
+          class="w-full input"
           :class="{
         'border-error': errorFlash,
         'border-success': successFlash

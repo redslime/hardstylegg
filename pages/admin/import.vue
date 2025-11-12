@@ -80,7 +80,7 @@ watchEffect(() => {
     <legend class="fieldset-legend">Insert artist url</legend>
     <div class="join">
       <div>
-        <label class="input join-item focus-within:outline-none focus-within:ring-0 w-96"
+        <label class="input join-item w-96"
           :class="{'border-1 border-error': !validUrl}">
           <input class="w-full" type="url" required :disabled="importing" v-model="url" />
         </label>

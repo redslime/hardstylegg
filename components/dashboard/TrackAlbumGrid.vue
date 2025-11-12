@@ -230,7 +230,7 @@ const computedPageProvider = computed(() => {
 <template>
   <h3 class="text-2xl font-bold" v-if="!hideTitle">{{ title }} {{ mode }}</h3>
 
-  <label class="input focus-within:outline-none focus-within:ring-0 my-3">
+  <label class="input my-3">
     <SearchIcon />
     <input type="text" class="grow" placeholder="Search" v-model="query" />
     {{ filteredLength }}
@@ -285,9 +285,9 @@ const computedPageProvider = computed(() => {
     <div class="modal-box max-w-1/2" v-if="!editingSaving">
       <div class="flex flex-col justify-center items-center gap-1">
         <img class="w-full overflow-hidden object-contain max-h-[300px] mb-2" :src="`https://i.scdn.co/image/${editingItem.cover_art}`" alt="" />
-        <input class="input w-xl text-center input-lg text-lg font-semibold focus:outline-none focus:ring-0" v-model="editingItem.title" />
-        <input class="input w-xl text-sm text-center opacity-70 focus:outline-none focus:ring-0" v-model="editingItem.artists" />
-        <input class="input w-20 text-xs text-center opacity-70 focus:outline-none focus:ring-0" type="number" v-model="editingItem.year" />
+        <input class="input w-xl text-center input-lg text-lg font-semibold" v-model="editingItem.title" />
+        <input class="input w-xl text-sm text-center opacity-70" v-model="editingItem.artists" />
+        <input class="input w-20 text-xs text-center opacity-70" type="number" v-model="editingItem.year" />
 
         <div class="flex gap-3 self-start mt-7">
           <button class="btn btn-soft btn-success" @click="saveEditing()">Save</button>

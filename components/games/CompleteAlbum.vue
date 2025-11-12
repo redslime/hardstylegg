@@ -66,7 +66,7 @@ const validateGuess = (item: CompleteAlbumItem) => {
               <input
                   v-model="item.guess"
                   type="text"
-                  class="input input-xs w-full focus:outline-none focus:ring-0"
+                  class="input input-xs w-full"
                   @input="validateGuess(item)"
                   :class="{'input-error': item.correct === false}"
               />

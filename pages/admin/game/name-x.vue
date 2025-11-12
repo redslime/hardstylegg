@@ -44,7 +44,7 @@ function del(index: number) {
 
       <template #editTitle v-if="editing">
         <input type="text" placeholder="Title" required maxlength="128"
-               class="input input-lg validator w-[80ch] focus:outline-none focus:ring-0"
+               class="input input-lg validator w-[80ch]"
                v-model="editing.title" />
       </template>
 
@@ -82,7 +82,7 @@ function del(index: number) {
         <div class="mt-5">
           <fieldset class="fieldset">
             <legend class="fieldset-legend">Number of tracks that must be guessed correctly</legend>
-            <input class="input focus:outline-none focus:ring-0" type="number" v-model="editing!!.goal" min="1" :max="editing.items.length" placeholder="Guess goal" required />
+            <input class="input" type="number" v-model="editing!!.goal" min="1" :max="editing.items.length" placeholder="Guess goal" required />
           </fieldset>
         </div>
       </template>

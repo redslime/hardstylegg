@@ -91,7 +91,7 @@ function toggle(word: string, lineIndex: number) {
       <template #editBody v-if="editing && editing.track">
         <template v-if="!editing.text || forceInput">
           <div class="flex flex-col gap-2">
-            <textarea class="textarea focus:outline-none focus:ring-0 w-full" rows="10" placeholder="Enter lyrics..." v-model="input"></textarea>
+            <textarea class="textarea w-full" rows="10" placeholder="Enter lyrics..." v-model="input"></textarea>
             <p class="opacity-80 flex gap-1"><InfoIcon class="text-info" /> Copy the full lyrics into this box. You can choose which words to leave out in the next step.</p>
             <button class="btn btn-soft btn-success mt-2 w-fit" :disabled="!input || input.trim().length === 0"
               @click="editing.text = input!!; forceInput = false">
