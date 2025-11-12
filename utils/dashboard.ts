@@ -149,5 +149,5 @@ export function deleteTrack(track: Track) {
 }
 
 export function deleteAlbum(album: Track) {
-    albums?.splice(tracks.indexOf(track), 1)
+    albums?.splice(albums.indexOf(album), 1)
 }
