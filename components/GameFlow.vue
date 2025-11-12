@@ -26,12 +26,6 @@ import {
 import {getTracks} from "~/utils/tracks";
 import {useLocalStorage} from "@vueuse/core";
 
-useHead({
-  meta: [
-    { name: "viewport", content: "width=device-width, initial-scale=1.0, viewport-fit=cover" },
-  ]
-})
-
 const props = defineProps({
   gameData: { type: Object as PropType<GameContainer>, required: true },
   cookie: { type: Object as PropType<CookieDayMemory[]>, required: true }
