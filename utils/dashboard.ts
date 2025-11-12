@@ -143,3 +143,11 @@ export async function updateScheduleDay(day: ScheduleDay) {
         body: day
     })
 }
+
+export function deleteTrack(track: Track) {
+    tracks?.splice(tracks.indexOf(track), 1)
+}
+
+export function deleteAlbum(album: Track) {
+    albums?.splice(tracks.indexOf(track), 1)
+}
