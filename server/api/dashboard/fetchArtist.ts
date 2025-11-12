@@ -87,11 +87,14 @@ export default defineEventHandler(async (event) => {
         const albums: Track[] = []
         const tracks: Track[] = []
 
-        // initial request
-        let data = await requestWithRetry(() => getSpotifyApi().artists.albums(artistId as string, "album,single", undefined, 50))
+        let total = 1 // cause the while to run at least once
+        let collected = 0
         let offset = 0
 
-        do {
+        while(collected < total) {
+            const data = await requestWithRetry(() => getSpotifyApi().artists.albums(artistId as string, "album,single", undefined, 50, offset))
+            total = data.total
+
             for (const item of data.items) {
                 if (item.album_type === "album") albums.push(mapAlbum(item))
 
@@ -99,9 +102,9 @@ export default defineEventHandler(async (event) => {
                 tracks.push(...childItems.items.map((track: any) => mapTrack(track, item)))
             }
 
+            collected += data.items.length
             offset += data.items.length
-            data = await requestWithRetry(() => getSpotifyApi().artists.albums(artistId as string, "album,single", undefined, 50, offset))
-        } while (data.next)
+        }
 
         tracks.sort((a, b) => b.year - a.year)
 
