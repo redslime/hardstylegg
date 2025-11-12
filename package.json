@@ -16,6 +16,7 @@
     "@ffmpeg/util": "^0.12.2",
     "@meersagor/wavesurfer-vue": "^2.0.0",
     "@prisma/client": "^6.18.0",
+    "@spotify/web-api-ts-sdk": "^1.2.0",
     "@tailwindcss/vite": "^4.1.15",
     "apexcharts": "^5.3.6",
     "canvas-confetti": "^1.9.3",

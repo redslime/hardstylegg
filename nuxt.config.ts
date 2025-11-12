@@ -50,6 +50,8 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
       discordClientSecret: process.env.NUXT_DISCORD_CLIENT_SECRET,
+      spotifyClientId: process.env.NUXT_SPOTIFY_CLIENT_ID,
+      spotifyClientSecret: process.env.NUXT_SPOTIFY_CLIENT_SECRET,
       public: {
           appUrl: process.env.NUXT_PUBLIC_APP_URL,
           discordClientId: process.env.NUXT_PUBLIC_DISCORD_CLIENT_ID

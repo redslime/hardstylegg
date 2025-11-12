@@ -32,6 +32,14 @@ function getStructure(user: User): DashboardGroup[] {
         url: "/admin/albums"
     })
 
+    if(user.admin) {
+        overviewItems.push({
+            name: "Import artist",
+            icon: "CloudArrowDownIcon",
+            url: "/admin/import"
+        })
+    }
+
     overviewItems.push({
         name: "Editors",
         icon: "UsersIcon",
