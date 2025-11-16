@@ -149,7 +149,6 @@ async function buildSvg(markup: any, event: H3Event<EventHandlerRequest>) {
 
     // Return SVG or PNG
     event.node.res.setHeader('Content-Type', 'image/png');
-    console.log("[API] svg and png done, replying")
     return png;
 }
 
@@ -229,8 +228,6 @@ async function replyCode(code: string, event: H3Event<EventHandlerRequest>) {
         }
     })
 
-    console.log("[API] Found report: ", report)
-
     if(report) {
         const ids = await getIdsForDay(report.dayId)
         const dayFriendly = getFriendlyName(report.dayId)
@@ -290,8 +287,6 @@ async function replyCode(code: string, event: H3Event<EventHandlerRequest>) {
             </div>
           `);
 
-        console.log("[API] Generated markup, building svg and repling")
-
        return buildSvg(markup, event)
     }
 
@@ -302,8 +297,6 @@ export default defineEventHandler(async (event) => {
     const query = getQuery(event);
     const resultsQuery = query.r as string;
     const codeQuery = query.c as string;
-
-    console.log("[API] og request: r=" + resultsQuery + ", q=" + codeQuery)
 
     if(query.c) {
         return await replyCode(query.c as string, event);

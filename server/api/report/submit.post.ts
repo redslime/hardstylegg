@@ -5,8 +5,6 @@ import prisma from "~/lib/prisma";
 export default defineEventHandler(async (event) => {
     const report = await readBody<ReportContainer>(event)
 
-    console.log("Received performance report:", report)
-
     if(report) {
         const successes = report.data.filter(item => item.success).length
 
