@@ -36,7 +36,13 @@ function getStructure(user: User): DashboardGroup[] {
         overviewItems.push({
             name: "Import artist",
             icon: "CloudArrowDownIcon",
-            url: "/admin/import"
+            url: "/admin/import/artist"
+        })
+
+        overviewItems.push({
+            name: "Import track",
+            icon: "CloudArrowDownIcon",
+            url: "/admin/import/track"
         })
     }
 

@@ -24,7 +24,7 @@ async function start() {
 
   if(id) {
     importing.value = true
-    data.value = await $fetch<{ albums: Track[], tracks: Track[] }>("/api/dashboard/fetchArtist?artistId=" + id)
+    data.value = await $fetch<{ albums: Track[], tracks: Track[] }>("/api/dashboard/import/fetchArtist?artistId=" + id)
     importing.value = false
   }
 }
@@ -34,7 +34,7 @@ async function finish() {
   importing.value = true
 
   try {
-    const success = await $fetch<boolean>("/api/dashboard/import", {
+    const success = await $fetch<boolean>("/api/dashboard/import/artist", {
       method: "POST",
       body: { albums: data.value!!.albums, tracks: data.value!!.tracks }
     })
