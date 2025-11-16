@@ -20,7 +20,7 @@ const { data: tracks, pending, error } = await useAsyncData(() => getDashboardTr
 
   <DashboardGameLoadingSpinner :pending="pending" :error="error" />
 
-  <template v-if="tracks && user.admin">
+  <template v-if="tracks">
     <TrackAlbumGrid :items="tracks" :hideTitle="true" :selectable="false" :editable="user.admin" />
   </template>
 </template>
