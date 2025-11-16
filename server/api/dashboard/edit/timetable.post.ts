@@ -55,7 +55,7 @@ export default defineEventHandler(async (event) => {
                         id: { notIn: timetable.items.filter((i) => i.id).map((i) => i.id!) },
                     },
                     upsert: timetable.items.map((item) => ({
-                        where: { id: item.id!! },
+                        where: { id: item.id ?? -1 },
                         create: {
                             name: item.name,
                             begin: item.begin,

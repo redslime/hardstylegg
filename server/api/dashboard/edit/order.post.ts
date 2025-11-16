@@ -27,7 +27,7 @@ export default defineEventHandler(async (event) => {
                         where: {
                             parent_id_index: {
                                 parent_id: order.id!!,
-                                index: item.index!,
+                                index: item.index ?? -1,
                             }
                         },
                         create: {

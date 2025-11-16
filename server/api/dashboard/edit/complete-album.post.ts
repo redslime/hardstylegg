@@ -48,7 +48,7 @@ export default defineEventHandler(async (event) => {
                         id: { notIn: album.items.filter((i) => i.id).map((i) => i.id!) },
                     },
                     upsert: album.items.map((item) => ({
-                        where: { id: item.id!! },
+                        where: { id: item.id ?? -1 },
                         create: {
                             name: item.name,
                             artist: item.artist,
