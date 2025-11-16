@@ -5,20 +5,15 @@ import {getBaseDate, getDayIdToday, getFriendlyName, getTimeUntilMidnight} from 
 
 function getStructure(user: User): DashboardGroup[] {
     const overviewItems = []
+    const adminItems = []
+    const gameItems = []
 
+    // overview items
     overviewItems.push({
         name: "Home",
         icon: "HomeIcon",
         url: "/admin"
     })
-
-    if(user.admin) {
-        overviewItems.push({
-            name: "Schedule",
-            icon: "CalendarDaysIcon",
-            url: "/admin/schedule"
-        })
-    }
 
     overviewItems.push({
         name: "Track database",
@@ -32,28 +27,34 @@ function getStructure(user: User): DashboardGroup[] {
         url: "/admin/albums"
     })
 
-    if(user.admin) {
-        overviewItems.push({
-            name: "Import artist",
-            icon: "CloudArrowDownIcon",
-            url: "/admin/import/artist"
-        })
-
-        overviewItems.push({
-            name: "Import track",
-            icon: "CloudArrowDownIcon",
-            url: "/admin/import/track"
-        })
-    }
-
     overviewItems.push({
         name: "Editors",
         icon: "UsersIcon",
         url: "/admin/editors"
     })
 
-    const gameItems = []
 
+    // admin items
+    adminItems.push({
+        name: "Schedule",
+        icon: "CalendarDaysIcon",
+        url: "/admin/schedule"
+    })
+
+    adminItems.push({
+        name: "Import artist",
+        icon: "CloudArrowDownIcon",
+        url: "/admin/import/artist"
+    })
+
+    adminItems.push({
+        name: "Import track",
+        icon: "CloudArrowDownIcon",
+        url: "/admin/import/track"
+    })
+
+
+    // game items
     gameItems.push({
         name: "Artwork",
         icon: "Pencil",
@@ -100,7 +101,7 @@ function getStructure(user: User): DashboardGroup[] {
         url: "/admin/game/timetable"
     })
 
-    return [
+    const groups: DashboardGroup[] = [
         {
             name: "Overview",
             items: overviewItems
@@ -110,6 +111,15 @@ function getStructure(user: User): DashboardGroup[] {
             items: gameItems
         }
     ]
+
+    if(user.admin) {
+        groups.splice(1, 0, {
+            name: "Admin",
+            items: adminItems
+        })
+    }
+
+    return groups
 }
 
 async function getEditors(): Promise<Editor[]> {
