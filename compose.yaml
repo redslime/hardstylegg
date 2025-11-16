@@ -14,6 +14,17 @@ services:
   app:
     build:
       dockerfile: dev.Dockerfile
+    develop:
+      watch:
+        - action: sync
+          path: ./
+          target: /app
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: package.json
+        - action: rebuild
+          path: ./prisma/
     restart: unless-stopped
     env_file:
       - .env
