@@ -3,6 +3,8 @@
 import {getDashboardData, getFriendlyName} from "~/utils/dashboard";
 import {gameComps, getGameName} from "~/utils/game";
 import {GameState} from "~/types/models";
+import PlayerStatsChart from "~/components/dashboard/PlayerStatsChart.vue";
+import ScoreStatsChart from "~/components/dashboard/ScoreStatsChart.vue";
 
 definePageMeta({
   layout: 'dashboard',
@@ -84,7 +86,7 @@ function getTypeIds(day: number) {
       </div>
     </div>
 
-    <div class="flex gap-5">
+    <div class="flex flex-wrap gap-5">
       <div class="bg-base-200 p-7 rounded-md">
         <h1 class="text-2xl font-bold mb-5 text-center">Tomorrow</h1>
 
@@ -118,6 +120,18 @@ function getTypeIds(day: number) {
         <button class="btn btn-primary mt-5 btn-outline btn-sm" v-if="user.admin" @click="navigateTo('/admin/schedule')">
           Go to schedule
         </button>
+      </div>
+    </div>
+
+    <div class="flex flex-wrap gap-5">
+      <div class="bg-base-200 p-7 rounded-md">
+        <h1 class="text-2xl font-bold mb-5 text-center">Player stats</h1>
+        <PlayerStatsChart />
+      </div>
+
+      <div class="bg-base-200 p-7 rounded-md">
+        <h1 class="text-2xl font-bold mb-5 text-center">Average Score stats</h1>
+        <ScoreStatsChart />
       </div>
     </div>
 
