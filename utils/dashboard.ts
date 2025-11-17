@@ -1,4 +1,4 @@
-import type {DashboardData, PackedDayData, ScheduleDay, ScheduleEntry, Track} from "~/types/models";
+import type {DashboardData, ScheduleDay, Track} from "~/types/models";
 import type {
     ArtworkContainer,
     CompleteAlbumContainer,
@@ -11,6 +11,7 @@ import type {
     TimetableContainer
 } from "~/types/gameModels";
 import {DateTime} from "luxon";
+import {getAlbumCacheParam, getTrackCacheParam} from "~/utils/cacheKeys";
 
 export const GAMES_PER_DAY = 5
 
@@ -35,13 +36,15 @@ export async function getDashboardData(): Promise<DashboardData> {
 
 export async function getDashboardTracks(): Promise<Track[]> {
     if(tracks !== null) return tracks
-    tracks = await $fetch<Track[]>('/api/dashboard/tracks')
+    const v = await getTrackCacheParam()
+    tracks = await $fetch<Track[]>('/api/dashboard/tracks' + v)
     return tracks
 }
 
 export async function getDashboardAlbums(): Promise<Track[]> {
     if(albums !== null) return albums
-    albums = await $fetch<Track[]>('/api/dashboard/albums')
+    const v = await getAlbumCacheParam()
+    albums = await $fetch<Track[]>('/api/dashboard/albums' + v)
     return albums
 }
 

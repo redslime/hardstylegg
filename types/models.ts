@@ -120,3 +120,8 @@ export interface CookieStreakMemory {
     streak: number
     lastDayId: number
 }
+
+export interface KeyCache {
+    tracks: string
+    albums: string
+}
