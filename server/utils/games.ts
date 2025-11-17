@@ -5,6 +5,7 @@ import type {
     CompleteAlbumContainer,
     CompleteLyricsContainer,
     HeardleContainer,
+    MapContainer,
     NameXContainer,
     OrderContainer,
     OrderItem,
@@ -41,6 +42,9 @@ export async function getGameInstance(prisma: PrismaClient, type_id: number, ins
         }
         case 9: {
             return await getTimetableInstance(prisma, instance_id)
+        }
+        case 10: {
+            return await getMapInstance(prisma, instance_id)
         }
     }
 }
@@ -162,5 +166,15 @@ export async function getTimetableInstance(prisma: PrismaClient, id: number): Pr
         color_bg: "#" + parent!!.color_bg,
         color_text: "#" + parent!!.color_text,
         items: items
+    }
+}
+
+export async function getMapInstance(prisma: PrismaClient, id: number): Promise<MapContainer> {
+    const parent = await prisma.game_map.findUnique({ where: { id: id } })
+    return <MapContainer>{
+        id: parent!!.id,
+        created_by: parent!!.created_by,
+        title: parent!!.title,
+        goal: parent!!.goal,
     }
 }

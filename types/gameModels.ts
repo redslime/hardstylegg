@@ -105,3 +105,10 @@ export interface TimetableItem {
     guess?: string
     correct?: boolean | null
 }
+
+export interface MapContainer {
+    id?: number
+    created_by?: number
+    title: string
+    goal: string
+}

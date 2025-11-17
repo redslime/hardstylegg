@@ -11,6 +11,7 @@ export default defineNuxtConfig({
         '/share': { ssr: true },
         '/': { ssr: false },
         '/play': { ssr: false },
+        '/test': { ssr: false },
         '/admin/**': { ssr: false }
     },
 

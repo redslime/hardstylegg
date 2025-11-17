@@ -184,6 +184,7 @@ model user {
   game_complete_album  game_complete_album[]
   game_complete_lyrics game_complete_lyrics[]
   game_heardle         game_heardle[]
+  game_map             game_map[]
   game_namex           game_namex[]
   game_order           game_order[]
   game_quiz            game_quiz[]
@@ -218,4 +219,14 @@ model report_item {
 
   @@id([parent_code, typeId, gameId])
   @@index([typeId, gameId], map: "report_item_typeId_gameId_index")
+}
+
+model game_map {
+  id         Int    @id @default(autoincrement())
+  created_by Int
+  title      String @db.VarChar(64)
+  goal       String @db.Char(2)
+  user       user   @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "game_map_user_id_fk")
+
+  @@index([created_by], map: "game_map_user_id_fk")
 }

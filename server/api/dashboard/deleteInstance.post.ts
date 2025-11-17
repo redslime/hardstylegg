@@ -82,6 +82,13 @@ export default defineEventHandler(async (event) => {
                     }
                 })
             }
+            case 10: {
+                return await prisma.game_map.delete({
+                    where: {
+                        id: gameId
+                    }
+                })
+            }
         }
     } else {
         throw createError({

@@ -24,7 +24,9 @@ import Order from "~/components/games/Order.vue";
 import Quiz from "~/components/games/Quiz.vue";
 import Timeline from "~/components/games/Timeline.vue";
 import Timetable from "~/components/games/Timetable.vue";
+import Map from "~/components/games/Map.vue";
 import {debug} from "~/utils/utils";
+import MapIcon from "~/components/icons/game/MapIcon.vue";
 
 let currentTypeId: number | null = null
 let currentGameId: number | null = null
@@ -41,6 +43,7 @@ export const gameComps = {
     Quiz: { id: 7, comp: Quiz, icon: CheckCircle, preview: (props: any) => props.container.title },
     Timeline: { id: 8, comp: Timeline, icon: Calendar, preview: (props: any) => props.container.title },
     Timetable: { id: 9, comp: Timetable, icon: PencilSquare, preview: (props: any) => "Complete the timetable" },
+    Map: { id: 10, comp: Map, icon: MapIcon, preview: (props: any) => props.container.title }
 }
 
 export async function getGameContainer(): Promise<GameContainer> {

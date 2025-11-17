@@ -1,7 +1,7 @@
 import type {
     ArtworkContainer,
     CompleteAlbumContainer,
-    CompleteLyricsContainer, HeardleContainer,
+    CompleteLyricsContainer, HeardleContainer, MapContainer,
     NameXContainer,
     OrderContainer,
     QuizContainer,
@@ -245,6 +245,18 @@ export function validateTimetableItem(item: TimetableItem, errors: string[]) {
     if(item.begin === item.end) {
         errors.push("Begin and end time must be different")
     }
+}
+
+export function validateMap(map: MapContainer): string[] {
+    const errors: string[] = []
+
+    validateTitle(map.title, errors)
+
+    if(!map.goal || map.goal.trim().length === 0) {
+        errors.push("Country goal is required")
+    }
+
+    return errors
 }
 
 function validateTitle(title: string, errors: string[]) {

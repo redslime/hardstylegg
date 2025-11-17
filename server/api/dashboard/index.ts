@@ -100,6 +100,11 @@ function getStructure(user: User): DashboardGroup[] {
         icon: "PencilSquare",
         url: "/admin/game/timetable"
     })
+    gameItems.push({
+        name: "Map",
+        icon: "MapIcon",
+        url: "/admin/game/map"
+    })
 
     const groups: DashboardGroup[] = [
         {

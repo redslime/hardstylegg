@@ -4,6 +4,7 @@ import type {
   CompleteAlbumContainer,
   CompleteLyricsContainer,
   HeardleContainer,
+  MapContainer,
   NameXContainer,
   OrderContainer,
   QuizContainer,
@@ -15,6 +16,7 @@ import {
   getCompleteAlbumData,
   getCompleteLyricsData,
   getHeardleData,
+  getMapData,
   getNameXData,
   getOrderData,
   getQuizData,
@@ -32,6 +34,7 @@ type EditorData =
     | QuizContainer[]
     | TimelineContainer[]
     | TimetableContainer[]
+    | MapContainer[]
 
 const emit = defineEmits(['select'])
 const { typeId } = defineProps({
@@ -48,6 +51,7 @@ const { data, pending, error, clear } = await useAsyncData<EditorData>(() => {
     case 7: return getQuizData()
     case 8: return getTimelineData()
     case 9: return getTimetableData()
+    case 10: return getMapData()
     default: return getArtworkData()
   }
 }, { lazy: true })

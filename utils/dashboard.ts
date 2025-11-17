@@ -4,6 +4,7 @@ import type {
     CompleteAlbumContainer,
     CompleteLyricsContainer,
     HeardleContainer,
+    MapContainer,
     NameXContainer,
     OrderContainer,
     QuizContainer,
@@ -27,6 +28,7 @@ let orderData: OrderContainer[] | null = null;
 let quizData: QuizContainer[] | null = null;
 let timelineData: TimelineContainer[] | null = null;
 let timetableData: TimetableContainer[] | null = null;
+let mapData: MapContainer[] | null = null;
 
 export async function getDashboardData(): Promise<DashboardData> {
     if(dashboardData !== null) return dashboardData
@@ -100,6 +102,12 @@ export async function getTimetableData(): Promise<TimetableContainer[]> {
     if(timetableData !== null) return timetableData
     timetableData = await $fetch<TimetableContainer[]>('/api/dashboard/timetable')
     return timetableData
+}
+
+export async function getMapData(): Promise<MapContainer[]> {
+    if(mapData !== null) return mapData
+    mapData = await $fetch<MapContainer[]>('/api/dashboard/map')
+    return mapData
 }
 
 export function getScheduleForGame(typeId: number, gameId: number | undefined): ScheduleDay | undefined {

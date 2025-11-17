@@ -4,6 +4,7 @@ import type {
   CompleteAlbumContainer,
   CompleteLyricsContainer,
   HeardleContainer,
+  MapContainer,
   NameXContainer,
   OrderContainer,
   QuizContainer,
@@ -19,6 +20,7 @@ import OrderPreview from "~/components/dashboard/preview/OrderPreview.vue";
 import QuizPreview from "~/components/dashboard/preview/QuizPreview.vue";
 import TimelinePreview from "~/components/dashboard/preview/TimelinePreview.vue";
 import TimetablePreview from "~/components/dashboard/preview/TimetablePreview.vue";
+import MapPreview from "~/components/dashboard/preview/MapPreview.vue";
 
 const { typeId, instance } = defineProps({
   typeId: { type: Number, required: true },
@@ -36,6 +38,7 @@ const { typeId, instance } = defineProps({
   <QuizPreview v-else-if="typeId === 7" :instance="instance as QuizContainer" :pointer="false" />
   <TimelinePreview v-else-if="typeId === 8" :instance="instance as TimelineContainer" :pointer="false" />
   <TimetablePreview v-else-if="typeId === 9" :instance="instance as TimetableContainer" :pointer="false" />
+  <MapPreview v-else-if="typeId === 10" :instance="instance as MapContainer" :pointer="false" />
 </template>
 
 <style scoped>
