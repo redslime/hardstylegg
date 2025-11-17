@@ -2,6 +2,7 @@ import {DateTime} from 'luxon';
 import prisma from "~/lib/prisma";
 import {getGameInstance} from "~/server/utils/games";
 import type {PackedDayData} from "~/types/models";
+import {resetCache} from "~/server/api/dashboard/stats/players";
 
 const BASE_DATE = DateTime.fromISO('2025-11-05', { zone: 'Europe/Berlin' });
 
@@ -174,6 +175,7 @@ export async function getPackedDayDataForDay(dayId: number): Promise<PackedDayDa
 async function onNewDay(newDayId: number) {
     packedCache = await getPackedDayDataForDay(newDayId)
     scoreCache = null
+    resetCache()
 }
 
 export async function getAvgScores(): Promise<{ dayIds: number[], dayNames: string[], avg: number[] }> {

@@ -4,6 +4,10 @@ import {getDayIdToday, getFriendlyName} from "~/server/utils/schedule";
 type Response = Record<number, { dayFriendly: string, played: number; completed: number; }>
 let cache: Response | null = null
 
+export function resetCache() {
+    cache = null
+}
+
 export default defineEventHandler(async (event) => {
     if(cache) return cache
 
