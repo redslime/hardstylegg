@@ -38,6 +38,7 @@ export default defineNuxtConfig({
             viewport: "width=device-width, initial-scale=1, viewport-fit=cover",
             meta: [
                 { name: 'theme-color', content: '#010D15' },
+                { name: 'mobile-web-app-capable', content: 'yes' },
                 { name: 'apple-mobile-web-app-capable', content: 'yes' },
                 { name: 'apple-mobile-web-app-title', content: 'hardstyle.gg' },
                 { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' }
