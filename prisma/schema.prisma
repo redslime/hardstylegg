@@ -224,7 +224,7 @@ model report_item {
 model game_map {
   id         Int    @id @default(autoincrement())
   created_by Int
-  title      String @db.VarChar(64)
+  title      String @db.VarChar(128)
   goal       String @db.Char(2)
   user       user   @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "game_map_user_id_fk")
 
