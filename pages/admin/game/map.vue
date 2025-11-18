@@ -3,7 +3,6 @@ import type {MapContainer} from "~/types/gameModels";
 import DashboardGameLoadingSpinner from "~/components/dashboard/DashboardGameLoadingSpinner.vue";
 import MapPreview from "~/components/dashboard/preview/MapPreview.vue";
 import type {HighlightItem} from "~/components/CountryMap.vue";
-import {getName} from "i18n-iso-countries"
 import {MapGame} from "~/utils/game/clientGameRegistry";
 
 definePageMeta({
@@ -16,6 +15,8 @@ const { data, pending, error } = await useAsyncData<MapContainer[]>(() => gameDe
 const instances = computed<MapContainer[] | undefined>(() => data.value)
 const editing = ref<MapContainer | undefined>()
 const selected = ref<HighlightItem[]>([])
+const { $countries } = useNuxtApp();
+const countryName = computed(() => $countries.getName(editing.value?.goal ?? "", "en"))
 
 function clicked(country: string) {
   selected.value = [
@@ -56,7 +57,7 @@ watch(editing, (val) => {
       <template #editBody v-if="editing">
         <CountryMap v-model:highlighted="selected" @click="s => clicked(s)" />
         <div v-if="editing.goal">
-          Selected: {{ getName(editing.goal, "en") }}
+          Selected: {{ countryName }}
         </div>
       </template>
     </DashboardGameEditor>
