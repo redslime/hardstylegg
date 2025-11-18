@@ -1,17 +1,16 @@
 <script setup lang="ts">
-import CheckCircle from "~/components/icons/game/CheckCircle.vue";
 import {type QuizContainer} from "~/types/gameModels";
-import {validateQuiz} from "~/utils/gameValidators"
-import {getQuizData} from "~/utils/dashboard";
 import DashboardGameLoadingSpinner from "~/components/dashboard/DashboardGameLoadingSpinner.vue";
 import QuizPreview from "~/components/dashboard/preview/QuizPreview.vue";
+import {QuizGame} from "~/utils/game/clientGameRegistry";
 
 definePageMeta({
   layout: 'dashboard',
   middleware: ['authenticated'],
 })
 
-const { data, pending, error } = await useAsyncData<QuizContainer[]>(() => getQuizData(), { lazy: true })
+const gameDef = QuizGame
+const { data, pending, error } = await useAsyncData<QuizContainer[]>(() => gameDef.getAllInstances(), { lazy: true })
 const instances = computed<QuizContainer[] | undefined>(() => data.value)
 const editing = ref<QuizContainer | undefined>()
 </script>
@@ -23,12 +22,7 @@ const editing = ref<QuizContainer | undefined>()
     <DashboardGameEditor
         v-model:instances="instances"
         v-model:editing="editing"
-        :validator="() => validateQuiz(editing!!)"
-        :editUrl="'/api/dashboard/edit/quiz'"
-        :typeId="7"
-        :typeName="'Quiz'"
-        :icon="CheckCircle"
-        :title="t => t.title"
+        :gameDef="gameDef"
     >
       <template #previewBody="{ instance, clicked }">
         <QuizPreview :instance="instance" @click="clicked()" />

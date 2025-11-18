@@ -123,6 +123,6 @@ watch(() => interact, (value) => {
 
 <style>
 .leaflet-container {
-  background: transparent;
+  background: transparent !important;
 }
 </style>

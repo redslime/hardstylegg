@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import type {ArtworkContainer} from "~/types/gameModels";
-import {getArtworkData} from "~/utils/dashboard";
 import DashboardGameLoadingSpinner from "~/components/dashboard/DashboardGameLoadingSpinner.vue";
-import {validateArtwork} from "~/utils/gameValidators";
-import Pencil from "~/components/icons/game/Pencil.vue";
 import {getName} from "~/utils/tracks";
 import {getSpotifyArtwork} from "~/utils/utils";
 import TrackPicker from "~/components/dashboard/TrackPicker.vue";
@@ -11,13 +8,15 @@ import ImageUploader from "~/components/ImageUploader.vue";
 import {ref} from "vue";
 import Checkmark from "~/components/icons/Checkmark.vue";
 import ArtworkPreview from "~/components/dashboard/preview/ArtworkPreview.vue";
+import {ArtworkGame} from "~/utils/game/clientGameRegistry";
 
 definePageMeta({
   layout: 'dashboard',
   middleware: ['authenticated'],
 })
 
-const { data, pending, error } = await useAsyncData<ArtworkContainer[]>(() => getArtworkData(), { lazy: true })
+const gameDef = ArtworkGame
+const { data, pending, error } = await useAsyncData<ArtworkContainer[]>(() => gameDef.getAllInstances(), { lazy: true })
 const instances = computed<ArtworkContainer[] | undefined>(() => data.value)
 const editing = ref<ArtworkContainer | undefined>()
 
@@ -81,12 +80,7 @@ function clearUpload() {
     <DashboardGameEditor
         v-model:instances="instances"
         v-model:editing="editing"
-        :validator="() => validateArtwork(editing!!)"
-        :editUrl="'/api/dashboard/edit/artwork'"
-        :typeId="1"
-        :typeName="'Artwork'"
-        :icon="Pencil"
-        :title="t => getName(t.track)"
+        :gameDef="gameDef"
         @saved="reset()"
         @cancelled="reset()"
     >

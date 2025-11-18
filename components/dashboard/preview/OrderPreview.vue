@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type {OrderContainer} from "~/types/gameModels";
+import {OrderGame} from "~/utils/game/clientGameRegistry";
 
 const { instance, pointer } = defineProps({
   instance: { type: Object as PropType<OrderContainer>, required: true },
@@ -8,7 +9,7 @@ const { instance, pointer } = defineProps({
 </script>
 
 <template>
-  <DashboardGamePreviewHeader :typeId="6" :pointer="pointer" :container="instance" :title="instance.title">
+  <DashboardGamePreviewHeader :gameDef="OrderGame" :pointer="pointer" :container="instance">
     <div class="w-full flex gap-2">
       <div class="shrink w-1/4 sm:w-1/3 xs:w-1/2" v-for="item in instance.items" :key="item.track.sid">
         <img

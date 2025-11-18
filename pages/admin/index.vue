@@ -1,10 +1,11 @@
 <script setup lang="ts">
 
 import {getDashboardData, getFriendlyName} from "~/utils/dashboard";
-import {gameComps, getGameName} from "~/utils/game";
+import {getGameName} from "~/utils/game";
 import {GameState} from "~/types/models";
 import PlayerStatsChart from "~/components/dashboard/PlayerStatsChart.vue";
 import ScoreStatsChart from "~/components/dashboard/ScoreStatsChart.vue";
+import {findGameById} from "~/utils/game/clientGameRegistry";
 
 definePageMeta({
   layout: 'dashboard',
@@ -53,7 +54,7 @@ function getTypeIds(day: number) {
           <div class="flex gap-2">
             <div v-for="(typeId, index) in getTypeIds(schedule.todayId)" :key="index" class="p-3 rounded-md tooltip bg-base-100"
                  :data-tip="getGameName(typeId)">
-              <component :is="gameComps[getGameName(typeId) as keyof typeof gameComps].icon" :state="GameState.UPCOMING" />
+              <component :is="findGameById(typeId)!!.icon" :state="GameState.UPCOMING" />
             </div>
           </div>
         </div>
@@ -100,7 +101,7 @@ function getTypeIds(day: number) {
           <div class="flex gap-2">
             <div v-if="tomorrowSchedule" v-for="(typeId, index) in tomorrowSchedule.typeIds" :key="index" class="p-2 rounded-md tooltip bg-black/50"
                  :data-tip="getGameName(typeId)">
-              <component :size="4" :is="gameComps[getGameName(typeId) as keyof typeof gameComps].icon" :state="GameState.UPCOMING" />
+              <component :size="4" :is="findGameById(typeId)!!.icon" :state="GameState.UPCOMING" />
             </div>
           </div>
         </div>

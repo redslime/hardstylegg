@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type {TimetableContainer} from "~/types/gameModels";
+import {TimetableGame} from "~/utils/game/clientGameRegistry";
 
 const { instance, pointer } = defineProps({
   instance: { type: Object as PropType<TimetableContainer>, required: true },
@@ -8,7 +9,7 @@ const { instance, pointer } = defineProps({
 </script>
 
 <template>
-  <DashboardGamePreviewHeader :typeId="9" :pointer="pointer" :container="instance" :title="instance.title">
+  <DashboardGamePreviewHeader :gameDef="TimetableGame" :pointer="pointer" :container="instance">
     <div v-for="item in instance.items" :key="item.id" class="badge badge-outline"
          :class="{'badge-info': item.hidden}">
       {{ item.name }}

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type {TimelineContainer} from "~/types/gameModels";
+import {TimelineGame} from "~/utils/game/clientGameRegistry";
 
 const { instance, pointer } = defineProps({
   instance: { type: Object as PropType<TimelineContainer>, required: true },
@@ -8,7 +9,7 @@ const { instance, pointer } = defineProps({
 </script>
 
 <template>
-  <DashboardGamePreviewHeader :typeId="8" :pointer="pointer" :container="instance" :title="instance.title">
+  <DashboardGamePreviewHeader :gameDef="TimelineGame" :pointer="pointer" :container="instance">
     <div class="badge badge-outline badge-info">{{ instance.goal }}</div>
   </DashboardGamePreviewHeader>
 </template>

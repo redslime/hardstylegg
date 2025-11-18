@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type {CompleteLyricsContainer} from "~/types/gameModels";
-import {getName} from "~/utils/tracks";
+import {CompleteLyricsGame} from "~/utils/game/clientGameRegistry";
 
 const { instance, pointer } = defineProps({
   instance: { type: Object as PropType<CompleteLyricsContainer>, required: true },
@@ -26,7 +26,7 @@ function getLines(instance: CompleteLyricsContainer) {
 </script>
 
 <template>
-  <DashboardGamePreviewHeader :typeId="3" :pointer="pointer" :container="instance" :title="getName(instance.track)">
+  <DashboardGamePreviewHeader :gameDef="CompleteLyricsGame" :pointer="pointer" :container="instance">
     <div class="whitespace-pre-wrap">
       <template v-for="(line, lineIndex) in getLines(instance)" :key="lineIndex">
         <p class="flex items-center gap-1">

@@ -28,7 +28,7 @@ const options = ref({
 })
 
 // Using core functionality - returns waveSurfer instance and all state
-const { waveSurfer, isReady, totalDuration, isPlaying, currentTime } = useWaveSurfer({
+const { waveSurfer, isReady } = useWaveSurfer({
   containerRef,
   options: options.value
 })

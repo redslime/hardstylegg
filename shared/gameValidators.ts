@@ -1,11 +1,15 @@
 import type {
     ArtworkContainer,
     CompleteAlbumContainer,
-    CompleteLyricsContainer, HeardleContainer, MapContainer,
+    CompleteLyricsContainer,
+    HeardleContainer,
+    MapContainer,
     NameXContainer,
     OrderContainer,
     QuizContainer,
-    TimelineContainer, TimetableContainer, TimetableItem
+    TimelineContainer,
+    TimetableContainer,
+    TimetableItem
 } from "~/types/gameModels";
 
 export function validateArtwork(artwork: ArtworkContainer): string[] {

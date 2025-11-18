@@ -1,21 +1,19 @@
 <script setup lang="ts">
 import type {NameXContainer} from "~/types/gameModels";
-import {getNameXData} from "~/utils/dashboard";
 import {computed} from "vue";
 import DashboardGameLoadingSpinner from "~/components/dashboard/DashboardGameLoadingSpinner.vue";
-import {validateNameX} from "~/utils/gameValidators";
-import ListBullet from "~/components/icons/game/ListBullet.vue";
-import {getName} from "~/utils/tracks";
 import TrashIcon from "~/components/icons/TrashIcon.vue";
 import TrackPicker from "~/components/dashboard/TrackPicker.vue";
 import NameXPreview from "~/components/dashboard/preview/NameXPreview.vue";
+import {NameXGame} from "~/utils/game/clientGameRegistry";
 
 definePageMeta({
   layout: 'dashboard',
   middleware: ['authenticated'],
 })
 
-const { data, pending, error } = await useAsyncData<NameXContainer[]>(() => getNameXData(), { lazy: true })
+const gameDef = NameXGame
+const { data, pending, error } = await useAsyncData<NameXContainer[]>(() => gameDef.getAllInstances(), { lazy: true })
 const instances = computed<NameXContainer[] | undefined>(() => data.value)
 const editing = ref<NameXContainer | undefined>()
 
@@ -31,12 +29,7 @@ function del(index: number) {
     <DashboardGameEditor
         v-model:instances="instances"
         v-model:editing="editing"
-        :validator="() => validateNameX(editing!!)"
-        :editUrl="'/api/dashboard/edit/name-x'"
-        :typeId="5"
-        :typeName="'Name X'"
-        :icon="ListBullet"
-        :title="t => t.title"
+        :gameDef="gameDef"
     >
       <template #previewBody="{ instance, clicked }">
         <NameXPreview :instance="instance" @click="clicked()" />

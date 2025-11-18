@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {ref} from "vue";
-import {useWaveSurfer, useWaveSurferRegions, useWaveSurferTimeline, useWaveSurferZoom} from "@meersagor/wavesurfer-vue";
+import {useWaveSurfer, useWaveSurferRegions, useWaveSurferTimeline} from "@meersagor/wavesurfer-vue";
 import type {RegionParams} from "wavesurfer.js/plugins/regions";
 import type {HeardleContainer} from "~/types/gameModels";
 
@@ -23,7 +23,7 @@ const options = ref({
 })
 
 // Using core functionality - returns waveSurfer instance and all state
-const { waveSurfer, isReady, totalDuration, isPlaying, currentTime } = useWaveSurfer({
+const { waveSurfer, isReady } = useWaveSurfer({
   containerRef,
   options: options.value
 })

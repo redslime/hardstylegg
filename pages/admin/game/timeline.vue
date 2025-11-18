@@ -1,17 +1,16 @@
 <script lang="ts" setup>
 import {type TimelineContainer} from "~/types/gameModels";
-import {getTimelineData} from "~/utils/dashboard";
-import {validateTimeline} from "~/utils/gameValidators"
-import Calendar from "~/components/icons/game/Calendar.vue";
 import DashboardGameLoadingSpinner from "~/components/dashboard/DashboardGameLoadingSpinner.vue";
 import TimelinePreview from "~/components/dashboard/preview/TimelinePreview.vue";
+import {TimelineGame} from "~/utils/game/clientGameRegistry";
 
 definePageMeta({
   layout: 'dashboard',
   middleware: ['authenticated'],
 })
 
-const { data, pending, error } = await useAsyncData<TimelineContainer[]>(() => getTimelineData(), { lazy: true })
+const gameDef = TimelineGame
+const { data, pending, error } = await useAsyncData<TimelineContainer[]>(() => gameDef.getAllInstances(), { lazy: true })
 const instances = computed<TimelineContainer[] | undefined>(() => data.value)
 const editing = ref<TimelineContainer | undefined>()
 </script>
@@ -23,12 +22,7 @@ const editing = ref<TimelineContainer | undefined>()
     <DashboardGameEditor
         v-model:instances="instances"
         v-model:editing="editing"
-        :validator="() => validateTimeline(editing!!)"
-        :editUrl="'/api/dashboard/edit/timeline'"
-        :typeId="8"
-        :typeName="'Timeline'"
-        :icon="Calendar"
-        :title="t => t.title"
+        :gameDef="gameDef"
     >
       <template #previewBody="{ instance, clicked }">
         <TimelinePreview :instance="instance" @click="clicked()" />

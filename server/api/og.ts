@@ -6,122 +6,13 @@ import {readFileSync} from "node:fs";
 import {join} from "pathe";
 import type {EventHandlerRequest, H3Event} from "h3";
 import prisma from "~/lib/prisma";
+import {findGameById} from "~/server/utils/game/serverGameRegistry";
 
 const interRegular = readFileSync(join(process.cwd(), '.output', 'public', 'fonts', 'Regular.ttf'))
 const interBold = readFileSync(join(process.cwd(), '.output', 'public', 'fonts', 'Bold.ttf'))
 
-const getIconSvg = (type: number) => {
-    // Map your game types to simple icons
-    // You'll need to create simplified SVG versions of your icons
-    const iconMap: Record<number, string> = {
-        0: '<path stroke="currentColor" fill="none" stroke-width="1.5" d="M12 2L2 7L12 12L22 7L12 2Z M2 17L12 22L22 17M2 12L12 17L22 12" />',
-        1: '<path stroke="currentColor" fill="none" stroke-width="1.5" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L6.832 19.82a4.5 4.5 0 0 1-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 0 1 1.13-1.897L16.863 4.487Zm0 0L19.5 7.125" />',
-        2: '<path stroke="currentColor" fill="none" stroke-width="1.5" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />',
-        3: '<path stroke="currentColor" fill="none" stroke-width="1.5" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />',
-        4: '<path stroke="currentColor" fill="none" stroke-width="1.5" d="M19.114 5.636a9 9 0 0 1 0 12.728M16.463 8.288a5.25 5.25 0 0 1 0 7.424M6.75 8.25l4.72-4.72a.75.75 0 0 1 1.28.53v15.88a.75.75 0 0 1-1.28.53l-4.72-4.72H4.51c-.88 0-1.704-.507-1.938-1.354A9.009 9.009 0 0 1 2.25 12c0-.83.112-1.633.322-2.396C2.806 8.756 3.63 8.25 4.51 8.25H6.75Z" />',
-        5: '<path stroke="currentColor" fill="none" stroke-width="1.5" d="M8.25 6.75h12M8.25 12h12m-12 5.25h12M3.75 6.75h.007v.008H3.75V6.75Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0ZM3.75 12h.007v.008H3.75V12Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm-.375 5.25h.007v.008H3.75v-.008Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" />',
-        6: '<path stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M7.5 21 3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" />',
-        7: '<path stroke="currentColor" fill="none" stroke-width="1.5" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />',
-        8: '<path stroke="currentColor" fill="none" stroke-width="1.5" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />',
-        9: '<path stroke="currentColor" fill="none" stroke-width="1.5" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />',
-        10: '<path stroke="currentColor" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M9 6.75V15m6-6v8.25m.503 3.498 4.875-2.437c.381-.19.622-.58.622-1.006V4.82c0-.836-.88-1.38-1.628-1.006l-3.869 1.934c-.317.159-.69.159-1.006 0L9.503 3.252a1.125 1.125 0 0 0-1.006 0L3.622 5.689C3.24 5.88 3 6.27 3 6.695V19.18c0 .836.88 1.38 1.628 1.006l3.869-1.934c.317-.159.69-.159 1.006 0l4.994 2.497c.317.158.69.158 1.006 0Z" />'
-        // Add more icon mappings based on your game types
-    };
-
-    return iconMap[type] || iconMap[0];
-};
-
 function hexToBits(hex: string, length: number): string {
-    const bits = parseInt(hex, 16).toString(2).padStart(length, "0");
-    return bits;
-}
-
-async function getOptions(typeId: number, gameId: number) {
-    if(typeId === 2) {
-        return await prisma.game_complete_album_item.count({
-            where: {
-                parent_id: gameId,
-                hidden: true
-            }
-        })
-    } else if(typeId === 5) {
-        const nameX = await prisma.game_namex.findUnique({
-            select: {
-                goal: true
-            },
-            where: {
-                id: gameId
-            }
-        })
-        return nameX?.goal ?? "?"
-    } else if(typeId === 6) {
-        return await prisma.game_order_item.count({
-            where: {
-                parent_id: gameId,
-            }
-        })
-    } else if(typeId === 9) {
-        return await prisma.game_timetable_item.count({
-            where: {
-                parent_id: gameId,
-                hidden: true
-            }
-        })
-    }
-
-    return "?"
-}
-
-async function getDetails(reportItem: {
-    parent_code: string
-    typeId: number
-    gameId: number
-    success: boolean
-    attempts: number | null
-    items_completed: string | null
-    items_clicked: string | null
-} | undefined): Promise<string> {
-    if(!reportItem) { return "" }
-
-    if(reportItem.success) {
-        if(reportItem.typeId === 1 || reportItem.typeId === 4 || reportItem.typeId === 5) {
-            // Artwork, Heardle, Name X
-            return "in " + reportItem.attempts
-        }
-    } else if(reportItem.items_completed) {
-        try {
-            const completed = JSON.parse(reportItem.items_completed) as { [key: string]: boolean }
-            const count = Object.values(completed).filter(v => v).length
-
-            // CompleteAlbum, NameX, Order, Timetable
-            if(reportItem.typeId === 2 || reportItem.typeId === 5 || reportItem.typeId === 6 || reportItem.typeId === 9) {
-                if(count > 0) {
-                    const options = await getOptions(reportItem.typeId, reportItem.gameId)
-
-                    return count + "/" + options
-                }
-            }
-        } catch (e: any) {
-            return ""
-        }
-    } else if(reportItem.items_clicked) {
-        try {
-            const array = JSON.parse(reportItem.items_clicked) as number[]
-
-            // Timeline
-            if(array && reportItem.typeId === 8) {
-                // special case: number in array is the amount of years off from goal
-
-                if(array.length === 1 && array[0] && array[0] > 0) {
-                    return array[0] + " off"
-                }
-            }
-        } catch(e: any) {
-            return ""
-        }
-    }
-
-    return ""
+    return parseInt(hex, 16).toString(2).padStart(length, "0");
 }
 
 async function buildSvg(markup: any, event: H3Event<EventHandlerRequest>) {
@@ -169,6 +60,8 @@ async function replyLegacyString(resultsQuery: string, event: H3Event<EventHandl
 
     // Generate icon elements
     const iconElements = types.map((type, index) => {
+        const gameDef = findGameById(type)!!
+        const iconSvg = gameDef.getPreviewIcon()
         const exists = results.length > index;
         const isSuccess = exists && results[index] === true;
         const isError = exists && results[index] === false;
@@ -187,7 +80,7 @@ async function replyLegacyString(resultsQuery: string, event: H3Event<EventHandl
         return `
       <div style="display: flex; padding: 8px; border-radius: 6px; background-color: ${bgColor};">
         <svg width="24" height="24" viewBox="0 0 24 24" stroke-width="1" style="color: ${textColor}">
-          ${getIconSvg(type)}
+          ${iconSvg}
         </svg>
       </div>
     `;
@@ -236,10 +129,12 @@ async function replyCode(code: string, event: H3Event<EventHandlerRequest>) {
         // Generate icon elements
         const iconElements = await Promise.all(ids.typeIds.map(async (typeId, index): Promise<string> => {
             const gameId = ids.gameIds[index]
+            const gameDef = findGameById(typeId)!!
+            const iconSvg = gameDef.getPreviewIcon()
             const reportItem = report.report_item.find(ri => ri.typeId === typeId && ri.gameId === gameId)
             const isSuccess = reportItem && reportItem.success === true;
             const isError = reportItem && reportItem.success === false;
-            const details = await getDetails(reportItem)
+            const details = reportItem ? await gameDef.getPreviewDetails(reportItem) : '';
 
             let bgColor = '#0F172A'; // base-100
             let textColor = '#3ABDF8';
@@ -256,7 +151,7 @@ async function replyCode(code: string, event: H3Event<EventHandlerRequest>) {
     <div style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start">
       <div style="display: flex; padding: 8px; border-radius: 6px; background-color: ${bgColor};">
         <svg width="24" height="24" viewBox="0 0 24 24" stroke-width="1" style="color: ${textColor}">
-          ${getIconSvg(typeId)}
+          ${iconSvg}
         </svg>
       </div>
       <p style="color: darkgray; margin-top: 0; padding: 0; font-size: 13px;">${details}</p>    
@@ -296,8 +191,6 @@ async function replyCode(code: string, event: H3Event<EventHandlerRequest>) {
 
 export default defineEventHandler(async (event) => {
     const query = getQuery(event);
-    const resultsQuery = query.r as string;
-    const codeQuery = query.c as string;
 
     if(query.c) {
         return await replyCode(query.c as string, event);

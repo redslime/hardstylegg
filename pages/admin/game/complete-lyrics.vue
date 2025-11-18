@@ -1,21 +1,20 @@
 <script setup lang="ts">
 import type {CompleteLyricsContainer} from "~/types/gameModels";
-import {getCompleteLyricsData} from "~/utils/dashboard";
 import DashboardGameLoadingSpinner from "~/components/dashboard/DashboardGameLoadingSpinner.vue";
-import {validateCompleteLyrics} from "~/utils/gameValidators";
-import ChatBubble from "~/components/icons/game/ChatBubble.vue";
 import {getName} from "~/utils/tracks";
 import {computed} from "vue";
 import TrackPicker from "~/components/dashboard/TrackPicker.vue";
 import InfoIcon from "~/components/icons/InfoIcon.vue";
 import CompleteLyricsPreview from "~/components/dashboard/preview/CompleteLyricsPreview.vue";
+import {CompleteLyricsGame} from "~/utils/game/clientGameRegistry";
 
 definePageMeta({
   layout: 'dashboard',
   middleware: ['authenticated'],
 })
 
-const { data, pending, error } = await useAsyncData<CompleteLyricsContainer[]>(() => getCompleteLyricsData(), { lazy: true })
+const gameDef = CompleteLyricsGame
+const { data, pending, error } = await useAsyncData<CompleteLyricsContainer[]>(() => gameDef.getAllInstances(), { lazy: true })
 const instances = computed<CompleteLyricsContainer[] | undefined>(() => data.value)
 const editing = ref<CompleteLyricsContainer | undefined>()
 const input = ref<string | undefined>()
@@ -70,12 +69,7 @@ function toggle(word: string, lineIndex: number) {
     <DashboardGameEditor
       v-model:instances="instances"
       v-model:editing="editing"
-      :validator="() => validateCompleteLyrics(editing!!)"
-      :editUrl="'/api/dashboard/edit/complete-lyrics'"
-      :typeId="3"
-      :typeName="'Complete lyrics'"
-      :icon="ChatBubble"
-      :title="cl => getName(cl.track)"
+      :gameDef="gameDef"
       >
       <template #previewBody="{ instance, clicked }">
         <CompleteLyricsPreview :instance="instance" @click="clicked()" />

@@ -2,7 +2,7 @@
 import DiscordIcon from "~/components/icons/DiscordIcon.vue";
 
 const query = useRoute().query
-const { loggedIn, user, fetch: refreshSession } = useUserSession()
+const { loggedIn } = useUserSession()
 
 if(loggedIn.value) {
   navigateTo('/admin')

@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import {gameComps, getGameContainer, getPreviewTitle, hasPlayedToday} from "~/utils/game";
+import {getGameContainer, getPreviewTitle, hasPlayedToday} from "~/utils/game";
 import {type CookieDayMemory, GameState} from "~/types/models";
 import {getTracks} from "~/utils/tracks";
 import {refreshCookie} from "#app";
 import CookieChart from "~/components/CookieChart.vue";
+import {findGameByName} from "~/utils/game/clientGameRegistry";
 
 definePageMeta({
   layout: 'hero'
@@ -62,7 +63,7 @@ useOnce(() => {
             'bg-success': getState(index) === GameState.SUCCEEDED,
             'bg-error': getState(index) === GameState.FAILED,
           }">
-            <component :is="gameComps[game.name as keyof typeof gameComps].icon" :state="getState(index)" />
+            <component :is="findGameByName(game.name)!!.icon" :state="getState(index)" />
           </div>
         </div>
         <button class="btn btn-primary btn-xl" v-if="!played" @click="play">Play</button>

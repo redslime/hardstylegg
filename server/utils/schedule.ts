@@ -1,8 +1,8 @@
 import {DateTime} from 'luxon';
 import prisma from "~/lib/prisma";
-import {getGameInstance} from "~/server/utils/games";
 import type {PackedDayData} from "~/types/models";
 import {resetCache} from "~/server/api/dashboard/stats/players";
+import {findGameById} from "~/server/utils/game/serverGameRegistry";
 
 const BASE_DATE = DateTime.fromISO('2025-11-05', { zone: 'Europe/Berlin' });
 
@@ -142,11 +142,12 @@ export async function getPackedDayDataForDay(dayId: number): Promise<PackedDayDa
 
         if (typeIds.length === gameIds.length) {
             for (let i = 0; i < gameIds.length; i++) {
-                const type_id = typeIds[i]
-                const instance_id = gameIds[i]
+                const typeId = typeIds[i]
+                const gameId = gameIds[i]
 
-                if(type_id && instance_id) {
-                    const game = await getGameInstance(prisma, type_id, instance_id)
+                if(typeId && gameId) {
+                    const gameDef = findGameById(typeId)!!
+                    const game = await gameDef.fetchInstance(gameId)
                     editors.add(editorData.find(e => e.id === game?.created_by)?.name ?? "Unknown")
                     packed.push(game)
                 }

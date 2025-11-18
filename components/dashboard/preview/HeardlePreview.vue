@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type {HeardleContainer} from "~/types/gameModels";
-import {getName} from "~/utils/tracks";
+import {HeardleGame} from "~/utils/game/clientGameRegistry";
 
 const { instance, pointer } = defineProps({
   instance: { type: Object as PropType<HeardleContainer>, required: true },
@@ -9,7 +9,7 @@ const { instance, pointer } = defineProps({
 </script>
 
 <template>
-  <DashboardGamePreviewHeader :typeId="4" :pointer="pointer" :container="instance" :title="getName(instance.track)">
+  <DashboardGamePreviewHeader :gameDef="HeardleGame" :pointer="pointer" :container="instance">
     <WaveformPreview class="w-full" :container="instance" />
   </DashboardGamePreviewHeader>
 </template>

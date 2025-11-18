@@ -1,10 +1,7 @@
 <script setup lang="ts">
 import type {CompleteAlbumContainer} from "~/types/gameModels";
 import {computed} from "vue";
-import {getCompleteAlbumData} from "~/utils/dashboard";
 import DashboardGameLoadingSpinner from "~/components/dashboard/DashboardGameLoadingSpinner.vue";
-import {validateCompleteAlbum} from "~/utils/gameValidators";
-import PencilSquare from "~/components/icons/game/PencilSquare.vue";
 import {getName} from "~/utils/tracks";
 import TrackPicker from "~/components/dashboard/TrackPicker.vue";
 import InfoIcon from "~/components/icons/InfoIcon.vue";
@@ -13,13 +10,15 @@ import TrashIcon from "~/components/icons/TrashIcon.vue";
 import {GameState} from "~/types/models";
 import Checkmark from "~/components/icons/Checkmark.vue";
 import CompleteAlbumPreview from "~/components/dashboard/preview/CompleteAlbumPreview.vue";
+import {CompleteAlbumGame} from "~/utils/game/clientGameRegistry";
 
 definePageMeta({
   layout: 'dashboard',
   middleware: ['authenticated'],
 })
 
-const { data, pending, error } = await useAsyncData<CompleteAlbumContainer[]>(() => getCompleteAlbumData(), { lazy: true })
+const gameDef = CompleteAlbumGame
+const { data, pending, error } = await useAsyncData<CompleteAlbumContainer[]>(() => gameDef.getAllInstances(), { lazy: true })
 const instances = computed<CompleteAlbumContainer[] | undefined>(() => data.value)
 const editing = ref<CompleteAlbumContainer | undefined>()
 const editingIndex = ref<number | undefined>(-1)
@@ -41,12 +40,7 @@ function add() {
     <DashboardGameEditor
         v-model:instances="instances"
         v-model:editing="editing"
-        :validator="() => validateCompleteAlbum(editing!!)"
-        :editUrl="'/api/dashboard/edit/complete-album'"
-        :typeId="2"
-        :typeName="'Complete Album'"
-        :icon="PencilSquare"
-        :title="a => getName(a.album!!)"
+        :gameDef="gameDef"
     >
       <template #previewBody="{ instance, clicked }">
         <CompleteAlbumPreview :instance="instance" @click="clicked()" />

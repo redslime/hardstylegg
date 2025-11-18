@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type {MapContainer} from "~/types/gameModels";
 import {getName} from "i18n-iso-countries"
+import {MapGame} from "~/utils/game/clientGameRegistry";
 
 const { instance, pointer } = defineProps({
   instance: { type: Object as PropType<MapContainer>, required: true },
@@ -9,7 +10,7 @@ const { instance, pointer } = defineProps({
 </script>
 
 <template>
-  <DashboardGamePreviewHeader :typeId="10" :pointer="pointer" :container="instance" :title="instance.title">
+  <DashboardGamePreviewHeader :gameDef="MapGame" :pointer="pointer" :container="instance">
     <div class="badge badge-outline badge-info">{{ getName(instance.goal, "en") }}</div>
   </DashboardGamePreviewHeader>
 </template>

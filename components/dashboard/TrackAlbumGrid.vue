@@ -175,9 +175,8 @@ watch(debouncedQuery, async (val) => {
         .filter(result => result.matchCount >= Math.min(2, keywords.length)) // At least 2 keywords or all if fewer
         .sort((a, b) => b.matchScore - a.matchScore)
         .map(result => {
-          const name = result.track.artists + " - " + result.track.title
           // Highlight all matched keywords
-          let highlighted = name
+          let highlighted = result.track.artists + " - " + result.track.title
           keywords.forEach(keyword => {
             const regex = new RegExp(`(${keyword})`, 'gi')
             highlighted = highlighted.replace(regex, '<span class=""><b>$1</b></span>')

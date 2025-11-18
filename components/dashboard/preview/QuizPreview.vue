@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type {QuizContainer} from "~/types/gameModels";
+import {QuizGame} from "~/utils/game/clientGameRegistry";
 
 const { instance, pointer } = defineProps({
   instance: { type: Object as PropType<QuizContainer>, required: true },
@@ -8,7 +9,7 @@ const { instance, pointer } = defineProps({
 </script>
 
 <template>
-  <DashboardGamePreviewHeader :typeId="7" :pointer="pointer" :container="instance" :title="instance.title">
+  <DashboardGamePreviewHeader :gameDef="QuizGame" :pointer="pointer" :container="instance">
     <div v-for="item in instance.items" :key="item.id" class="badge badge-outline"
          :class="{
                 'badge-success': item.correct,

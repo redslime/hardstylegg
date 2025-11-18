@@ -1,18 +1,19 @@
 <script setup lang="ts">
 import {getDashboardData, getScheduleForGame} from "~/utils/dashboard";
 import type {ScheduleDay} from "~/types/models";
+import type {ClientGameDef} from "~/utils/game/ClientGameDef";
 
 const emit = defineEmits(['clicked'])
-const { typeId, container, title, pointer } = defineProps({
-  typeId: { type: Number as PropType<number>, required: true },
+const { gameDef, container, pointer } = defineProps({
+  gameDef: { type: Object as PropType<ClientGameDef<any>>, required: true },
   container: { type: Object as PropType<{ id?: number, created_by?: number }>, required: true },
-  title: { type: String as PropType<string>, required: true },
   pointer: { type: Boolean, default: true }
 })
 
 const { user } = useUserSession()
 const dashboardData = await getDashboardData()
-const scheduleData = computed<ScheduleDay | undefined>(() => getScheduleForGame(typeId, container.id))
+const scheduleData = computed<ScheduleDay | undefined>(() => getScheduleForGame(gameDef.id, container.id))
+const title = computed(() => gameDef.getDashboardHeaderTitle(container))
 const todayId = computed(() => dashboardData.schedule.todayId)
 const upcoming = computed(() => todayId.value && scheduleData.value && todayId.value <= scheduleData.value.day)
 const past = computed(() => todayId.value && scheduleData.value && todayId.value > scheduleData.value.day)

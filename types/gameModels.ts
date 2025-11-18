@@ -1,17 +1,16 @@
 import type {Track} from "~/types/models";
 
-export interface ArtworkContainer {
-    id?: number
-    created_by?: number
+export type AnyGameContainer = ArtworkContainer | CompleteAlbumContainer | CompleteLyricsContainer | HeardleContainer | NameXContainer | OrderContainer | QuizContainer | TimelineContainer | TimetableContainer | MapContainer
+export type AnyGameContainers = AnyGameContainer[]
+
+export interface ArtworkContainer extends EditorContainer {
     track: Track
     artwork_blank: string
     blankFile?: File
     uploadedName?: string
 }
 
-export interface CompleteAlbumContainer {
-    id?: number
-    created_by?: number
+export interface CompleteAlbumContainer extends EditorContainer {
     album: Track | null
     items: CompleteAlbumItem[]
 }
@@ -26,16 +25,12 @@ export interface CompleteAlbumItem {
     correct?: boolean | null
 }
 
-export interface CompleteLyricsContainer {
-    id?: number
-    created_by?: number
+export interface CompleteLyricsContainer extends EditorContainer {
     text: string
     track: Track
 }
 
-export interface HeardleContainer {
-    id?: number
-    created_by?: number
+export interface HeardleContainer extends EditorContainer {
     track: Track
     src: string
     durations: number[]
@@ -43,17 +38,13 @@ export interface HeardleContainer {
     previewUrl?: string
 }
 
-export interface NameXContainer {
-    id?: number
-    created_by?: number
+export interface NameXContainer extends EditorContainer {
     goal: number
     title: string
     items: Track[]
 }
 
-export interface OrderContainer {
-    id?: number
-    created_by?: number
+export interface OrderContainer extends EditorContainer {
     title: string
     showNames: boolean
     items: OrderItem[]
@@ -65,30 +56,22 @@ export interface OrderItem {
     track: Track
 }
 
-export interface QuizContainer {
-    id?: number
-    created_by?: number
+export interface QuizContainer extends EditorContainer {
     title: string
     items: QuizAnswer[]
 }
 
-export interface QuizAnswer {
-    id?: number
-    parent_id?: number
+export interface QuizAnswer extends EditorContainer {
     text: string
     correct: boolean
 }
 
-export interface TimelineContainer {
-    id?: number
-    created_by?: number
+export interface TimelineContainer extends EditorContainer {
     title: string
     goal: number
 }
 
-export interface TimetableContainer {
-    id?: number
-    created_by?: number
+export interface TimetableContainer extends EditorContainer {
     title: string
     color_bg: string
     color_text: string
@@ -106,9 +89,7 @@ export interface TimetableItem {
     correct?: boolean | null
 }
 
-export interface MapContainer {
-    id?: number
-    created_by?: number
+export interface MapContainer extends EditorContainer {
     title: string
     goal: string
 }

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type {NameXContainer} from "~/types/gameModels";
+import {NameXGame} from "~/utils/game/clientGameRegistry";
 
 const { instance, pointer } = defineProps({
   instance: { type: Object as PropType<NameXContainer>, required: true },
@@ -8,7 +9,7 @@ const { instance, pointer } = defineProps({
 </script>
 
 <template>
-  <DashboardGamePreviewHeader :typeId="5" :pointer="pointer" :container="instance" :title="instance.title">
+  <DashboardGamePreviewHeader :gameDef="NameXGame" :pointer="pointer" :container="instance">
     <div v-for="track in instance.items" :key="track.sid" class="badge badge-outline">
       {{ getName(track) }}
     </div>

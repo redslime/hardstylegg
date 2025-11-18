@@ -6,7 +6,6 @@ import Countdown from "~/components/Countdown.vue";
 import {bitsToHex, copyToClipboard, debug} from "~/utils/utils";
 import ResultShareButton from "~/components/ResultShareButton.vue";
 import {
-  gameComps,
   getCookieMemory,
   getPreviewTitle,
   getReportCode,
@@ -25,6 +24,7 @@ import {
 } from "~/types/models";
 import {getTracks} from "~/utils/tracks";
 import {useLocalStorage} from "@vueuse/core";
+import {findGameByName} from "~/utils/game/clientGameRegistry";
 
 const props = defineProps({
   gameData: { type: Object as PropType<GameContainer>, required: true },
@@ -35,7 +35,7 @@ const dayId = ref<number>(props.gameData.dayId)
 const gameData = reactive<GameData[]>(props.gameData.data)
 const currentIndex = ref(0)
 const currentGameData = computed<GameData>(() => gameData[currentIndex.value]!!)
-const currentGameComp = computed(() => gameComps[currentGameData.value.name as keyof typeof gameComps])
+const currentGameComp = computed(() => findGameByName(currentGameData.value.name)!!)
 const currentState = computed<GameState>(() => currentGameData.value.props.state)
 const summary = ref<boolean>(false)
 const details = ref<boolean>(false)
@@ -185,7 +185,7 @@ onMounted(() => {
           'bg-success': game.props.state === GameState.SUCCEEDED,
           'bg-error': game.props.state === GameState.FAILED,
         }">
-        <component :is="gameComps[game.name as keyof typeof gameComps].icon" :state="game.props.state" />
+        <component :is="findGameByName(game.name)!!.icon" :state="game.props.state" />
       </div>
     </div>
 
@@ -244,7 +244,7 @@ onMounted(() => {
             }"
            @click="currentIndex=index"
       >
-        <component :is="gameComps[game.name as keyof typeof gameComps].icon" :state="game.props.state" />
+        <component :is="findGameByName(game.name)!!.icon" :state="game.props.state" />
       </div>
     </div>
 
@@ -262,7 +262,7 @@ onMounted(() => {
 
   <Teleport :to="teleportTo" v-if="mounted">
     <KeepAlive>
-      <component v-if="!summary || (summary && details)" :is="currentGameComp.comp" :key="currentIndex" v-bind="currentGameData.props" @onFinish="listener" />
+      <component v-if="!summary || (summary && details)" :is="currentGameComp.gameComponent" :key="currentIndex" v-bind="currentGameData.props" @onFinish="listener" />
     </KeepAlive>
   </Teleport>
 

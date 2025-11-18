@@ -1,19 +1,18 @@
 <script setup lang="ts">
 import type {MapContainer} from "~/types/gameModels";
-import {getMapData} from "~/utils/dashboard";
 import DashboardGameLoadingSpinner from "~/components/dashboard/DashboardGameLoadingSpinner.vue";
-import {validateMap} from "~/utils/gameValidators";
-import MapIcon from "~/components/icons/game/MapIcon.vue";
 import MapPreview from "~/components/dashboard/preview/MapPreview.vue";
 import type {HighlightItem} from "~/components/CountryMap.vue";
 import {getName} from "i18n-iso-countries"
+import {MapGame} from "~/utils/game/clientGameRegistry";
 
 definePageMeta({
   layout: 'dashboard',
   middleware: ['authenticated'],
 })
 
-const { data, pending, error } = await useAsyncData<MapContainer[]>(() => getMapData(), { lazy: true })
+const gameDef = MapGame
+const { data, pending, error } = await useAsyncData<MapContainer[]>(() => gameDef.getAllInstances(), { lazy: true })
 const instances = computed<MapContainer[] | undefined>(() => data.value)
 const editing = ref<MapContainer | undefined>()
 const selected = ref<HighlightItem[]>([])
@@ -42,12 +41,7 @@ watch(editing, (val) => {
     <DashboardGameEditor
         v-model:instances="instances"
         v-model:editing="editing"
-        :validator="() => validateMap(editing!!)"
-        :editUrl="'/api/dashboard/edit/map'"
-        :typeId="10"
-        :typeName="'Map'"
-        :icon="MapIcon"
-        :title="t => t.title"
+        :gameDef="gameDef"
     >
       <template #previewBody="{ instance, clicked }">
         <MapPreview :instance="instance" @click="clicked()" />

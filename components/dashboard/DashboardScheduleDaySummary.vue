@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import {GameState, type Schedule, type ScheduleDay} from "~/types/models";
-import {gameComps, getGameName} from "~/utils/game";
+import {getGameName} from "~/utils/game";
 import {GAMES_PER_DAY} from "~/utils/dashboard";
+import {findGameById} from "~/utils/game/clientGameRegistry";
 
 const { day, schedule } = defineProps({
   day: { type: Object as PropType<ScheduleDay>, required: true },
@@ -23,7 +24,7 @@ const isUpcoming = computed(() => day.day > schedule.todayId);
     <div class="flex gap-2">
       <div v-for="game in day.typeIds" :key="game" class="p-3 rounded-md tooltip bg-black/50"
            :data-tip="getGameName(game)">
-        <component :is="gameComps[getGameName(game) as keyof typeof gameComps].icon" :state="GameState.UPCOMING" />
+        <component :is="findGameById(game)!!.icon" :state="GameState.UPCOMING" />
       </div>
     </div>
     <div class="flex flex-row gap-3" v-if="isUpcoming || (isToday && !isReady)" >

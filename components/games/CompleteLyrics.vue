@@ -24,7 +24,7 @@ const text = computed(() => props.container.text)
 const currentIndex = inject<number>('currentIndex')
 
 const lines = computed(() => {
-  const lineArr = text.value.split('\n').map(lineText => {
+  return text.value.split('\n').map(lineText => {
     const regex = /\[\[(.+?)\]\]/g
     const parts: LinePart[] = []
     let lastIndex = 0
@@ -35,7 +35,7 @@ const lines = computed(() => {
       const [full, name] = match
 
       if (match.index > lastIndex) {
-        parts.push({ isInput: false, text: lineText.slice(lastIndex, match.index) })
+        parts.push({isInput: false, text: lineText.slice(lastIndex, match.index)})
       }
 
       const key = name!!.trim() || `input_${index}`
@@ -54,13 +54,11 @@ const lines = computed(() => {
     }
 
     if (lastIndex < lineText.length) {
-      parts.push({ isInput: false, text: lineText.slice(lastIndex) })
+      parts.push({isInput: false, text: lineText.slice(lastIndex)})
     }
 
-    return { parts }
+    return {parts}
   })
-
-  return lineArr
 })
 
 const answers = reactive<Record<string, string>>({})

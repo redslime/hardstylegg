@@ -1,23 +1,23 @@
 <script setup lang="ts">
 import type {HeardleContainer} from "~/types/gameModels";
-import {getHeardleData} from "~/utils/dashboard";
 import {ref} from "vue";
 import DashboardGameLoadingSpinner from "~/components/dashboard/DashboardGameLoadingSpinner.vue";
-import {validateHeardle, validateHeardleDurations} from "~/utils/gameValidators";
-import SpeakerWave from "~/components/icons/game/SpeakerWave.vue";
+import {validateHeardleDurations} from "#shared/gameValidators";
 import {getName} from "~/utils/tracks";
 import TrackPicker from "~/components/dashboard/TrackPicker.vue";
 import TrashIcon from "~/components/icons/TrashIcon.vue";
 import InfoIcon from "~/components/icons/InfoIcon.vue";
 import DashboardHeardleCutter from "~/components/dashboard/DashboardHeardleCutter.vue";
 import HeardlePreview from "~/components/dashboard/preview/HeardlePreview.vue";
+import {HeardleGame} from "~/utils/game/clientGameRegistry";
 
 definePageMeta({
   layout: 'dashboard',
   middleware: ['authenticated'],
 })
 
-const { data, pending, error } = await useAsyncData<HeardleContainer[]>(() => getHeardleData(), { lazy: true })
+const gameDef = HeardleGame
+const { data, pending, error } = await useAsyncData<HeardleContainer[]>(() => gameDef.getAllInstances(), { lazy: true })
 const instances = computed<HeardleContainer[] | undefined>(() => data.value)
 const editing = ref<HeardleContainer | undefined>()
 const isUploading = ref(false)
@@ -107,12 +107,7 @@ function reset() {
     <DashboardGameEditor
         v-model:instances="instances"
         v-model:editing="editing"
-        :validator="() => validateHeardle(editing!!)"
-        :editUrl="'/api/dashboard/edit/heardle'"
-        :typeId="4"
-        :typeName="'Heardle'"
-        :icon="SpeakerWave"
-        :title="t => getName(t.track)"
+        :gameDef="gameDef"
         @saved="reset()"
         @cancelled="reset()"
     >

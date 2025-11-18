@@ -1,4 +1,5 @@
 import type {DateTime} from "luxon";
+import type {ClientGameDef} from "~/utils/game/ClientGameDef";
 
 export interface PackedDayData {
     dayId: number
@@ -72,6 +73,7 @@ export interface ScheduleDay {
 
 export interface ScheduleEntry {
     typeId: number | undefined
+    gameDef: ClientGameDef<any> | undefined
     gameData: any | undefined
 }
 
@@ -124,4 +126,14 @@ export interface CookieStreakMemory {
 export interface KeyCache {
     tracks: string
     albums: string
+}
+
+export interface ReportItem {
+    parent_code: string
+    typeId: number
+    gameId: number
+    success: boolean
+    attempts: number | null
+    items_completed: string | null
+    items_clicked: string | null
 }

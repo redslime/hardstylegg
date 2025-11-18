@@ -1,59 +1,13 @@
 <script setup lang="ts">
-import type {
-  ArtworkContainer,
-  CompleteAlbumContainer,
-  CompleteLyricsContainer,
-  HeardleContainer,
-  MapContainer,
-  NameXContainer,
-  OrderContainer,
-  QuizContainer,
-  TimelineContainer,
-  TimetableContainer
-} from "~/types/gameModels";
-import {
-  getArtworkData,
-  getCompleteAlbumData,
-  getCompleteLyricsData,
-  getHeardleData,
-  getMapData,
-  getNameXData,
-  getOrderData,
-  getQuizData,
-  getTimelineData,
-  getTimetableData
-} from "~/utils/dashboard";
-
-type EditorData =
-    | ArtworkContainer[]
-    | CompleteAlbumContainer[]
-    | CompleteLyricsContainer[]
-    | HeardleContainer[]
-    | NameXContainer[]
-    | OrderContainer[]
-    | QuizContainer[]
-    | TimelineContainer[]
-    | TimetableContainer[]
-    | MapContainer[]
+import type {AnyGameContainers} from "~/types/gameModels";
+import {findGameById} from "~/utils/game/clientGameRegistry";
 
 const emit = defineEmits(['select'])
 const { typeId } = defineProps({
   typeId: { type: Number, required: true }
 })
-const { data, pending, error, clear } = await useAsyncData<EditorData>(() => {
-  switch(typeId) {
-    case 1: return getArtworkData()
-    case 2: return getCompleteAlbumData()
-    case 3: return getCompleteLyricsData()
-    case 4: return getHeardleData()
-    case 5: return getNameXData()
-    case 6: return getOrderData()
-    case 7: return getQuizData()
-    case 8: return getTimelineData()
-    case 9: return getTimetableData()
-    case 10: return getMapData()
-    default: return getArtworkData()
-  }
+const { data, pending, error, clear } = await useAsyncData<AnyGameContainers>(() => {
+  return findGameById(typeId)!!.getAllInstances()
 }, { lazy: true })
 
 function select(instance: any) {

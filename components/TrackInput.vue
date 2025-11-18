@@ -77,9 +77,8 @@ watch(debouncedQuery, async (val) => {
       .sort((a, b) => b.matchScore - a.matchScore)
       .slice(0, 5)
       .map(result => {
-        const name = result.track.artists + " - " + result.track.title
         // Highlight all matched keywords
-        let highlighted = name
+        let highlighted = result.track.artists + " - " + result.track.title
         keywords.forEach(keyword => {
           const regex = new RegExp(`(${keyword})`, 'gi')
           highlighted = highlighted.replace(regex, '<span class=""><b>$1</b></span>')

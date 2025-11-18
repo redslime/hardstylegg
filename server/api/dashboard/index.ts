@@ -1,12 +1,13 @@
-import type {DashboardData, DashboardGroup, Editor, Schedule, ScheduleDay} from "~/types/models";
+import type {DashboardData, DashboardGroup, DashboardItem, Editor, Schedule, ScheduleDay} from "~/types/models";
 import type {User} from "#auth-utils";
 import prisma from "~/lib/prisma";
 import {getBaseDate, getDayIdToday, getFriendlyName, getTimeUntilMidnight} from "~/server/utils/schedule";
+import {getGames} from "~/server/utils/game/serverGameRegistry";
 
 function getStructure(user: User): DashboardGroup[] {
-    const overviewItems = []
-    const adminItems = []
-    const gameItems = []
+    const overviewItems: DashboardItem[] = []
+    const adminItems: DashboardItem[] = []
+    const gameItems: DashboardItem[] = []
 
     // overview items
     overviewItems.push({
@@ -53,57 +54,13 @@ function getStructure(user: User): DashboardGroup[] {
         url: "/admin/import/track"
     })
 
-
     // game items
-    gameItems.push({
-        name: "Artwork",
-        icon: "Pencil",
-        url: "/admin/game/artwork"
-    })
-    gameItems.push({
-        name: "Complete Album",
-        icon: "PencilSquare",
-        url: "/admin/game/complete-album"
-    })
-    gameItems.push({
-        name: "Complete Lyrics",
-        icon: "ChatBubble",
-        url: "/admin/game/complete-lyrics"
-    })
-    gameItems.push({
-        name: "Heardle",
-        icon: "SpeakerWave",
-        url: "/admin/game/heardle"
-    })
-    gameItems.push({
-        name: "Name X",
-        icon: "ListBullet",
-        url: "/admin/game/name-x"
-    })
-    gameItems.push({
-        name: "Order",
-        icon: "ArrowsRightLeft",
-        url: "/admin/game/order"
-    })
-    gameItems.push({
-        name: "Quiz",
-        icon: "CheckCircle",
-        url: "/admin/game/quiz"
-    })
-    gameItems.push({
-        name: "Timeline",
-        icon: "Calendar",
-        url: "/admin/game/timeline"
-    })
-    gameItems.push({
-        name: "Timetable",
-        icon: "PencilSquare",
-        url: "/admin/game/timetable"
-    })
-    gameItems.push({
-        name: "Map",
-        icon: "MapIcon",
-        url: "/admin/game/map"
+    getGames().forEach(game => {
+        gameItems.push({
+            name: game.getSpacedName(),
+            icon: "gameDef:" + game.id, // little workaround
+            url: `/admin/game/${game.getDashedName()}`
+        })
     })
 
     const groups: DashboardGroup[] = [

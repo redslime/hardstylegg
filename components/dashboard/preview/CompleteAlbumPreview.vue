@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type {CompleteAlbumContainer} from "~/types/gameModels";
-import {getName} from "~/utils/tracks";
+import {CompleteAlbumGame} from "~/utils/game/clientGameRegistry";
 
 const { instance, pointer } = defineProps({
   instance: { type: Object as PropType<CompleteAlbumContainer>, required: true },
@@ -9,7 +9,7 @@ const { instance, pointer } = defineProps({
 </script>
 
 <template>
-  <DashboardGamePreviewHeader :typeId="2" :pointer="pointer" :container="instance" :title="getName(instance.album!!)">
+  <DashboardGamePreviewHeader :gameDef="CompleteAlbumGame" :pointer="pointer" :container="instance">
     <div v-for="item in instance.items" :key="item.id" class="badge badge-outline"
          :class="{'badge-info': item.hidden}">
       {{ item.name }}

@@ -1,21 +1,20 @@
 <script setup lang="ts">
 import type {OrderContainer} from "~/types/gameModels";
-import {getOrderData} from "~/utils/dashboard";
 import {computed} from "vue";
 import DashboardGameLoadingSpinner from "~/components/dashboard/DashboardGameLoadingSpinner.vue";
-import {validateOrder} from "~/utils/gameValidators";
-import ArrowsRightLeft from "~/components/icons/game/ArrowsRightLeft.vue";
 import Draggable from "vuedraggable";
 import TrackPicker from "~/components/dashboard/TrackPicker.vue";
 import type {Track} from "~/types/models";
 import OrderPreview from "~/components/dashboard/preview/OrderPreview.vue";
+import {OrderGame} from "~/utils/game/clientGameRegistry";
 
 definePageMeta({
   layout: 'dashboard',
   middleware: ['authenticated'],
 })
 
-const { data, pending, error } = await useAsyncData<OrderContainer[]>(() => getOrderData(), { lazy: true })
+const gameDef = OrderGame
+const { data, pending, error } = await useAsyncData<OrderContainer[]>(() => gameDef.getAllInstances(), { lazy: true })
 const instances = computed<OrderContainer[] | undefined>(() => data.value)
 const editing = ref<OrderContainer | undefined>()
 
@@ -41,12 +40,7 @@ function update() {
     <DashboardGameEditor
         v-model:instances="instances"
         v-model:editing="editing"
-        :validator="() => validateOrder(editing!!)"
-        :editUrl="'/api/dashboard/edit/order'"
-        :typeId="6"
-        :typeName="'Order'"
-        :icon="ArrowsRightLeft"
-        :title="t => t.title"
+        :gameDef="gameDef"
     >
       <template #previewBody="{ instance, clicked }">
         <OrderPreview :instance="instance" @click="clicked()" />
@@ -66,7 +60,7 @@ function update() {
             class="flex gap-2 max-w-[1000px]"
             :component-data="{
               name: 'flip-list',
-              tag: 'div',
+              tag: 'div'
              }"
             @update="update"
         >

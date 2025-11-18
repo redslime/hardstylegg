@@ -1,20 +1,20 @@
 <script setup lang="ts">
 import type {TimetableContainer, TimetableItem} from "~/types/gameModels";
-import {getTimetableData} from "~/utils/dashboard";
 import DashboardGameLoadingSpinner from "~/components/dashboard/DashboardGameLoadingSpinner.vue";
-import {validateTimetable, validateTimetableItem} from "~/utils/gameValidators";
-import PencilSquare from "~/components/icons/game/PencilSquare.vue";
+import {validateTimetableItem} from "#shared/gameValidators";
 import InfoIcon from "~/components/icons/InfoIcon.vue";
 import {Vue3ColorPicker} from '@cyhnkckali/vue3-color-picker';
 import '@cyhnkckali/vue3-color-picker/dist/style.css';
 import TimetablePreview from "~/components/dashboard/preview/TimetablePreview.vue";
+import {TimetableGame} from "~/utils/game/clientGameRegistry";
 
 definePageMeta({
   layout: 'dashboard',
   middleware: ['authenticated'],
 })
 
-const { data, pending, error } = await useAsyncData<TimetableContainer[]>(() => getTimetableData(), { lazy: true })
+const gameDef = TimetableGame
+const { data, pending, error } = await useAsyncData<TimetableContainer[]>(() => gameDef.getAllInstances(), { lazy: true })
 const instances = computed<TimetableContainer[] | undefined>(() => data.value)
 const editing = ref<TimetableContainer | undefined>()
 const editingItem = ref<TimetableItem | undefined>()
@@ -90,12 +90,7 @@ export default {
     <DashboardGameEditor
         v-model:instances="instances"
         v-model:editing="editing"
-        :validator="() => validateTimetable(editing!!)"
-        :editUrl="'/api/dashboard/edit/timetable'"
-        :typeId="9"
-        :typeName="'Timetable'"
-        :icon="PencilSquare"
-        :title="t => t.title"
+        :gameDef="gameDef"
     >
       <template #previewBody="{ instance, clicked }">
         <TimetablePreview :instance="instance" @click="clicked()" />

@@ -1,12 +1,12 @@
 <script setup lang="ts">
 import CalendarDaysIcon from "~/components/icons/CalendarDaysIcon.vue";
 import {GAMES_PER_DAY, getDashboardData, getFriendlyName, updateScheduleDay} from "~/utils/dashboard";
-import {gameComps, getGameName} from "~/utils/game";
 import {GameState, type PackedDayData, type ScheduleDay, type ScheduleEntry} from "~/types/models";
 import NoSymbolIcon from "~/components/icons/NoSymbolIcon.vue";
 import ArrowPathIcon from "~/components/icons/ArrowPathIcon.vue";
 import PlusIcon from "~/components/icons/PlusIcon.vue";
 import {watchOnce} from "@vueuse/shared";
+import {findGameById, getGames} from "~/utils/game/clientGameRegistry";
 
 definePageMeta({
   layout: 'dashboard',
@@ -28,10 +28,6 @@ const selectingIndex = ref<number | undefined>(undefined)
 const selectType = ref<number | undefined>(undefined)
 const saving = ref(false)
 const savingError = ref<string | undefined>(undefined)
-
-function splitCamelCase(str: string): string {
-  return str.replace(/([a-z])([A-Z])/g, '$1 $2');
-}
 
 function clearSlot(index: number) {
   if(games.value && games.value[index]) {
@@ -96,9 +92,11 @@ watchOnce(packedGameData, (data) => {
     for (let i = 0; i < data.typeIds.length; i++) {
       const typeId = data.typeIds[i]
       const gameData = data.data[i]
+      const gameDef = typeId ? findGameById(typeId) : undefined
 
       games.value.push({
         typeId,
+        gameDef,
         gameData
       })
     }
@@ -109,6 +107,7 @@ watchOnce(packedGameData, (data) => {
   for(let i = 0; i < times; i++) {
     games.value.push({
       typeId: undefined,
+      gameDef: undefined,
       gameData: undefined
     })
   }
@@ -128,9 +127,9 @@ watchOnce(packedGameData, (data) => {
 
       <div class="stat" v-for="(game, index) in games" :key="index">
         <div class="stat-title">Game {{ index + 1 }}</div>
-        <div class="stat-value flex items-center gap-2" v-if="game.typeId">
-          <component :is="gameComps[getGameName(game.typeId!!) as keyof typeof gameComps].icon" :state="GameState.UPCOMING" />
-          {{ splitCamelCase(getGameName(game.typeId!!)) }}
+        <div class="stat-value flex items-center gap-2" v-if="game.gameDef">
+          <component :is="game.gameDef.icon" :state="GameState.UPCOMING" />
+          {{ game.gameDef.getSpacedName() }}
         </div>
 
         <div class="relative group w-fit" v-if="game.typeId">
@@ -150,17 +149,16 @@ watchOnce(packedGameData, (data) => {
 
         <template v-else>
           <div class="mt-2" v-if="editable">
-            <!-- change popover-1 and --anchor-1 names. Use unique names for each dropdown -->
             <button class="btn btn-primary btn-soft" :popovertarget="'popover-' + index" :style="'anchor-name:--anchor-' + index">
               <PlusIcon /> Add
             </button>
             <ul class="dropdown menu rounded-box bg-base-300 shadow-sm"
                 popover :id="'popover-' + index" :style="'position-anchor:--anchor-' + index"
                 :class="{'dropdown-top': index >= 2}">
-              <li v-for="[name, comp] of Object.entries(gameComps)" :key="comp.id">
+              <li v-for="[_, comp] of Object.entries(getGames())" :key="comp.id">
                 <a @click="openSelect(comp.id, index)">
                   <component :is="comp.icon" :state="GameState.UPCOMING" />
-                  {{ name }}
+                  {{ comp.getSpacedName() }}
                 </a>
               </li>
             </ul>

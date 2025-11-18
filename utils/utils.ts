@@ -30,11 +30,6 @@ export function getToday(): Date {
     return today
 }
 
-export function getTodayFriendly(): string {
-    const today = getToday()
-    return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(today)
-}
-
 export function getSpotifyArtwork(id: string) {
     return `https://i.scdn.co/image/${id}`
 }

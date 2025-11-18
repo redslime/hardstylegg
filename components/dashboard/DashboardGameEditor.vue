@@ -3,6 +3,8 @@
 import {deepCopy} from "~/utils/utils";
 import DashboardGameDeleteButton from "~/components/dashboard/DashboardGameDeleteButton.vue";
 import type {ScheduleDay} from "~/types/models";
+import type {ClientGameDef} from "~/utils/game/ClientGameDef";
+import {getScheduleForGame} from "~/utils/dashboard";
 
 const instances = defineModel<T[] | undefined>('instances', {
   required: true,
@@ -12,21 +14,17 @@ const editing = defineModel<T | undefined>('editing', {
   default: undefined,
 })
 
-const { validator, editUrl, typeId, typeName, icon } = defineProps({
-  validator: { type: Function as PropType<() => string[]>, required: true },
-  editUrl: { type: String, required: true },
-  typeId: { type: Number, required: true },
-  typeName: { type: String, required: true },
-  icon: { type: Object as PropType<Component>, required: true },
-  title: { type: Function as PropType<(game: T) => string>, required: true }
+const { gameDef } = defineProps({
+  gameDef: { type: Object as PropType<ClientGameDef<T>>, required: true },
 })
 
 const emit = defineEmits(['saved', 'cancelled'])
 
 const { user } = useUserSession()
+const typeName = computed(() => gameDef.getSpacedName())
 const savingModal = ref<HTMLDialogElement | undefined>()
 const savingResponse = ref<boolean | String[] | undefined>()
-const editingErrors = computed<string[]>(() => validator())
+const editingErrors = computed<string[]>(() => gameDef.validate(editing.value!!))
 const editingExample = computed<boolean>(() => editing.value?.id === 1)
 
 function cancel() {
@@ -43,7 +41,7 @@ async function save() {
     gameInstance.created_by = user.value.id
 
     try {
-      const data = await $fetch<string[] | T>(editUrl, {
+      const data = await $fetch<string[] | T>(gameDef.getEditUrl(), {
         method: 'POST',
         body: gameInstance,
       })
@@ -77,7 +75,7 @@ function onDelete(container: T) {
 }
 
 function tryEdit(instance: T) {
-  const scheduleData = computed<ScheduleDay | undefined>(() => getScheduleForGame(typeId, instance.id))
+  const scheduleData = computed<ScheduleDay | undefined>(() => getScheduleForGame(gameDef.id, instance.id))
   const editable = user.value.admin || !scheduleData || !scheduleData.value || instance.id === 1
 
   if(editable) {
@@ -88,7 +86,7 @@ function tryEdit(instance: T) {
 
 <template>
   <div class="flex items-center gap-2 text-4xl font-bold mb-8">
-    <span class="text-primary"><component :is="icon" class="size-8" /></span>
+    <span class="text-primary"><component :is="gameDef.icon" class="size-8" /></span>
     <div v-if="!editing">
       {{ typeName }} instances
       <div v-if="instances" class="badge badge-soft badge-primary badge-xl">{{ instances.length }}</div>
@@ -136,7 +134,7 @@ function tryEdit(instance: T) {
         <button class="btn btn-neutral join-item" @click="cancel">Cancel</button>
         <button class="btn btn-success join-item" @click="save" :disabled="editingErrors.length > 0 || editingExample">Save</button>
       </div>
-      <DashboardGameDeleteButton :editing="editing" :typeId="typeId" @deleted="onDelete" />
+      <DashboardGameDeleteButton :editing="editing" :typeId="gameDef.id" @deleted="onDelete" />
     </div>
   </div>
 
