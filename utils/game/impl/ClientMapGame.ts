@@ -1,14 +1,15 @@
 import {ClientGameDef} from "~/utils/game/ClientGameDef";
 import type {MapContainer} from "~/types/gameModels";
-import MapIcon from "~/components/icons/game/MapIcon.vue";
-import MapPreview from "~/components/dashboard/preview/MapPreview.vue";
+import MapIcon from "~/components/games/map/MapIcon.vue";
+import MapPreview from "~/components/games/map/MapPreview.vue";
 import {GAME_METAS} from "#shared/games";
-import Map from "~/components/games/Map.vue";
+import MapGame from "~/components/games/map/MapGame.vue";
+import MapEditor from "~/components/games/map/MapEditor.vue";
 
 export class ClientMapGame extends ClientGameDef<MapContainer> {
 
     constructor() {
-        super(GAME_METAS.Map, Map, MapIcon, MapPreview);
+        super(GAME_METAS.Map, MapGame, MapIcon, MapPreview, MapEditor);
     }
 
     override getIconPreviewTitle(container: MapContainer): string {

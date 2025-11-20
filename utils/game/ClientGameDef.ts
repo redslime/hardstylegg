@@ -6,14 +6,16 @@ export abstract class ClientGameDef<T extends EditorContainer> extends GameDef<T
     public gameComponent: Component
     public icon: Component
     public previewComponent: Component
+    public editorComponent: Component
 
     private instances: T[] | null = null
 
-    protected constructor(meta: GameMeta, gameComponent: Component, icon: Component, previewComponent: Component) {
+    protected constructor(meta: GameMeta, gameComponent: Component, icon: Component, previewComponent: Component, editorComponent: Component) {
         super(meta)
         this.gameComponent = gameComponent
         this.icon = icon
         this.previewComponent = previewComponent
+        this.editorComponent = editorComponent
     }
 
     abstract getIconPreviewTitle(container: T): string

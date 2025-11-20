@@ -12,16 +12,16 @@ import {ClientTimetableGame} from "~/utils/game/impl/ClientTimetableGame";
 
 const games: ClientGameDef<any>[] = []
 
-export const ArtworkGame = new ClientArtworkGame()
-export const CompleteAlbumGame = new ClientCompleteAlbumGame()
-export const CompleteLyricsGame = new ClientCompleteLyricsGame()
-export const HeardleGame = new ClientHeardleGame()
-export const NameXGame = new ClientNameXGame()
-export const OrderGame = new ClientOrderGame()
-export const QuizGame = new ClientQuizGame()
-export const TimelineGame = new ClientTimelineGame()
-export const TimetableGame = new ClientTimetableGame()
-export const MapGame = new ClientMapGame()
+export const ArtworkDef = new ClientArtworkGame()
+export const CompleteAlbumDef = new ClientCompleteAlbumGame()
+export const CompleteLyricsDef = new ClientCompleteLyricsGame()
+export const HeardleDef = new ClientHeardleGame()
+export const NameXDef = new ClientNameXGame()
+export const OrderDef = new ClientOrderGame()
+export const QuizDef = new ClientQuizGame()
+export const TimelineDef = new ClientTimelineGame()
+export const TimetableDef = new ClientTimetableGame()
+export const MapDef = new ClientMapGame()
 
 function checkRegistered() {
     if(games.length === 0) registerGames()
@@ -39,20 +39,20 @@ export function findGameById(id: number): ClientGameDef<any> | undefined {
 
 export function findGameByName(name: string): ClientGameDef<any> | undefined {
     checkRegistered()
-    return games.find(g => g.name === name)
+    return games.find(g => g.name.toLowerCase() === name.toLowerCase())
 }
 
 export function registerGames() {
     games.push(
-        ArtworkGame,
-        CompleteAlbumGame,
-        CompleteLyricsGame,
-        HeardleGame,
-        NameXGame,
-        OrderGame,
-        QuizGame,
-        TimelineGame,
-        TimetableGame,
-        MapGame
+        ArtworkDef,
+        CompleteAlbumDef,
+        CompleteLyricsDef,
+        HeardleDef,
+        NameXDef,
+        OrderDef,
+        QuizDef,
+        TimelineDef,
+        TimetableDef,
+        MapDef
     )
 }

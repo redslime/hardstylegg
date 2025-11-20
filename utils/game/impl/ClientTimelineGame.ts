@@ -1,14 +1,15 @@
 import {ClientGameDef} from "~/utils/game/ClientGameDef";
 import type {TimelineContainer} from "~/types/gameModels";
 import {GAME_METAS} from "#shared/games";
-import Timeline from "~/components/games/Timeline.vue";
-import Calendar from "~/components/icons/game/Calendar.vue";
-import TimelinePreview from "~/components/dashboard/preview/TimelinePreview.vue";
+import TimelineGame from "~/components/games/timeline/TimelineGame.vue";
+import TimelineIcon from "~/components/games/timeline/TimelineIcon.vue";
+import TimelinePreview from "~/components/games/timeline/TimelinePreview.vue";
+import TimelineEditor from "~/components/games/timeline/TimelineEditor.vue";
 
 export class ClientTimelineGame extends ClientGameDef<TimelineContainer> {
 
     constructor() {
-        super(GAME_METAS.Timeline, Timeline, Calendar, TimelinePreview);
+        super(GAME_METAS.Timeline, TimelineGame, TimelineIcon, TimelinePreview, TimelineEditor);
     }
 
     override getIconPreviewTitle(container: TimelineContainer): string {

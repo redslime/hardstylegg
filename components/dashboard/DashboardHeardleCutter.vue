@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Mp3Uploader from "~/components/Mp3Uploader.vue";
+import HeardleUploader from "~/components/games/heardle/HeardleUploader.vue";
 import type {HeardleContainer} from "~/types/gameModels";
 import InfoIcon from "~/components/icons/InfoIcon.vue";
 import {FFmpeg} from '@ffmpeg/ffmpeg'
@@ -54,7 +54,7 @@ async function cut() {
 <template>
   <div v-if="!file"
       class="w-full aspect-square rounded-xl shrink shadow-md bg-black/20 flex items-center justify-center border-dashed border-2 border-base-content/20">
-    <Mp3Uploader v-model:selectedFile="file" v-model:previewUrl="previewUrl" />
+    <HeardleUploader v-model:selectedFile="file" v-model:previewUrl="previewUrl" />
   </div>
   <div class="w-full" v-else-if="previewUrl">
     <div class="text-xl mb-3">Select 15 second segment:</div>
