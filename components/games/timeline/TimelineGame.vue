@@ -3,7 +3,9 @@ import {ref} from 'vue'
 import {GameState} from "~/types/models";
 import type {TimelineContainer} from "~/types/gameModels";
 import {countOption} from "~/utils/game";
-import {TimelineDef} from "~/utils/game/clientGameRegistry";
+
+const { $gameRegistry } = useNuxtApp();
+const gameDef = $gameRegistry.TimelineDef
 
 const minYear = 2000
 const maxYear = 2025
@@ -66,7 +68,7 @@ function submit() {
 
 <template>
   <div class="w-full">
-    <GameTitle :gameDef="TimelineDef" :container="props.container" />
+    <GameTitle :gameDef="gameDef" :container="props.container" />
 
     <div class="place-items-center" @wheel.prevent="onWheel">
       <div class="flex flex-wrap gap-4 w-50 mb-2 place-items-center justify-center">

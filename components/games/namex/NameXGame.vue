@@ -2,8 +2,9 @@
 import {GameState, type ShallowTrack, type Track} from "~/types/models";
 import type {NameXContainer} from "~/types/gameModels";
 import {countAttempt, countItem} from "~/utils/game";
-import {NameXDef} from "~/utils/game/clientGameRegistry";
 
+const { $gameRegistry } = useNuxtApp();
+const gameDef = $gameRegistry.NameXDef
 const emit = defineEmits(['onFinish'])
 const props = defineProps({
   state: { type: Number as PropType<GameState>, required: true },
@@ -58,7 +59,7 @@ function censor(text: string, censor: boolean): string {
 </script>
 
 <template>
-  <GameTitle :gameDef="NameXDef" :container="props.container" />
+  <GameTitle :gameDef="gameDef" :container="props.container" />
 
   <ul class="list bg-base-100 rounded-box shadow-md divide-y divide-base-300">
     <li

@@ -14,11 +14,11 @@ import {computed, ref} from 'vue'
 import Draggable from 'vuedraggable'
 import {GameState} from "~/types/models";
 import {shuffleArray} from "~/utils/utils";
-import OrderIcon from "~/components/games/order/OrderIcon.vue";
 import type {OrderItem} from "~/types/gameModels";
 import {countItem} from "~/utils/game";
-import {OrderDef} from "~/utils/game/clientGameRegistry";
 
+const { $gameRegistry } = useNuxtApp();
+const gameDef = $gameRegistry.OrderDef
 const isMobile = inject<boolean>('isMobile')
 const emit = defineEmits(['onFinish'])
 const props = defineProps({
@@ -72,7 +72,7 @@ function isWrong(item: OrderItem, index: number) {
 </script>
 
 <template>
-  <GameTitle :gameDef="OrderDef" :container="props.container">
+  <GameTitle :gameDef="gameDef" :container="props.container">
     <template #subtitle>
       <div class="text-center text-base mb-8 text-base-content/50">(Oldest to newest)</div>
     </template>

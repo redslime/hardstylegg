@@ -2,9 +2,9 @@
 import {type QuizContainer} from "~/types/gameModels";
 import DashboardGameLoadingSpinner from "~/components/dashboard/DashboardGameLoadingSpinner.vue";
 import QuizPreview from "~/components/games/quiz/QuizPreview.vue";
-import {QuizDef} from "~/utils/game/clientGameRegistry";
 
-const gameDef = QuizDef
+const { $gameRegistry } = useNuxtApp();
+const gameDef = $gameRegistry.QuizDef
 const { data, pending, error } = await useAsyncData<QuizContainer[]>(() => gameDef.getAllInstances(), { lazy: true })
 const instances = computed<QuizContainer[] | undefined>(() => data.value)
 const editing = ref<QuizContainer | undefined>()

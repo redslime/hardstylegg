@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type {CompleteAlbumContainer} from "~/types/gameModels";
-import {CompleteAlbumDef} from "~/utils/game/clientGameRegistry";
 
+const { $gameRegistry } = useNuxtApp();
+const gameDef = $gameRegistry.CompleteAlbumDef
 const { instance, pointer } = defineProps({
   instance: { type: Object as PropType<CompleteAlbumContainer>, required: true },
   pointer: { type: Boolean, default: true }
@@ -9,7 +10,7 @@ const { instance, pointer } = defineProps({
 </script>
 
 <template>
-  <DashboardGamePreviewHeader :gameDef="CompleteAlbumDef" :pointer="pointer" :container="instance">
+  <DashboardGamePreviewHeader :gameDef="gameDef" :pointer="pointer" :container="instance">
     <div v-for="item in instance.items" :key="item.id" class="badge badge-outline"
          :class="{'badge-info': item.hidden}">
       {{ item.name }}

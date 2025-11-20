@@ -6,9 +6,10 @@ import InfoIcon from "~/components/icons/InfoIcon.vue";
 import {Vue3ColorPicker} from '@cyhnkckali/vue3-color-picker';
 import '@cyhnkckali/vue3-color-picker/dist/style.css';
 import TimetablePreview from "~/components/games/timetable/TimetablePreview.vue";
-import {TimetableDef} from "~/utils/game/clientGameRegistry";
+import TimetableGenerator from "~/components/games/timetable/TimetableGenerator.vue";
 
-const gameDef = TimetableDef
+const { $gameRegistry } = useNuxtApp();
+const gameDef = $gameRegistry.TimetableDef
 const { data, pending, error } = await useAsyncData<TimetableContainer[]>(() => gameDef.getAllInstances(), { lazy: true })
 const instances = computed<TimetableContainer[] | undefined>(() => data.value)
 const editing = ref<TimetableContainer | undefined>()

@@ -10,9 +10,9 @@ import TrashIcon from "~/components/icons/TrashIcon.vue";
 import {GameState} from "~/types/models";
 import Checkmark from "~/components/icons/Checkmark.vue";
 import CompleteAlbumPreview from "~/components/games/complete-album/CompleteAlbumPreview.vue";
-import {CompleteAlbumDef} from "~/utils/game/clientGameRegistry";
 
-const gameDef = CompleteAlbumDef
+const { $gameRegistry } = useNuxtApp();
+const gameDef = $gameRegistry.CompleteAlbumDef
 const { data, pending, error } = await useAsyncData<CompleteAlbumContainer[]>(() => gameDef.getAllInstances(), { lazy: true })
 const instances = computed<CompleteAlbumContainer[] | undefined>(() => data.value)
 const editing = ref<CompleteAlbumContainer | undefined>()

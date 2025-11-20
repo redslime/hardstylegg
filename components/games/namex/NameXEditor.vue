@@ -5,9 +5,9 @@ import DashboardGameLoadingSpinner from "~/components/dashboard/DashboardGameLoa
 import TrashIcon from "~/components/icons/TrashIcon.vue";
 import TrackPicker from "~/components/dashboard/TrackPicker.vue";
 import NameXPreview from "~/components/games/namex/NameXPreview.vue";
-import {NameXDef} from "~/utils/game/clientGameRegistry";
 
-const gameDef = NameXDef
+const { $gameRegistry } = useNuxtApp();
+const gameDef = $gameRegistry.NameXDef
 const { data, pending, error } = await useAsyncData<NameXContainer[]>(() => gameDef.getAllInstances(), { lazy: true })
 const instances = computed<NameXContainer[] | undefined>(() => data.value)
 const editing = ref<NameXContainer | undefined>()

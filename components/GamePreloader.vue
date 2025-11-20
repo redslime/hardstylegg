@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import type {GameData} from "~/types/models";
 import {debug} from "~/utils/utils";
-import {findGameByName} from "~/utils/game/clientGameRegistry";
 
+const { $gameRegistry } = useNuxtApp();
 const { gameData } = defineProps({
   gameData: { type: Object as PropType<GameData[]>, required: true }
 })
@@ -11,7 +11,7 @@ debug("Preloading...")
 
 requestIdleCallback(() => {
   gameData.forEach(game => {
-    const comp = findGameByName(game.name)
+    const comp: any = $gameRegistry.findGameByName(game.name)
 
     if(comp && comp.gameComponent && comp.gameComponent.getPreloadUrls) {
       const urls: string[] = comp.gameComponent.getPreloadUrls(game.props.container)

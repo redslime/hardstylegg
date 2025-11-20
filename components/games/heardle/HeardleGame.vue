@@ -18,8 +18,9 @@ import {getName} from "~/utils/tracks";
 import SpotifyButton from "~/components/SpotifyButton.vue";
 import ForwardIcon from "~/components/icons/ForwardIcon.vue";
 import {countAttempt} from "~/utils/game";
-import {HeardleDef} from "~/utils/game/clientGameRegistry";
 
+const { $gameRegistry } = useNuxtApp();
+const gameDef = $gameRegistry.HeardleDef
 const emit = defineEmits(['onFinish'])
 const props = defineProps({
   state: { type: Number as PropType<GameState>, required: true },
@@ -166,7 +167,7 @@ function unlockIOSAudio() {
 </script>
 
 <template>
-  <GameTitle :gameDef="HeardleDef" :container="props.container" />
+  <GameTitle :gameDef="gameDef" :container="props.container" />
 
   <audio ref="silence" id="silent-audio" preload="auto">
     <source src="/silence.mp3" type="audio/mp3">

@@ -3,8 +3,10 @@ import {computed} from 'vue'
 import {GameState} from "~/types/models";
 import type {TimetableContainer, TimetableItem} from "~/types/gameModels";
 import {countItem} from "~/utils/game";
-import {TimetableDef} from "~/utils/game/clientGameRegistry";
+import TimetableGenerator from "~/components/games/timetable/TimetableGenerator.vue";
 
+const { $gameRegistry } = useNuxtApp();
+const gameDef = $gameRegistry.TimetableDef
 const emit = defineEmits(['onFinish'])
 const props = defineProps({
   state: { type: Number as PropType<GameState>, required: true },
@@ -34,7 +36,7 @@ const validateGuess = (item: TimetableItem) => {
 </script>
 
 <template>
-  <GameTitle :gameDef="TimetableDef" :container="props.container" />
+  <GameTitle :gameDef="gameDef" :container="props.container" />
 
   <TimetableGenerator :container="props.container" :items="items">
     <template #default="{ item }">

@@ -8,7 +8,6 @@ import {
     type ReportContainer
 } from "~/types/models";
 import {debug} from "~/utils/utils";
-import {findGameById, findGameByName} from "~/utils/game/clientGameRegistry";
 
 let currentTypeId: number | null = null
 let currentGameId: number | null = null
@@ -25,6 +24,7 @@ export async function getGameContainer(): Promise<GameContainer> {
 }
 
 export function transform(data: PackedDayData): GameContainer {
+    const { $gameRegistry } = useNuxtApp();
     const types: number[] = data.typeIds
     const gameData: object[] = data.data
     const theme: string | null | undefined = data.theme
@@ -36,7 +36,7 @@ export function transform(data: PackedDayData): GameContainer {
             const data = gameData[i]
 
             if(type && data) {
-                const gameDef = findGameById(type)!!
+                const gameDef = $gameRegistry.findGameById(type)!!
 
                 transformed.push({
                     name: gameDef.name,
@@ -62,12 +62,14 @@ export function transform(data: PackedDayData): GameContainer {
 }
 
 export function getPreviewTitle(data: GameData): string {
-    const gameDef = findGameByName(data.name)!!
+    const { $gameRegistry } = useNuxtApp();
+    const gameDef = $gameRegistry.findGameByName(data.name)!!
     return gameDef.getIconPreviewTitle(data.props.container)
 }
 
 export function getGameName(type_id: number): string {
-    const gameDef = findGameById(type_id)!!
+    const { $gameRegistry } = useNuxtApp();
+    const gameDef = $gameRegistry.findGameById(type_id)!!
     return gameDef.name
 }
 

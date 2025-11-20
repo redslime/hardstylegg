@@ -6,13 +6,13 @@ import NoSymbolIcon from "~/components/icons/NoSymbolIcon.vue";
 import ArrowPathIcon from "~/components/icons/ArrowPathIcon.vue";
 import PlusIcon from "~/components/icons/PlusIcon.vue";
 import {watchOnce} from "@vueuse/shared";
-import {findGameById, getGames} from "~/utils/game/clientGameRegistry";
 
 definePageMeta({
   layout: 'dashboard',
   middleware: ['authenticated-admin'],
 })
 
+const { $gameRegistry } = useNuxtApp();
 const dashboardData = await getDashboardData()
 const todayId = dashboardData.schedule.todayId
 const dayId: number = parseInt(useRoute().params.dayId?.toString()!!)
@@ -92,7 +92,7 @@ watchOnce(packedGameData, (data) => {
     for (let i = 0; i < data.typeIds.length; i++) {
       const typeId = data.typeIds[i]
       const gameData = data.data[i]
-      const gameDef = typeId ? findGameById(typeId) : undefined
+      const gameDef = typeId ? $gameRegistry.findGameById(typeId) : undefined
 
       games.value.push({
         typeId,
@@ -155,7 +155,7 @@ watchOnce(packedGameData, (data) => {
             <ul class="dropdown menu rounded-box bg-base-300 shadow-sm"
                 popover :id="'popover-' + index" :style="'position-anchor:--anchor-' + index"
                 :class="{'dropdown-top': index >= 2}">
-              <li v-for="[_, comp] of Object.entries(getGames())" :key="comp.id">
+              <li v-for="[_, comp] of Object.entries($gameRegistry.getGames())" :key="comp.id">
                 <a @click="openSelect(comp.id, index)">
                   <component :is="comp.icon" :state="GameState.UPCOMING" />
                   {{ comp.getSpacedName() }}

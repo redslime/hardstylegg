@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import {findGameByName} from "~/utils/game/clientGameRegistry";
 
 definePageMeta({
   layout: 'dashboard',
   middleware: ['authenticated'],
 })
 
+const { $gameRegistry } = useNuxtApp();
 const name = ((useRoute().params.name) as string).replace("-", "")
-const gameDef = findGameByName(name)
+const gameDef = $gameRegistry.findGameByName(name)
 
 if(!gameDef) {
   navigateTo('/admin/')

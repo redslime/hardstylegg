@@ -9,9 +9,10 @@ import TrashIcon from "~/components/icons/TrashIcon.vue";
 import InfoIcon from "~/components/icons/InfoIcon.vue";
 import DashboardHeardleCutter from "~/components/dashboard/DashboardHeardleCutter.vue";
 import HeardlePreview from "~/components/games/heardle/HeardlePreview.vue";
-import {HeardleDef} from "~/utils/game/clientGameRegistry";
+import WaveformEditor from "~/components/games/heardle/WaveformEditor.vue";
 
-const gameDef = HeardleDef
+const { $gameRegistry } = useNuxtApp();
+const gameDef = $gameRegistry.HeardleDef
 const { data, pending, error } = await useAsyncData<HeardleContainer[]>(() => gameDef.getAllInstances(), { lazy: true })
 const instances = computed<HeardleContainer[] | undefined>(() => data.value)
 const editing = ref<HeardleContainer | undefined>()

@@ -2,8 +2,9 @@
 import {GameState} from "~/types/models";
 import type {CompleteAlbumContainer, CompleteAlbumItem} from "~/types/gameModels";
 import {countItem} from "~/utils/game";
-import {CompleteAlbumDef} from "~/utils/game/clientGameRegistry";
 
+const { $gameRegistry } = useNuxtApp();
+const gameDef = $gameRegistry.CompleteAlbumDef
 const emit = defineEmits(['onFinish'])
 const props = defineProps({
   state: { type: Number as PropType<GameState>, required: true },
@@ -35,7 +36,7 @@ const validateGuess = (item: CompleteAlbumItem) => {
 </script>
 
 <template>
-  <GameTitle :gameDef="CompleteAlbumDef" :container="props.container" />
+  <GameTitle :gameDef="gameDef" :container="props.container" />
 
   <div class="flex justify-center">
     <ul class="list bg-base-100 rounded-box shadow-md divide-y divide-base-300">

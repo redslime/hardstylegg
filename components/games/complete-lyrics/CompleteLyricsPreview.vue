@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type {CompleteLyricsContainer} from "~/types/gameModels";
-import {CompleteLyricsDef} from "~/utils/game/clientGameRegistry";
 
+const { $gameRegistry } = useNuxtApp();
+const gameDef = $gameRegistry.CompleteLyricsDef
 const { instance, pointer } = defineProps({
   instance: { type: Object as PropType<CompleteLyricsContainer>, required: true },
   pointer: { type: Boolean, default: true }
@@ -26,7 +27,7 @@ function getLines(instance: CompleteLyricsContainer) {
 </script>
 
 <template>
-  <DashboardGamePreviewHeader :gameDef="CompleteLyricsDef" :pointer="pointer" :container="instance">
+  <DashboardGamePreviewHeader :gameDef="gameDef" :pointer="pointer" :container="instance">
     <div class="whitespace-pre-wrap">
       <template v-for="(line, lineIndex) in getLines(instance)" :key="lineIndex">
         <p class="flex items-center gap-1">

@@ -1,7 +1,13 @@
-import {registerGames} from "~/utils/game/clientGameRegistry";
+import {ClientGameRegistry} from "~/utils/game/ClientGameRegistry";
 
 export default defineNuxtPlugin(() => {
     if(import.meta.client) {
-        registerGames()
+        const gameRegistry = new ClientGameRegistry()
+
+        return {
+            provide: {
+                gameRegistry
+            }
+        }
     }
 });

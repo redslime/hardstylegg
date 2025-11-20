@@ -3,7 +3,9 @@ import {GameState} from "~/types/models";
 import type {PropType} from 'vue'
 import {computed, reactive, watch} from 'vue'
 import type {CompleteLyricsContainer} from "~/types/gameModels";
-import {CompleteLyricsDef} from "~/utils/game/clientGameRegistry";
+
+const { $gameRegistry } = useNuxtApp();
+const gameDef = $gameRegistry.CompleteLyricsDef
 
 // Discriminated union for line parts to enable safe narrowing in the template
 interface LinePartInput { isInput: true; name: string }
@@ -73,7 +75,7 @@ watch(answers, (newAnswers) => {
 </script>
 
 <template>
-  <GameTitle :gameDef="CompleteLyricsDef" :container="props.container" />
+  <GameTitle :gameDef="gameDef" :container="props.container" />
 
   <div class="flex flex-col items-center">
     <div class="text-xl text-center text-base-content/80 mb-4">{{ description }}</div>

@@ -1,6 +1,5 @@
 import {GameState} from "~/types/models";
 import {type Component, defineAsyncComponent} from 'vue'
-import {findGameById} from "~/utils/game/clientGameRegistry";
 
 export function getStrokeColor(state: GameState | undefined): string {
     switch (state) {
@@ -32,8 +31,9 @@ const generalIcons: GlobImport = import.meta.glob('~/components/icons/*.vue') as
  */
 export function getIcon(icon: string, isGameIcon = false): Component {
     if(isGameIcon && icon.startsWith("gameDef:")) {
+        const { $gameRegistry } = useNuxtApp();
         const typeId = parseInt(icon.split(":")[1]!!)
-        const gameDef = findGameById(typeId)!!
+        const gameDef = $gameRegistry.findGameById(typeId)!!
         return gameDef.icon
     } else {
         const key = Object.keys(generalIcons).find(path => path.endsWith(`/${icon}.vue`))

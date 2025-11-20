@@ -4,12 +4,12 @@ import {type CookieDayMemory, GameState} from "~/types/models";
 import {getTracks} from "~/utils/tracks";
 import {refreshCookie} from "#app";
 import CookieChart from "~/components/CookieChart.vue";
-import {findGameByName} from "~/utils/game/clientGameRegistry";
 
 definePageMeta({
   layout: 'hero'
 })
 
+const { $gameRegistry } = useNuxtApp();
 const { data: gameData, pending, error } = await useAsyncData(() => getGameContainer(), { lazy: true })
 const cookie = useCookie<CookieDayMemory[]>("memory", {
   maxAge: 60 * 60 * 24 * 365,
@@ -63,7 +63,7 @@ useOnce(() => {
             'bg-success': getState(index) === GameState.SUCCEEDED,
             'bg-error': getState(index) === GameState.FAILED,
           }">
-            <component :is="findGameByName(game.name)!!.icon" :state="getState(index)" />
+            <component :is="$gameRegistry.findGameByName(game.name)!!.icon" :state="getState(index)" />
           </div>
         </div>
         <button class="btn btn-primary btn-xl" v-if="!played" @click="play">Play</button>

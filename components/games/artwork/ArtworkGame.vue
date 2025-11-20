@@ -12,8 +12,9 @@ export default {
 import {GameState, type ShallowTrack, type Track} from "~/types/models";
 import SpotifyButton from "~/components/SpotifyButton.vue";
 import {countAttempt} from "~/utils/game";
-import {ArtworkDef} from "~/utils/game/clientGameRegistry";
 
+const { $gameRegistry } = useNuxtApp();
+const gameDef = $gameRegistry.ArtworkDef
 const emit = defineEmits(['onFinish'])
 const details = inject<boolean>('details')
 const props = defineProps({
@@ -50,7 +51,7 @@ async function validate(selected: ShallowTrack, flashError: () => void, flashSuc
 </script>
 
 <template>
-  <GameTitle :gameDef="ArtworkDef" :container="props.container" />
+  <GameTitle :gameDef="gameDef" :container="props.container" />
 
   <div class="flex items-center justify-center flex-col w-full">
     <img

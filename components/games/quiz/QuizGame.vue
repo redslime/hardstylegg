@@ -3,8 +3,9 @@ import {GameState} from "~/types/models";
 import {shuffleArray} from "~/utils/utils";
 import type {QuizAnswer, QuizContainer} from "~/types/gameModels";
 import {countOption} from "~/utils/game";
-import {QuizDef} from "~/utils/game/clientGameRegistry";
 
+const { $gameRegistry } = useNuxtApp();
+const gameDef = $gameRegistry.QuizDef
 const emit = defineEmits(['onFinish'])
 const props = defineProps({
   state: { type: Number as PropType<GameState>, required: true },
@@ -43,7 +44,7 @@ const click = (answer: QuizAnswer) => {
 </script>
 
 <template>
-  <GameTitle :gameDef="QuizDef" :container="props.container" />
+  <GameTitle :gameDef="gameDef" :container="props.container" />
 
   <div class="flex flex-wrap gap-4 w-full">
     <div v-for="answer in answers" :key="answer.text"

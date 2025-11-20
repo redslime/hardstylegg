@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import type {AnyGameContainers} from "~/types/gameModels";
-import {findGameById} from "~/utils/game/clientGameRegistry";
 
+const { $gameRegistry } = useNuxtApp();
 const emit = defineEmits(['select'])
 const { typeId } = defineProps({
   typeId: { type: Number, required: true }
 })
 const { data, pending, error, clear } = await useAsyncData<AnyGameContainers>(() => {
-  return findGameById(typeId)!!.getAllInstances()
+  return $gameRegistry.findGameById(typeId)!!.getAllInstances()
 }, { lazy: true })
 
 function select(instance: any) {

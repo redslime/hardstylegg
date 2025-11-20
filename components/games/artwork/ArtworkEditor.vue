@@ -8,9 +8,9 @@ import ArtworkUploader from "~/components/games/artwork/ArtworkUploader.vue";
 import {ref} from "vue";
 import Checkmark from "~/components/icons/Checkmark.vue";
 import ArtworkPreview from "~/components/games/artwork/ArtworkPreview.vue";
-import {ArtworkDef} from "~/utils/game/clientGameRegistry";
 
-const gameDef = ArtworkDef
+const { $gameRegistry } = useNuxtApp();
+const gameDef = $gameRegistry.ArtworkDef
 const { data, pending, error } = await useAsyncData<ArtworkContainer[]>(() => gameDef.getAllInstances(), { lazy: true })
 const instances = computed<ArtworkContainer[] | undefined>(() => data.value)
 const editing = ref<ArtworkContainer | undefined>()

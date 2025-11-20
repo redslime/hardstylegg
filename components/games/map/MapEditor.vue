@@ -2,10 +2,10 @@
 import type {MapContainer} from "~/types/gameModels";
 import DashboardGameLoadingSpinner from "~/components/dashboard/DashboardGameLoadingSpinner.vue";
 import MapPreview from "~/components/games/map/MapPreview.vue";
-import type {HighlightItem} from "~/components/games/map/CountryMap.vue";
-import {MapDef} from "~/utils/game/clientGameRegistry";
+import CountryMap, {type HighlightItem} from "~/components/games/map/CountryMap.vue";
 
-const gameDef = MapDef
+const { $gameRegistry } = useNuxtApp();
+const gameDef = $gameRegistry.MapDef
 const { data, pending, error } = await useAsyncData<MapContainer[]>(() => gameDef.getAllInstances(), { lazy: true })
 const instances = computed<MapContainer[] | undefined>(() => data.value)
 const editing = ref<MapContainer | undefined>()

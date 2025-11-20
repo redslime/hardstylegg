@@ -6,9 +6,9 @@ import {computed} from "vue";
 import TrackPicker from "~/components/dashboard/TrackPicker.vue";
 import InfoIcon from "~/components/icons/InfoIcon.vue";
 import CompleteLyricsPreview from "~/components/games/complete-lyrics/CompleteLyricsPreview.vue";
-import {CompleteLyricsDef} from "~/utils/game/clientGameRegistry";
 
-const gameDef = CompleteLyricsDef
+const { $gameRegistry } = useNuxtApp();
+const gameDef = $gameRegistry.CompleteLyricsDef
 const { data, pending, error } = await useAsyncData<CompleteLyricsContainer[]>(() => gameDef.getAllInstances(), { lazy: true })
 const instances = computed<CompleteLyricsContainer[] | undefined>(() => data.value)
 const editing = ref<CompleteLyricsContainer | undefined>()

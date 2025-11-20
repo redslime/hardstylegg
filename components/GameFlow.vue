@@ -24,8 +24,8 @@ import {
 } from "~/types/models";
 import {getTracks} from "~/utils/tracks";
 import {useLocalStorage} from "@vueuse/core";
-import {findGameByName} from "~/utils/game/clientGameRegistry";
 
+const { $gameRegistry } = useNuxtApp();
 const props = defineProps({
   gameData: { type: Object as PropType<GameContainer>, required: true },
   cookie: { type: Object as PropType<CookieDayMemory[]>, required: true }
@@ -35,7 +35,7 @@ const dayId = ref<number>(props.gameData.dayId)
 const gameData = reactive<GameData[]>(props.gameData.data)
 const currentIndex = ref(0)
 const currentGameData = computed<GameData>(() => gameData[currentIndex.value]!!)
-const currentGameComp = computed(() => findGameByName(currentGameData.value.name)!!)
+const currentGameComp = computed(() => $gameRegistry.findGameByName(currentGameData.value.name)!!)
 const currentState = computed<GameState>(() => currentGameData.value.props.state)
 const summary = ref<boolean>(false)
 const details = ref<boolean>(false)
@@ -185,7 +185,7 @@ onMounted(() => {
           'bg-success': game.props.state === GameState.SUCCEEDED,
           'bg-error': game.props.state === GameState.FAILED,
         }">
-        <component :is="findGameByName(game.name)!!.icon" :state="game.props.state" />
+        <component :is="$gameRegistry.findGameByName(game.name)!!.icon" :state="game.props.state" />
       </div>
     </div>
 
@@ -244,7 +244,7 @@ onMounted(() => {
             }"
            @click="currentIndex=index"
       >
-        <component :is="findGameByName(game.name)!!.icon" :state="game.props.state" />
+        <component :is="$gameRegistry.findGameByName(game.name)!!.icon" :state="game.props.state" />
       </div>
     </div>
 

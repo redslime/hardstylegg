@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import type {QuizContainer} from "~/types/gameModels";
-import {QuizDef} from "~/utils/game/clientGameRegistry";
 
+const { $gameRegistry } = useNuxtApp();
+const gameDef = $gameRegistry.QuizDef
 const { instance, pointer } = defineProps({
   instance: { type: Object as PropType<QuizContainer>, required: true },
   pointer: { type: Boolean, default: true }
@@ -9,7 +10,7 @@ const { instance, pointer } = defineProps({
 </script>
 
 <template>
-  <DashboardGamePreviewHeader :gameDef="QuizDef" :pointer="pointer" :container="instance">
+  <DashboardGamePreviewHeader :gameDef="gameDef" :pointer="pointer" :container="instance">
     <div v-for="item in instance.items" :key="item.id" class="badge badge-outline"
          :class="{
                 'badge-success': item.correct,

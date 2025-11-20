@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import {GameState} from "~/types/models";
 import type {MapContainer} from "~/types/gameModels";
-import type {HighlightItem} from "~/components/games/map/CountryMap.vue";
-import {MapDef} from "~/utils/game/clientGameRegistry";
+import CountryMap, {type HighlightItem} from "~/components/games/map/CountryMap.vue";
 
+const { $gameRegistry } = useNuxtApp();
+const gameDef = $gameRegistry.MapDef
 const emit = defineEmits(['onFinish'])
 const props = defineProps({
   state: { type: Number as PropType<GameState>, required: true },
@@ -45,7 +46,7 @@ watch(() => props.state, val => {
 </script>
 
 <template>
-  <GameTitle :gameDef="MapDef" :container="props.container" />
+  <GameTitle :gameDef="gameDef" :container="props.container" />
 
   <CountryMap v-model:highlighted="selected" :interact="interact" @click="s => clicked(s)" />
 </template>
