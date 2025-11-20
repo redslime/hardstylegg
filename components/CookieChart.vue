@@ -1,15 +1,13 @@
 <script setup lang="ts">
-import type {CookieDayMemory} from "~/types/models";
+import type {AvgScoresContainer, CookieDayMemory} from "~/types/models";
 
-const scores = await $fetch<{ dayIds: number[], dayNames: string[], avg: number[] }>('/api/scores')
-const cookie = useCookie<CookieDayMemory[]>("memory", {
-  maxAge: 60 * 60 * 24 * 365,
-  sameSite: "strict",
-  default: () => []
+const { scores, cookie } = defineProps({
+  scores: { type: Object as PropType<AvgScoresContainer>, required: true },
+  cookie: { type: Object as PropType<CookieDayMemory[]>, required: true }
 })
 
 const userScores = scores.dayIds.map(id => {
-  const day = cookie.value.find(c => c.day === id)
+  const day = cookie.find(c => c.day === id)
 
   if(day) {
     return day.data.filter(d => d).length

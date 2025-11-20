@@ -137,3 +137,9 @@ export interface ReportItem {
     items_completed: string | null
     items_clicked: string | null
 }
+
+export interface AvgScoresContainer {
+    dayIds: number[]
+    dayNames: string[]
+    avg: number[]
+}

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {getGameContainer, getPreviewTitle, hasPlayedToday} from "~/utils/game";
-import {type CookieDayMemory, GameState} from "~/types/models";
+import {type AvgScoresContainer, type CookieDayMemory, GameState} from "~/types/models";
 import {getTracks} from "~/utils/tracks";
 import {refreshCookie} from "#app";
 import CookieChart from "~/components/CookieChart.vue";
@@ -10,7 +10,8 @@ definePageMeta({
 })
 
 const { $gameRegistry } = useNuxtApp();
-const { data: gameData, pending, error } = await useAsyncData(() => getGameContainer(), { lazy: true })
+const { data: gameData, pending } = await useAsyncData(() => getGameContainer(), { lazy: true })
+const { data: avgScores } = await useAsyncData(() => $fetch<AvgScoresContainer>('/api/scores'), { lazy: true })
 const cookie = useCookie<CookieDayMemory[]>("memory", {
   maxAge: 60 * 60 * 24 * 365,
   sameSite: "strict",
@@ -80,11 +81,11 @@ useOnce(() => {
     </div>
   </div>
 
-  <div class="hero bg-base-300 rounded-lg mt-7" v-if="cookie.length > 0 || dev">
+  <div class="hero bg-base-300 rounded-lg mt-7" v-if="avgScores && (cookie.length > 0 || dev)">
     <div class="hero-content flex flex-col text-center px-0 sm:px-1 md:px-4 w-full">
       <div class="w-full md:max-w-lg">
         <h1 class="text-xl md:text-3xl font-bold">Past challenge scores</h1>
-        <CookieChart />
+        <CookieChart :scores="avgScores" :cookie="cookie" />
       </div>
     </div>
   </div>
