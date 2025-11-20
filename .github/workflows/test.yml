@@ -23,7 +23,7 @@ jobs:
         run: npm ci --omit=dev
 
       - name: Generate prisma client
-        run: npx prisma generate
+        run: npx prisma@6.19.0 generate
 
       - name: Build Nuxt
         run: npm run build
