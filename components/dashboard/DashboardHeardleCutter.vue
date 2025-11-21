@@ -4,6 +4,7 @@ import type {HeardleContainer} from "~/types/gameModels";
 import InfoIcon from "~/components/icons/InfoIcon.vue";
 import {FFmpeg} from '@ffmpeg/ffmpeg'
 import {fetchFile} from '@ffmpeg/util'
+import WaveformCutter from "~/components/games/heardle/WaveformCutter.vue";
 
 const editing = defineModel<HeardleContainer>('editing', {required: true});
 const file = ref<File | null>(null);
