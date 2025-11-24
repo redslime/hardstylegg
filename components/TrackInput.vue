@@ -31,6 +31,10 @@ const emit = defineEmits(['onTrackSelected'])
 // debounce
 let timeout: number
 watch(query, (val) => {
+  if(errorFlash.value) {
+    query.value = "Incorrect"
+  }
+
   clearTimeout(timeout)
   timeout = window.setTimeout(() => {
     debouncedQuery.value = val
@@ -171,6 +175,7 @@ const flashError = async () => {
   errorFlash.value = true
   await delay(400)
   errorFlash.value = false
+  query.value = ""
 }
 
 const flashSuccess = async () => {
@@ -245,22 +250,26 @@ onMounted(() => {
   })
 })
 
+const placeholder = computed(() => {
+  return errorFlash.value ? "Incorrect" : "Track..."
+})
+
 // Expose input bindings and event handlers for slot
 const inputBindings = computed(() => ({
-  value: query.value,  // Changed from modelValue to value
+  value: query.value,
   class: [
     'input w-full',
     {
       'md:input-xl': props?.xl ?? false,
-      'border-error': errorFlash.value,
+      'border-error bg-error font-medium text-xl text-error-content text-center uppercase caret-transparent': errorFlash.value,
       'border-success': successFlash.value
     }
   ],
-  placeholder: 'Track...'
+  placeholder: placeholder.value
 }))
 
 const inputEvents = {
-  input: (e: Event) => {  // Changed from onUpdate:modelValue to input
+  input: (e: Event) => {
     query.value = (e.target as HTMLInputElement).value
     hoverIndex.value = -1
     selected.value = false
