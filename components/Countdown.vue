@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import {onBeforeUnmount, onMounted, ref} from 'vue'
+import {onBeforeUnmount, ref} from 'vue'
+import {watchOnce} from "@vueuse/shared";
 
-const { seconds: s } = await $fetch<{ seconds: number }>('/api/time')
+const { data: s, clear } = await useFetch<{ seconds: number }>('/api/time', { lazy: true })
 
-let secondsUntilMidnight = s
+let secondsUntilMidnight = 0
 const hours = ref("")
 const minutes = ref("")
 const seconds = ref("")
 let interval: ReturnType<typeof setInterval>
+const loaded = ref(false)
 
 const updateCountdown = () => {
   secondsUntilMidnight--
@@ -18,19 +20,22 @@ const updateCountdown = () => {
   seconds.value =`${Math.floor((diff / 1000) % 60)}`.padStart(2, '0')
 }
 
-onMounted(() => {
-  updateCountdown()
-  interval = setInterval(updateCountdown, 1000)
+onBeforeUnmount(() => {
+  clear()
+  clearInterval(interval)
 })
 
-onBeforeUnmount(() => {
-  clearInterval(interval)
+watchOnce(s, val => {
+  secondsUntilMidnight = val?.seconds ?? 0
+  updateCountdown()
+  interval = setInterval(updateCountdown, 1000)
+  loaded.value = true
 })
 </script>
 
-
 <template>
-  <span class="countdown font-mono">
+  <span v-if="!loaded" class="loading loading-infinity"></span>
+  <span v-else class="countdown font-mono">
     <span :style="`--value:${hours}`" aria-live="polite" :aria-label="hours">{{ hours }}</span>
     :
     <span :style="`--value:${minutes}; --digits: 2;`" aria-live="polite" :aria-label="minutes">{{ minutes }}</span>
