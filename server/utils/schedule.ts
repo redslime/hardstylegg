@@ -120,6 +120,14 @@ export async function checkDay() {
     }
 }
 
+export async function refreshGameData() {
+    if(lastKnownDayId) {
+        console.log("[DayManager] Refreshing packed game data...")
+        packedCache = await getPackedDayDataForDay(lastKnownDayId)
+        console.log("[DayManager] Refreshed!")
+    }
+}
+
 export async function getPackedDayDataForDay(dayId: number): Promise<PackedDayData> {
     const editorData = await prisma.user.findMany({
         select: {

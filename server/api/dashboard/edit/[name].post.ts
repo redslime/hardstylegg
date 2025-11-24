@@ -1,5 +1,6 @@
 import {defineEventHandler} from "h3";
 import {findGameByName} from "~/server/utils/game/serverGameRegistry";
+import {getPackedDayData, refreshGameData} from "~/server/utils/schedule";
 
 export default defineEventHandler(async (event) => {
     await requireUserSession(event)
@@ -17,6 +18,13 @@ export default defineEventHandler(async (event) => {
         if (!instance.id) {
             return await game.createInstance(instance)
         } else {
+            const dayData = await getPackedDayData()
+
+            if(dayData.typeIds.includes(game.id)) {
+                // updating game that is currently being played, refresh packed game cache
+                refreshGameData().then(() => {})
+            }
+
             return await game.updateInstance(instance)
         }
     }
