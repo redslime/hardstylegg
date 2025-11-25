@@ -1,6 +1,7 @@
 import {readBody} from "h3";
 import type {Track} from "~/types/models";
 import prisma from "~/lib/prisma";
+import {invalidateCacheKeys} from "~/server/utils/cacheKeys";
 
 export default defineEventHandler(async (event) => {
     const {user} = await requireUserSession(event)
@@ -32,6 +33,7 @@ export default defineEventHandler(async (event) => {
             }))
         )
 
+        invalidateCacheKeys()
         console.log(user.name, "imported:", albums.length, "albums,", tracks.length, "tracks")
         return true
     } else {
