@@ -1,10 +1,11 @@
 <script setup lang="ts" generic="T extends EditorContainer">
 
-import {deepCopy} from "~/utils/utils";
+import {deepCopy, deepCopyReactive} from "~/utils/utils";
 import DashboardGameDeleteButton from "~/components/dashboard/DashboardGameDeleteButton.vue";
-import type {ScheduleDay} from "~/types/models";
+import {GameState, type ScheduleDay} from "~/types/models";
 import type {ClientGameDef} from "~/utils/game/ClientGameDef";
 import {getScheduleForGame} from "~/utils/dashboard";
+import PlayIcon from "~/components/icons/PlayIcon.vue";
 
 const instances = defineModel<T[] | undefined>('instances', {
   required: true,
@@ -26,6 +27,14 @@ const savingModal = ref<HTMLDialogElement | undefined>()
 const savingResponse = ref<boolean | String[] | undefined>()
 const editingErrors = computed<string[]>(() => gameDef.validate(editing.value!!))
 const editingExample = computed<boolean>(() => editing.value?.id === 1)
+const previewModal = ref<HTMLDialogElement | undefined>()
+const previewState = ref<GameState>(GameState.PLAYING)
+const previewCounter = ref<number>(0)
+
+// preview injections
+provide("details", false)
+provide("summary", false)
+provide("currentIndex", 1)
 
 function cancel() {
   editing.value = undefined
@@ -82,6 +91,18 @@ function tryEdit(instance: T) {
     editing.value = deepCopy(instance)
   }
 }
+
+async function startPreview() {
+  // silly workaround to get the component to fully reset and clear any local consts
+  previewCounter.value++
+  await nextTick()
+  previewState.value = GameState.PLAYING
+  previewModal?.value?.showModal()
+}
+
+const previewListener = (state: GameState) => {
+  previewState.value = state
+}
 </script>
 
 <template>
@@ -134,6 +155,7 @@ function tryEdit(instance: T) {
         <button class="btn btn-neutral join-item" @click="cancel">Cancel</button>
         <button class="btn btn-success join-item" @click="save" :disabled="editingErrors.length > 0 || editingExample">Save</button>
       </div>
+      <button class="btn btn-soft btn-info" @click="startPreview()"><PlayIcon /> Live preview</button>
       <DashboardGameDeleteButton :editing="editing" :typeId="gameDef.id" @deleted="onDelete" />
     </div>
   </div>
@@ -153,6 +175,25 @@ function tryEdit(instance: T) {
     <div class="modal-box" v-else>
       <h3 class="text-xl font-bold text-center">Error</h3>
       <p v-for="error in savingResponse" class="text-error">{{ error }}</p>
+      <div class="modal-action">
+        <form method="dialog">
+          <button class="btn">Close</button>
+        </form>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog ref="previewModal" id="previewModal" class="modal" v-if="editing">
+    <div class="modal-box max-w-4xl">
+      <form method="dialog">
+        <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+      </form>
+      <div class="badge badge-primary badge-xs" v-if="previewState === GameState.PLAYING">State: Playing</div>
+      <div class="badge badge-success badge-xs" v-else-if="previewState === GameState.SUCCEEDED">State: Succeeded</div>
+      <div class="badge badge-error badge-xs" v-if="previewState === GameState.FAILED">State: Failed</div>
+      <div class="flex flex-col items-center">
+        <component :is="gameDef.gameComponent" :key="previewCounter" :state="previewState" :position="1" :container="deepCopyReactive(editing)" @onFinish="previewListener" />
+      </div>
       <div class="modal-action">
         <form method="dialog">
           <button class="btn">Close</button>
