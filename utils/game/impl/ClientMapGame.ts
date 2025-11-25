@@ -19,4 +19,10 @@ export class ClientMapGame extends ClientGameDef<MapContainer> {
     override getDashboardHeaderTitle(container: MapContainer): string {
         return container.title
     }
+
+    override getHelpText(container: MapContainer): string {
+        return "Your task is to click the correct country on the map.\n\n" +
+            "You only have one attempt at guessing!\n" +
+            "Can't figure it out? Use the skip button!";
+    }
 }

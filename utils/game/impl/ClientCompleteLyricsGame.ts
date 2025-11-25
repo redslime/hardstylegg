@@ -20,4 +20,13 @@ export class ClientCompleteLyricsGame extends ClientGameDef<CompleteLyricsContai
     override getDashboardHeaderTitle(container: CompleteLyricsContainer): string {
         return getName(container.track)
     }
+
+    override getHelpText(container: CompleteLyricsContainer): string {
+        const trackName = container.track.title + " by " + container.track.artists
+        return "Your task is to fill out the missing lyrics of " + trackName + ".\n" +
+            "Start typing in the input fields to submit your guesses.\n" +
+            "Correct ones are automatically accepted!\n\n" +
+            "You have unlimited attempts at guessing.\n" +
+            "Can't figure it out? Use the skip button!";
+    }
 }

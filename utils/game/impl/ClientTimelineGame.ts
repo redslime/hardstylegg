@@ -19,4 +19,11 @@ export class ClientTimelineGame extends ClientGameDef<TimelineContainer> {
     override getDashboardHeaderTitle(container: TimelineContainer): string {
         return container.title;
     }
+
+    override getHelpText(container: TimelineContainer): string {
+        return "Your task is to select the correct year.\n" +
+            "You can submit your order by pressing 'Submit'.\n\n" +
+            "You only have one attempt at guessing!\n" +
+            "Can't figure it out? Use the skip button!";
+    }
 }

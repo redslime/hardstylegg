@@ -22,6 +22,8 @@ export abstract class ClientGameDef<T extends EditorContainer> extends GameDef<T
 
     abstract getDashboardHeaderTitle(container: T): string
 
+    abstract getHelpText(container: T): string
+
     public async getAllInstances(): Promise<T[]> {
         if(this.instances !== null) return this.instances
         this.instances = await $fetch<T[]>('/api/dashboard/' + this.name.toLowerCase())

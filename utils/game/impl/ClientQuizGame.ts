@@ -19,4 +19,11 @@ export class ClientQuizGame extends ClientGameDef<QuizContainer> {
     override getDashboardHeaderTitle(container: QuizContainer): string {
         return container.title;
     }
+
+    override getHelpText(container: QuizContainer): string {
+        return "Your task is to select the correct answer.\n" +
+            "Some questions may accept multiple answers.\n\n" +
+            "You only have one attempt at guessing!\n" +
+            "Can't figure it out? Use the skip button!";
+    }
 }

@@ -24,6 +24,8 @@ import {
 } from "~/types/models";
 import {getTracks} from "~/utils/tracks";
 import {useLocalStorage} from "@vueuse/core";
+import QuestionMarkCircleIcon from "~/components/icons/QuestionMarkCircleIcon.vue";
+import type {ClientGameDef} from "~/utils/game/ClientGameDef";
 
 const { $gameRegistry } = useNuxtApp();
 const props = defineProps({
@@ -35,11 +37,12 @@ const dayId = ref<number>(props.gameData.dayId)
 const gameData = reactive<GameData[]>(props.gameData.data)
 const currentIndex = ref(0)
 const currentGameData = computed<GameData>(() => gameData[currentIndex.value]!!)
-const currentGameComp = computed(() => $gameRegistry.findGameByName(currentGameData.value.name)!!)
+const currentGameComp = computed<ClientGameDef<any>>(() => $gameRegistry.findGameByName(currentGameData.value.name)!!)
 const currentState = computed<GameState>(() => currentGameData.value.props.state)
 const summary = ref<boolean>(false)
 const details = ref<boolean>(false)
 const mounted = ref<boolean>(false)
+const helpModal = ref<HTMLDialogElement | undefined>()
 const gamesWon = computed<number>(() => gameData.filter(g => g.props.state == GameState.SUCCEEDED).length)
 const teleportTo = computed(() => {
   if(!details.value) {
@@ -156,7 +159,11 @@ onMounted(() => {
     <div class="w-full sm:w-7/8" id="top-dock">
 
     </div>
-    <div class="w-full flex flex-row justify-around content-baseline gap-4">
+    <div class="relative w-full flex flex-row justify-around content-baseline gap-4">
+      <div class="absolute inline-flex inset-y-0 left-4 items-center text-white/50 hover:text-white/70 cursor-pointer"
+           v-if="currentState === GameState.PLAYING" @click="helpModal?.showModal()">
+        <QuestionMarkCircleIcon />
+      </div>
       <div class="[&:empty]:hidden" id="spotify-dock">
 
       </div>
@@ -186,6 +193,12 @@ onMounted(() => {
           'bg-error': game.props.state === GameState.FAILED,
         }">
         <component :is="$gameRegistry.findGameByName(game.name)!!.icon" :state="game.props.state" />
+      </div>
+    </div>
+
+    <div class="invisible mt-2 md:visible absolute inset-y-0 left-4 top-14 md:top-0" v-if="currentState == GameState.PLAYING">
+      <div class="p-1 text-white/50 hover:text-white/70 cursor-pointer" @click="helpModal?.showModal()">
+        <QuestionMarkCircleIcon />
       </div>
     </div>
 
@@ -259,6 +272,18 @@ onMounted(() => {
       <MicroChevronDoubleRightIcon />
     </button>
   </div>
+
+  <dialog ref="helpModal" id="helpModal" class="modal">
+    <div class="modal-box">
+      <h3 class="text-lg font-bold">Game help: {{ currentGameComp.getSpacedName() }}</h3>
+      <p class="py-4 whitespace-pre-wrap">{{ currentGameComp.getHelpText(currentGameData.props.container) }}</p>
+      <div class="modal-action">
+        <form method="dialog">
+          <button class="btn">Close</button>
+        </form>
+      </div>
+    </div>
+  </dialog>
 
   <Teleport :to="teleportTo" v-if="mounted">
     <KeepAlive>

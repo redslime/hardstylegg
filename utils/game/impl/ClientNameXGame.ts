@@ -19,4 +19,11 @@ export class ClientNameXGame extends ClientGameDef<NameXContainer> {
     override getDashboardHeaderTitle(container: NameXContainer): string {
         return container.title
     }
+
+    override getHelpText(container: NameXContainer): string {
+        return "Your task is to correctly name " + container.goal + " tracks.\n" +
+            "Start typing in the search bar to find the track you're looking for.\n\n" +
+            "You have unlimited attempts at guessing.\n" +
+            "Can't figure it out? Use the skip button!";
+    }
 }

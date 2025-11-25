@@ -20,4 +20,13 @@ export class ClientHeardleGame extends ClientGameDef<HeardleContainer> {
     override getDashboardHeaderTitle(container: HeardleContainer): string {
         return getName(container.track)
     }
+
+    override getHelpText(container: HeardleContainer): string {
+        return "Your task is to identify this track by listening to short snippets.\n" +
+            "Start typing in the search bar to find the track you're looking for.\n" +
+            "You have " + container.durations.length + " attempts at guessing.\n" +
+            "With each incorrect guess, the track snippet becomes longer.\n" +
+            "No idea what to guess? You can extend the snippet by pressing 'Next stage'.\n\n" +
+            "Can't figure it out? Use the skip button!";
+    }
 }

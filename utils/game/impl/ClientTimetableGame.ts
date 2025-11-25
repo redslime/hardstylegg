@@ -19,4 +19,12 @@ export class ClientTimetableGame extends ClientGameDef<TimetableContainer> {
     override getDashboardHeaderTitle(container: TimetableContainer): string {
         return container.title;
     }
+
+    override getHelpText(container: TimetableContainer): string {
+        return "Your task is to fill in the missing timetable entries.\n" +
+            "Start typing in the input fields to submit your guesses.\n" +
+            "Correct ones are automatically accepted!\n\n" +
+            "You have unlimited attempts at guessing.\n" +
+            "Can't figure it out? Use the skip button!";
+    }
 }

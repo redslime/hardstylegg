@@ -20,4 +20,14 @@ export class ClientCompleteAlbumGame extends ClientGameDef<CompleteAlbumContaine
     override getDashboardHeaderTitle(container: CompleteAlbumContainer): string {
         return getName(container.album!!)
     }
+
+    override getHelpText(container: CompleteAlbumContainer): string {
+        const albumName = container.album ? container.album.title + " by " + container.album.artists : "this album"
+        return "Your task is to fill out the missing tracks of " + albumName + ".\n" +
+            "Start typing in the input fields to submit your guesses.\n" +
+            "Correct ones are automatically accepted!\n" +
+            "The order of the tracks matters!\n\n" +
+            "You have unlimited attempts at guessing.\n" +
+            "Can't figure it out? Use the skip button!";
+    }
 }
