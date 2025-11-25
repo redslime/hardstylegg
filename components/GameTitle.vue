@@ -12,14 +12,16 @@ const details = inject<boolean>('details')
 <template>
   <div class="mb-8">
     <div class="flex items-center justify-center gap-2">
-      <slot name="icon">
-        <component :is="gameDef.icon" />
-      </slot>
       <div class="text-xl font-bold text-base-content"
-           :class="{
-              'md:text-3xl': !details,
-              'md:text-xl': details,
-            }">
+           :class="{ 'md:text-3xl': !details, 'md:text-xl': details }">
+        <span class="mr-2 inline-block align-middle">
+          <slot name="icon">
+            <component
+                :is="gameDef.icon"
+                class="h-[1em] w-auto inline-block align-baseline"
+            />
+          </slot>
+        </span>
         <slot name="title">
           {{ title }}
         </slot>
