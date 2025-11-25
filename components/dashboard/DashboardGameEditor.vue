@@ -155,7 +155,7 @@ const previewListener = (state: GameState) => {
         <button class="btn btn-neutral join-item" @click="cancel">Cancel</button>
         <button class="btn btn-success join-item" @click="save" :disabled="editingErrors.length > 0 || editingExample">Save</button>
       </div>
-      <button class="btn btn-soft btn-info" @click="startPreview()"><PlayIcon /> Live preview</button>
+      <button class="btn btn-soft btn-info" :disabled="editingErrors.length > 0" @click="startPreview()"><PlayIcon /> Live preview</button>
       <DashboardGameDeleteButton :editing="editing" :typeId="gameDef.id" @deleted="onDelete" />
     </div>
   </div>
