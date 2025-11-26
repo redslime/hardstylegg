@@ -7,7 +7,6 @@ import {bitsToHex, copyToClipboard, debug} from "~/utils/utils";
 import ResultShareButton from "~/components/ResultShareButton.vue";
 import {
   getCookieMemory,
-  getPreviewTitle,
   getReportCode,
   hasPlayedToday,
   reportResult,
@@ -183,17 +182,7 @@ onMounted(() => {
 
   <div class="relative w-full">
     <div class="flex justify-center flex-wrap gap-2 mb-8" v-if="!details">
-      <div v-for="game in gameData" :key="game.name"
-           class="p-3 rounded-md tooltip"
-           :data-tip="getPreviewTitle(game)"
-           :class="{
-          'bg-base-100': game.props.state === GameState.UPCOMING,
-          'bg-primary text-primary-content': game.props.state === GameState.PLAYING,
-          'bg-success': game.props.state === GameState.SUCCEEDED,
-          'bg-error': game.props.state === GameState.FAILED,
-        }">
-        <component :is="$gameRegistry.findGameByName(game.name)!!.icon" :state="game.props.state" />
-      </div>
+      <GameIconRow :games="gameData" />
     </div>
 
     <div class="invisible mt-2 md:visible absolute inset-y-0 left-4 top-14 md:top-0" v-if="currentState == GameState.PLAYING">
@@ -245,20 +234,7 @@ onMounted(() => {
 
   <div class="flex flex-col w-full md:w-2/3 my-5 pb-5 border-secondary/50 border-1 rounded-md" v-if="summary && details">
     <div class="flex justify-center bg-base-300 flex-wrap gap-2 border-b-1 py-4 mb-4 border-secondary/50">
-      <div v-for="(game, index) in gameData" :key="game.name"
-           class="p-3 rounded-md cursor-pointer tooltip"
-           :data-tip="getPreviewTitle(game)"
-           :class="{
-              'outline-2 outline-primary': currentIndex === index,
-              'bg-base-100': game.props.state === GameState.UPCOMING,
-              'bg-primary text-primary-content': game.props.state === GameState.PLAYING,
-              'bg-success': game.props.state === GameState.SUCCEEDED,
-              'bg-error': game.props.state === GameState.FAILED,
-            }"
-           @click="currentIndex=index"
-      >
-        <component :is="$gameRegistry.findGameByName(game.name)!!.icon" :state="game.props.state" />
-      </div>
+      <GameIconRow :games="gameData" :outlineIndex="currentIndex" :click="index => currentIndex = index" />
     </div>
 
     <div class="px-5" id="state-summary">

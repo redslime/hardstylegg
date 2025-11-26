@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {getGameContainer, getPreviewTitle, hasPlayedToday} from "~/utils/game";
+import {getGameContainer, hasPlayedToday} from "~/utils/game";
 import {type AvgScoresContainer, type CookieDayMemory, GameState} from "~/types/models";
 import {getTracks} from "~/utils/tracks";
 import {refreshCookie} from "#app";
@@ -9,7 +9,6 @@ definePageMeta({
   layout: 'hero'
 })
 
-const { $gameRegistry } = useNuxtApp();
 const { data: gameData, pending } = await useAsyncData(() => getGameContainer(), { lazy: true })
 const { data: avgScores } = await useAsyncData(() => $fetch<AvgScoresContainer>('/api/scores'), { lazy: true })
 const cookie = useCookie<CookieDayMemory[]>("memory", {
@@ -57,15 +56,7 @@ useOnce(() => {
       </template>
       <template v-else-if="gameData && exists">
         <div class="flex justify-center flex-wrap gap-2 mb-3">
-          <div v-for="(game, index) in gameData.data" :key="index" class="p-3 rounded-md tooltip" :data-tip="getPreviewTitle(game)"
-               :class="{
-            'bg-base-100': getState(index) === GameState.UPCOMING,
-            'bg-primary text-primary-content': getState(index) === GameState.PLAYING,
-            'bg-success': getState(index) === GameState.SUCCEEDED,
-            'bg-error': getState(index) === GameState.FAILED,
-          }">
-            <component :is="$gameRegistry.findGameByName(game.name)!!.icon" :state="getState(index)" />
-          </div>
+          <GameIconRow :games="gameData.data" :getState="getState" />
         </div>
         <button class="btn btn-primary btn-xl" v-if="!played" @click="play">Play</button>
 

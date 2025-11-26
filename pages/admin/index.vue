@@ -1,8 +1,6 @@
 <script setup lang="ts">
 
 import {getDashboardData, getFriendlyName} from "~/utils/dashboard";
-import {getGameName} from "~/utils/game";
-import {GameState} from "~/types/models";
 import PlayerStatsChart from "~/components/dashboard/PlayerStatsChart.vue";
 import ScoreStatsChart from "~/components/dashboard/ScoreStatsChart.vue";
 
@@ -52,10 +50,7 @@ function getTypeIds(day: number) {
           <p class="uppercase font-semibold font-sm">Games</p>
 
           <div class="flex gap-2">
-            <div v-for="(typeId, index) in getTypeIds(schedule.todayId)" :key="index" class="p-3 rounded-md tooltip bg-base-100"
-                 :data-tip="getGameName(typeId)">
-              <component :is="$gameRegistry.findGameById(typeId)!!.icon" :state="GameState.UPCOMING" />
-            </div>
+            <GameIconRow :gameIds="getTypeIds(schedule.todayId)" />
           </div>
         </div>
 
@@ -98,11 +93,8 @@ function getTypeIds(day: number) {
             <div class="badge badge-soft badge-error" v-else>Not ready</div>
           </div>
 
-          <div class="flex gap-2">
-            <div v-if="tomorrowSchedule" v-for="(typeId, index) in tomorrowSchedule.typeIds" :key="index" class="p-2 rounded-md tooltip bg-black/50"
-                 :data-tip="getGameName(typeId)">
-              <component :size="4" :is="$gameRegistry.findGameById(typeId)!!.icon" :state="GameState.UPCOMING" />
-            </div>
+          <div class="flex gap-2" v-if="tomorrowSchedule">
+            <GameIconRow :gameIds="tomorrowSchedule.gameIds" :iconSize="4" />
           </div>
         </div>
 
