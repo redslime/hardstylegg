@@ -3,6 +3,7 @@ import prisma from "~/lib/prisma";
 import type {AvgScoresContainer, PackedDayData} from "~/types/models";
 import {resetCache} from "~/server/api/dashboard/stats/players";
 import {findGameById} from "~/server/utils/game/serverGameRegistry";
+import {resetArchiveCache} from "~/server/api/archive";
 
 const BASE_DATE = DateTime.fromISO('2025-11-05', { zone: 'Europe/Berlin' });
 
@@ -185,6 +186,7 @@ async function onNewDay(newDayId: number) {
     packedCache = await getPackedDayDataForDay(newDayId)
     scoreCache = null
     resetCache()
+    resetArchiveCache()
 }
 
 export async function getAvgScores(): Promise<AvgScoresContainer> {

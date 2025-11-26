@@ -10,9 +10,10 @@ export default defineNuxtConfig({
     routeRules: {
         '/share': { ssr: true },
         '/': { ssr: false },
-        '/play': { ssr: false },
+        '/play/**': { ssr: false },
         '/test': { ssr: false },
-        '/admin/**': { ssr: false }
+        '/admin/**': { ssr: false },
+        '/archive': { ssr: false },
     },
 
     vite: {

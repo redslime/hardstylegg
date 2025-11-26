@@ -31,7 +31,7 @@ const getState = props.getState ?? ((index: number) => {
             'bg-error': getState(index) === GameState.FAILED,
             'cursor-pointer': props.click
           }]">
-    <component :is="$gameRegistry.findGameByName(game.name)!!.icon" :state="getState(index)" />
+    <component :is="$gameRegistry.findGameByName(game.name)!!.icon" :state="getState(index)" :size="props.iconSize" />
   </div>
   <div v-else-if="props.gameIds" v-for="typeId in props.gameIds" :key="typeId" class="p-3 rounded-md tooltip bg-base-100"
        :class="[props.style]" :data-tip="getGameName(typeId)">

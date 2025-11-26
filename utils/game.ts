@@ -2,6 +2,7 @@ import {
     type CookieDayMemory,
     type GameContainer,
     type GameData,
+    GameEnvironment,
     type GameReport,
     GameState,
     type PackedDayData,
@@ -78,9 +79,13 @@ export function updateState(typeId: number | null, gameId: number | null) {
     currentGameId = gameId
 }
 
-export function startGame() {
+export function startGame(gameEnv: GameEnvironment) {
     if(import.meta.env.DEV) {
         debug("Not creating a performance report in dev mode")
+        return
+    }
+    if(gameEnv !== GameEnvironment.DAILY) {
+        debug("Not creating a performance report for non-daily challenges")
         return
     }
 

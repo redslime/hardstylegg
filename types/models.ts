@@ -17,6 +17,11 @@ export enum GameState {
     FAILED
 }
 
+export enum GameEnvironment {
+    DAILY,
+    ARCHIVE
+}
+
 export interface Track {
     sid: string
     artists: string
@@ -142,4 +147,10 @@ export interface AvgScoresContainer {
     dayIds: number[]
     dayNames: string[]
     avg: number[]
+}
+
+export interface ArchiveContainer {
+    baseDate: DateTime
+    todayId: number
+    recentGames: PackedDayData[]
 }

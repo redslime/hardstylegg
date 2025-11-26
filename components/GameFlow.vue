@@ -19,19 +19,23 @@ import {
   type CookieStreakMemory,
   type GameContainer,
   type GameData,
+  GameEnvironment,
   GameState
 } from "~/types/models";
 import {getTracks} from "~/utils/tracks";
 import {useLocalStorage} from "@vueuse/core";
 import QuestionMarkCircleIcon from "~/components/icons/QuestionMarkCircleIcon.vue";
 import type {ClientGameDef} from "~/utils/game/ClientGameDef";
+import FireIcon from "~/components/icons/FireIcon.vue";
 
 const { $gameRegistry } = useNuxtApp();
 const props = defineProps({
+  gameEnv: { type: Object as PropType<GameEnvironment>, required: true },
   gameData: { type: Object as PropType<GameContainer>, required: true },
-  cookie: { type: Object as PropType<CookieDayMemory[]>, required: true }
+  cookie: { type: Object as PropType<CookieDayMemory[]> }
 })
 const streak = useLocalStorage<CookieStreakMemory>("streak", { streak: 0, lastDayId: -1 })
+const emit = defineEmits(['finish'])
 const dayId = ref<number>(props.gameData.dayId)
 const gameData = reactive<GameData[]>(props.gameData.data)
 const currentIndex = ref(0)
@@ -58,6 +62,7 @@ const played = computed(() => hasPlayedToday(props.cookie, dayId.value))
 
 const currentTypeId = computed<number>(() => currentGameComp.value.id)
 const currentGameId = computed<number>(() => currentGameData.value.props.container.id)
+const tracked = computed<boolean>(() => props.gameEnv === GameEnvironment.DAILY)
 
 provide("details", details)
 provide("summary", summary)
@@ -104,19 +109,22 @@ function next() {
     currentIndex.value = 0
 
     updateState(null, null)
-    sendReport()
-    advanceStreak()
 
-    const data = getCookieMemory()
+    if(props.cookie) {
+      sendReport()
+      advanceStreak()
 
-    if(data) {
-      if(props.cookie.length >= 14) {
-        debug("removing oldest cookie memory data")
-        props.cookie.shift()
+      const data = getCookieMemory()
+
+      if(data) {
+        if(props.cookie.length >= 14) {
+          debug("removing oldest cookie memory data")
+          props.cookie.shift()
+        }
+
+        debug("pushing data into cookie: ", data)
+        props.cookie.push(data)
       }
-
-      debug("pushing data into cookie: ", data)
-      props.cookie.push(data)
     }
   } else {
     currentIndex.value++
@@ -126,18 +134,20 @@ function next() {
 }
 
 const copyResult = () => {
-  const reportCode = getReportCode()
-  let url = `https://hardstyle.gg/share?r=${shareCode.value}`
+  if(tracked.value) {
+    const reportCode = getReportCode()
+    let url = `https://hardstyle.gg/share?r=${shareCode.value}`
 
-  if(reportCode) {
-    url = `https://hardstyle.gg/share?c=${reportCode}`
+    if(reportCode) {
+      url = `https://hardstyle.gg/share?c=${reportCode}`
+    }
+
+    copyToClipboard(`I scored ${gamesWon.value}/${gameData.length} on hardstyle.gg today. Join me!\n${url}`)
   }
-
-  copyToClipboard(`I scored ${gamesWon.value}/${gameData.length} on hardstyle.gg today. Join me!\n${url}`)
 }
 
 useOnce(() => {
-  startGame()
+  startGame(props.gameEnv)
   getTracks().then(() => {}) // preload tracks
 })
 
@@ -211,25 +221,48 @@ onMounted(() => {
       <div class="text-3xl md:text-4xl font-bold">Thanks for playing!</div>
     </div>
 
-    <div class="flex flex-col w-full items-center">
-      <CookieStreakBanner class="w-fit" :streak="streak.streak" />
-    </div>
+    <template v-if="tracked">
+      <div class="flex flex-col w-full items-center">
+        <CookieStreakBanner class="w-fit" :streak="streak.streak" />
+      </div>
 
-    <div>
-      You scored <b>{{ gamesWon }} / {{ gameData.length }}</b> today!
-    </div>
-    <div>
-      Next daily challenge in <Countdown />
-    </div>
-    <div class="text-sm mt-2 text-base-content/70">
-      Today's editors: {{ props.gameData.editors }}
-    </div>
-    <div class="flex flex-wrap justify-center mt-8 gap-2">
-      <ResultShareButton :action="copyResult" />
-      <button class="btn btn-soft btn-secondary" @click="details=!details">
-        {{ details ? "Hide" : "Show" }} detailed summary
-      </button>
-    </div>
+      <div class="flex flex-col w-full items-center">
+        <div role="alert" class="alert alert-success alert-soft gap-2 mb-5" v-if="streak.streak <= 1">
+          <p class="font-semibold">Missed yesterday's challenge? You can now play it in the <NuxtLink to="/archive" class="text-primary">archive</NuxtLink>!</p>
+        </div>
+      </div>
+
+      <div>
+        You scored <b>{{ gamesWon }} / {{ gameData.length }}</b> today!
+      </div>
+      <div>
+        Next daily challenge in <Countdown />
+      </div>
+      <div class="text-sm mt-2 text-base-content/70">
+        Today's editors: {{ props.gameData.editors }}
+      </div>
+      <div class="flex flex-wrap justify-center mt-8 gap-2">
+        <ResultShareButton :action="copyResult" />
+        <button class="btn btn-soft btn-secondary" @click="details=!details">
+          {{ details ? "Hide" : "Show" }} detailed summary
+        </button>
+      </div>
+    </template>
+
+    <template v-else>
+      <div>
+        You scored <b>{{ gamesWon }} / {{ gameData.length }}</b>!
+      </div>
+      <div class="text-sm mt-2 text-base-content/70">
+        Editors: {{ props.gameData.editors }}
+      </div>
+      <div class="flex flex-wrap justify-center mt-8 gap-2">
+        <button class="btn btn-primary" @click="emit('finish')">Back to archive</button>
+        <button class="btn btn-soft btn-secondary" @click="details=!details">
+          {{ details ? "Hide" : "Show" }} detailed summary
+        </button>
+      </div>
+    </template>
   </div>
 
   <div class="flex flex-col w-full md:w-2/3 my-5 pb-5 border-secondary/50 border-1 rounded-md" v-if="summary && details">

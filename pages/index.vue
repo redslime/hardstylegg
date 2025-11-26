@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import {getGameContainer, hasPlayedToday} from "~/utils/game";
-import {type AvgScoresContainer, type CookieDayMemory, GameState} from "~/types/models";
+import {type AvgScoresContainer, type CookieDayMemory, type GameContainer, GameState} from "~/types/models";
 import {getTracks} from "~/utils/tracks";
 import {refreshCookie} from "#app";
 import CookieChart from "~/components/CookieChart.vue";
+import {watchOnce} from "@vueuse/shared";
+import {getYesterdayGame} from "~/utils/archive";
 
 definePageMeta({
   layout: 'hero'
@@ -11,6 +13,7 @@ definePageMeta({
 
 const { data: gameData, pending } = await useAsyncData(() => getGameContainer(), { lazy: true })
 const { data: avgScores } = await useAsyncData(() => $fetch<AvgScoresContainer>('/api/scores'), { lazy: true })
+const gameDataPast = ref<GameContainer>()
 const cookie = useCookie<CookieDayMemory[]>("memory", {
   maxAge: 60 * 60 * 24 * 365,
   sameSite: "strict",
@@ -32,6 +35,15 @@ function getState(index: number): GameState {
 async function play() {
   navigateTo('/play')
 }
+
+function navigateArchive() {
+  navigateTo('/archive')
+}
+
+watchOnce(gameData, async (val) => {
+  if(val === undefined) return
+  gameDataPast.value = await getYesterdayGame()
+})
 
 onMounted(() => {
   refreshCookie("memory")
@@ -77,6 +89,33 @@ useOnce(() => {
       <div class="w-full md:max-w-lg">
         <h1 class="text-xl md:text-3xl font-bold">Past challenge scores</h1>
         <CookieChart :scores="avgScores" :cookie="cookie" />
+      </div>
+    </div>
+  </div>
+
+  <div class="hero bg-base-300 rounded-lg mt-7">
+    <div class="hero-content flex flex-col text-center px-0 sm:px-1 md:px-4 w-full">
+      <h1 class="text-2xl md:text-3xl font-bold">Game archive</h1>
+
+      <div class="w-full flex flex-col gap-4 flex-wrap">
+        <div>
+          You can find <b>all past challenges</b> in the <NuxtLink to="/archive" class="text-primary"><b>Archive</b></NuxtLink>.
+        </div>
+        <div class="w-full flex justify-center">
+          <div class="border-secondary border-1 w-fit py-3 px-10 rounded-md bg-black/10 shadow-lg">
+            <h2 class="text-2xl font-medium">Yesterday's challenge</h2>
+            <div v-if="gameDataPast">
+              <h4 class="text-md mb-2">{{ gameDataPast.dayFriendly }}</h4>
+              <div class="flex flex-wrap gap-2 justify-center">
+                <GameIconRow :games="gameDataPast.data" :getState="_ => GameState.UPCOMING" :iconSize="6" />
+              </div>
+              <button class="btn btn-primary btn-md mt-2" @click="navigateArchive()">Play in archive</button>
+            </div>
+            <div v-else>
+              <span class="loading loading-spinner-lg"></span>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
