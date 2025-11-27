@@ -14,6 +14,14 @@ let currentTypeId: number | null = null
 let currentGameId: number | null = null
 let report: ReportContainer | null = null
 let packedGameData: GameContainer | null = null
+let gameEnvironment: GameEnvironment | null = null
+
+type TempReport = {
+    consumer: (report: GameReport) => void,
+    currentTypeId: number,
+    currentGameId: number
+}
+const skippedReports: TempReport[] = []
 
 export async function getGameContainer(): Promise<GameContainer> {
     if(packedGameData === null) {
@@ -80,6 +88,8 @@ export function updateState(typeId: number | null, gameId: number | null) {
 }
 
 export function startGame(gameEnv: GameEnvironment) {
+    gameEnvironment = gameEnv
+
     if(import.meta.env.DEV) {
         debug("Not creating a performance report in dev mode")
         return
@@ -99,7 +109,19 @@ export function startGame(gameEnv: GameEnvironment) {
                 completed: false,
                 data: []
             }
-        }).catch(_ => {})
+            return report
+        }).then(rep => {
+            skippedReports.forEach(r => {
+                const gr = {
+                    typeId: r.currentTypeId,
+                    gameId: r.currentGameId,
+                    success: false
+                }
+                r.consumer(gr)
+                rep.data.push(gr)
+            })
+            skippedReports.length = 0
+        })
     })
 }
 
@@ -139,6 +161,15 @@ export function countOption(id: number | undefined) {
 }
 
 export function reportResult(consumer: (report: GameReport) => void) {
+    if(!report && currentTypeId && currentGameId && gameEnvironment === GameEnvironment.DAILY) {
+        // sometimes the result will come in before the report is ready, process them later
+        const con = <TempReport>{
+            consumer,
+            currentTypeId,
+            currentGameId
+        }
+        skippedReports.push(con)
+    }
     if(report && currentTypeId && currentGameId) {
         const gr = report.data.find(r => r.typeId === currentTypeId && r.gameId === currentGameId)
 
