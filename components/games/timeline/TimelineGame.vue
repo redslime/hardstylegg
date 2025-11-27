@@ -25,7 +25,6 @@ watch(() => props.state, state => {
 
 const state = computed(() => props.state)
 const finished = computed(() => state.value == GameState.SUCCEEDED || state.value == GameState.FAILED)
-const title = computed(() => props.container.title)
 const goal = computed(() => props.container.goal)
 
 // Default to the midpoint year for demonstration
@@ -70,15 +69,15 @@ function submit() {
   <div class="w-full">
     <GameTitle :gameDef="gameDef" :container="props.container" />
 
-    <div class="place-items-center" @wheel.prevent="onWheel">
+    <div class="flex flex-col items-center" @wheel.prevent="onWheel">
       <div class="flex flex-wrap gap-4 w-50 mb-2 place-items-center justify-center">
-        <div v-if="selectedYear>2000">
+        <div class="font-light text-base-content/70" v-if="selectedYear>2000">
           {{ Math.max(2000, selectedYear-1) }}
         </div>
         <div class="text-xl md:text-3xl font-bold">
           {{ selectedYear }}
         </div>
-        <div v-if="selectedYear<2025">
+        <div class="font-light text-base-content/70" v-if="selectedYear<2025">
           {{ Math.min(2025, selectedYear+1) }}
         </div>
       </div>
