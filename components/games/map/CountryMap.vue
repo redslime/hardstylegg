@@ -118,7 +118,9 @@ watch(() => interact, (value) => {
 </script>
 
 <template>
-  <div ref="mapContainer" style="height: 540px; width: 100%;"></div>
+  <div ref="mapContainer" class="relative" style="height: 540px; width: 100%;">
+    <slot></slot>
+  </div>
 </template>
 
 <style>

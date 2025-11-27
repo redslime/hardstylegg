@@ -3,7 +3,7 @@ import {GameState} from "~/types/models";
 import type {MapContainer} from "~/types/gameModels";
 import CountryMap, {type HighlightItem} from "~/components/games/map/CountryMap.vue";
 
-const { $gameRegistry } = useNuxtApp();
+const { $gameRegistry, $countries } = useNuxtApp();
 const gameDef = $gameRegistry.MapDef
 const emit = defineEmits(['onFinish'])
 const props = defineProps({
@@ -11,18 +11,32 @@ const props = defineProps({
   position: { type: Number as PropType<number>, required: true },
   container: { type: Object as PropType<MapContainer>, required: true }
 })
-
+const isMobile = inject<boolean>('isMobile')
+const finished = computed(() => props.state == GameState.SUCCEEDED || props.state == GameState.FAILED)
 const selected = ref<HighlightItem[]>([])
+const current = ref<string | undefined>()
 const interact = ref(true)
+const goalName = computed(() => $countries.getName(props.container.goal, "en"))
+const selectedName = computed(() => current.value ? $countries.getName(current.value, "en") : "")
 
 async function clicked(country: string) {
-  emit("onFinish", country === props.container.goal ? GameState.SUCCEEDED : GameState.FAILED)
+  current.value = country
+  selected.value = [
+    {
+      iso2: country,
+      color: "#3ABDF8",
+    }
+  ]
+}
+
+async function submit() {
+  emit("onFinish", current.value === props.container.goal ? GameState.SUCCEEDED : GameState.FAILED)
   await nextTick()
 
   interact.value = false
   selected.value = [
     {
-      iso2: country,
+      iso2: current.value!!,
       color: "#FB7085",
     },
     {
@@ -48,7 +62,20 @@ watch(() => props.state, val => {
 <template>
   <GameTitle :gameDef="gameDef" :container="props.container" />
 
-  <CountryMap v-model:highlighted="selected" :interact="interact" @click="s => clicked(s)" />
+  <CountryMap v-model:highlighted="selected" :interact="interact" @click="s => clicked(s)">
+    <div class="absolute bottom-2 flex justify-center w-full z-500">
+      <Teleport to="#side-dock" :disabled="!isMobile">
+        <button class="btn btn-primary btn-lg btn-outline" @click="submit()" v-if="!finished && current">Submit</button>
+      </Teleport>
+
+      <template v-if="finished">
+        <div class="flex gap-2">
+          <div class="badge md:badge-lg badge-success">Correct: {{ goalName }}</div>
+          <div v-if="props.state === GameState.FAILED" class="badge md:badge-lg badge-error">Selected: {{ selectedName }}</div>
+        </div>
+      </template>
+    </div>
+  </CountryMap>
 </template>
 
 <style scoped>

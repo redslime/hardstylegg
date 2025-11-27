@@ -4,13 +4,12 @@ import DashboardGameLoadingSpinner from "~/components/dashboard/DashboardGameLoa
 import MapPreview from "~/components/games/map/MapPreview.vue";
 import CountryMap, {type HighlightItem} from "~/components/games/map/CountryMap.vue";
 
-const { $gameRegistry } = useNuxtApp();
+const { $gameRegistry, $countries } = useNuxtApp();
 const gameDef = $gameRegistry.MapDef
 const { data, pending, error } = await useAsyncData<MapContainer[]>(() => gameDef.getAllInstances(), { lazy: true })
 const instances = computed<MapContainer[] | undefined>(() => data.value)
 const editing = ref<MapContainer | undefined>()
 const selected = ref<HighlightItem[]>([])
-const { $countries } = useNuxtApp();
 const countryName = computed(() => $countries.getName(editing.value?.goal ?? "", "en"))
 
 function clicked(country: string) {
