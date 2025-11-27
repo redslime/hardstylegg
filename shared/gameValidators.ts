@@ -93,7 +93,7 @@ export function validateHeardle(heardle: HeardleContainer): string[] {
         errors.push("Track is required")
     }
     if(!heardle.src || heardle.src.trim().length === 0) {
-        errors.push("Track file is required")
+        errors.push("Track file is required (click on upload when segments are done)")
     }
     if(!heardle.durations || heardle.durations.length === 0) {
         errors.push("Track segments are required")
