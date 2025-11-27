@@ -35,10 +35,14 @@ watch(query, (val) => {
     query.value = "Incorrect"
   }
 
-  clearTimeout(timeout)
-  timeout = window.setTimeout(() => {
-    debouncedQuery.value = val
-  }, 300)
+  const trimmed = val.trim()
+
+  if(debouncedQuery.value !== trimmed) {
+    clearTimeout(timeout)
+    timeout = window.setTimeout(() => {
+      debouncedQuery.value = val.trim()
+    }, 300)
+  }
 })
 
 watch(debouncedQuery, async (val) => {

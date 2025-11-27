@@ -129,11 +129,15 @@ async function saveEditing() {
 // debounce
 let timeout: number
 watch(query, (val) => {
-  clearTimeout(timeout)
-  filteredLength.value = 0
-  timeout = window.setTimeout(() => {
-    debouncedQuery.value = val
-  }, 300)
+  const trimmed = val.trim()
+
+  if(debouncedQuery.value !== trimmed) {
+    clearTimeout(timeout)
+    filteredLength.value = 0
+    timeout = window.setTimeout(() => {
+      debouncedQuery.value = val.trim()
+    }, 300)
+  }
 })
 
 watch(debouncedQuery, async (val) => {
@@ -236,7 +240,7 @@ const computedPageProvider = computed(() => {
   </label>
 
   <div class="w-full bg-base-100 rounded-md p-3 h-[1000px] overflow-auto">
-    <div v-if="(query?.length ?? 0) < 5">
+    <div v-if="(query?.trim().length ?? 0) < 5">
       Begin searching to see results...
     </div>
 
