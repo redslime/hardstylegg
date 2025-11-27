@@ -49,10 +49,11 @@ watch(editing, (val) => {
       </template>
 
       <template #editBody v-if="editing">
-        <CountryMap v-model:highlighted="selected" @click="s => clicked(s)" />
-        <div v-if="editing.goal">
-          Selected: {{ countryName }}
-        </div>
+        <CountryMap v-model:highlighted="selected" @click="s => clicked(s)">
+          <div class="absolute bottom-2 flex justify-center w-full z-500">
+            <div class="badge md:badge-lg badge-info" v-if="editing.goal">Selected: {{ countryName }}</div>
+          </div>
+        </CountryMap>
       </template>
     </DashboardGameEditor>
   </div>
