@@ -12,12 +12,12 @@ const loading = ref<boolean>(false)
 const playing = ref<GameContainer | undefined>()
 
 function play(dayId: number) {
-  window.history.replaceState({}, "", `/play/archive`)
+  window.history.pushState({}, "", `/play/archive`)
   playing.value = deepCopyReactive(archiveGames.find(g => g.dayId === dayId)!!)
 }
 
 function endGame() {
-  window.history.replaceState({}, "", `/archive`)
+  window.history.pushState({}, "", `/archive`)
   playing.value = undefined
 }
 
@@ -38,6 +38,10 @@ async function expand() {
   await Promise.all(ids.map(id => getArchiveGame(id)))
   loading.value = false
 }
+
+window.addEventListener('popstate', () => {
+  playing.value = undefined
+})
 
 watchOnce(yesterday, async (val) => ydayFriendly.value = await getDayFriendlyName(val?.dayId ?? 0, "LLLL d"))
 onUnmounted(() => clear())
