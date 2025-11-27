@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div class="flex flex-col w-full mt-10 md:mt-[10%]">
+  <div class="flex flex-col w-full mt-10 md:mt-20">
     <div class="flex justify-center">
       <div class="base md:mx-10 bg-primary-content rounded-md shadow-2xl w-full max-w-4xl">
         <h1 class="grow text-center text-accent italic font-normal text-5xl md:text-7xl py-2">

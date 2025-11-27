@@ -55,7 +55,7 @@ useOnce(() => {
 </script>
 
 <template>
-  <div class="hero bg-base-300 rounded-lg">
+  <div class="hero bg-base-300 rounded-lg border-1 border-primary">
     <div class="hero-content flex flex-col text-center">
       <div class="max-w-lg">
         <h1 class="text-3xl md:text-5xl font-bold">Daily challenge</h1>
@@ -84,18 +84,18 @@ useOnce(() => {
     </div>
   </div>
 
-  <div class="hero bg-base-300 rounded-lg mt-7" v-if="avgScores && (cookie.length > 0 || dev)">
+  <div class="hero bg-base-300 rounded-lg mt-7 border-1 border-neutral" v-if="avgScores && (cookie.length > 0 || dev)">
     <div class="hero-content flex flex-col text-center px-0 sm:px-1 md:px-4 w-full">
       <div class="w-full md:max-w-lg">
-        <h1 class="text-xl md:text-3xl font-bold">Past challenge scores</h1>
+        <h1 class="text-2xl md:text-4xl font-bold">Past challenge scores</h1>
         <CookieChart :scores="avgScores" :cookie="cookie" />
       </div>
     </div>
   </div>
 
-  <div class="hero bg-base-300 rounded-lg mt-7">
+  <div class="hero bg-base-300 rounded-lg mt-7 border-1 border-neutral">
     <div class="hero-content flex flex-col text-center px-0 sm:px-1 md:px-4 w-full">
-      <h1 class="text-2xl md:text-3xl font-bold">Game archive</h1>
+      <h1 class="text-2xl md:text-4xl font-bold">Game archive</h1>
 
       <div class="w-full flex flex-col gap-4 flex-wrap">
         <div>
@@ -103,7 +103,7 @@ useOnce(() => {
         </div>
         <div class="w-full flex justify-center">
           <div class="border-secondary border-1 w-fit py-3 px-10 rounded-md bg-black/10 shadow-lg">
-            <h2 class="text-2xl font-medium">Yesterday's challenge</h2>
+            <h2 class="text-xl md:text-2xl font-medium">Yesterday's challenge</h2>
             <div v-if="gameDataPast">
               <h4 class="text-md mb-2">{{ gameDataPast.dayFriendly }}</h4>
               <div class="flex flex-wrap gap-2 justify-center">
