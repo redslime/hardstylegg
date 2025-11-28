@@ -2,10 +2,11 @@
 
 import {deepCopy, deepCopyReactive} from "~/utils/utils";
 import DashboardGameDeleteButton from "~/components/dashboard/DashboardGameDeleteButton.vue";
-import {GameState, type ScheduleDay} from "~/types/models";
+import {type Editor, GameState, type ScheduleDay, StateFilter} from "~/types/models";
 import type {ClientGameDef} from "~/utils/game/ClientGameDef";
-import {getScheduleForGame} from "~/utils/dashboard";
+import {getDashboardData, getScheduleForGame} from "~/utils/dashboard";
 import PlayIcon from "~/components/icons/PlayIcon.vue";
+import DashboardStateFilterSelector from "~/components/dashboard/DashboardStateFilterSelector.vue";
 
 const instances = defineModel<T[] | undefined>('instances', {
   required: true,
@@ -22,6 +23,8 @@ const { gameDef } = defineProps({
 const emit = defineEmits(['saved', 'cancelled'])
 
 const { user } = useUserSession()
+const dashboardData = await getDashboardData()
+const todayId = computed(() => dashboardData.schedule.todayId)
 const typeName = computed(() => gameDef.getSpacedName())
 const savingModal = ref<HTMLDialogElement | undefined>()
 const savingResponse = ref<boolean | String[] | undefined>()
@@ -30,6 +33,32 @@ const editingExample = computed<boolean>(() => editing.value?.id === 1)
 const previewModal = ref<HTMLDialogElement | undefined>()
 const previewState = ref<GameState>(GameState.PLAYING)
 const previewCounter = ref<number>(0)
+const stateFilter = ref<StateFilter>(StateFilter.ALL)
+const editorFilter = ref<Editor | undefined>(undefined)
+
+const filteredInstances = computed(() => {
+  const f1: (instance: T) => boolean = i => {
+    if(stateFilter.value === StateFilter.ALL) return true
+
+    const schedule = getScheduleForGame(gameDef.id, i.id)
+
+    if(stateFilter.value === StateFilter.UNUSED && schedule === undefined) return true
+    if(stateFilter.value === StateFilter.PAST && schedule !== undefined && schedule.day !== undefined && schedule.day < todayId.value) return true
+    if(stateFilter.value === StateFilter.UPCOMING && schedule !== undefined && schedule.day !== undefined && schedule.day >= todayId.value) return true
+
+    return false
+  }
+  const f2: (instance: T) => boolean = i => {
+    if(editorFilter.value) {
+      return editorFilter.value?.id === i.created_by
+    }
+
+    return true
+  }
+
+  return instances.value?.filter(f1).filter(f2) ?? []
+})
+const hiddenCount = computed(() => (instances.value?.length ?? 0) - filteredInstances.value.length)
 
 // preview injections
 provide("details", false)
@@ -110,7 +139,7 @@ const previewListener = (state: GameState) => {
     <span class="text-primary"><component :is="gameDef.icon" class="size-8" /></span>
     <div v-if="!editing">
       {{ typeName }} instances
-      <div v-if="instances" class="badge badge-soft badge-primary badge-xl">{{ instances.length }}</div>
+      <div v-if="instances" class="badge badge-soft badge-primary badge-xl">{{ filteredInstances.length }}</div>
       <button class="btn btn-success btn-soft btn-sm ml-2" @click="editing=deepCopy({title: '', items: []})">
         Create new
       </button>
@@ -123,13 +152,24 @@ const previewListener = (state: GameState) => {
     </div>
   </div>
 
-  <div class="flex flex-wrap gap-3" v-if="editing === undefined && instances">
-    <template v-for="instance in instances" :key="instance.id">
-      <slot name="previewBody" :instance="instance" :clicked="() => tryEdit(instance)">
+  <template v-if="editing === undefined && instances">
+    <div class="flex gap-3 mb-5">
+      <DashboardStateFilterSelector v-model:state="stateFilter" />
+      <DashboardEditorFilterSelector v-model:editor="editorFilter" v-if="user.admin" />
+    </div>
 
-      </slot>
-    </template>
-  </div>
+    <div class="flex flex-wrap gap-3 mb-3">
+      <template v-for="instance in filteredInstances" :key="instance.id">
+        <slot name="previewBody" :instance="instance" :clicked="() => tryEdit(instance)">
+
+        </slot>
+      </template>
+    </div>
+
+    <div class="text-base-content/70" v-if="hiddenCount > 0">
+      ({{ hiddenCount }} hidden instances)
+    </div>
+  </template>
 
   <div class="flex flex-col gap-3" v-if="editing != null">
     <div class="bg-base-200 w-fit p-3 rounded-lg">

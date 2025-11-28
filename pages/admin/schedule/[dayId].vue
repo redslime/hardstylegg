@@ -183,7 +183,7 @@ watchOnce(packedGameData, (data) => {
   </div>
 
   <dialog ref="selectorModal" id="selectorModal" class="modal" v-if="selectType" @close="modalClosed()">
-    <div class="modal-box max-w-[600px] overflow-x-hidden">
+    <div class="modal-box max-w-[600px] min-h-96 overflow-x-hidden">
       <DashboardSelectGame :typeId="selectType" @select="ins => selected(ins.typeId!!, ins.data!!)" />
       <div class="modal-action">
         <form method="dialog">

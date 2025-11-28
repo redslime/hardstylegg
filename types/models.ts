@@ -154,3 +154,10 @@ export interface ArchiveContainer {
     todayId: number
     recentGames: PackedDayData[]
 }
+
+export enum StateFilter {
+    ALL,
+    UNUSED,
+    UPCOMING,
+    PAST
+}
