@@ -2,6 +2,7 @@
 import {GameState} from "~/types/models";
 import type {CompleteAlbumContainer, CompleteAlbumItem} from "~/types/gameModels";
 import {countItem} from "~/utils/game";
+import {getName} from "~/utils/tracks";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.CompleteAlbumDef
@@ -15,6 +16,7 @@ const props = defineProps({
 const state = computed(() => props.state)
 const finished = computed(() => state.value == GameState.SUCCEEDED || state.value == GameState.FAILED)
 const items = computed(() => props.container.items)
+const title = computed(() => getName(props.container.album!!))
 const currentIndex = inject<number>('currentIndex')
 
 const validateGuess = (item: CompleteAlbumItem) => {
@@ -37,6 +39,8 @@ const validateGuess = (item: CompleteAlbumItem) => {
 
 <template>
   <GameTitle :gameDef="gameDef" :container="props.container" />
+
+  <div class="text-xl text-center text-base-content/80 mb-2">{{ title }}</div>
 
   <div class="flex justify-center">
     <ul class="list bg-base-100 rounded-box shadow-md divide-y divide-base-300">
