@@ -94,7 +94,7 @@ function getTypeIds(day: number) {
           </div>
 
           <div class="flex gap-2" v-if="tomorrowSchedule">
-            <GameIconRow :gameIds="tomorrowSchedule.gameIds" :iconSize="4" />
+            <GameIconRow :gameIds="tomorrowSchedule.typeIds" :iconSize="4" />
           </div>
         </div>
 
