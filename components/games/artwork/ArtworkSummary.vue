@@ -1,0 +1,27 @@
+<script setup lang="ts">
+import type {ArtworkContainer} from "~/types/gameModels";
+import type {GameReportFlat} from "~/types/models";
+import {getSpotifyArtwork} from "~/utils/utils";
+
+const { container, reports } = defineProps({
+  container: { type: Object as PropType<ArtworkContainer>, required: true },
+  reports: { type: Array as PropType<GameReportFlat[]>, required: true }
+})
+</script>
+
+<template>
+  <div class="flex gap-2 max-w-[600px]">
+    <div class="shrink">
+      <img :src="`${getSpotifyArtwork(container.track.cover_art)}`" :alt="container.track.title"
+           class="w-full h-auto rounded-xl shrink shadow-md"/>
+    </div>
+    <div class="shrink">
+      <img :src="`${getLocalArtwork(container.artwork_blank)}`" alt="Blank artwork"
+           class="w-full h-auto rounded-xl shrink shadow-md"/>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+
+</style>

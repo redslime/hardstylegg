@@ -6,11 +6,12 @@ import CompleteAlbumIcon from "~/components/games/complete-album/CompleteAlbumIc
 import CompleteAlbumPreview from "~/components/games/complete-album/CompleteAlbumPreview.vue";
 import {getName} from "~/utils/tracks";
 import CompleteAlbumEditor from "~/components/games/complete-album/CompleteAlbumEditor.vue";
+import CompleteAlbumSummary from "~/components/games/complete-album/CompleteAlbumSummary.vue";
 
 export class ClientCompleteAlbumGame extends ClientGameDef<CompleteAlbumContainer> {
 
     constructor() {
-        super(GAME_METAS.CompleteAlbum, CompleteAlbumGame, CompleteAlbumIcon, CompleteAlbumPreview, CompleteAlbumEditor);
+        super(GAME_METAS.CompleteAlbum, CompleteAlbumGame, CompleteAlbumIcon, CompleteAlbumPreview, CompleteAlbumEditor, CompleteAlbumSummary);
     }
 
     override getIconPreviewTitle(container: CompleteAlbumContainer): string {

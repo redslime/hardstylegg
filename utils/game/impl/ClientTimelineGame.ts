@@ -5,11 +5,12 @@ import TimelineGame from "~/components/games/timeline/TimelineGame.vue";
 import TimelineIcon from "~/components/games/timeline/TimelineIcon.vue";
 import TimelinePreview from "~/components/games/timeline/TimelinePreview.vue";
 import TimelineEditor from "~/components/games/timeline/TimelineEditor.vue";
+import TimelineSummary from "~/components/games/timeline/TimelineSummary.vue";
 
 export class ClientTimelineGame extends ClientGameDef<TimelineContainer> {
 
     constructor() {
-        super(GAME_METAS.Timeline, TimelineGame, TimelineIcon, TimelinePreview, TimelineEditor);
+        super(GAME_METAS.Timeline, TimelineGame, TimelineIcon, TimelinePreview, TimelineEditor, TimelineSummary);
     }
 
     override getIconPreviewTitle(container: TimelineContainer): string {

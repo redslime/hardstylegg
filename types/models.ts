@@ -118,6 +118,13 @@ export interface GameReport {
     itemsClicked?: number[]
 }
 
+export interface GameReportFlat {
+    success: boolean
+    attempts?: number
+    itemsCompleted: Record<number, boolean>
+    itemsClicked: number[]
+}
+
 export interface CookieDayMemory {
     day: number
     data: boolean[]

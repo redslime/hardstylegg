@@ -5,11 +5,12 @@ import OrderGame from "~/components/games/order/OrderGame.vue";
 import OrderIcon from "~/components/games/order/OrderIcon.vue";
 import OrderPreview from "~/components/games/order/OrderPreview.vue";
 import OrderEditor from "~/components/games/order/OrderEditor.vue";
+import OrderSummary from "~/components/games/order/OrderSummary.vue";
 
 export class ClientOrderGame extends ClientGameDef<OrderContainer> {
 
     constructor() {
-        super(GAME_METAS.Order, OrderGame, OrderIcon, OrderPreview, OrderEditor);
+        super(GAME_METAS.Order, OrderGame, OrderIcon, OrderPreview, OrderEditor, OrderSummary);
     }
 
     override getIconPreviewTitle(container: OrderContainer): string {

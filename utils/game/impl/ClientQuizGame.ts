@@ -5,11 +5,12 @@ import QuizGame from "~/components/games/quiz/QuizGame.vue";
 import QuizIcon from "~/components/games/quiz/QuizIcon.vue";
 import QuizPreview from "~/components/games/quiz/QuizPreview.vue";
 import QuizEditor from "~/components/games/quiz/QuizEditor.vue";
+import QuizSummary from "~/components/games/quiz/QuizSummary.vue";
 
 export class ClientQuizGame extends ClientGameDef<QuizContainer> {
 
     constructor() {
-        super(GAME_METAS.Quiz, QuizGame, QuizIcon, QuizPreview, QuizEditor);
+        super(GAME_METAS.Quiz, QuizGame, QuizIcon, QuizPreview, QuizEditor, QuizSummary);
     }
 
     override getIconPreviewTitle(container: QuizContainer): string {

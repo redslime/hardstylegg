@@ -4,12 +4,13 @@ import MapIcon from "~/components/games/map/MapIcon.vue";
 import MapPreview from "~/components/games/map/MapPreview.vue";
 import {GAME_METAS} from "#shared/games";
 import MapGame from "~/components/games/map/MapGame.vue";
+import MapSummary from "~/components/games/map/MapSummary.vue";
 import MapEditor from "~/components/games/map/MapEditor.vue";
 
 export class ClientMapGame extends ClientGameDef<MapContainer> {
 
     constructor() {
-        super(GAME_METAS.Map, MapGame, MapIcon, MapPreview, MapEditor);
+        super(GAME_METAS.Map, MapGame, MapIcon, MapPreview, MapEditor, MapSummary);
     }
 
     override getIconPreviewTitle(container: MapContainer): string {

@@ -6,8 +6,9 @@ import PlayIcon from "~/components/icons/PlayIcon.vue";
 import PauseIcon from "~/components/icons/PauseIcon.vue";
 
 const duration = defineModel<number>('duration', { required: true })
-const { previewUrl } = defineProps({
-  previewUrl: { type: String, required: true }
+const { previewUrl, disabled } = defineProps({
+  previewUrl: { type: String, required: true },
+  disabled: { type: Boolean, default: false }
 })
 
 const containerRef = ref<HTMLElement | null>(null)
@@ -72,8 +73,9 @@ watch(isReady, (ready) => {
       end: duration.value,
       color: 'rgba(244,113,181,0.27)',
       drag: false,
+      resize: !disabled,
       resizeStart: false,
-      resizeEnd: true
+      resizeEnd: !disabled
     } as RegionParams)
 
     regionsPlugin.value!!.addRegion({

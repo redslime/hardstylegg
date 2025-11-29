@@ -2,11 +2,12 @@
 
 import {deepCopy, deepCopyReactive} from "~/utils/utils";
 import DashboardGameDeleteButton from "~/components/dashboard/DashboardGameDeleteButton.vue";
-import {type Editor, GameState, type ScheduleDay, StateFilter} from "~/types/models";
+import {type Editor, type GameReportFlat, GameState, type ScheduleDay, StateFilter} from "~/types/models";
 import type {ClientGameDef} from "~/utils/game/ClientGameDef";
 import {getDashboardData, getScheduleForGame} from "~/utils/dashboard";
 import PlayIcon from "~/components/icons/PlayIcon.vue";
 import DashboardStateFilterSelector from "~/components/dashboard/DashboardStateFilterSelector.vue";
+import DashboardGameBasicStats from "~/components/dashboard/DashboardGameBasicStats.vue";
 
 const instances = defineModel<T[] | undefined>('instances', {
   required: true,
@@ -30,6 +31,9 @@ const savingModal = ref<HTMLDialogElement | undefined>()
 const savingResponse = ref<boolean | String[] | undefined>()
 const editingErrors = computed<string[]>(() => gameDef.validate(editing.value!!))
 const editingExample = computed<boolean>(() => editing.value?.id === 1)
+const editingSchedule = computed<ScheduleDay | undefined>(() => getScheduleForGame(gameDef.id, editing.value?.id))
+const editingIsPast = computed<boolean>(() => editingSchedule.value?.day !== undefined && editingSchedule.value.day < todayId.value)
+const editingGameReports = ref<GameReportFlat[]>([])
 const previewModal = ref<HTMLDialogElement | undefined>()
 const previewState = ref<GameState>(GameState.PLAYING)
 const previewCounter = ref<number>(0)
@@ -132,6 +136,14 @@ async function startPreview() {
 const previewListener = (state: GameState) => {
   previewState.value = state
 }
+
+watch(editing, async () => {
+  if(editing.value && editingIsPast.value && editing.value.id) {
+    editingGameReports.value = await gameDef.getGameReports(editing.value.id)
+  } else {
+    editingGameReports.value = []
+  }
+})
 </script>
 
 <template>
@@ -171,34 +183,56 @@ const previewListener = (state: GameState) => {
     </div>
   </template>
 
-  <div class="flex flex-col gap-3" v-if="editing != null">
-    <div class="bg-base-200 w-fit p-3 rounded-lg">
-      <div class="font-bold mb-4">
-        <slot name="editTitle">
+  <template v-if="editing != null">
+    <div class="flex flex-wrap gap-5">
+      <div class="flex flex-col gap-3">
+        <div class="bg-base-200 w-fit p-3 rounded-lg">
+          <template v-if="!editingIsPast">
+            <div class="font-bold mb-4">
+              <slot name="editTitle">
 
-        </slot>
-      </div>
+              </slot>
+            </div>
 
-      <slot name="editBody">
+            <slot name="editBody">
 
-      </slot>
+            </slot>
 
-      <div class="mt-4" v-if="editingErrors.length > 0">
-        <div class="text-error" v-for="error in editingErrors" :key="error">
-          {{ error }}.
+            <div class="mt-4" v-if="editingErrors.length > 0">
+              <div class="text-error" v-for="error in editingErrors" :key="error">
+                {{ error }}.
+              </div>
+            </div>
+          </template>
+
+          <template v-else>
+            <GameTitle :gameDef="gameDef" :container="editing" :dashboard="true" />
+            <component :is="gameDef.summaryComponent" :container="editing" :reports="editingGameReports" />
+          </template>
+        </div>
+
+        <div class="flex gap-5">
+          <template v-if="!editingIsPast">
+            <div class="join">
+              <button class="btn btn-neutral join-item" @click="cancel">Cancel</button>
+              <button class="btn btn-success join-item" @click="save" :disabled="editingErrors.length > 0 || editingExample">Save</button>
+            </div>
+            <DashboardGameDeleteButton :editing="editing" :typeId="gameDef.id" @deleted="onDelete" />
+          </template>
+
+          <template v-else>
+            <button class="btn btn-neutral join-item" @click="cancel">Go back</button>
+          </template>
+
+          <button class="btn btn-soft btn-info" :disabled="editingErrors.length > 0" @click="startPreview()"><PlayIcon /> Live preview</button>
         </div>
       </div>
-    </div>
 
-    <div class="flex gap-5">
-      <div class="join">
-        <button class="btn btn-neutral join-item" @click="cancel">Cancel</button>
-        <button class="btn btn-success join-item" @click="save" :disabled="editingErrors.length > 0 || editingExample">Save</button>
+      <div v-if="editingIsPast">
+        <DashboardGameBasicStats :gameReports="editingGameReports" />
       </div>
-      <button class="btn btn-soft btn-info" :disabled="editingErrors.length > 0" @click="startPreview()"><PlayIcon /> Live preview</button>
-      <DashboardGameDeleteButton :editing="editing" :typeId="gameDef.id" @deleted="onDelete" />
     </div>
-  </div>
+  </template>
 
   <dialog ref="savingModal" id="savingModal" class="modal">
     <div class="modal-box" v-if="savingResponse === undefined">

@@ -5,11 +5,12 @@ import TimetableGame from "~/components/games/timetable/TimetableGame.vue";
 import TimetablePreview from "~/components/games/timetable/TimetablePreview.vue";
 import TimetableEditor from "~/components/games/timetable/TimetableEditor.vue";
 import TimetableIcon from "~/components/games/timetable/TimetableIcon.vue";
+import TimetableSummary from "~/components/games/timetable/TimetableSummary.vue";
 
 export class ClientTimetableGame extends ClientGameDef<TimetableContainer> {
 
     constructor() {
-        super(GAME_METAS.Timetable, TimetableGame, TimetableIcon, TimetablePreview, TimetableEditor);
+        super(GAME_METAS.Timetable, TimetableGame, TimetableIcon, TimetablePreview, TimetableEditor, TimetableSummary);
     }
 
     override getIconPreviewTitle(container: TimetableContainer): string {

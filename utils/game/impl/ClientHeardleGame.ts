@@ -6,11 +6,12 @@ import HeardleIcon from "~/components/games/heardle/HeardleIcon.vue";
 import HeardlePreview from "~/components/games/heardle/HeardlePreview.vue";
 import {getName} from "~/utils/tracks";
 import HeardleEditor from "~/components/games/heardle/HeardleEditor.vue";
+import HeardleSummary from "~/components/games/heardle/HeardleSummary.vue";
 
 export class ClientHeardleGame extends ClientGameDef<HeardleContainer> {
 
     constructor() {
-        super(GAME_METAS.Heardle, HeardleGame, HeardleIcon, HeardlePreview, HeardleEditor);
+        super(GAME_METAS.Heardle, HeardleGame, HeardleIcon, HeardlePreview, HeardleEditor, HeardleSummary);
     }
 
     override getIconPreviewTitle(container: HeardleContainer): string {

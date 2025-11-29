@@ -79,7 +79,7 @@ function getItemStyle(item: TimetableItem) {
             class="absolute left-0 right-0 rounded-lg shadow-md px-3 py-1"
             :style="getItemStyle(item)"
         >
-          <slot :item="item" />
+          <slot :item="item as TimetableItem" />
         </div>
       </div>
     </div>

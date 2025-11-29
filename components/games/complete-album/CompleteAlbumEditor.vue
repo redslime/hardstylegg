@@ -5,11 +5,10 @@ import DashboardGameLoadingSpinner from "~/components/dashboard/DashboardGameLoa
 import {getName} from "~/utils/tracks";
 import TrackPicker from "~/components/dashboard/TrackPicker.vue";
 import InfoIcon from "~/components/icons/InfoIcon.vue";
-import ArtworkIcon from "~/components/games/artwork/ArtworkIcon.vue";
 import TrashIcon from "~/components/icons/TrashIcon.vue";
-import {GameState} from "~/types/models";
 import Checkmark from "~/components/icons/Checkmark.vue";
 import CompleteAlbumPreview from "~/components/games/complete-album/CompleteAlbumPreview.vue";
+import PencilIcon from "~/components/icons/PencilIcon.vue";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.CompleteAlbumDef
@@ -101,7 +100,7 @@ function add() {
                 <button class="btn btn-success btn-xs join-item h-full" @click="editingIndex = -1"><Checkmark /></button>
               </template>
               <template v-else-if="editingIndex === -1">
-                <button class="btn btn-primary btn-xs join-item" @click="editingIndex = index"><ArtworkIcon class="size-2" :state="GameState.PLAYING" /></button>
+                <button class="btn btn-primary btn-xs join-item" @click="editingIndex = index"><PencilIcon class="size-2" /></button>
                 <button class="btn btn-error btn-xs join-item" @click="del(index)"><TrashIcon class="size-2" /></button>
               </template>
             </div>

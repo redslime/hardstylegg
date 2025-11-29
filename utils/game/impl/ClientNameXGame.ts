@@ -5,11 +5,12 @@ import NameXGame from "~/components/games/namex/NameXGame.vue";
 import NameXIcon from "~/components/games/namex/NameXIcon.vue";
 import NameXPreview from "~/components/games/namex/NameXPreview.vue";
 import NameXEditor from "~/components/games/namex/NameXEditor.vue";
+import NameXSummary from "~/components/games/namex/NameXSummary.vue";
 
 export class ClientNameXGame extends ClientGameDef<NameXContainer> {
 
     constructor() {
-        super(GAME_METAS.NameX, NameXGame, NameXIcon, NameXPreview, NameXEditor);
+        super(GAME_METAS.NameX, NameXGame, NameXIcon, NameXPreview, NameXEditor, NameXSummary);
     }
 
     override getIconPreviewTitle(container: NameXContainer): string {

@@ -6,11 +6,12 @@ import CompleteLyricsIcon from "~/components/games/complete-lyrics/CompleteLyric
 import CompleteLyricsPreview from "~/components/games/complete-lyrics/CompleteLyricsPreview.vue";
 import {getName} from "~/utils/tracks";
 import CompleteLyricsEditor from "~/components/games/complete-lyrics/CompleteLyricsEditor.vue";
+import CompleteLyricsSummary from "~/components/games/complete-lyrics/CompleteLyricsSummary.vue";
 
 export class ClientCompleteLyricsGame extends ClientGameDef<CompleteLyricsContainer> {
 
     constructor() {
-        super(GAME_METAS.CompleteLyrics, CompleteLyricsGame, CompleteLyricsIcon, CompleteLyricsPreview, CompleteLyricsEditor);
+        super(GAME_METAS.CompleteLyrics, CompleteLyricsGame, CompleteLyricsIcon, CompleteLyricsPreview, CompleteLyricsEditor, CompleteLyricsSummary);
     }
 
     override getIconPreviewTitle(container: CompleteLyricsContainer): string {

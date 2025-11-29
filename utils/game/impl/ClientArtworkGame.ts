@@ -6,11 +6,12 @@ import ArtworkPreview from "~/components/games/artwork/ArtworkPreview.vue";
 import {getName} from "~/utils/tracks";
 import ArtworkGame from "~/components/games/artwork/ArtworkGame.vue";
 import ArtworkEditor from "~/components/games/artwork/ArtworkEditor.vue";
+import ArtworkSummary from "~/components/games/artwork/ArtworkSummary.vue";
 
 export class ClientArtworkGame extends ClientGameDef<ArtworkContainer> {
 
     constructor() {
-        super(GAME_METAS.Artwork, ArtworkGame, ArtworkIcon, ArtworkPreview, ArtworkEditor);
+        super(GAME_METAS.Artwork, ArtworkGame, ArtworkIcon, ArtworkPreview, ArtworkEditor, ArtworkSummary);
     }
 
     override getIconPreviewTitle(container: ArtworkContainer): string {
