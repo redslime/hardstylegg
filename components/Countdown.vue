@@ -2,7 +2,7 @@
 import {onBeforeUnmount, ref} from 'vue'
 import {watchOnce} from "@vueuse/shared";
 
-const { data: s, clear } = await useFetch<{ seconds: number }>('/api/time', { lazy: true })
+const { data: s, clear } = await useAsyncData<{ seconds: number }>(`${Date.now()}`, () => $fetch('/api/time'), { lazy: true })
 
 let secondsUntilMidnight = 0
 const hours = ref("")
