@@ -37,6 +37,7 @@ const editingGameReports = ref<GameReportFlat[]>([])
 const previewModal = ref<HTMLDialogElement | undefined>()
 const previewState = ref<GameState>(GameState.PLAYING)
 const previewCounter = ref<number>(0)
+const previewOpen = ref<boolean>(false)
 const stateFilter = ref<StateFilter>(StateFilter.ALL)
 const editorFilter = ref<Editor | undefined>(undefined)
 
@@ -128,6 +129,7 @@ function tryEdit(instance: T) {
 async function startPreview() {
   // silly workaround to get the component to fully reset and clear any local consts
   previewCounter.value++
+  previewOpen.value = true
   await nextTick()
   previewState.value = GameState.PLAYING
   previewModal?.value?.showModal()
@@ -257,7 +259,7 @@ watch(editing, async () => {
     </div>
   </dialog>
 
-  <dialog ref="previewModal" id="previewModal" class="modal" v-if="editing">
+  <dialog ref="previewModal" id="previewModal" class="modal" v-if="editing && previewOpen" @close="previewOpen = false">
     <div class="modal-box max-w-4xl">
       <form method="dialog">
         <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>

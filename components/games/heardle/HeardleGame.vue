@@ -84,10 +84,29 @@ onMounted(() => {
 })
 
 onDeactivated(() => {
+  // triggered inside GameFlow since it's wrapped around <KeepAlive>
+  unmounted()
+})
+
+onUnmounted(() => {
+  unmounted()
+})
+
+watch(gameFinished, () => {
+  if(gameFinished.value) {
+    unlockIOSAudio()
+    howl?.seek(0)
+    howl?.volume(0.05)
+    howl?.play()
+  }
+})
+
+function unmounted() {
+  howl?.stop()
   howl?.unload()
   if (timeout) clearTimeout(timeout)
   if (progressInterval) clearInterval(progressInterval)
-})
+}
 
 async function playSnippet() {
   hasPlayed.value = true
