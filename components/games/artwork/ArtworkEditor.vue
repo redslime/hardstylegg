@@ -8,17 +8,20 @@ import ArtworkUploader from "~/components/games/artwork/ArtworkUploader.vue";
 import {ref} from "vue";
 import Checkmark from "~/components/icons/Checkmark.vue";
 import ArtworkPreview from "~/components/games/artwork/ArtworkPreview.vue";
+import {watchOnce} from "@vueuse/shared";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.ArtworkDef
 const { data, pending, error } = await useAsyncData<ArtworkContainer[]>(() => gameDef.getAllInstances(), { lazy: true })
-const instances = computed<ArtworkContainer[] | undefined>(() => data.value)
+const instances = ref<ArtworkContainer[] | undefined>()
 const editing = ref<ArtworkContainer | undefined>()
 
 const previewUrl = ref<string | null>(null)
 const isUploading = ref(false)
 const uploadError = ref<string | null>(null)
 const uploadDone = ref(false)
+
+watchOnce(data, () => instances.value = data.value)
 
 async function upload() {
   if (!editing.value || !editing.value.blankFile) return

@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type {CompleteAlbumContainer} from "~/types/gameModels";
-import {computed} from "vue";
 import DashboardGameLoadingSpinner from "~/components/dashboard/DashboardGameLoadingSpinner.vue";
 import {getName} from "~/utils/tracks";
 import TrackPicker from "~/components/dashboard/TrackPicker.vue";
@@ -9,13 +8,16 @@ import TrashIcon from "~/components/icons/TrashIcon.vue";
 import Checkmark from "~/components/icons/Checkmark.vue";
 import CompleteAlbumPreview from "~/components/games/complete-album/CompleteAlbumPreview.vue";
 import PencilIcon from "~/components/icons/PencilIcon.vue";
+import {watchOnce} from "@vueuse/shared";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.CompleteAlbumDef
 const { data, pending, error } = await useAsyncData<CompleteAlbumContainer[]>(() => gameDef.getAllInstances(), { lazy: true })
-const instances = computed<CompleteAlbumContainer[] | undefined>(() => data.value)
+const instances = ref<CompleteAlbumContainer[] | undefined>()
 const editing = ref<CompleteAlbumContainer | undefined>()
 const editingIndex = ref<number | undefined>(-1)
+
+watchOnce(data, () => instances.value = data.value)
 
 function del(index: number) {
   editing.value!!.items.splice(index, 1)

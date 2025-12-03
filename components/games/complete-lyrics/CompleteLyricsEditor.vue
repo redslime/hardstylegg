@@ -6,11 +6,12 @@ import {computed} from "vue";
 import TrackPicker from "~/components/dashboard/TrackPicker.vue";
 import InfoIcon from "~/components/icons/InfoIcon.vue";
 import CompleteLyricsPreview from "~/components/games/complete-lyrics/CompleteLyricsPreview.vue";
+import {watchOnce} from "@vueuse/shared";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.CompleteLyricsDef
 const { data, pending, error } = await useAsyncData<CompleteLyricsContainer[]>(() => gameDef.getAllInstances(), { lazy: true })
-const instances = computed<CompleteLyricsContainer[] | undefined>(() => data.value)
+const instances = ref<CompleteLyricsContainer[] | undefined>()
 const editing = ref<CompleteLyricsContainer | undefined>()
 const input = ref<string | undefined>()
 const forceInput = ref<boolean>(false)
@@ -21,6 +22,8 @@ const editingLines = computed(() => {
   const text = editing.value?.text // needed to trigger recalculation
   return getLines(editing.value!!)
 })
+
+watchOnce(data, () => instances.value = data.value)
 
 function getLines(instance: CompleteLyricsContainer) {
   return instance.text.split('\n').map(lineText => {

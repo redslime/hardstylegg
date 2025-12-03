@@ -10,11 +10,12 @@ import InfoIcon from "~/components/icons/InfoIcon.vue";
 import DashboardHeardleCutter from "~/components/dashboard/DashboardHeardleCutter.vue";
 import HeardlePreview from "~/components/games/heardle/HeardlePreview.vue";
 import WaveformEditor from "~/components/games/heardle/WaveformEditor.vue";
+import {watchOnce} from "@vueuse/shared";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.HeardleDef
 const { data, pending, error } = await useAsyncData<HeardleContainer[]>(() => gameDef.getAllInstances(), { lazy: true })
-const instances = computed<HeardleContainer[] | undefined>(() => data.value)
+const instances = ref<HeardleContainer[] | undefined>()
 const editing = ref<HeardleContainer | undefined>()
 const isUploading = ref(false)
 const uploadError = ref<string | null>(null)
@@ -36,6 +37,8 @@ const durationsValid = computed<boolean>(() => {
   validateHeardleDurations(editing.value!!.durations, errors)
   return errors.length === 0
 })
+
+watchOnce(data, () => instances.value = data.value)
 
 function del(index: number) {
   editing.value!!.durations.splice(index, 1)

@@ -2,12 +2,15 @@
 import {type TimelineContainer} from "~/types/gameModels";
 import DashboardGameLoadingSpinner from "~/components/dashboard/DashboardGameLoadingSpinner.vue";
 import TimelinePreview from "~/components/games/timeline/TimelinePreview.vue";
+import {watchOnce} from "@vueuse/shared";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.TimelineDef
 const { data, pending, error } = await useAsyncData<TimelineContainer[]>(() => gameDef.getAllInstances(), { lazy: true })
-const instances = computed<TimelineContainer[] | undefined>(() => data.value)
+const instances = ref<TimelineContainer[] | undefined>()
 const editing = ref<TimelineContainer | undefined>()
+
+watchOnce(data, () => instances.value = data.value)
 </script>
 
 <template>

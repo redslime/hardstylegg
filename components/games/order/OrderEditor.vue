@@ -6,12 +6,15 @@ import Draggable from "vuedraggable";
 import TrackPicker from "~/components/dashboard/TrackPicker.vue";
 import type {Track} from "~/types/models";
 import OrderPreview from "~/components/games/order/OrderPreview.vue";
+import {watchOnce} from "@vueuse/shared";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.OrderDef
 const { data, pending, error } = await useAsyncData<OrderContainer[]>(() => gameDef.getAllInstances(), { lazy: true })
-const instances = computed<OrderContainer[] | undefined>(() => data.value)
+const instances = ref<OrderContainer[] | undefined>()
 const editing = ref<OrderContainer | undefined>()
+
+watchOnce(data, () => instances.value = data.value)
 
 function del(index: number) {
   editing.value!!.items.splice(index, 1)

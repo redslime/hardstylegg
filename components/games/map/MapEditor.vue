@@ -3,11 +3,12 @@ import type {MapContainer} from "~/types/gameModels";
 import DashboardGameLoadingSpinner from "~/components/dashboard/DashboardGameLoadingSpinner.vue";
 import MapPreview from "~/components/games/map/MapPreview.vue";
 import CountryMap, {type HighlightItem} from "~/components/games/map/CountryMap.vue";
+import {watchOnce} from "@vueuse/shared";
 
 const { $gameRegistry, $countries } = useNuxtApp();
 const gameDef = $gameRegistry.MapDef
 const { data, pending, error } = await useAsyncData<MapContainer[]>(() => gameDef.getAllInstances(), { lazy: true })
-const instances = computed<MapContainer[] | undefined>(() => data.value)
+const instances = ref<MapContainer[] | undefined>()
 const editing = ref<MapContainer | undefined>()
 const selected = ref<HighlightItem[]>([])
 const countryName = computed(() => $countries.getName(editing.value?.goal ?? "", "en"))
@@ -27,6 +28,8 @@ watch(editing, (val) => {
     selected.value = [{ iso2: val.goal, color: "#fd9c2c" }]
   }
 })
+
+watchOnce(data, () => instances.value = data.value)
 </script>
 
 <template>

@@ -94,7 +94,7 @@ async function save() {
           const fetchedGameInstance = data as T
           instances.value?.splice(0, instances.value.length, ...instances.value.filter((i) => i.id !== fetchedGameInstance.id))
           instances.value?.push(fetchedGameInstance)
-          instances.value?.sort((a, b) => (a.id ?? 0) - (b.id ?? 0))
+          instances.value = instances.value?.sort((a, b) => (a.id ?? 0) - (b.id ?? 0))
 
           savingResponse.value = true
           editing.value = undefined

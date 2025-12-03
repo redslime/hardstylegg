@@ -7,11 +7,12 @@ import {Vue3ColorPicker} from '@cyhnkckali/vue3-color-picker';
 import '@cyhnkckali/vue3-color-picker/dist/style.css';
 import TimetablePreview from "~/components/games/timetable/TimetablePreview.vue";
 import TimetableGenerator from "~/components/games/timetable/TimetableGenerator.vue";
+import {watchOnce} from "@vueuse/shared";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.TimetableDef
 const { data, pending, error } = await useAsyncData<TimetableContainer[]>(() => gameDef.getAllInstances(), { lazy: true })
-const instances = computed<TimetableContainer[] | undefined>(() => data.value)
+const instances = ref<TimetableContainer[] | undefined>()
 const editing = ref<TimetableContainer | undefined>()
 const editingItem = ref<TimetableItem | undefined>()
 const actModal = ref<HTMLDialogElement | null>()
@@ -25,6 +26,8 @@ const editingItemErrors = computed<string[]>(() => {
   validateTimetableItem(editingItem.value, errors)
   return errors
 })
+
+watchOnce(data, () => instances.value = data.value)
 
 async function edit(item: TimetableItem) {
   editingItem.value = item

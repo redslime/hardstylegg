@@ -2,12 +2,15 @@
 import {type QuizContainer} from "~/types/gameModels";
 import DashboardGameLoadingSpinner from "~/components/dashboard/DashboardGameLoadingSpinner.vue";
 import QuizPreview from "~/components/games/quiz/QuizPreview.vue";
+import {watchOnce} from "@vueuse/shared";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.QuizDef
 const { data, pending, error } = await useAsyncData<QuizContainer[]>(() => gameDef.getAllInstances(), { lazy: true })
-const instances = computed<QuizContainer[] | undefined>(() => data.value)
+const instances = ref<QuizContainer[] | undefined>()
 const editing = ref<QuizContainer | undefined>()
+
+watchOnce(data, () => instances.value = data.value)
 </script>
 
 <template>

@@ -5,16 +5,19 @@ import DashboardGameLoadingSpinner from "~/components/dashboard/DashboardGameLoa
 import TrashIcon from "~/components/icons/TrashIcon.vue";
 import TrackPicker from "~/components/dashboard/TrackPicker.vue";
 import NameXPreview from "~/components/games/namex/NameXPreview.vue";
+import {watchOnce} from "@vueuse/shared";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.NameXDef
 const { data, pending, error } = await useAsyncData<NameXContainer[]>(() => gameDef.getAllInstances(), { lazy: true })
-const instances = computed<NameXContainer[] | undefined>(() => data.value)
+const instances = ref<NameXContainer[] | undefined>()
 const editing = ref<NameXContainer | undefined>()
 
 function del(index: number) {
   editing.value!!.items.splice(index, 1)
 }
+
+watchOnce(data, () => instances.value = data.value)
 </script>
 
 <template>
