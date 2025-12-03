@@ -27,8 +27,9 @@ const filteredData = computed(() => {
 
     return true
   }
+  const f3: (instance: AnyGameContainer) => boolean = i => i.id !== 1 // exclude example
 
-  return data.value?.filter(f1).filter(f2) ?? []
+  return data.value?.filter(f1).filter(f2).filter(f3) ?? []
 })
 
 function select(instance: any) {
