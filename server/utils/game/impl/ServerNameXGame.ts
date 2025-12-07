@@ -60,7 +60,7 @@ export class ServerNameXGame extends ServerGameDef<NameXContainer> {
             goal: parent!!.goal,
             title: parent!!.title,
             tracks: parent!!.tracks,
-            items: orderedTracks
+            items: parent!!.tracks ? orderedTracks : trackIds
         }
     }
 
