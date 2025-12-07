@@ -12,6 +12,9 @@ const props = defineProps({
   container: { type: Object as PropType<MapContainer>, required: true }
 })
 const isMobile = inject<boolean>('isMobile')
+const currentIndex = inject<number>('currentIndex')
+const summary = inject<boolean>("summary", false)
+const details = inject<boolean>("details", false)
 const finished = computed(() => props.state == GameState.SUCCEEDED || props.state == GameState.FAILED)
 const selected = ref<HighlightItem[]>([])
 const current = ref<string | undefined>()
@@ -70,8 +73,12 @@ watch(() => props.state, val => {
 
       <template v-if="finished">
         <div class="flex gap-2">
-          <div class="badge md:badge-lg badge-success">Correct: {{ goalName }}</div>
-          <div v-if="props.state === GameState.FAILED" class="badge md:badge-lg badge-error">Selected: {{ selectedName }}</div>
+          <Teleport to="#top-dock" :disabled="!isMobile || props.position !== currentIndex || summary || details">
+            <div class="flex justify-center w-full gap-2">
+              <div class="badge badge-lg badge-success">Correct: {{ goalName }}</div>
+              <div v-if="props.state === GameState.FAILED" class="badge badge-lg badge-error">Selected: {{ selectedName }}</div>
+            </div>
+          </Teleport>
         </div>
       </template>
     </div>
