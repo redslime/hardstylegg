@@ -12,41 +12,69 @@ const props = defineProps({
   container: { type: Object as PropType<NameXContainer>, required: true }
 })
 
+const tracks = computed(() => props.container.tracks)
 const state = computed(() => props.state)
 const finished = computed(() => state.value == GameState.SUCCEEDED || state.value == GameState.FAILED)
 const goal = computed(() => props.container.goal)
-const title = computed(() => props.container.title)
-const items = ref<{index: number, track: Track, guessed: boolean}[]>(
+const items = ref<{index: number, item: Track | string, guessed: boolean}[]>(
     props.container.items.map((item, index) => ({
       index,
-      track: item,
+      item,
       guessed: false
     }))
 )
 const guessed = computed(() => items.value.filter(i => i.guessed).length)
 
-function validate(selected: ShallowTrack, flashError: () => void, flashSuccess: () => void, clear: () => void) {
+function validateTrack(selected: ShallowTrack, flashError: () => void, flashSuccess: () => void, clear: () => void) {
   let success = false;
   countAttempt()
 
   for(const [_, item] of Object.entries(items.value)) {
-    if(selected.sid === item.track.sid) {
-      countItem(item.index, true)
-      item.guessed = true;
-      success = true;
+    if(tracks.value) {
+      if(selected.sid === (item.item as Track).sid) {
+        countItem(item.index, true)
+        item.guessed = true;
+        success = true;
+      }
     }
   }
 
-  if(success) {
-    clear()
+  clear()
 
+  if(success) {
     if(guessed.value >= goal.value) {
       emit("onFinish", GameState.SUCCEEDED)
     }
 
     flashSuccess()
   } else {
-    clear()
+    flashError()
+  }
+}
+
+function validateInput(selected: string, flashError: () => void, flashSuccess: () => void, clear: () => void) {
+  let success = false;
+  countAttempt()
+
+  for(const [_, item] of Object.entries(items.value)) {
+    if(!tracks.value) {
+      if(selected.trim().toLowerCase() === (item.item as string).trim().toLowerCase()) {
+        countItem(item.index, true)
+        item.guessed = true;
+        success = true;
+      }
+    }
+  }
+
+  clear()
+
+  if(success) {
+    if(guessed.value >= goal.value) {
+      emit("onFinish", GameState.SUCCEEDED)
+    }
+
+    flashSuccess()
+  } else {
     flashError()
   }
 }
@@ -64,27 +92,32 @@ function censor(text: string, censor: boolean): string {
   <ul class="list bg-base-100 rounded-box shadow-md divide-y divide-base-300">
     <li
         v-for="(item, index) in items"
-        :key="item.track.sid"
+        :key="index"
         class="flex items-center gap-3 py-2 px-3"
     >
       <div class="text-xl tabular-nums font-mono w-6"
-          :class="{
-            'opacity-30': !item.guessed,
-            'text-success': item.guessed
-          }">
+           :class="{
+          'opacity-30': !item.guessed,
+          'text-success': item.guessed
+        }">
         {{ index + 1 }}
       </div>
 
       <div class="flex-1">
         <div class="flex items-center gap-2 font-semibold">
           <div :class="{'blur-sm': !item.guessed && guessed < goal && !finished}">
-            {{ censor(item.track.title, !item.guessed && guessed < goal && !finished) }}
+            <template v-if="tracks">
+              {{ censor((item.item as Track).title, !item.guessed && guessed < goal && !finished) }}
+            </template>
+            <template v-else>
+              {{ censor(item.item as string, !item.guessed && guessed < goal && !finished) }}
+            </template>
           </div>
         </div>
 
-        <div class="text-xs opacity-60">
+        <div class="text-xs opacity-60" v-if="tracks">
           <div :class="{'blur-sm': !item.guessed && guessed < goal && !finished}">
-            {{ censor(item.track.artists, !item.guessed && guessed < goal && !finished) }}
+            {{ censor((item.item as Track).artists, !item.guessed && guessed < goal && !finished) }}
           </div>
         </div>
       </div>
@@ -93,7 +126,9 @@ function censor(text: string, censor: boolean): string {
 
   <div class="mt-8 w-2/3" v-if="!finished">
     <TrackInput
-        @on-track-selected="validate"
+        :textMode="!tracks"
+        @onTrackSelected="validateTrack"
+        @onTextInput="validateInput"
         v-slot="{ inputBindings, inputEvents, errorFlash, successFlash }"
     >
       <label

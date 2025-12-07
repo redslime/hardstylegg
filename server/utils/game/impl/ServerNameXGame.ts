@@ -14,7 +14,11 @@ export class ServerNameXGame extends ServerGameDef<NameXContainer> {
     override async fetchAllInstances(user: User): Promise<NameXContainer[]> {
         const instances = await prisma.game_namex.findMany(this.whereAdminOrCreator(user))
         const trackIds = instances.flatMap(i => {
-            return JSON.parse(i.items) as string[]
+            if(i.tracks) {
+                return JSON.parse(i.items) as string[]
+            } else {
+                return []
+            }
         })
         const tracks = await prisma.track.findMany({
             where: {
@@ -27,11 +31,19 @@ export class ServerNameXGame extends ServerGameDef<NameXContainer> {
         return instances.map(i => {
             const { items, ...rest } = i
             const array = JSON.parse(i.items) as string[]
-            const ts: Track[] = array.map(sid => tracks.find(t => t.sid === sid)!!)
 
-            return <NameXContainer>{
-                ...rest,
-                items: ts
+            if(i.tracks) {
+                const ts: Track[] = array.map(sid => tracks.find(t => t.sid === sid)!!)
+
+                return <NameXContainer>{
+                    ...rest,
+                    items: ts
+                }
+            } else {
+                return <NameXContainer>{
+                    ...rest,
+                    items: array
+                }
             }
         })
     }
@@ -47,17 +59,21 @@ export class ServerNameXGame extends ServerGameDef<NameXContainer> {
             created_by: parent!!.created_by,
             goal: parent!!.goal,
             title: parent!!.title,
+            tracks: parent!!.tracks,
             items: orderedTracks
         }
     }
 
     override async createInstance(instance: NameXContainer): Promise<NameXContainer> {
+        const array = instance.tracks ?
+            JSON.stringify((instance.items as Track[]).map(i => i.sid)) : JSON.stringify(instance.items as string[])
         const fetched = await prisma.game_namex.create({
             data: {
                 created_by: instance.created_by!!,
                 title: instance.title,
                 goal: instance.goal,
-                items: JSON.stringify(instance.items.map(i => i.sid))
+                tracks: instance.tracks ?? false,
+                items: array
             }
         })
         const { items, ...rest } = fetched
@@ -68,12 +84,15 @@ export class ServerNameXGame extends ServerGameDef<NameXContainer> {
     }
 
     override async updateInstance(instance: NameXContainer): Promise<NameXContainer> {
+        const array = instance.tracks ?
+            JSON.stringify((instance.items as Track[]).map(i => i.sid)) : JSON.stringify(instance.items as string[])
         const fetched = await prisma.game_namex.update({
             where: { id: instance.id },
             data: {
                 title: instance.title,
                 goal: instance.goal,
-                items: JSON.stringify(instance.items.map(i => i.sid))
+                tracks: instance.tracks ?? false,
+                items: array
             }
         })
         const { items, ...rest } = fetched

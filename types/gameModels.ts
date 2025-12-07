@@ -41,7 +41,8 @@ export interface HeardleContainer extends EditorContainer {
 export interface NameXContainer extends EditorContainer {
     goal: number
     title: string
-    items: Track[]
+    tracks: boolean
+    items: Track[] | string[]
 }
 
 export interface OrderContainer extends EditorContainer {

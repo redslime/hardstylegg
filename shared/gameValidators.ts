@@ -11,6 +11,7 @@ import type {
     TimetableContainer,
     TimetableItem
 } from "~/types/gameModels";
+import type {Track} from "~/types/models";
 
 export function validateArtwork(artwork: ArtworkContainer): string[] {
     const errors: string[] = []
@@ -133,6 +134,7 @@ export function validateHeardleDurations(durations: number[], errors: string[]) 
 
 export function validateNameX(namex : NameXContainer): string[] {
     const errors: string[] = []
+    const itemKeys = namex.tracks ? (namex.items as Track[]).map(t => t.sid) : namex.items as string[]
 
     validateTitle(namex.title, errors)
 
@@ -143,10 +145,10 @@ export function validateNameX(namex : NameXContainer): string[] {
         errors.push("Goal must be between 1 and " + namex.items.length)
     }
     if(!namex.items || namex.items.length === 0) {
-        errors.push("At least one track is required")
+        errors.push("At least one item is required")
     }
-    if(new Set(namex.items.map(t => t.sid)).size < namex.items.length) {
-        errors.push("Each track must be unique")
+    if(new Set(itemKeys).size < namex.items.length) {
+        errors.push("Each track item be unique")
     }
 
     return errors

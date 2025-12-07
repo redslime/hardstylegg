@@ -78,12 +78,13 @@ model game_heardle {
 }
 
 model game_namex {
-  id         Int    @id @default(autoincrement())
+  id         Int     @id @default(autoincrement())
   created_by Int
-  title      String @db.VarChar(128)
+  title      String  @db.VarChar(128)
   goal       Int
-  items      String @db.VarChar(512)
-  user       user   @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "game_namex_user_id_fk")
+  tracks     Boolean @default(dbgenerated("b'1'")) @db.Bit(1)
+  items      String  @db.VarChar(1024)
+  user       user    @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "game_namex_user_id_fk")
 
   @@index([created_by], map: "game_namex_user_id_fk")
 }

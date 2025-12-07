@@ -12,9 +12,13 @@ interface SearchResult {
   highlighted: string
 }
 
+const props = defineProps({
+  xl: { type: Boolean, required: false },
+  textMode: { type: Boolean, required: false } // disables search and uses @onTextInput instead
+})
 const isMobile = inject<boolean>("isMobile")
 const query = ref('')
-const allOptions = await getTracks()
+const allOptions = props.textMode ? [] : await getTracks()
 let fuse: Fuse<typeof allOptions[0]>
 const hoverIndex = ref<number>(-1)
 const debouncedQuery = ref('')
@@ -22,11 +26,8 @@ const filtered = ref<SearchResult[]>([])
 const selected = ref<boolean>(false)
 const errorFlash = ref<boolean>(false)
 const successFlash = ref<boolean>(false)
-const props = defineProps({
-  xl: { type: Boolean, required: false }
-})
 const visible = computed(() => query.value.length > 3 && filtered.value.length > 0)
-const emit = defineEmits(['onTrackSelected'])
+const emit = defineEmits(['onTrackSelected', 'onTextInput'])
 
 // debounce
 let timeout: number
@@ -34,6 +35,8 @@ watch(query, (val) => {
   if(errorFlash.value) {
     query.value = "Incorrect"
   }
+
+  if(props.textMode) return
 
   const trimmed = val.trim()
 
@@ -140,6 +143,11 @@ function select(item: ShallowTrack) {
 }
 
 function enter() {
+  if(props.textMode) {
+    emit('onTextInput', query.value, flashError, flashSuccess, clear)
+    return
+  }
+
   if(visible.value) {
     if(hoverIndex.value != -1) {
       select(filtered.value[hoverIndex.value ?? 0].item)
@@ -247,15 +255,23 @@ function highlightExact(text: string, region: number[] = []): string {
 }
 
 onMounted(() => {
-  fuse = new Fuse(allOptions, {
-    includeScore: true,
-    includeMatches: true,
-    keys: ['title', 'artists']
-  })
+  if(!props.textMode) {
+    fuse = new Fuse(allOptions, {
+      includeScore: true,
+      includeMatches: true,
+      keys: ['title', 'artists']
+    })
+  }
 })
 
 const placeholder = computed(() => {
-  return errorFlash.value ? "Incorrect" : "Track..."
+  if(errorFlash.value) {
+    return "Incorrect"
+  } else if(!props.textMode) {
+    return "Track..."
+  }
+
+  return ""
 })
 
 // Expose input bindings and event handlers for slot
@@ -303,7 +319,7 @@ const inputEvents = {
       </slot>
 
       <div class="absolute z-10 w-full bg-base-100 border mt-1 rounded-lg shadow overflow-hidden
-          py-2 divide-dashed divide-y divide-neutral" v-if="visible && !selected"
+          py-2 divide-dashed divide-y divide-neutral" v-if="visible && !selected && !props.textMode"
            :class="[
               isMobile ? 'bottom-full mb-1' : 'top-full mt-1'
             ]">
