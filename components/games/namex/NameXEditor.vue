@@ -109,7 +109,7 @@ watchOnce(data, () => instances.value = data.value)
 
         <div class="mt-5">
           <fieldset class="fieldset">
-            <legend class="fieldset-legend">Number of tracks that must be guessed correctly</legend>
+            <legend class="fieldset-legend">Number of items that must be guessed correctly</legend>
             <input class="input" type="number" v-model="editing!!.goal" min="1" :max="editing.items.length" placeholder="Guess goal" required />
           </fieldset>
         </div>
