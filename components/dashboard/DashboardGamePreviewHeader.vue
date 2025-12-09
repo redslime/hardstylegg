@@ -10,7 +10,6 @@ const { gameDef, container, pointer } = defineProps({
   pointer: { type: Boolean, default: true }
 })
 
-const { user } = useUserSession()
 const dashboardData = await getDashboardData()
 const scheduleData = computed<ScheduleDay | undefined>(() => getScheduleForGame(gameDef.id, container.id))
 const title = computed(() => gameDef.getDashboardHeaderTitle(container))
@@ -18,7 +17,6 @@ const todayId = computed(() => dashboardData.schedule.todayId)
 const upcoming = computed(() => todayId.value && scheduleData.value && todayId.value <= scheduleData.value.day)
 const past = computed(() => todayId.value && scheduleData.value && todayId.value > scheduleData.value.day)
 const example = computed(() => container.id === 1)
-const editable = computed(() => user.value.admin || !scheduleData || !scheduleData.value || example.value)
 const editor = computed(() => dashboardData.editors.find(e => e.id === container.created_by))
 
 function click() {
@@ -29,7 +27,7 @@ function click() {
 </script>
 
 <template>
-  <div class="bg-base-200 p-3 max-w-[600px] rounded-lg" :class="{'cursor-pointer': pointer && editable}" @click="click()">
+  <div class="bg-base-200 p-3 max-w-[600px] rounded-lg" :class="{'cursor-pointer': pointer}" @click="click()">
     <div class="text-2xl font-bold">{{ title }}</div>
     <div class="flex flex-wrap gap-1 mb-4">
       <div class="badge badge-warning badge-soft badge-xs font-mono" v-if="past">Played on: {{ scheduleData!!.dayFriendly }}</div>
