@@ -118,12 +118,7 @@ function onDelete(container: T) {
 }
 
 function tryEdit(instance: T) {
-  const scheduleData = computed<ScheduleDay | undefined>(() => getScheduleForGame(gameDef.id, instance.id))
-  const editable = user.value.admin || !scheduleData || !scheduleData.value || instance.id === 1
-
-  if(editable) {
-    editing.value = deepCopy(instance)
-  }
+  editing.value = deepCopy(instance)
 }
 
 async function startPreview() {
