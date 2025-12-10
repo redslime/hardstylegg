@@ -60,7 +60,7 @@ export function loadImageFromDataURL(dataUrl: string): Promise<HTMLImageElement>
     })
 }
 
-export function convertToWebP(img: HTMLImageElement, quality = 0.8): Promise<string> {
+export function convertToWebP(img: HTMLImageElement, quality = 1): Promise<string> {
     return new Promise((resolve, reject) => {
         try {
             const canvas = document.createElement("canvas")
