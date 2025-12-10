@@ -9,7 +9,7 @@ import type {
     QuizContainer,
     TimelineContainer,
     TimetableContainer,
-    TimetableItem
+    TimetableItem, ZoomerContainer
 } from "~/types/gameModels";
 import type {Track} from "~/types/models";
 
@@ -260,6 +260,22 @@ export function validateMap(map: MapContainer): string[] {
 
     if(!map.goal || map.goal.trim().length === 0) {
         errors.push("Country goal is required")
+    }
+
+    return errors
+}
+
+export function validateZoomer(zoomer: ZoomerContainer): string[] {
+    const errors: string[] = []
+
+    validateTitle(zoomer.title, errors)
+
+    if(!zoomer.data || zoomer.data.stepHeights.length !== 5) {
+        errors.push("5 image zoom levels required")
+    }
+
+    if(!zoomer.goal) {
+        errors.push("Goal is required")
     }
 
     return errors

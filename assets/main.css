@@ -5,6 +5,6 @@
   themes: light --default, night --prefersdark;
 }
 
-.input:focus, .input:focus-within {
+.input:focus, .input:focus-within, .select:focus, .select:focus-within {
     outline: none;
 }

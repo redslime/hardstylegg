@@ -51,7 +51,7 @@ npm run dev
 This doesn't represent the order in which files should be created as they are very interlinked but rather serves as an overview:
 
 ### Game registration
-1. Create a new container at `/models/gameModels.ts`. It essentially holds all the dynamic information about the game that is stored in the database, thus it should be very close to the table schema that you may have made already.
+1. Create a new container at `/types/gameModels.ts`. It essentially holds all the dynamic information about the game that is stored in the database, thus it should be very close to the table schema that you may have made already.
 2. Register the game in `/shared/games.ts`, you will need a validator that should be placed in `/shared/gameValidators.ts`.
 3. Create the client and server definitions in `/utils/game/impl/` and `/server/utils/game/impl/` respectively and implement its methods (to do this, you need to have made the components below first).
 

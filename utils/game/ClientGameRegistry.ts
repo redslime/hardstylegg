@@ -9,6 +9,7 @@ import {ClientQuizGame} from "~/utils/game/impl/ClientQuizGame";
 import {ClientTimelineGame} from "~/utils/game/impl/ClientTimelineGame";
 import {ClientTimetableGame} from "~/utils/game/impl/ClientTimetableGame";
 import {ClientMapGame} from "~/utils/game/impl/ClientMapGame";
+import {ClientZoomerGame} from "~/utils/game/impl/ClientZoomerGame";
 
 export class ClientGameRegistry {
     private games: ClientGameDef<any>[] = []
@@ -23,6 +24,7 @@ export class ClientGameRegistry {
     public TimelineDef = new ClientTimelineGame()
     public TimetableDef = new ClientTimetableGame()
     public MapDef = new ClientMapGame()
+    public ZoomerDef = new ClientZoomerGame()
 
     constructor() {
         this.games.push(
@@ -35,7 +37,8 @@ export class ClientGameRegistry {
             this.QuizDef,
             this.TimelineDef,
             this.TimetableDef,
-            this.MapDef
+            this.MapDef,
+            this.ZoomerDef
         )
     }
 

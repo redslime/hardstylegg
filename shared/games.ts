@@ -9,7 +9,7 @@ import {
     validateOrder,
     validateQuiz,
     validateTimeline,
-    validateTimetable
+    validateTimetable, validateZoomer
 } from "#shared/gameValidators";
 
 export const GAME_METAS = {
@@ -62,5 +62,10 @@ export const GAME_METAS = {
         id: 10,
         name: "Map",
         validator: validateMap
+    },
+    Zoomer: {
+        id: 11,
+        name: "Zoomer",
+        validator: validateZoomer
     }
  } satisfies Record<string, GameMeta>

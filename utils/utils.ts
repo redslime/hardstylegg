@@ -158,3 +158,42 @@ export function debug(...args: any[]) {
         console.log('[DEBUG]', ...args)
     }
 }
+
+export function getYearsUntilToday(start: number): number[] {
+    const array: number[] = []
+    const today = new Date().getFullYear()
+
+    for(let i = start; i <= today; i++) {
+        array.push(i)
+    }
+
+    array.sort((a, b) => b - a)
+    return array
+}
+
+export function getYearsInbetween(start: number, end: number): number[] {
+    const array: number[] = []
+
+    for(let i = start; i <= end; i++) {
+        array.push(i)
+    }
+
+    array.sort((a, b) => b - a)
+    return array
+}
+
+export function capitalize(word: string): string {
+    if (!word) return word;
+    return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+}
+
+export function shallowRecordEquals(a?: Record<string, string>, b?: Record<string, string>): boolean {
+    if (a == null && b == null) return true;
+    if (!a || !b) return false;
+
+    const keysA = Object.keys(a);
+    const keysB = Object.keys(b);
+    if (keysA.length !== keysB.length) return false;
+
+    return keysA.every(k => a[k] === b[k]);
+}

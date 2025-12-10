@@ -191,6 +191,7 @@ model user {
   game_quiz            game_quiz[]
   game_timeline        game_timeline[]
   game_timetable       game_timetable[]
+  game_zoomer          game_zoomer[]
 }
 
 model day_schedule {
@@ -230,4 +231,15 @@ model game_map {
   user       user   @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "game_map_user_id_fk")
 
   @@index([created_by], map: "game_map_user_id_fk")
+}
+
+model game_zoomer {
+  id         Int    @id @default(autoincrement())
+  created_by Int
+  title      String @db.VarChar(128)
+  goal       String @db.VarChar(128)
+  data       String @db.VarChar(8192)
+  user       user   @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "game_zoomer_user_id_fk")
+
+  @@index([created_by], map: "game_zoomer_user_id_fk")
 }

@@ -1,6 +1,7 @@
 import type {Track} from "~/types/models";
+import type {ZoomerImageData, ZoomerType} from "~/types/zoomerModels";
 
-export type AnyGameContainer = ArtworkContainer | CompleteAlbumContainer | CompleteLyricsContainer | HeardleContainer | NameXContainer | OrderContainer | QuizContainer | TimelineContainer | TimetableContainer | MapContainer
+export type AnyGameContainer = ArtworkContainer | CompleteAlbumContainer | CompleteLyricsContainer | HeardleContainer | NameXContainer | OrderContainer | QuizContainer | TimelineContainer | TimetableContainer | MapContainer | ZoomerContainer
 export type AnyGameContainers = AnyGameContainer[]
 
 export interface ArtworkContainer extends EditorContainer {
@@ -93,4 +94,10 @@ export interface TimetableItem {
 export interface MapContainer extends EditorContainer {
     title: string
     goal: string
+}
+
+export interface ZoomerContainer extends EditorContainer {
+    title: string
+    goal: ZoomerType
+    data: ZoomerImageData
 }
