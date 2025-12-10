@@ -18,7 +18,7 @@ const { instance, pointer } = defineProps({
              class="w-full h-auto rounded-xl shrink shadow-md"/>
       </div>
       <div class="shrink w-1/4 sm:w-1/3 xs:w-1/2">
-        <img :src="`${getLocalArtwork(instance.artwork_blank)}`" alt="Blank artwork"
+        <img :src="`${getLocalArtwork(instance.imgName)}`" alt="Blank artwork"
              class="w-full h-auto rounded-xl shrink shadow-md"/>
       </div>
     </div>

@@ -16,7 +16,7 @@ const { container, reports } = defineProps({
            class="w-full h-auto rounded-xl shrink shadow-md"/>
     </div>
     <div class="shrink">
-      <img :src="`${getLocalArtwork(container.artwork_blank)}`" alt="Blank artwork"
+      <img :src="`${getLocalArtwork(container.imgName)}`" alt="Blank artwork"
            class="w-full h-auto rounded-xl shrink shadow-md"/>
     </div>
   </div>

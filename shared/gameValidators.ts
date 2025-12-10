@@ -9,7 +9,8 @@ import type {
     QuizContainer,
     TimelineContainer,
     TimetableContainer,
-    TimetableItem, ZoomerContainer
+    TimetableItem,
+    ZoomerContainer
 } from "~/types/gameModels";
 import type {Track} from "~/types/models";
 
@@ -19,18 +20,8 @@ export function validateArtwork(artwork: ArtworkContainer): string[] {
     if(!artwork.track) {
         errors.push("Track is required")
     }
-    if(!artwork.artwork_blank || artwork.artwork_blank.trim().length === 0) {
-        if(!artwork.uploadedName) {
-            if(artwork.blankFile) {
-                errors.push("Upload blank artwork first")
-            } else {
-                errors.push("Blank artwork is required")
-            }
-        }
-    }
-
-    if(artwork.blankFile && artwork.blankFile.type !== 'image/png') {
-        errors.push("Blank artwork must be a PNG file")
+    if(!artwork.img64 && !artwork.imgName) {
+        errors.push("Artwork file is required")
     }
 
     return errors

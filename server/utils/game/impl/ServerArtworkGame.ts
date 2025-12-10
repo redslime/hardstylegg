@@ -6,6 +6,8 @@ import {ServerGameDef} from "~/server/utils/game/ServerGameDef";
 import {join} from "pathe";
 import {unlink} from "node:fs/promises";
 import type {ReportItem} from "~/types/models";
+import {decodeBase64Image, validateWebPBuffer} from "~/utils/image";
+import {writeFile} from "fs/promises";
 
 export class ServerArtworkGame extends ServerGameDef<ArtworkContainer> {
 
@@ -27,7 +29,7 @@ export class ServerArtworkGame extends ServerGameDef<ArtworkContainer> {
             return <ArtworkContainer>{
                 id: i.id,
                 created_by: i.created_by,
-                artwork_blank: i.artwork_blank,
+                imgName: i.artwork_blank,
                 track: tracks.find(t => t.sid === i.track_id),
             }
         })
@@ -41,21 +43,36 @@ export class ServerArtworkGame extends ServerGameDef<ArtworkContainer> {
             id: parent!!.id,
             created_by: parent!!.created_by,
             track: track,
-            artwork_blank: parent!!.artwork_blank
+            imgName: parent!!.artwork_blank
         }
     }
 
     override async createInstance(instance: ArtworkContainer): Promise<ArtworkContainer> {
+        if(!instance.img64) {
+            throw createError({ statusCode: 400, message: "Missing image data" })
+        }
+
+        // write image to file
+        const imgName = crypto.randomUUID()
+        const path = join(process.cwd(), 'data', 'artwork', imgName + '.webp')
+        const buffer = decodeBase64Image(instance.img64)
+
+        validateWebPBuffer(buffer)
+        await writeFile(path, buffer)
+        instance.img64 = undefined
+        instance.imgName = imgName
+
         const fetched = await prisma.game_artwork.create({
             data: {
                 created_by: instance.created_by!!,
                 track_id: instance.track.sid,
-                artwork_blank: instance.artwork_blank
+                artwork_blank: instance.imgName
             }
         })
-        const { track_id, ...rest } = fetched
+        const { track_id, artwork_blank, ...rest } = fetched
         return <ArtworkContainer>{
             ...rest,
+            imgName: artwork_blank,
             track: instance.track
         }
     }
@@ -65,10 +82,9 @@ export class ServerArtworkGame extends ServerGameDef<ArtworkContainer> {
             where: {id: instance.id},
             data: {
                 track_id: instance.track.sid,
-                artwork_blank: instance.artwork_blank
             }
         })
-        const {track_id, ...rest} = fetched
+        const {track_id, artwork_blank, ...rest} = fetched
         return <ArtworkContainer>{
             ...rest,
             track: instance.track
@@ -77,7 +93,7 @@ export class ServerArtworkGame extends ServerGameDef<ArtworkContainer> {
 
     override async deleteInstance(gameId: number): Promise<any> {
         const deleted = await prisma.game_artwork.delete(this.whereGameId(gameId))
-        const imgPath = join(process.cwd(), 'data', 'artwork', deleted.artwork_blank + '.png')
+        const imgPath = join(process.cwd(), 'data', 'artwork', deleted.artwork_blank + '.webp')
         await unlink(imgPath)
         return deleted
     }

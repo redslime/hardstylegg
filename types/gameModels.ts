@@ -6,9 +6,8 @@ export type AnyGameContainers = AnyGameContainer[]
 
 export interface ArtworkContainer extends EditorContainer {
     track: Track
-    artwork_blank: string
-    blankFile?: File
-    uploadedName?: string
+    imgName: string
+    img64?: string // only used during creation
 }
 
 export interface CompleteAlbumContainer extends EditorContainer {

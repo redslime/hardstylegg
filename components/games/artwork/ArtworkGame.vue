@@ -4,7 +4,7 @@ import {getLocalArtwork, getSpotifyArtwork} from "~/utils/utils";
 
 export default {
   getPreloadUrls: (container: ArtworkContainer): string[] => {
-    return [getLocalArtwork(container.artwork_blank), getSpotifyArtwork(container.track.cover_art)]
+    return [getLocalArtwork(container.imgName)!!, getSpotifyArtwork(container.track.cover_art)!!]
   }
 }
 </script>
@@ -26,14 +26,13 @@ const props = defineProps({
 const state = computed(() => props.state)
 const finished = computed(() => state.value == GameState.SUCCEEDED || state.value == GameState.FAILED)
 const track = computed<Track>(() => props.container.track)
-const artworkBlank = computed(() => props.container.artwork_blank)
 const currentIndex = inject<number>('currentIndex')
 
 const src = computed(() => {
   if(finished.value) {
     return getSpotifyArtwork(track.value.cover_art)
   } else {
-    return getLocalArtwork(artworkBlank.value)
+    return props.container.img64 ?? getLocalArtwork(props.container.imgName)
   }
 })
 

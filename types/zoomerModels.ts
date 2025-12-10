@@ -64,7 +64,7 @@ export interface ZoomerInternalImage {
 }
 
 export interface ZoomerImageData {
-    img64?: string,
+    img64?: string, // only used during creation
     imgName?: string,
     author: string,
     width: number,

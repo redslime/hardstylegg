@@ -31,11 +31,13 @@ export function getToday(): Date {
 }
 
 export function getSpotifyArtwork(id: string) {
+    if(id === undefined) return undefined
     return `https://i.scdn.co/image/${id}`
 }
 
 export function getLocalArtwork(id: string) {
-    return `/artwork/${id}.png`
+    if(id === undefined) return undefined
+    return `/artwork/${id}.webp`
 }
 
 export function shuffleArray<T>(arr: T[]): T[] {

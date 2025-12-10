@@ -1,33 +1,34 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import ArrowUpTrayIcon from "~/components/icons/ArrowUpTrayIcon.vue";
+import {processImageToWebP} from "~/utils/image";
 
-const selectedFile = defineModel<File | null>('selectedFile', { required: true })
-const previewUrl = defineModel<string | null>('previewUrl', { required: true })
+const img64 = defineModel<string | undefined>('img64', { required: true })
 const emit = defineEmits(['selected'])
 const isDragging = ref(false)
 
-function handleFileChange(event: Event) {
+async function handleFileChange(event: Event) {
   const file = (event.target as HTMLInputElement).files?.[0]
   if (!file) return
-
-  selectedFile.value = file
-  previewUrl.value = URL.createObjectURL(file)
+  try {
+    img64.value = await processImageToWebP(file)
+  } catch (err: any) {
+    alert(err.message)
+  }
   emit('selected')
 }
 
-function handleDrop(event: DragEvent) {
+async function handleDrop(event: DragEvent) {
   event.preventDefault()
   isDragging.value = false
 
   const file = event.dataTransfer?.files?.[0]
   if (!file) return
-  setPreview(file)
-}
-
-function setPreview(file: File) {
-  selectedFile.value = file
-  previewUrl.value = URL.createObjectURL(file)
+  try {
+    img64.value = await processImageToWebP(file)
+  } catch (err: any) {
+    alert(err.message)
+  }
 }
 
 function handleDragOver(event: DragEvent) {
@@ -54,14 +55,16 @@ function handleDragLeave() {
           @dragleave.prevent="handleDragLeave"
           @drop="handleDrop"
       >
-        <ArrowUpTrayIcon v-if="!previewUrl" class="size-8" />
-        <div v-if="!previewUrl" class="text-base-content/80 text-center">
-          <p class="font-medium">Blank artwork</p>
-          <p class="text-sm text-base-content/50">Click or drop .png file</p>
-        </div>
+        <template v-if="!img64">
+          <ArrowUpTrayIcon class="size-8" />
+          <div class="text-base-content/80 text-center">
+            <p class="font-medium">Blank artwork</p>
+            <p class="text-sm text-base-content/50">Click or drop image</p>
+          </div>
+        </template>
         <img
             v-else
-            :src="previewUrl"
+            :src="img64"
             alt="Preview"
             class="h-full object-contain rounded-lg"
         />
@@ -69,7 +72,7 @@ function handleDragLeave() {
       <input
           id="file-input"
           type="file"
-          accept="image/png"
+          accept="image/*"
           class="hidden"
           @change="handleFileChange"
       />
