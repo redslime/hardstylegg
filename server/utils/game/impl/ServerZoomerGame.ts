@@ -7,6 +7,8 @@ import {GAME_METAS} from "#shared/games";
 import prisma from "~/lib/prisma";
 import {join} from "pathe";
 import {writeFile} from "fs/promises";
+import {decodeBase64Image, validateWebPBuffer} from "~/utils/image";
+import {unlink} from "node:fs/promises";
 
 export class ServerZoomerGame extends ServerGameDef<ZoomerContainer> {
 
@@ -62,39 +64,45 @@ export class ServerZoomerGame extends ServerGameDef<ZoomerContainer> {
         return "invalid"
     }
 
+    private mapRecord(rec: {
+        id: number
+        created_by: number
+        title: string
+        goal: string
+        data: string
+    }): ZoomerContainer {
+        return <ZoomerContainer>{
+            id: rec!!.id,
+            created_by: rec!!.created_by!!,
+            title: rec!!.title,
+            goal: this.serializeType(rec!!.goal),
+            data: JSON.parse(rec!!.data) as ZoomerImageData,
+        }
+    }
+
     override async fetchAllInstances(user: User): Promise<ZoomerContainer[]> {
         const instances = await prisma.game_zoomer.findMany(this.whereAdminOrCreator(user))
-        return instances.map(i => {
-            return <ZoomerContainer>{
-                id: i.id,
-                created_by: i.created_by!!,
-                title: i.title,
-                goal: this.serializeType(i.goal),
-                data: JSON.parse(i.data) as ZoomerImageData
-            }
-        })
+        return instances.map(i => this.mapRecord(i))
     }
 
     override async fetchInstance(gameId: number): Promise<ZoomerContainer> {
         const i = await prisma.game_zoomer.findUnique({ where: { id: gameId } })
-        return <ZoomerContainer>{
-            id: i!!.id,
-            created_by: i!!.created_by!!,
-            title: i!!.title,
-            goal: this.serializeType(i!!.goal),
-            data: JSON.parse(i!!.data) as ZoomerImageData,
-        }
+        return this.mapRecord(i!!)
     }
 
     override async createInstance(instance: ZoomerContainer): Promise<ZoomerContainer> {
         const { img64, ...rest } = instance.data
 
+        if(!img64) {
+            throw createError({ statusCode: 400, message: "Missing image data" })
+        }
+
         // write image to file
         const imgName = crypto.randomUUID()
         const path = join(process.cwd(), 'data', 'zoomer', imgName + '.webp')
-        const base64Data = img64!!.replace(/^data:image\/webp;base64,/, '')
-        const buffer = Buffer.from(base64Data, 'base64')
+        const buffer = decodeBase64Image(img64)
 
+        validateWebPBuffer(buffer)
         await writeFile(path, buffer)
         rest.imgName = imgName
 
@@ -136,7 +144,11 @@ export class ServerZoomerGame extends ServerGameDef<ZoomerContainer> {
     }
 
     override async deleteInstance(gameId: number): Promise<any> {
-        return await prisma.game_zoomer.delete(this.whereGameId(gameId))
+        const deleted = await prisma.game_zoomer.delete(this.whereGameId(gameId))
+        const record = this.mapRecord(deleted)
+        const path = join(process.cwd(), 'data', 'zoomer', record.data.imgName!! + '.webp')
+        await unlink(path)
+        return deleted
     }
 
     override getPreviewIcon(): string {
