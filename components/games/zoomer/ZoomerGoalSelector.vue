@@ -65,6 +65,15 @@ function finish() {
   }
 }
 
+// make sure all festival data is cleared properly when re-selecting
+const goalName = computed(() => goal.value?.name)
+watch(goalName, (newVal) => {
+  if(newVal && goal.value && goal.value.id === 'festival') {
+    selectFestival()
+    goal.value.name = newVal
+  }
+})
+
 onMounted(() => {
   if(target) {
     if(target.id === "festival") {
