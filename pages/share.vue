@@ -25,7 +25,7 @@ onMounted(() => {
 </script>
 
 <template>
-
+  <span class="loading loading-spinner loading-xl text-center"></span>
 </template>
 
 <style scoped>
