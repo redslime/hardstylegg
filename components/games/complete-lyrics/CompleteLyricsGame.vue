@@ -66,7 +66,7 @@ const lines = computed(() => {
 const answers = reactive<Record<string, string>>({})
 watch(answers, (newAnswers) => {
   const allCorrect = Object.entries(newAnswers)
-      .every(([correct, given]) => (given || "").toLowerCase() === correct.toLowerCase())
+      .every(([correct, given]) => (given || "").toLowerCase().trim() === correct.toLowerCase())
 
   if(allCorrect) {
     emit("onFinish", GameState.SUCCEEDED)
@@ -89,10 +89,10 @@ watch(answers, (newAnswers) => {
               </template>
 
               <template v-else>
-              <span v-if="finished || (answers[part.name]?.toLowerCase() === part.name.toLowerCase())" class="font-bold"
+              <span v-if="finished || (answers[part.name]?.toLowerCase().trim() === part.name.toLowerCase())" class="font-bold"
                     :class="{
-                  'text-success/80': answers[part.name]?.toLowerCase() === part.name.toLowerCase(),
-                  'text-error/80': answers[part.name]?.toLowerCase() !== part.name.toLowerCase()
+                  'text-success/80': answers[part.name]?.toLowerCase().trim() === part.name.toLowerCase(),
+                  'text-error/80': answers[part.name]?.toLowerCase().trim() !== part.name.toLowerCase()
                 }">
                 {{ part.name }}
               </span>
