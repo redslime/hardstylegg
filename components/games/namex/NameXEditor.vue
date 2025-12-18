@@ -6,6 +6,8 @@ import TrackPicker from "~/components/dashboard/TrackPicker.vue";
 import NameXPreview from "~/components/games/namex/NameXPreview.vue";
 import {watchOnce} from "@vueuse/shared";
 import type {Track} from "~/types/models";
+import PencilIcon from "~/components/icons/PencilIcon.vue";
+import Checkmark from "~/components/icons/Checkmark.vue";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.NameXDef
@@ -13,6 +15,7 @@ const { data, pending, error } = await useAsyncData<NameXContainer[]>(() => game
 const instances = ref<NameXContainer[] | undefined>()
 const editing = ref<NameXContainer | undefined>()
 const input = ref("")
+const editingIndex = ref<number>(-1)
 
 function del(index: number) {
   editing.value!!.items.splice(index, 1)
@@ -40,8 +43,8 @@ watchOnce(data, () => instances.value = data.value)
         v-model:instances="instances"
         v-model:editing="editing"
         :gameDef="gameDef"
-        @saved="input = ''"
-        @cancelled="input = ''"
+        @saved="input = ''; editingIndex = -1"
+        @cancelled="input = ''; editingIndex = -1"
     >
       <template #previewBody="{ instance, clicked }">
         <NameXPreview :instance="instance" @click="clicked()" />
@@ -76,7 +79,18 @@ watchOnce(data, () => instances.value = data.value)
                   {{ (item as Track).title }}
                 </template>
                 <template v-else>
-                  {{ item }}
+                  <template v-if="editingIndex === index">
+                    <input
+                        v-model="editing.items[index]"
+                        type="text"
+                        class="input input-sm autofocus"
+                        @keyup.enter="editingIndex = -1"
+                        autofocus
+                    />
+                  </template>
+                  <template v-else>
+                    {{ item }}
+                  </template>
                 </template>
               </div>
 
@@ -85,8 +99,14 @@ watchOnce(data, () => instances.value = data.value)
               </div>
             </div>
 
-            <div class="absolute right-2">
-              <button class="btn btn-error btn-xs" @click="del(index)"><TrashIcon class="size-2" /></button>
+            <div class="absolute join flex flex-row justify-center items-center right-2 h-full">
+              <template v-if="index === editingIndex">
+                <button class="btn btn-success btn-xs join-item h-full" @click="editingIndex = -1"><Checkmark /></button>
+              </template>
+              <template v-else-if="editingIndex === -1">
+                <button class="btn btn-primary btn-xs join-item" v-if="!editing.tracks" @click="editingIndex = index"><PencilIcon class="size-2" /></button>
+                <button class="btn btn-error btn-xs join-item" @click="del(index)"><TrashIcon class="size-2" /></button>
+              </template>
             </div>
           </li>
         </ul>

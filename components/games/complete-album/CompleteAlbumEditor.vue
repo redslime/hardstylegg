@@ -37,6 +37,8 @@ function add() {
         v-model:instances="instances"
         v-model:editing="editing"
         :gameDef="gameDef"
+        @cancelled="editingIndex = -1"
+        @saved="editingIndex = -1"
     >
       <template #previewBody="{ instance, clicked }">
         <CompleteAlbumPreview :instance="instance" @click="clicked()" />
@@ -67,6 +69,7 @@ function add() {
                       v-model="item.name"
                       type="text"
                       class="input input-sm"
+                      autofocus
                   />
                 </template>
 
