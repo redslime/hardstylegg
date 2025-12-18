@@ -92,8 +92,9 @@ export class ServerQuizGame extends ServerGameDef<QuizContainer> {
         }
     }
 
-    override async deleteInstance(gameId: number): Promise<any> {
-        return await prisma.game_quiz.delete(this.whereGameId(gameId))
+    override async deleteInstance(gameId: number, user: User): Promise<boolean> {
+        const deleted = await prisma.game_quiz.delete(this.whereGameIdAndAdminOrCreator(gameId, user))
+        return gameId === deleted.id
     }
 
     override getPreviewIcon(): string {

@@ -18,7 +18,7 @@ export abstract class ServerGameDef<T extends EditorContainer> extends GameDef<T
 
     abstract updateInstance(instance: T): Promise<T>
 
-    abstract deleteInstance(gameId: number): Promise<any>
+    abstract deleteInstance(gameId: number, user: User): Promise<boolean>
 
     abstract getPreviewIcon(): string
 
@@ -61,10 +61,11 @@ export abstract class ServerGameDef<T extends EditorContainer> extends GameDef<T
         return ""
     }
 
-    protected whereGameId(gameId: number) {
+    protected whereGameIdAndAdminOrCreator(gameId: number, user: User) {
         return {
             where: {
-                id: gameId
+                id: gameId,
+                ...(user.admin ? {} : { created_by: user.id })
             }
         }
     }

@@ -82,11 +82,16 @@ export class ServerHeardleGame extends ServerGameDef<HeardleContainer> {
         }
     }
 
-    override async deleteInstance(gameId: number): Promise<any> {
-        const deleted = await prisma.game_heardle.delete(this.whereGameId(gameId))
-        const mp3Path = join(process.cwd(), 'data', 'heardle', deleted.src + '.mp3')
-        await unlink(mp3Path)
-        return deleted
+    override async deleteInstance(gameId: number, user: User): Promise<boolean> {
+        const deleted = await prisma.game_heardle.delete(this.whereGameIdAndAdminOrCreator(gameId, user))
+
+        if(gameId === deleted.id) {
+            const mp3Path = join(process.cwd(), 'data', 'heardle', deleted.src + '.mp3')
+            await unlink(mp3Path)
+            return true
+        }
+
+        return false
     }
 
     override getPreviewIcon(): string {

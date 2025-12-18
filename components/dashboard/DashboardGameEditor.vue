@@ -112,8 +112,8 @@ async function save() {
   }
 }
 
-function onDelete(container: T) {
-  instances.value?.splice(0, instances.value.length, ...instances.value?.filter(i => i.id !== container.id))
+function onDelete(gameId: number) {
+  instances.value = instances.value?.filter(i => i.id !== gameId).sort((a, b) => (a.id ?? 0) - (b.id ?? 0))
   editing.value = undefined
 }
 

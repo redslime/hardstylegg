@@ -143,12 +143,17 @@ export class ServerZoomerGame extends ServerGameDef<ZoomerContainer> {
         }
     }
 
-    override async deleteInstance(gameId: number): Promise<any> {
-        const deleted = await prisma.game_zoomer.delete(this.whereGameId(gameId))
-        const record = this.mapRecord(deleted)
-        const path = join(process.cwd(), 'data', 'zoomer', record.data.imgName!! + '.webp')
-        await unlink(path)
-        return deleted
+    override async deleteInstance(gameId: number, user: User): Promise<boolean> {
+        const deleted = await prisma.game_zoomer.delete(this.whereGameIdAndAdminOrCreator(gameId, user))
+
+        if(gameId === deleted.id) {
+            const record = this.mapRecord(deleted)
+            const path = join(process.cwd(), 'data', 'zoomer', record.data.imgName!! + '.webp')
+            await unlink(path)
+            return true
+        }
+
+        return false
     }
 
     override getPreviewIcon(): string {

@@ -91,11 +91,16 @@ export class ServerArtworkGame extends ServerGameDef<ArtworkContainer> {
         }
     }
 
-    override async deleteInstance(gameId: number): Promise<any> {
-        const deleted = await prisma.game_artwork.delete(this.whereGameId(gameId))
-        const imgPath = join(process.cwd(), 'data', 'artwork', deleted.artwork_blank + '.webp')
-        await unlink(imgPath)
-        return deleted
+    override async deleteInstance(gameId: number, user: User): Promise<boolean> {
+        const deleted = await prisma.game_artwork.delete(this.whereGameIdAndAdminOrCreator(gameId, user))
+
+        if(gameId === deleted.id) {
+            const imgPath = join(process.cwd(), 'data', 'artwork', deleted.artwork_blank + '.webp')
+            await unlink(imgPath)
+            return true
+        }
+
+        return false
     }
 
     override getPreviewIcon(): string {

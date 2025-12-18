@@ -29,7 +29,7 @@ async function del() {
   confirmed.value = true
 
   try {
-    const data = await $fetch('/api/dashboard/deleteInstance', {
+    const data = await $fetch<boolean>('/api/dashboard/deleteInstance', {
       method: 'POST',
       body: {
         typeId,
@@ -38,10 +38,12 @@ async function del() {
     })
 
     if(data) {
-      emit('deleted', data)
+      emit('deleted', editing?.id)
       deletingResponse.value = true
       deletingModal.value?.close()
-      return
+    } else {
+      deletingResponse.value = true
+      deletingModal.value?.close()
     }
   } catch (e) {
     deletingResponse.value = false

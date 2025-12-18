@@ -45,8 +45,9 @@ export class ServerTimelineGame extends ServerGameDef<TimelineContainer> {
         })
     }
 
-    override async deleteInstance(gameId: number): Promise<any> {
-        return await prisma.game_timeline.delete(this.whereGameId(gameId))
+    override async deleteInstance(gameId: number, user: User): Promise<boolean> {
+        const deleted = await prisma.game_timeline.delete(this.whereGameIdAndAdminOrCreator(gameId, user))
+        return gameId === deleted.id
     }
 
     override getPreviewIcon(): string {
