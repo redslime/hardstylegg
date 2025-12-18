@@ -77,8 +77,6 @@ async function finish() {
   </fieldset>
 
   <template v-if="data">
-    <pre>{{ data }}</pre>
-
     <div
         class="bg-base-200 rounded-lg shadow p-2 flex flex-col justify-start my-8"
         :class="{'max-w-[195px]': editing?.sid !== data.sid,

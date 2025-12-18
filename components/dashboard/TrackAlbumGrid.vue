@@ -13,13 +13,14 @@ interface SearchResult {
 }
 
 const emit = defineEmits(['selected'])
-const { items, albums, title, selectable, editable } = defineProps({
+const { items, albums, title, selectable, editable, existing } = defineProps({
   items: { type: Array as PropType<Track[]>, required: true },
   albums: { type: Boolean, default: false },
   title: { type: String, default: "Select" },
   hideTitle: { type: Boolean, default: false },
   selectable: { type: Boolean, default: true },
-  editable: { type: Boolean, default: false }
+  editable: { type: Boolean, default: false },
+  existing: { type: Array as PropType<string[]>, default: [] }
 })
 
 const mode = albums ? "album" : "track"
@@ -261,9 +262,15 @@ const computedPageProvider = computed(() => {
         <div :style="style" class="p-2">
           <div
               class="h-full bg-base-200 rounded-lg shadow p-2 flex flex-col justify-start"
-              :class="{ 'cursor-pointer hover:outline-1 outline-primary': selectable }"
+              :class="{
+                'cursor-pointer hover:outline-1 outline-primary': selectable,
+                'outline-1 outline-warning': existing.includes(item.item.sid)
+              }"
               @click="select(item)"
           >
+            <div class="flex justify-center mb-2" v-if="existing.includes(item.item.sid)">
+              <div class="badge badge-soft badge-warning">Already exists</div>
+            </div>
             <div class="relative group">
               <img class="w-full overflow-hidden object-contain max-h-[200px]" :src="`https://i.scdn.co/image/${item.item.cover_art}`" alt="" />
               <div v-if="editable" class="absolute z-10 inset-0 backdrop-blur-sm bg-black/50 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">

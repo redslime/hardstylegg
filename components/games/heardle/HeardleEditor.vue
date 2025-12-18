@@ -15,6 +15,7 @@ import {watchOnce} from "@vueuse/shared";
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.HeardleDef
 const { data, pending, error } = await useAsyncData<HeardleContainer[]>(() => gameDef.getAllInstances(), { lazy: true })
+const { data: existingIds } = await useAsyncData<string[]>(() => gameDef.getExistingTracks(), { lazy: true })
 const instances = ref<HeardleContainer[] | undefined>()
 const editing = ref<HeardleContainer | undefined>()
 const isUploading = ref(false)
@@ -117,7 +118,7 @@ function reset() {
       <template #editTitle v-if="editing">
         <div class="flex gap-2 items-center">
           <div class="text-2xl font-bold" v-if="editing.track">{{ getName(editing.track) }}</div>
-          <TrackPicker v-if="!editing.track" @selected="t => (editing!!.track = t)" :title="editing!!.track ? 'Replace' : 'Select'" />
+          <TrackPicker v-if="!editing.track" @selected="t => (editing!!.track = t)" :title="editing!!.track ? 'Replace' : 'Select'" :existing="existingIds" />
         </div>
       </template>
 

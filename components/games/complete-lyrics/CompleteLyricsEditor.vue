@@ -11,6 +11,7 @@ import {watchOnce} from "@vueuse/shared";
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.CompleteLyricsDef
 const { data, pending, error } = await useAsyncData<CompleteLyricsContainer[]>(() => gameDef.getAllInstances(), { lazy: true })
+const { data: existingIds } = await useAsyncData<string[]>(() => gameDef.getExistingTracks(), { lazy: true })
 const instances = ref<CompleteLyricsContainer[] | undefined>()
 const editing = ref<CompleteLyricsContainer | undefined>()
 const input = ref<string | undefined>()
@@ -76,7 +77,7 @@ function toggle(word: string, lineIndex: number) {
       <template #editTitle v-if="editing">
         <div class="flex gap-2 items-center">
           <div class="text-2xl font-bold" v-if="editing.track">{{ getName(editing.track) }}</div>
-          <TrackPicker @selected="t => (editing!!.track = t)" :title="editing!!.track ? 'Replace' : 'Select'" />
+          <TrackPicker @selected="t => (editing!!.track = t)" :title="editing!!.track ? 'Replace' : 'Select'" :existing="existingIds" />
         </div>
       </template>
 

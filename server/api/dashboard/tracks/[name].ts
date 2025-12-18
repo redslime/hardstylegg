@@ -5,7 +5,7 @@ export default defineEventHandler(async (event) => {
     const game = findGameByName(event.context.params?.name ?? "");
 
     if(game) {
-        return await game.fetchAllInstances(user)
+        return await game.getExistingTracks()
     } else {
         return createError({
             statusCode: 404,

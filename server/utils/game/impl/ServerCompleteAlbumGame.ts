@@ -132,4 +132,13 @@ export class ServerCompleteAlbumGame extends ServerGameDef<CompleteAlbumContaine
             }
         })
     }
+
+    override async getExistingTracks(): Promise<string[]> {
+        const recs = await prisma.game_complete_album.findMany({
+            select: {
+                album_id: true
+            }
+        })
+        return recs.filter(r => r != null && r.album_id != null).map(r => r.album_id!!)
+    }
 }

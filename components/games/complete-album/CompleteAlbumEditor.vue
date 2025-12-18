@@ -13,6 +13,7 @@ import {watchOnce} from "@vueuse/shared";
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.CompleteAlbumDef
 const { data, pending, error } = await useAsyncData<CompleteAlbumContainer[]>(() => gameDef.getAllInstances(), { lazy: true })
+const { data: existingIds } = await useAsyncData<string[]>(() => gameDef.getExistingTracks(), { lazy: true })
 const instances = ref<CompleteAlbumContainer[] | undefined>()
 const editing = ref<CompleteAlbumContainer | undefined>()
 const editingIndex = ref<number | undefined>(-1)
@@ -47,7 +48,7 @@ function add() {
       <template #editTitle v-if="editing">
         <div class="flex gap-2 items-center">
           <div class="text-2xl font-bold" v-if="editing.album">{{ getName(editing.album!!) }}</div>
-          <TrackPicker :albums="true" @selected="t => (editing!!.album = t)" :title="editing!!.album ? 'Replace' : 'Select'" />
+          <TrackPicker :albums="true" @selected="t => (editing!!.album = t)" :title="editing!!.album ? 'Replace' : 'Select'" :existing="existingIds" />
         </div>
       </template>
 

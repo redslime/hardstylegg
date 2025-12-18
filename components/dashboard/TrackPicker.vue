@@ -7,7 +7,8 @@ import TrackAlbumGrid from "~/components/dashboard/TrackAlbumGrid.vue";
 const { albums, title, disabled } = defineProps({
   albums: { type: Boolean, default: false },
   title: { type: String, default: "Select" },
-  disabled: { type: Boolean, default: false }
+  disabled: { type: Boolean, default: false },
+  existing: { type: Array as PropType<string[]>, default: ["6pqmG1bGvYe1eboml5y3hM"] }
 })
 const emit = defineEmits(['selected'])
 const mode = albums ? "album" : "track"
@@ -33,7 +34,7 @@ function select(track: Track) {
 
     <dialog id="trackPickerModal" ref="modal" class="modal">
       <div class="modal-box max-w-4/5 bg-base-300">
-        <TrackAlbumGrid :items="allOptions" :albums="albums" :title="title" @selected="select" />
+        <TrackAlbumGrid :items="allOptions" :albums="albums" :title="title" :existing="existing" @selected="select" />
       </div>
     </dialog>
   </template>

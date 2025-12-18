@@ -101,4 +101,13 @@ export class ServerHeardleGame extends ServerGameDef<HeardleContainer> {
     override async getPreviewDetails(reportItem: ReportItem): Promise<string> {
         return this.respondAttempts(reportItem)
     }
+
+    override async getExistingTracks(): Promise<string[]> {
+        const recs = await prisma.game_heardle.findMany({
+            select: {
+                track_id: true
+            }
+        })
+        return recs.map(r => r.track_id)
+    }
 }

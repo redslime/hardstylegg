@@ -30,6 +30,10 @@ export abstract class ServerGameDef<T extends EditorContainer> extends GameDef<T
         return "?"
     }
 
+    public async getExistingTracks(): Promise<string[]> {
+        return []
+    }
+
     public async readBody(event: H3Event<EventHandlerRequest>): Promise<T> {
         return await readBody<T>(event)
     }
