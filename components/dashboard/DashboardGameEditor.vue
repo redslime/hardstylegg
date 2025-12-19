@@ -2,7 +2,7 @@
 
 import {deepCopy, deepCopyReactive} from "~/utils/utils";
 import DashboardGameDeleteButton from "~/components/dashboard/DashboardGameDeleteButton.vue";
-import {type Editor, type GameReportFlat, GameState, type ScheduleDay, StateFilter} from "~/types/models";
+import {type Editor, type GameReportFlat, GameState, type ScheduleDay, SortMode, StateFilter} from "~/types/models";
 import type {ClientGameDef} from "~/utils/game/ClientGameDef";
 import {getDashboardData, getScheduleForGame} from "~/utils/dashboard";
 import PlayIcon from "~/components/icons/PlayIcon.vue";
@@ -40,6 +40,7 @@ const previewCounter = ref<number>(0)
 const previewOpen = ref<boolean>(false)
 const stateFilter = ref<StateFilter>(StateFilter.ALL)
 const editorFilter = ref<Editor | undefined>(undefined)
+const sortMode = ref<SortMode>(SortMode.ID)
 
 const filteredInstances = computed(() => {
   const f1: (instance: T) => boolean = i => {
@@ -64,6 +65,18 @@ const filteredInstances = computed(() => {
   return instances.value?.filter(f1).filter(f2) ?? []
 })
 const hiddenCount = computed(() => (instances.value?.length ?? 0) - filteredInstances.value.length)
+const instanceSorter = computed<(a: T, b: T) => number>(() => {
+  if(sortMode.value === SortMode.SCHEDULE) {
+    return (a: T, b: T) => {
+      const aa = getScheduleForGame(gameDef.id, a.id)?.day ?? 9999
+      const bb = getScheduleForGame(gameDef.id, b.id)?.day ?? 9999
+      return aa - bb
+    }
+  } else {
+    // ID mode (creation date)
+    return (a: T, b: T) => (a.id ?? 0) - (b.id ?? 0)
+  }
+})
 
 // preview injections
 provide("details", false)
@@ -94,7 +107,7 @@ async function save() {
           const fetchedGameInstance = data as T
           instances.value?.splice(0, instances.value.length, ...instances.value.filter((i) => i.id !== fetchedGameInstance.id))
           instances.value?.push(fetchedGameInstance)
-          instances.value = instances.value?.sort((a, b) => (a.id ?? 0) - (b.id ?? 0))
+          instances.value = instances.value?.sort(instanceSorter.value)
 
           savingResponse.value = true
           editing.value = undefined
@@ -113,7 +126,7 @@ async function save() {
 }
 
 function onDelete(gameId: number) {
-  instances.value = instances.value?.filter(i => i.id !== gameId).sort((a, b) => (a.id ?? 0) - (b.id ?? 0))
+  instances.value = instances.value?.filter(i => i.id !== gameId).sort(instanceSorter.value)
   editing.value = undefined
 }
 
@@ -141,6 +154,10 @@ watch(editing, async () => {
     editingGameReports.value = []
   }
 })
+
+watch(sortMode, () => {
+  instances.value = instances.value?.sort(instanceSorter.value)
+})
 </script>
 
 <template>
@@ -165,6 +182,7 @@ watch(editing, async () => {
     <div class="flex gap-3 mb-5">
       <DashboardStateFilterSelector v-model:state="stateFilter" />
       <DashboardEditorFilterSelector v-model:editor="editorFilter" v-if="user.admin" />
+      <DashboardSortingSelector v-model:mode="sortMode" />
     </div>
 
     <div class="flex flex-wrap gap-3 mb-3">

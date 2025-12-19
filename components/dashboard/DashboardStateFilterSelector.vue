@@ -15,11 +15,6 @@ function getStyle(state: StateFilter): string {
   }
 }
 
-function getName(state: StateFilter): string {
-  const str = StateFilter[state]
-  return str[0]!!.toUpperCase() + str.slice(1).toLowerCase()
-}
-
 function change(clicked: StateFilter) {
   document.activeElement?.blur()
 
@@ -35,13 +30,13 @@ function change(clicked: StateFilter) {
     <div class="dropdown" :class="{'pointer-events-none': disabled}">
       <div tabindex="0" role="button" class="select cursor-pointer" v-bind="disabled ? { disabled: true } : {}">
         <div class="status" :class="getStyle(state as StateFilter)"></div>
-        {{ getName(state as StateFilter) }}
+        {{ state }}
       </div>
       <ul tabindex="-1" class="dropdown-content menu bg-base-300 rounded-box z-10 w-52 p-2 shadow-sm">
-        <li v-for="state in Object.values(StateFilter).filter(s => Number.isInteger(s) && s !== state)" :key="state" @click="change(state as StateFilter)">
+        <li v-for="state in Object.values(StateFilter).filter(s => s !== state)" :key="state" @click="change(state as StateFilter)">
           <a>
             <div class="status" :class="getStyle(state as StateFilter)"></div>
-            {{ getName(state as StateFilter) }}
+            {{ state }}
           </a>
          </li>
       </ul>

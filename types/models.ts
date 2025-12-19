@@ -163,8 +163,13 @@ export interface ArchiveContainer {
 }
 
 export enum StateFilter {
-    ALL,
-    UNUSED,
-    UPCOMING,
-    PAST
+    ALL = "All",
+    UNUSED = "Unused",
+    UPCOMING = "Upcoming",
+    PAST = "Past"
+}
+
+export enum SortMode {
+    ID = "Creation date",
+    SCHEDULE = "Schedule date"
 }
