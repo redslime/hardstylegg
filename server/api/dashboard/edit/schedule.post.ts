@@ -29,6 +29,9 @@ export default defineEventHandler(async (event) => {
             if(ids.length < GAMES_PER_DAY) {
                 editAnyway = true
             }
+        } else {
+            // no schedule data at all yet!
+            editAnyway = true
         }
     }
 
