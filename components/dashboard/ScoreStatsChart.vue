@@ -1,9 +1,11 @@
 <script setup lang="ts">
-const { data, pending, error } = useFetch("/api/scores")
+import type {AvgScoresContainer} from "~/types/models";
+
+const { data, pending, error } = useFetch<AvgScoresContainer>("/api/scores")
 
 let options = reactive({})
 let series = reactive([{}])
-const valid = computed(() => data.value && Object.keys(data.value).length > 0)
+const valid = computed(() => data.value && data.value.dayIds.length > 0)
 
 watch(data, (d) => {
   if(!d) return
