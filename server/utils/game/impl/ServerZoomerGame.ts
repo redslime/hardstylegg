@@ -6,7 +6,7 @@ import type {Artist, Festival, ZoomerImageData, ZoomerType} from "~/types/zoomer
 import {GAME_METAS} from "#shared/games";
 import prisma from "~/lib/prisma";
 import {join} from "pathe";
-import {writeFile} from "fs/promises";
+import {mkdir, writeFile} from "fs/promises";
 import {decodeBase64Image, validateWebPBuffer} from "~/utils/image";
 import {unlink} from "node:fs/promises";
 
@@ -103,6 +103,7 @@ export class ServerZoomerGame extends ServerGameDef<ZoomerContainer> {
         const buffer = decodeBase64Image(img64)
 
         validateWebPBuffer(buffer)
+        await mkdir(join(process.cwd(), 'data', 'zoomer'), { recursive: true })
         await writeFile(path, buffer)
         rest.imgName = imgName
 

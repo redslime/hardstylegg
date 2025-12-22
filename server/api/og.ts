@@ -8,8 +8,9 @@ import type {EventHandlerRequest, H3Event} from "h3";
 import prisma from "~/lib/prisma";
 import {findGameById} from "~/server/utils/game/serverGameRegistry";
 
-const interRegular = readFileSync(join(process.cwd(), '.output', 'public', 'fonts', 'Regular.ttf'))
-const interBold = readFileSync(join(process.cwd(), '.output', 'public', 'fonts', 'Bold.ttf'))
+const config = useRuntimeConfig()
+const interRegular = readFileSync(config.public.isDev ? join(process.cwd(), 'public', 'fonts', 'Regular.ttf') : join(process.cwd(), '.output', 'public', 'fonts', 'Regular.ttf'))
+const interBold = readFileSync(config.public.isDev ? join(process.cwd(), 'public', 'fonts', 'Bold.ttf') : join(process.cwd(), '.output', 'public', 'fonts', 'Bold.ttf'))
 
 function hexToBits(hex: string, length: number): string {
     return parseInt(hex, 16).toString(2).padStart(length, "0");

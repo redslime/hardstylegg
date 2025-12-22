@@ -7,7 +7,7 @@ import {join} from "pathe";
 import {unlink} from "node:fs/promises";
 import type {ReportItem} from "~/types/models";
 import {decodeBase64Image, validateWebPBuffer} from "~/utils/image";
-import {writeFile} from "fs/promises";
+import {writeFile, mkdir} from "fs/promises";
 
 export class ServerArtworkGame extends ServerGameDef<ArtworkContainer> {
 
@@ -58,6 +58,7 @@ export class ServerArtworkGame extends ServerGameDef<ArtworkContainer> {
         const buffer = decodeBase64Image(instance.img64)
 
         validateWebPBuffer(buffer)
+        await mkdir(join(process.cwd(), 'data', 'artwork'), { recursive: true })
         await writeFile(path, buffer)
         instance.img64 = undefined
         instance.imgName = imgName

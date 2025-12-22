@@ -1,5 +1,6 @@
 import {writeFile} from "node:fs/promises";
 import {join} from "pathe";
+import {mkdir} from "fs/promises";
 
 function isMp3File(buffer: Buffer | Uint8Array): boolean {
     const mp3Signature = [0x49, 0x44, 0x33]
@@ -30,6 +31,7 @@ export default defineEventHandler(async (event) => {
     const fileName = crypto.randomUUID()
     const uploadPath = join(process.cwd(), 'data', 'heardle', fileName + '.mp3')
 
+    await mkdir(join(process.cwd(), 'data', 'heardle'), { recursive: true })
     await writeFile(uploadPath, file.data)
     console.log("User " + user.name + " uploaded file " + fileName + ".mp3 for Heardle")
 
