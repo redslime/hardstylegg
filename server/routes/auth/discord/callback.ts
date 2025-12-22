@@ -1,5 +1,6 @@
 import {defineEventHandler, getCookie, getQuery, setCookie} from 'h3'
 import prisma from "~/lib/prisma";
+import {consumeDiscordToken} from "~/server/utils/loginTokenManager";
 
 export default defineEventHandler(async (event) => {
     const config = useRuntimeConfig()
@@ -64,24 +65,39 @@ export default defineEventHandler(async (event) => {
         return errorRedirect('Failed to fetch user info')
     }
 
-    const userData = await prisma.user.findUnique({
-        where: {
-            discord_id: userInfo.id
-        }
-    })
+    // Check if this is an initial-login token
+    const newUserData = await consumeDiscordToken(returnedState, userInfo.id, userInfo.global_name)
 
-    if(userData) {
+    if(newUserData) {
         await setUserSession(event, {
             user: {
-                id: userData.id,
-                name: userData.name,
-                admin: userData.admin,
+                id: newUserData.id,
+                name: newUserData.name,
+                admin: newUserData.admin,
                 discordId: userInfo.id,
                 avatar: userInfo.avatar
             }
         })
     } else {
-        return errorRedirect('You are not an admin or editor')
+        const userData = await prisma.user.findUnique({
+            where: {
+                discord_id: userInfo.id
+            }
+        })
+
+        if(userData) {
+            await setUserSession(event, {
+                user: {
+                    id: userData.id,
+                    name: userData.name,
+                    admin: userData.admin,
+                    discordId: userInfo.id,
+                    avatar: userInfo.avatar
+                }
+            })
+        } else {
+            return errorRedirect('You are not an admin or editor')
+        }
     }
 
     // Clear the temporary state cookie

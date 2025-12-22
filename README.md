@@ -80,10 +80,6 @@ npm run generate
 ```shell
 npm run migrate-prisma
 ```
-7. Seed database
-```shell
-npm run seed-prisma
-```
 8. Run server
 ```shell
 npm run dev
