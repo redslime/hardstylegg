@@ -1,0 +1,11 @@
+services:
+  db:
+    ports:
+      - "3306:3306"
+    restart: unless-stopped
+
+  # Doesn't actually run in Docker but your IDE! This is required to satisfy the app definition.
+  app:
+    image: hello-world
+    restart: no
+    depends_on: []

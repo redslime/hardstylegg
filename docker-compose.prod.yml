@@ -1,0 +1,19 @@
+services:
+  db:
+    restart: always
+
+  app:
+    container_name: hardstylegg
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: always
+    command: sh -c "npx prisma migrate deploy && node .output/server/index.mjs"
+    env_file:
+      - .env
+    volumes:
+      - app-data:/app/data
+    ports:
+      - "80:80"
+    environment:
+      NODE_ENV: production
