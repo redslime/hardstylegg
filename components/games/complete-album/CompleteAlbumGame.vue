@@ -82,7 +82,7 @@ const validateGuess = (item: CompleteAlbumItem) => {
   </div>
 
   <div class="mt-4 text-center" v-if="finished && props.container.album && currentIndex === props.position">
-    <SpotifyButton :track="props.container.album" :isAlbum="true" />
+    <TrackListenButton :track="props.container.album" :isAlbum="true" />
   </div>
 </template>
 

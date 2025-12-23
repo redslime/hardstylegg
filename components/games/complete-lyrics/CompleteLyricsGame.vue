@@ -111,7 +111,7 @@ watch(answers, (newAnswers) => {
     </div>
 
     <div class="mt-4" v-if="finished && currentIndex === props.position">
-      <SpotifyButton :track="props.container?.track" />
+      <TrackListenButton :track="props.container?.track" />
     </div>
   </div>
 </template>

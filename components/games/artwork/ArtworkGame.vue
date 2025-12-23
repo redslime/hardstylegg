@@ -10,7 +10,7 @@ export default {
 </script>
 <script setup lang="ts">
 import {GameState, type ShallowTrack, type Track} from "~/types/models";
-import SpotifyButton from "~/components/SpotifyButton.vue";
+import TrackListenButton from "~/components/TrackListenButton.vue";
 import {countAttempt} from "~/utils/game";
 
 const { $gameRegistry } = useNuxtApp();
@@ -67,7 +67,7 @@ async function validate(selected: ShallowTrack, flashError: () => void, flashSuc
         {{ track.artists }} - {{ track.title }}
       </p>
       <div class="mt-4 text-center" v-if="currentIndex === props.position">
-        <SpotifyButton :track="track" />
+        <TrackListenButton :track="track" />
       </div>
     </div>
     <div class="flex w-full justify-center items-center" v-else>

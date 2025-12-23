@@ -15,7 +15,7 @@ import {Howl} from 'howler'
 import PlayIcon from "~/components/icons/PlayIcon.vue";
 import {GameState, type ShallowTrack, type Track} from "~/types/models";
 import {getName} from "~/utils/tracks";
-import SpotifyButton from "~/components/SpotifyButton.vue";
+import TrackListenButton from "~/components/TrackListenButton.vue";
 import ForwardIcon from "~/components/icons/ForwardIcon.vue";
 import {countAttempt} from "~/utils/game";
 
@@ -255,7 +255,7 @@ function unlockIOSAudio() {
         {{ track.artists }} - {{ track.title }}
       </p>
       <div class="absolute bottom-4 right-4" v-if="currentIndex === props.position">
-        <SpotifyButton :track="track" />
+        <TrackListenButton :track="track" />
       </div>
     </div>
   </div>
