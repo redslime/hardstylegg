@@ -72,11 +72,7 @@ function isWrong(item: OrderItem, index: number) {
 </script>
 
 <template>
-  <GameTitle :gameDef="gameDef" :container="props.container">
-    <template #subtitle>
-      <div class="text-center text-base mb-8 text-base-content/50">(Oldest to newest)</div>
-    </template>
-  </GameTitle>
+  <GameTitle :gameDef="gameDef" :container="props.container" />
 
   <div class="max-w-5xl mx-auto">
     <Draggable
