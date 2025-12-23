@@ -56,8 +56,10 @@ onUnmounted(() => clear())
         <div class="border-secondary border-1 w-fit py-3 px-10 rounded-md bg-black/10 shadow-lg mb-10">
           <h2 class="text-2xl font-medium">Yesterday's challenge</h2>
           <div v-if="yesterday">
-            <h4 class="text-md mb-2">{{ ydayFriendly }}</h4>
-            <div class="flex flex-wrap gap-2 justify-center">
+            <h4 class="text-md">{{ ydayFriendly }}</h4>
+            <h4 class="text-md text-secondary font-medium" v-if="yesterday.theme">{{ yesterday.theme }}</h4>
+
+            <div class="flex flex-wrap gap-2 justify-center mt-2">
               <GameIconRow :games="yesterday.data" :getState="_ => GameState.UPCOMING" :iconSize="6" />
             </div>
             <button class="btn btn-primary btn-md mt-2" @click="play(yesterday.dayId)">Play</button>
@@ -72,7 +74,7 @@ onUnmounted(() => clear())
           <p class="text-base-content/70">Click to play</p>
           <div class="flex flex-col gap-4 mt-5">
             <div v-for="game in archiveGames" :key="game.dayId">
-              <ArchiveGamePreview :dayId="game.dayId" :games="game.data" @click="play(game.dayId)" />
+              <ArchiveGamePreview :container="game" @click="play(game.dayId)" />
             </div>
           </div>
 

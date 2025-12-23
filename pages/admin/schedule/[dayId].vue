@@ -118,6 +118,7 @@ watchOnce(packedGameData, (data) => {
   <div class="flex items-center gap-2 text-4xl font-bold">
     <span class="text-primary"><CalendarDaysIcon class="size-8" /></span>
     Schedule for {{ friendly }}
+    <span class="font-medium" v-if="packedGameData?.theme">({{ packedGameData.theme }})</span>
   </div>
 
   <DashboardGameLoadingSpinner :pending="pending" :error="error" />

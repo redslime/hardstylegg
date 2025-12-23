@@ -19,6 +19,11 @@ const isUpcoming = computed(() => day.day > schedule.todayId);
       <div class="badge badge-sm badge-info" v-else-if="isPlaying">Playing</div>
       <div class="badge badge-sm badge-error" v-else>Not ready</div>
     </template>
+
+    <div class="text-xl font-medium text-secondary mb-2" v-if="day.theme">
+      {{ day.theme }}
+    </div>
+
     <div class="flex gap-2">
       <GameIconRow :gameIds="day.typeIds" :style="'bg-black/50'" />
     </div>

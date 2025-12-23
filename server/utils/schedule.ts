@@ -38,29 +38,16 @@ export async function getPackedDayData(): Promise<PackedDayData> {
     }
 }
 
-export async function getTypeIdsForDay(dayId: number): Promise<number[]> {
+export async function getDayData(dayId: number): Promise<{ typeIds: number[], gameIds: number[], theme?: string }> {
     if(dayId === packedCache?.dayId) {
-        return packedCache?.typeIds ?? []
-    }
+        const typeIds = packedCache?.typeIds ?? []
+        const gameIds = packedCache?.data.map(i => i.id) ?? []
+        const theme = packedCache?.theme
 
-    const typeIds = await prisma.day_schedule.findUnique({
-        where: {
-            day: dayId
-        }
-    })
-
-    if(typeIds) {
-        return JSON.parse(typeIds.type_ids) as number[]
-    }
-
-    return []
-}
-
-export async function getIdsForDay(dayId: number): Promise<{ typeIds: number[], gameIds: number[] }> {
-    if(dayId === packedCache?.dayId) {
-        return {
-            typeIds: packedCache?.typeIds ?? [],
-            gameIds: packedCache?.data.map(i => i.id) ?? []
+        if(theme) {
+            return { typeIds, gameIds, theme }
+        } else {
+            return { typeIds, gameIds }
         }
     }
 
@@ -73,7 +60,13 @@ export async function getIdsForDay(dayId: number): Promise<{ typeIds: number[], 
     if(schedule) {
         const typeIds = JSON.parse(schedule.type_ids) as number[]
         const gameIds = JSON.parse(schedule.game_ids) as number[]
-        return { typeIds, gameIds }
+        const theme = schedule.theme
+
+        if(theme) {
+            return { typeIds, gameIds, theme }
+        } else {
+            return { typeIds, gameIds }
+        }
     }
 
     return {

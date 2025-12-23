@@ -1,7 +1,7 @@
 import satori from 'satori';
 import {html} from 'satori-html';
 import sharp from 'sharp';
-import {getFriendlyName, getIdsForDay, getTypeIdsForDay} from "~/server/utils/schedule";
+import {getDayData, getFriendlyName} from "~/server/utils/schedule";
 import {readFileSync} from "node:fs";
 import {join} from "pathe";
 import type {EventHandlerRequest, H3Event} from "h3";
@@ -48,19 +48,20 @@ async function buildSvg(markup: any, event: H3Event<EventHandlerRequest>) {
 async function replyLegacyString(resultsQuery: string, event: H3Event<EventHandlerRequest>) {
     const parts = resultsQuery.split(';').map(p => p.trim())
     const dayId = parseInt(parts[0] ?? "1")
+    const ids = await getDayData(dayId)
+    const theme = ids.theme
     const dayFriendly = getFriendlyName(dayId)
     const hexScore = parts[1] ?? "0"
-    const types = await getTypeIdsForDay(dayId)
-    const resultString = hexToBits(hexScore, types.length);
+    const resultString = hexToBits(hexScore, ids.typeIds.length);
 
     // Parse results
     const results: (boolean | undefined)[] = [...resultString].map(c => c === '1' ? true : c === '0' ? false : undefined)
 
     // Fetch today's data
-    const successes = Math.min(types.length, results.filter(r => r).length);
+    const successes = Math.min(ids.typeIds.length, results.filter(r => r).length);
 
     // Generate icon elements
-    const iconElements = types.map((type, index) => {
+    const iconElements = ids.typeIds.map((type, index) => {
         const gameDef = findGameById(type)!!
         const iconSvg = gameDef.getPreviewIcon()
         const exists = results.length > index;
@@ -94,14 +95,23 @@ async function replyLegacyString(resultsQuery: string, event: H3Event<EventHandl
         <div style="display: flex; width: 100%; justify-content: space-between; align-items: baseline;">
           <div style="font-size: 32px; font-weight: bold;  color: #ffffff;">
             hardstyle.gg
-          </div> 
-          <div style="font-size: 24px; color: #9ca3af;">
-            ${dayFriendly}
           </div>
-          <div style="font-size: 24px; color: #9ca3af;">
-            ${successes}/${types.length}
-          </div>
+          ` +
+            (theme !== undefined ?
+                `<div style="display: flex; justify-content: center;">
+                  <div style="font-size: 24px; color: #7975ef;">
+                    ${theme}
+                  </div>
+                </div>` :
+                `<div style="font-size: 24px; color: #9ca3af;">
+                    ${dayFriendly}
+                  </div>
+                  <div style="font-size: 24px; color: #9ca3af;">
+                    ${successes}/${ids.typeIds.length}
+                  </div>`)
+            + `
         </div>
+        
         <div style="display: flex; justify-content: center; gap: 16px;">
           ${iconElements}
         </div>
@@ -124,8 +134,9 @@ async function replyCode(code: string, event: H3Event<EventHandlerRequest>) {
     })
 
     if(report) {
-        const ids = await getIdsForDay(report.dayId)
+        const ids = await getDayData(report.dayId)
         const dayFriendly = getFriendlyName(report.dayId)
+        const theme = ids.theme
 
         // Generate icon elements
         const iconElements = await Promise.all(ids.typeIds.map(async (typeId, index): Promise<string> => {
@@ -169,13 +180,21 @@ async function replyCode(code: string, event: H3Event<EventHandlerRequest>) {
                 <div style="display: flex; width: 100%; justify-content: space-between; align-items: baseline;">
                   <div style="font-size: 32px; font-weight: bold;  color: #ffffff;">
                     hardstyle.gg
-                  </div> 
-                  <div style="font-size: 24px; color: #9ca3af;">
+                  </div>
+                ` +
+                (theme !== undefined ?
+                `<div style="display: flex; justify-content: center;">
+                  <div style="font-size: 24px; color: #7975ef;">
+                    ${theme}
+                  </div>
+                </div>` :
+                `<div style="font-size: 24px; color: #9ca3af;">
                     ${dayFriendly}
                   </div>
                   <div style="font-size: 24px; color: #9ca3af;">
-                    ${report.successes}/${ids.typeIds.length}
-                  </div>
+                    ${successes}/${ids.typeIds.length}
+                  </div>`)
+                + `
                 </div>
                 <div style="display: flex; justify-content: center; gap: 16px;">
                   ${iconString}

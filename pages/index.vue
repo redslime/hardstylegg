@@ -59,8 +59,11 @@ useOnce(() => {
     <div class="hero-content flex flex-col text-center">
       <div class="max-w-lg">
         <h1 class="text-3xl md:text-5xl font-bold">Daily challenge</h1>
-        <h2 v-if="gameData && gameData.theme" class="text-xl md:text-2xl mt-1 text-secondary font-medium">{{ gameData.theme }}</h2>
-        <h4 class="text-xl mt-2" v-if="gameData">{{ gameData.dayFriendly }}</h4>
+        <h4 class="text-xl mt-2" v-if="gameData">
+          <span v-if="gameData && gameData.theme" class="text-xl md:text-2xl mt-1 text-secondary font-medium">{{ gameData.theme }}</span>
+          <span v-if="gameData && gameData.theme"> - </span>
+          {{ gameData.dayFriendly }}
+        </h4>
       </div>
 
       <template v-if="pending">
@@ -105,7 +108,11 @@ useOnce(() => {
           <div class="border-secondary border-1 w-fit py-3 px-10 rounded-md bg-black/10 shadow-lg">
             <h2 class="text-xl md:text-2xl font-medium">Yesterday's challenge</h2>
             <div v-if="gameDataPast">
-              <h4 class="text-md mb-2">{{ gameDataPast.dayFriendly }}</h4>
+              <h4 class="text-md mb-2">
+                <span v-if="gameDataPast.theme" class="text-secondary font-medium">{{ gameDataPast.theme }}</span>
+                <span v-if="gameDataPast.theme"> - </span>
+                {{ gameDataPast.dayFriendly }}
+              </h4>
               <div class="flex flex-wrap gap-2 justify-center">
                 <GameIconRow :games="gameDataPast.data" :getState="_ => GameState.UPCOMING" :iconSize="6" />
               </div>

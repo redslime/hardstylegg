@@ -9,14 +9,14 @@ definePageMeta({
   middleware: ['authenticated'],
 })
 
-const { $gameRegistry } = useNuxtApp();
 const { user } = await useUserSession()
 const dashboard = await getDashboardData()
 const schedule = dashboard.schedule
+const todayData = schedule.days.find(d => d.day === schedule.todayId)
 const friendly = await getFriendlyName(schedule.todayId, "LLLL d")
 const timesPlayed = dashboard.reports.length
 const completionRate = Math.round((dashboard.reports.filter(r => r.completed).length / timesPlayed) * 100)
-const gameCount = schedule.days.find(d => d.day === schedule.todayId)?.gameIds.length ?? 0
+const gameCount = todayData?.gameIds.length ?? 0
 const tomorrowSchedule = schedule.days.find(d => d.day === schedule.todayId + 1)
 const tomorrowReady = tomorrowSchedule && tomorrowSchedule.gameIds.length > 0
 const daysAhead = schedule.days.filter(d => d.day > schedule.todayId).filter(d => d.gameIds.length > 0).length
@@ -43,7 +43,10 @@ function getTypeIds(day: number) {
 <template>
   <div class="flex flex-col gap-5">
     <div class="bg-primary text-primary-content p-5 rounded-md">
-      <h1 class="text-5xl font-bold mb-5">{{ friendly }}</h1>
+      <h1 class="text-5xl font-bold mb-5">
+        {{ friendly }}
+        <span class="font-medium" v-if="todayData?.theme">({{ todayData.theme }})</span>
+      </h1>
 
       <div class="flex p-2 divide-x-2 divide-black/50 divide-dashed">
         <div class="flex flex-col p-3 gap-2 items-center">
