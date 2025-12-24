@@ -192,7 +192,7 @@ async function replyCode(code: string, event: H3Event<EventHandlerRequest>) {
                     ${dayFriendly}
                   </div>
                   <div style="font-size: 24px; color: #9ca3af;">
-                    ${successes}/${ids.typeIds.length}
+                    ${report.successes}/${ids.typeIds.length}
                   </div>`)
                 + `
                 </div>
