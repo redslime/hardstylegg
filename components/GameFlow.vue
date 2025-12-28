@@ -26,7 +26,7 @@ import {getTracks} from "~/utils/tracks";
 import {useLocalStorage} from "@vueuse/core";
 import QuestionMarkCircleIcon from "~/components/icons/QuestionMarkCircleIcon.vue";
 import type {ClientGameDef} from "~/utils/game/ClientGameDef";
-import FireIcon from "~/components/icons/FireIcon.vue";
+import ContextBox from "~/components/ContextBox.vue";
 
 const { $gameRegistry } = useNuxtApp();
 const props = defineProps({
@@ -270,7 +270,7 @@ onMounted(() => {
       <GameIconRow :games="gameData" :outlineIndex="currentIndex" :click="index => currentIndex = index" />
     </div>
 
-    <div class="px-5" id="state-summary">
+    <div class="px-5 flex flex-col items-center" id="state-summary">
 
     </div>
   </div>
@@ -298,6 +298,8 @@ onMounted(() => {
     <KeepAlive>
       <component v-if="!summary || (summary && details)" :is="currentGameComp.gameComponent" :key="currentIndex" v-bind="currentGameData.props" @onFinish="listener" />
     </KeepAlive>
+    <ContextBox :container="currentGameData.props.container"
+                v-if="(!summary || (summary && details)) && (currentState == GameState.FAILED || currentState == GameState.SUCCEEDED)" />
   </Teleport>
 
 </template>

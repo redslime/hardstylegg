@@ -3,6 +3,7 @@ import {GameState} from "~/types/models";
 import {shuffleArray} from "~/utils/utils";
 import type {QuizAnswer, QuizContainer} from "~/types/gameModels";
 import {countOption} from "~/utils/game";
+import LightBulbIcon from "~/components/icons/LightBulbIcon.vue";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.QuizDef
@@ -56,7 +57,13 @@ const click = (answer: QuizAnswer) => {
                   'text-success-content bg-success ring-0': answered && answer.correct,
                   'text-error-content bg-error ring-0': answered && !answer.correct}"
         @click="click(answer)">
-      {{ answer.text }}
+      <div class="flex flex-col text-center">
+        <div>{{ answer.text }}</div>
+
+        <div class="text-sm font-normal" v-if="answered && answer.context">
+          {{ answer.context }}
+        </div>
+      </div>
     </div>
   </div>
 </template>

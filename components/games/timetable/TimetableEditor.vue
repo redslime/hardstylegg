@@ -142,6 +142,8 @@ export default {
             </div>
           </div>
         </div>
+
+        <ContextField v-model:input="editing.context" />
       </template>
     </DashboardGameEditor>
   </div>

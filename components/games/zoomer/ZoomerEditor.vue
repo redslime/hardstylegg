@@ -64,6 +64,7 @@ watch(ready, () => {
           <ZoomerTypeBadge v-if="editing!!.goal" :type="editing!!.goal" />
           <div class="mt-5"></div>
           <ZoomerCropper v-if="editing!!.goal" v-model="cropResult" />
+          <ContextField v-if="editing!!.goal" v-model:input="editing!!.context" />
         </template>
         <template v-else>
           <div role="alert" class="alert alert-warning">

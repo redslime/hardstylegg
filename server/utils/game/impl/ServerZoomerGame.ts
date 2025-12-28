@@ -69,7 +69,8 @@ export class ServerZoomerGame extends ServerGameDef<ZoomerContainer> {
         created_by: number
         title: string
         goal: string
-        data: string
+        data: string,
+        context: string | null
     }): ZoomerContainer {
         return <ZoomerContainer>{
             id: rec!!.id,
@@ -77,6 +78,7 @@ export class ServerZoomerGame extends ServerGameDef<ZoomerContainer> {
             title: rec!!.title,
             goal: this.serializeType(rec!!.goal),
             data: JSON.parse(rec!!.data) as ZoomerImageData,
+            context: rec!!.context
         }
     }
 
@@ -113,6 +115,7 @@ export class ServerZoomerGame extends ServerGameDef<ZoomerContainer> {
                 title: instance.title,
                 goal: this.deserializeType(instance.goal),
                 data: JSON.stringify(rest),
+                context: instance.context
             }
         })
 
@@ -121,7 +124,8 @@ export class ServerZoomerGame extends ServerGameDef<ZoomerContainer> {
             created_by: created.created_by,
             title: instance.title,
             goal: instance.goal,
-            data: rest
+            data: rest,
+            context: instance.context
         }
     }
 
@@ -132,6 +136,7 @@ export class ServerZoomerGame extends ServerGameDef<ZoomerContainer> {
                 title: instance.title,
                 goal: this.deserializeType(instance.goal),
                 data: JSON.stringify(instance.data),
+                context: instance.context
             }
         })
 
@@ -140,7 +145,8 @@ export class ServerZoomerGame extends ServerGameDef<ZoomerContainer> {
             created_by: updated.created_by,
             title: updated.title,
             goal: instance.goal,
-            data: instance.data
+            data: instance.data,
+            context: instance.context
         }
     }
 

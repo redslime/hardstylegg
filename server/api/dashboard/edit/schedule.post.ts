@@ -1,7 +1,7 @@
 import {defineEventHandler, readBody} from "h3";
 import type {ScheduleDay} from "~/types/models";
 import prisma from "~/lib/prisma";
-import {getDayIdToday} from "~/server/utils/schedule";
+import {getDayIdToday, refreshGameData} from "~/server/utils/schedule";
 import {GAMES_PER_DAY} from "~/utils/dashboard";
 
 export default defineEventHandler(async (event) => {
@@ -37,7 +37,7 @@ export default defineEventHandler(async (event) => {
 
     if(schedule.day > getDayIdToday() || editAnyway) {
         // only allow updating future entries
-        return await prisma.day_schedule.upsert({
+        const fetched = await prisma.day_schedule.upsert({
             where: {
                 day: schedule.day
             },
@@ -51,6 +51,13 @@ export default defineEventHandler(async (event) => {
                 game_ids: JSON.stringify(schedule.gameIds)
             }
         })
+
+        if(editAnyway) {
+            // todays schedule was edited, make sure we refresh the cache
+            await refreshGameData()
+        }
+
+        return fetched
     } else {
         return createError({
             statusCode: 400,

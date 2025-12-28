@@ -16,11 +16,13 @@ export class ServerMapGame extends ServerGameDef<MapContainer> {
 
     override async fetchInstance(gameId: number): Promise<MapContainer> {
         const parent = await prisma.game_map.findUnique({ where: { id: gameId } })
+
         return <MapContainer>{
             id: parent!!.id,
             created_by: parent!!.created_by,
             title: parent!!.title,
             goal: parent!!.goal,
+            context: parent!!.context
         }
     }
 
@@ -29,7 +31,8 @@ export class ServerMapGame extends ServerGameDef<MapContainer> {
             data: {
                 title: instance.title,
                 created_by: instance.created_by!!,
-                goal: instance.goal
+                goal: instance.goal,
+                context: instance.context
             }
         })
     }
@@ -39,7 +42,8 @@ export class ServerMapGame extends ServerGameDef<MapContainer> {
             where: { id: instance.id },
             data: {
                 title: instance.title,
-                goal: instance.goal
+                goal: instance.goal,
+                context: instance.context
             }
         })
     }

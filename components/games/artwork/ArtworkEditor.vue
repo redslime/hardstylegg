@@ -92,6 +92,8 @@ function clearUpload() {
             <button class="btn btn-warning btn-soft" @click="clearUpload">Reset artwork</button>
           </div>
         </div>
+
+        <ContextField v-model:input="editing.context" />
       </template>
     </DashboardGameEditor>
   </div>

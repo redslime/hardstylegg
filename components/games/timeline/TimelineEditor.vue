@@ -35,6 +35,8 @@ watchOnce(data, () => instances.value = data.value)
       <template #editBody>
         <input class="input validator" type="number" min="2000" max="2025" placeholder="Answer option"
                required v-model="editing!!.goal" />
+
+        <ContextField v-model:input="editing!!.context" />
       </template>
     </DashboardGameEditor>
   </div>

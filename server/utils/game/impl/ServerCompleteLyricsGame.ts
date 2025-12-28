@@ -34,11 +34,13 @@ export class ServerCompleteLyricsGame extends ServerGameDef<CompleteLyricsContai
     override async fetchInstance(gameId: number): Promise<CompleteLyricsContainer> {
         const parent = await prisma.game_complete_lyrics.findUnique({ where: { id: gameId } })
         const track = await prisma.track.findUnique({ where: { sid: parent!!.track_id } })
+
         return <CompleteLyricsContainer>{
             id: parent!!.id,
             created_by: parent!!.created_by,
             text: parent!!.text,
-            track: track
+            track: track,
+            context: parent!!.context
         }
     }
 
@@ -47,12 +49,14 @@ export class ServerCompleteLyricsGame extends ServerGameDef<CompleteLyricsContai
             data: {
                 created_by: instance.created_by!!,
                 text: instance.text,
-                track_id: instance.track.sid
+                track_id: instance.track.sid,
+                context: instance.context
             }
         })
         const track = await prisma.track.findUnique({
             where: { sid: instance.track.sid }
         })
+
         return <CompleteLyricsContainer>{
             ...rest,
             track
@@ -64,12 +68,14 @@ export class ServerCompleteLyricsGame extends ServerGameDef<CompleteLyricsContai
             where: { id: instance.id },
             data: {
                 text: instance.text,
-                track_id: instance.track.sid
+                track_id: instance.track.sid,
+                context: instance.context
             }
         })
         const track = await prisma.track.findUnique({
             where: { sid: instance.track.sid }
         })
+
         return <CompleteLyricsContainer> {
             ...rest,
             track

@@ -23,6 +23,7 @@ export interface CompleteAlbumItem {
     hidden: boolean
     guess?: string
     correct?: boolean | null
+    context: string | null
 }
 
 export interface CompleteLyricsContainer extends EditorContainer {
@@ -55,6 +56,7 @@ export interface OrderItem {
     parent_id?: number
     index: number
     track: Track
+    context: string | null
 }
 
 export interface QuizContainer extends EditorContainer {
@@ -88,6 +90,7 @@ export interface TimetableItem {
     hidden: boolean
     guess?: string
     correct?: boolean | null
+    context: string | null
 }
 
 export interface MapContainer extends EditorContainer {

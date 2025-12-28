@@ -8,6 +8,7 @@ import {getDashboardData, getScheduleForGame} from "~/utils/dashboard";
 import PlayIcon from "~/components/icons/PlayIcon.vue";
 import DashboardStateFilterSelector from "~/components/dashboard/DashboardStateFilterSelector.vue";
 import DashboardGameBasicStats from "~/components/dashboard/DashboardGameBasicStats.vue";
+import ContextBox from "~/components/ContextBox.vue";
 
 const instances = defineModel<T[] | undefined>('instances', {
   required: true,
@@ -201,7 +202,7 @@ watch(sortMode, () => {
   <template v-if="editing != null">
     <div class="flex flex-wrap gap-5">
       <div class="flex flex-col gap-3">
-        <div class="bg-base-200 w-fit p-3 rounded-lg">
+        <div class="bg-base-200 w-fit min-w-2xl p-3 rounded-lg">
           <template v-if="!editingIsPast">
             <div class="font-bold mb-4">
               <slot name="editTitle">
@@ -280,9 +281,12 @@ watch(sortMode, () => {
       <div class="badge badge-primary badge-xs" v-if="previewState === GameState.PLAYING">State: Playing</div>
       <div class="badge badge-success badge-xs" v-else-if="previewState === GameState.SUCCEEDED">State: Succeeded</div>
       <div class="badge badge-error badge-xs" v-if="previewState === GameState.FAILED">State: Failed</div>
+
       <div class="flex flex-col items-center">
         <component :is="gameDef.gameComponent" :key="previewCounter" :state="previewState" :position="1" :container="deepCopyReactive(editing)" @onFinish="previewListener" />
+        <ContextBox :container="editing as AnyGameContainer" v-if="previewState !== GameState.PLAYING" />
       </div>
+
       <div class="modal-action">
         <form method="dialog">
           <button class="btn">Close</button>

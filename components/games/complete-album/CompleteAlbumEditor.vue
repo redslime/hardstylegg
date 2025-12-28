@@ -25,7 +25,7 @@ function del(index: number) {
 }
 
 function add() {
-  editing.value!!.items.push({name: "", artist: "", hidden: false})
+  editing.value!!.items.push({name: "", artist: "", hidden: false, context: null})
   editingIndex.value = editing.value!!.items.length - 1
 }
 </script>
@@ -118,6 +118,8 @@ function add() {
           Click on individual tracks to toggle them.
         </p>
         <button class="btn btn-soft btn-primary mt-5" @click="add()">Add track</button>
+
+        <ContextField v-model:input="editing.context" />
       </template>
     </DashboardGameEditor>
   </div>

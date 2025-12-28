@@ -17,11 +17,13 @@ export class ServerTimelineGame extends ServerGameDef<TimelineContainer> {
 
     override async fetchInstance(gameId: number): Promise<TimelineContainer> {
         const parent = await prisma.game_timeline.findUnique({ where: { id: gameId } })
+
         return <TimelineContainer>{
             id: parent!!.id,
             created_by: parent!!.created_by,
             title: parent!!.title,
-            goal: parent!!.goal
+            goal: parent!!.goal,
+            context: parent!!.context
         }
     }
 
@@ -30,7 +32,8 @@ export class ServerTimelineGame extends ServerGameDef<TimelineContainer> {
             data: {
                 title: instance.title,
                 created_by: instance.created_by!!,
-                goal: instance.goal
+                goal: instance.goal,
+                context: instance.context
             }
         })
     }
@@ -40,7 +43,8 @@ export class ServerTimelineGame extends ServerGameDef<TimelineContainer> {
             where: { id: instance.id },
             data: {
                 title: instance.title,
-                goal: instance.goal
+                goal: instance.goal,
+                context: instance.context
             }
         })
     }

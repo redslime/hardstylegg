@@ -54,13 +54,15 @@ export class ServerNameXGame extends ServerGameDef<NameXContainer> {
         const tracks = await prisma.track.findMany({ where: { sid: { in: trackIds } } })
         const trackById = new Map(tracks.map(t => [t.sid, t]))
         const orderedTracks = trackIds.map(id => trackById.get(id)).filter(Boolean) as typeof tracks
+
         return <NameXContainer>{
             id: parent!!.id,
             created_by: parent!!.created_by,
             goal: parent!!.goal,
             title: parent!!.title,
             tracks: parent!!.tracks,
-            items: parent!!.tracks ? orderedTracks : trackIds
+            items: parent!!.tracks ? orderedTracks : trackIds,
+            context: parent!!.context
         }
     }
 
@@ -73,10 +75,12 @@ export class ServerNameXGame extends ServerGameDef<NameXContainer> {
                 title: instance.title,
                 goal: instance.goal,
                 tracks: instance.tracks ?? false,
-                items: array
+                items: array,
+                context: instance.context
             }
         })
         const { items, ...rest } = fetched
+
         return <NameXContainer>{
             ...rest,
             items: instance.items
@@ -92,10 +96,12 @@ export class ServerNameXGame extends ServerGameDef<NameXContainer> {
                 title: instance.title,
                 goal: instance.goal,
                 tracks: instance.tracks ?? false,
-                items: array
+                items: array,
+                context: instance.context
             }
         })
         const { items, ...rest } = fetched
+
         return <NameXContainer>{
             ...rest,
             items: instance.items

@@ -19,13 +19,14 @@ export default defineEventHandler(async (event) => {
             return await game.createInstance(instance)
         } else {
             const dayData = await getPackedDayData()
+            const updated = await game.updateInstance(instance)
 
             if(dayData.typeIds.includes(game.id)) {
                 // updating game that is currently being played, refresh packed game cache
                 refreshGameData().then(() => {})
             }
 
-            return await game.updateInstance(instance)
+            return updated
         }
     }
 })

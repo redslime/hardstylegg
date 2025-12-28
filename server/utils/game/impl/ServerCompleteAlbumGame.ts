@@ -33,7 +33,8 @@ export class ServerCompleteAlbumGame extends ServerGameDef<CompleteAlbumContaine
                 id: i.id,
                 created_by: i.created_by,
                 album: albums.find(a => a.sid === i.album_id),
-                items: items.filter(item => item.parent_id === i.id)
+                items: items.filter(item => item.parent_id === i.id),
+                context: i.context
             }
         })
     }
@@ -42,11 +43,13 @@ export class ServerCompleteAlbumGame extends ServerGameDef<CompleteAlbumContaine
         const parent = await prisma.game_complete_album.findUnique({ where: { id: gameId } })
         const album = await prisma.album.findUnique({ where: { sid: parent!!.album_id ?? "" } })
         const items = await prisma.game_complete_album_item.findMany({ where: { parent_id: gameId } })
+
         return <CompleteAlbumContainer>{
             id: parent!!.id,
             created_by: parent!!.created_by,
             album: album,
-            items: items
+            items: items,
+            context: parent!!.context
         }
     }
 
@@ -55,6 +58,7 @@ export class ServerCompleteAlbumGame extends ServerGameDef<CompleteAlbumContaine
             data: {
                 created_by: instance.created_by!!,
                 album_id: instance.album?.sid,
+                context: instance.context,
                 game_complete_album_item: {
                     create: instance.items.map(item => {
                         return {
@@ -67,8 +71,8 @@ export class ServerCompleteAlbumGame extends ServerGameDef<CompleteAlbumContaine
             },
             include: { game_complete_album_item: true }
         })
-
         const { game_complete_album_item, album_id, ...rest } = fetched
+
         return <CompleteAlbumContainer>{
             ...rest,
             album: instance.album,
@@ -81,6 +85,7 @@ export class ServerCompleteAlbumGame extends ServerGameDef<CompleteAlbumContaine
             where: { id: instance.id },
             data: {
                 album_id: instance.album?.sid,
+                context: instance.context,
                 game_complete_album_item: {
                     deleteMany: {
                         id: { notIn: instance.items.filter((i) => i.id).map((i) => i.id!) },
@@ -90,20 +95,22 @@ export class ServerCompleteAlbumGame extends ServerGameDef<CompleteAlbumContaine
                         create: {
                             name: item.name,
                             artist: item.artist,
-                            hidden: item.hidden
+                            hidden: item.hidden,
+                            context: item.context
                         },
                         update: {
                             name: item.name,
                             artist: item.artist,
-                            hidden: item.hidden
+                            hidden: item.hidden,
+                            context: item.context
                         },
                     }))
                 }
             },
             include: { game_complete_album_item: true }
         })
-
         const { game_complete_album_item, album_id, ...rest } = fetched
+
         return <CompleteAlbumContainer>{
             ...rest,
             album: instance.album,

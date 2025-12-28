@@ -39,12 +39,14 @@ export class ServerHeardleGame extends ServerGameDef<HeardleContainer> {
         const parent = (await prisma.game_heardle.findUnique({ where: { id: gameId } }))
         const flattenDurations: number[] = JSON.parse(parent!!.durations)
         const track = await prisma.track.findUnique({ where: { sid: parent!!.track_id } })
+
         return <HeardleContainer>{
             id: parent!!.id,
             created_by: parent!!.created_by,
             track: track,
             src: parent!!.src,
             durations: flattenDurations,
+            context: parent!!.context
         }
     }
 
@@ -54,10 +56,12 @@ export class ServerHeardleGame extends ServerGameDef<HeardleContainer> {
                 created_by: instance.created_by!!,
                 src: instance.src,
                 durations: JSON.stringify(instance.durations),
-                track_id: instance.track.sid
+                track_id: instance.track.sid,
+                context: instance.context
             }
         })
         const { track_id, durations, ...rest } = fetched
+
         return <HeardleContainer>{
             ...rest,
             durations: JSON.parse(durations) as number[],
@@ -71,10 +75,12 @@ export class ServerHeardleGame extends ServerGameDef<HeardleContainer> {
             data: {
                 src: instance.src,
                 durations: JSON.stringify(instance.durations),
-                track_id: instance.track.sid
+                track_id: instance.track.sid,
+                context: instance.context
             }
         })
         const { track_id, durations, ...rest } = fetched
+
         return <HeardleContainer>{
             ...rest,
             durations: JSON.parse(durations) as number[],

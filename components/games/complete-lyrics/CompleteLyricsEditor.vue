@@ -59,6 +59,11 @@ function toggle(word: string, lineIndex: number) {
   lines[lineIndex] = words.join(' ')
   editing.value!!.text = lines.join('\n')
 }
+
+function reset() {
+  input.value = undefined
+  forceInput.value = false
+}
 </script>
 
 <template>
@@ -69,6 +74,8 @@ function toggle(word: string, lineIndex: number) {
       v-model:instances="instances"
       v-model:editing="editing"
       :gameDef="gameDef"
+      @saved="reset()"
+      @cancelled="reset()"
       >
       <template #previewBody="{ instance, clicked }">
         <CompleteLyricsPreview :instance="instance" @click="clicked()" />
@@ -119,6 +126,8 @@ function toggle(word: string, lineIndex: number) {
           </p>
           <button class="btn btn-soft btn-primary mt-5" @click="forceInput = true; input = editing.text">Edit lyrics</button>
         </div>
+
+        <ContextField v-model:input="editing.context" />
       </template>
     </DashboardGameEditor>
   </div>

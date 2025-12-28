@@ -25,12 +25,14 @@ export class ServerArtworkGame extends ServerGameDef<ArtworkContainer> {
                 }
             }
         })
+
         return instances.map(i => {
             return <ArtworkContainer>{
                 id: i.id,
                 created_by: i.created_by,
                 imgName: i.artwork_blank,
                 track: tracks.find(t => t.sid === i.track_id),
+                context: i.context
             }
         })
     }
@@ -43,7 +45,8 @@ export class ServerArtworkGame extends ServerGameDef<ArtworkContainer> {
             id: parent!!.id,
             created_by: parent!!.created_by,
             track: track,
-            imgName: parent!!.artwork_blank
+            imgName: parent!!.artwork_blank,
+            context: parent!!.context
         }
     }
 
@@ -67,10 +70,12 @@ export class ServerArtworkGame extends ServerGameDef<ArtworkContainer> {
             data: {
                 created_by: instance.created_by!!,
                 track_id: instance.track.sid,
-                artwork_blank: instance.imgName
+                artwork_blank: instance.imgName,
+                context: instance.context
             }
         })
         const { track_id, artwork_blank, ...rest } = fetched
+
         return <ArtworkContainer>{
             ...rest,
             imgName: artwork_blank,
@@ -83,9 +88,11 @@ export class ServerArtworkGame extends ServerGameDef<ArtworkContainer> {
             where: {id: instance.id},
             data: {
                 track_id: instance.track.sid,
+                context: instance.context
             }
         })
         const {track_id, artwork_blank, ...rest} = fetched
+
         return <ArtworkContainer>{
             ...rest,
             track: instance.track

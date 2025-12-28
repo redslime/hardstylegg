@@ -152,6 +152,8 @@ function reset() {
             <InfoIcon class="text-info" />
             The amount of segments corresponds the amount of guesses. Aim for around 5.
           </p>
+
+          <ContextField v-model:input="editing.context" />
         </template>
         <template v-else-if="editing.track">
           <DashboardHeardleCutter :editing="editing" />

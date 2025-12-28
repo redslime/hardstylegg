@@ -133,6 +133,8 @@ watchOnce(data, () => instances.value = data.value)
             <input class="input" type="number" v-model="editing!!.goal" min="1" :max="editing.items.length" placeholder="Guess goal" required />
           </fieldset>
         </div>
+
+        <ContextField v-model:input="editing.context" />
       </template>
     </DashboardGameEditor>
   </div>

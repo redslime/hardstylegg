@@ -39,7 +39,8 @@ export class ServerOrderGame extends ServerGameDef<OrderContainer> {
                 created_by: instance.created_by,
                 title: instance.title,
                 showNames: instance.show_names,
-                items: children
+                items: children,
+                context: instance.context
             }
         })
     }
@@ -55,15 +56,18 @@ export class ServerOrderGame extends ServerGameDef<OrderContainer> {
             return <OrderItem>{
                 parent_id: i.parent_id,
                 index: i.index,
-                track: track
+                track: track,
+                context: i.context
             }
         })
+
         return <OrderContainer>{
             id: parent!!.id,
             created_by: parent!!.created_by,
             title: parent!!.title,
             showNames: parent!!.show_names,
-            items: itemsFat
+            items: itemsFat,
+            context: parent!!.context
         }
     }
 
@@ -73,11 +77,13 @@ export class ServerOrderGame extends ServerGameDef<OrderContainer> {
                 created_by: instance.created_by!!,
                 title: instance.title,
                 show_names: instance.showNames,
+                context: instance.context,
                 game_order_item: {
                     create: instance.items.map(item => {
                         return {
                             index: item.index,
                             track_id: item.track.sid,
+                            context: item.context
                         }
                     })
                 }
@@ -90,7 +96,8 @@ export class ServerOrderGame extends ServerGameDef<OrderContainer> {
             created_by: fetched.created_by,
             title: fetched.title,
             showNames: fetched.show_names,
-            items: instance.items
+            items: instance.items,
+            context: fetched.context
         }
     }
 
@@ -100,6 +107,7 @@ export class ServerOrderGame extends ServerGameDef<OrderContainer> {
             data: {
                 title: instance.title,
                 show_names: instance.showNames,
+                context: instance.context,
                 game_order_item: {
                     deleteMany: {
                         index: { notIn: instance.items.map((i) => i.index!) },
@@ -114,9 +122,11 @@ export class ServerOrderGame extends ServerGameDef<OrderContainer> {
                         create: {
                             index: item.index!,
                             track_id: item.track.sid,
+                            context: item.context
                         },
                         update: {
                             track_id: item.track.sid,
+                            context: item.context
                         },
                     }))
                 }
@@ -129,7 +139,8 @@ export class ServerOrderGame extends ServerGameDef<OrderContainer> {
             created_by: fetched.created_by,
             title: fetched.title,
             showNames: fetched.show_names,
-            items: instance.items
+            items: instance.items,
+            context: fetched.context
         }
     }
 

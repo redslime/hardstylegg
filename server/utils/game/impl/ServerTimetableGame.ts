@@ -29,13 +29,15 @@ export class ServerTimetableGame extends ServerGameDef<TimetableContainer> {
     override async fetchInstance(gameId: number): Promise<TimetableContainer> {
         const parent = await prisma.game_timetable.findUnique({ where: { id: gameId } })
         const items = await prisma.game_timetable_item.findMany({ where: { parent_id: gameId } })
+
         return <TimetableContainer>{
             id: parent!!.id,
             created_by: parent!!.created_by,
             title: parent!!.title,
             color_bg: "#" + parent!!.color_bg,
             color_text: "#" + parent!!.color_text,
-            items: items
+            items: items,
+            context: parent!!.context
         }
     }
 
@@ -46,26 +48,29 @@ export class ServerTimetableGame extends ServerGameDef<TimetableContainer> {
                 title: instance.title,
                 color_bg: instance.color_bg.replace("#", ""),
                 color_text: instance.color_text.replace("#", ""),
+                context: instance.context,
                 game_timetable_item: {
                     create: instance.items.map(item => {
                         return {
                             name: item.name,
                             begin: item.begin,
                             end: item.end,
-                            hidden: item.hidden
+                            hidden: item.hidden,
+                            context: item.context
                         }
                     })
                 }
             },
             include: { game_timetable_item: true }
         })
-
         const { game_timetable_item, color_bg, color_text, ...rest } = fetched
+
         return <TimetableContainer>{
             ...rest,
             color_bg: "#" + color_bg,
             color_text: "#" + color_text,
-            items: game_timetable_item
+            items: game_timetable_item,
+            context: fetched.context
         }
     }
 
@@ -77,6 +82,7 @@ export class ServerTimetableGame extends ServerGameDef<TimetableContainer> {
                 title: instance.title,
                 color_bg: instance.color_bg.replace("#", ""),
                 color_text: instance.color_text.replace("#", ""),
+                context: instance.context,
                 game_timetable_item: {
                     deleteMany: {
                         id: { notIn: instance.items.filter((i) => i.id).map((i) => i.id!) },
@@ -87,26 +93,29 @@ export class ServerTimetableGame extends ServerGameDef<TimetableContainer> {
                             name: item.name,
                             begin: item.begin,
                             end: item.end,
-                            hidden: item.hidden
+                            hidden: item.hidden,
+                            context: item.context
                         },
                         update: {
                             name: item.name,
                             begin: item.begin,
                             end: item.end,
-                            hidden: item.hidden
+                            hidden: item.hidden,
+                            context: item.context
                         }
                     }))
                 }
             },
             include: { game_timetable_item: true }
         })
-
         const { game_timetable_item, color_bg, color_text, ...rest } = fetched
+
         return <TimetableContainer>{
             ...rest,
             color_bg: "#" + color_bg,
             color_text: "#" + color_text,
-            items: game_timetable_item
+            items: game_timetable_item,
+            context: fetched.context
         }
     }
 

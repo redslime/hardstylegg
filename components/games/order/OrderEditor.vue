@@ -94,6 +94,8 @@ function update() {
           <input v-model="editing.showNames" class="checkbox checkbox-success" type="checkbox" checked="checked" />
           Show names
         </label>
+
+        <ContextField v-model:input="editing.context" />
       </template>
     </DashboardGameEditor>
   </div>

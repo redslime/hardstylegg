@@ -27,11 +27,13 @@ export class ServerQuizGame extends ServerGameDef<QuizContainer> {
     override async fetchInstance(gameId: number): Promise<QuizContainer> {
         const parent = await prisma.game_quiz.findUnique({ where: { id: gameId } })
         const items = await prisma.game_quiz_item.findMany({ where: { parent_id: gameId } })
+
         return <QuizContainer>{
             id: parent!!.id,
             created_by: parent!!.created_by,
             title: parent!!.title,
-            items: items
+            items: items,
+            context: parent!!.context
         }
     }
 
@@ -40,11 +42,13 @@ export class ServerQuizGame extends ServerGameDef<QuizContainer> {
             data: {
                 title: instance.title,
                 created_by: instance.created_by!!,
+                context: instance.context,
                 game_quiz_item: {
                     create: instance.items.map(item => {
                         return {
                             text: item.text,
-                            correct: item.correct
+                            correct: item.correct,
+                            context: item.context,
                         }
                     })
                 }
@@ -52,6 +56,7 @@ export class ServerQuizGame extends ServerGameDef<QuizContainer> {
             include: { game_quiz_item: true }
         })
         const { game_quiz_item, ...rest } = fetched
+
         return <QuizContainer>{
             ...rest,
             items: game_quiz_item
@@ -63,6 +68,7 @@ export class ServerQuizGame extends ServerGameDef<QuizContainer> {
             where: { id: instance.id },
             data: {
                 title: instance.title,
+                context: instance.context,
                 game_quiz_item: {
                     // delete all old items not in new list
                     deleteMany: {
@@ -74,18 +80,20 @@ export class ServerQuizGame extends ServerGameDef<QuizContainer> {
                         create: {
                             text: item.text,
                             correct: item.correct,
+                            context: item.context
                         },
                         update: {
                             text: item.text,
                             correct: item.correct,
+                            context: item.context
                         },
                     })),
                 },
             },
             include: { game_quiz_item: true },
         })
-
         const { game_quiz_item, ...rest } = fetched
+
         return <QuizContainer>{
             ...rest,
             items: game_quiz_item

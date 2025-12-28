@@ -57,6 +57,8 @@ watchOnce(data, () => instances.value = data.value)
             <div class="badge md:badge-lg badge-info" v-if="editing.goal">Selected: {{ countryName }}</div>
           </div>
         </CountryMap>
+
+        <ContextField v-model:input="editing.context" />
       </template>
     </DashboardGameEditor>
   </div>

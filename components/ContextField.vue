@@ -1,0 +1,33 @@
+<script setup lang="ts">
+import LightBulbIcon from "~/components/icons/LightBulbIcon.vue";
+
+const input = defineModel<string | null>('input', { required: true })
+const hasInput = computed(() => (input.value?.trim().length ?? 0) > 0)
+const opened = ref<boolean>(hasInput.value)
+const { hasItems } = defineProps({
+  hasItems: { type: Boolean, default: false }
+})
+</script>
+
+<template>
+  <div class="collapse collapse-arrow bg-base-100 border-base-300 border w-5/7 my-5">
+    <input type="checkbox" v-model="opened" />
+    <div class="collapse-title font-semibold after:start-5 after:end-auto pe-4 ps-12 flex gap-1">
+      <LightBulbIcon :class="{'text-info': hasInput, 'text-gray-500': !hasInput}" />
+      Context
+    </div>
+    <div class="collapse-content text-sm">
+      <fieldset class="fieldset">
+        <div v-if="hasItems">
+          This context field is intended for the entire question. You can add contexts for individual items above.
+        </div>
+        <textarea class="textarea w-full" rows="4" wrap="soft" maxlength="1000" v-model="input"></textarea>
+        <div class="label">The context is shown after the game has been played.</div>
+      </fieldset>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+
+</style>
