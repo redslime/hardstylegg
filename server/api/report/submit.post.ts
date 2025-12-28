@@ -30,11 +30,11 @@ export default defineEventHandler(async (event) => {
                 }
             })
         } catch (e: any) {
-            console.error("Error while trying to update report:", e)
+            console.error("Error while trying to update report:", e, report)
             return createError({ statusCode: 500, statusMessage: "Error while trying to update report" })
         }
     } else {
-        console.error("Invalid report data")
+        console.error("Invalid report data", report)
         return createError({ statusCode: 400, statusMessage: "Invalid report data" })
     }
 })
