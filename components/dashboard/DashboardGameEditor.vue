@@ -9,6 +9,7 @@ import PlayIcon from "~/components/icons/PlayIcon.vue";
 import DashboardStateFilterSelector from "~/components/dashboard/DashboardStateFilterSelector.vue";
 import DashboardGameBasicStats from "~/components/dashboard/DashboardGameBasicStats.vue";
 import ContextBox from "~/components/ContextBox.vue";
+import type {AnyGameContainer} from "~/types/gameModels";
 
 const instances = defineModel<T[] | undefined>('instances', {
   required: true,
@@ -222,8 +223,11 @@ watch(sortMode, () => {
           </template>
 
           <template v-else>
-            <GameTitle :gameDef="gameDef" :container="editing" :dashboard="true" />
-            <component :is="gameDef.summaryComponent" :container="editing" :reports="editingGameReports" />
+            <div class="flex flex-col items-center max-w-4xl">
+              <GameTitle :gameDef="gameDef" :container="editing" :dashboard="true" />
+              <component :is="gameDef.summaryComponent" :container="editing" :reports="editingGameReports" />
+              <ContextBox :container="editing as unknown as AnyGameContainer" />
+            </div>
           </template>
         </div>
 
@@ -284,7 +288,7 @@ watch(sortMode, () => {
 
       <div class="flex flex-col items-center">
         <component :is="gameDef.gameComponent" :key="previewCounter" :state="previewState" :position="1" :container="deepCopyReactive(editing)" @onFinish="previewListener" />
-        <ContextBox :container="editing as AnyGameContainer" v-if="previewState !== GameState.PLAYING" />
+        <ContextBox :container="editing as unknown as AnyGameContainer" v-if="previewState !== GameState.PLAYING" />
       </div>
 
       <div class="modal-action">

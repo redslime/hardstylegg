@@ -30,10 +30,18 @@ function getBackground(answer: QuizAnswer): string {
              :style="{
                       background: getBackground(answer)}"
         >
-          {{ answer.text }}
-          <span v-if="reports.length > 0">
-                  &nbsp({{ getAnswerShare(answer.id!!) }}%)
-                </span>
+          <div class="flex flex-col text-center">
+            <div>
+              {{ answer.text }}
+              <span v-if="reports.length > 0">
+                ({{ getAnswerShare(answer.id!!) }}%)
+              </span>
+            </div>
+
+            <div class="text-sm font-normal" v-if="answer.context">
+              {{ answer.context }}
+            </div>
+          </div>
         </div>
       </div>
     </template>
