@@ -65,6 +65,7 @@ export interface QuizContainer extends EditorContainer {
 }
 
 export interface QuizAnswer extends EditorContainer {
+    tempId?: number
     text: string
     correct: boolean
 }

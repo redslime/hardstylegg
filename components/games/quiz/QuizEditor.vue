@@ -11,6 +11,12 @@ const gameDef = $gameRegistry.QuizDef
 const { data, pending, error } = await useAsyncData<QuizContainer[]>(() => gameDef.getAllInstances(), { lazy: true })
 const instances = ref<QuizContainer[] | undefined>()
 const editing = ref<QuizContainer | undefined>()
+const itemCounter = ref<number>(1)
+
+function addOption() {
+  itemCounter.value++
+  editing.value?.items.push({tempId: itemCounter.value, text: '', correct: false, context: null})
+}
 
 watchOnce(data, () => instances.value = data.value)
 </script>
@@ -36,12 +42,12 @@ watchOnce(data, () => instances.value = data.value)
 
       <template #editBody v-if="editing">
         <div class="flex flex-col gap-2">
-          <div v-for="(item, index) in editing.items" :key="index">
+          <div v-for="(item, index) in editing.items" :key="item.tempId">
             <QuizEditorItemLine v-model:item="editing.items[index]!!" @delete="editing.items.splice(index, 1)" />
           </div>
         </div>
 
-        <button v-if="editing.items.length < 10" class="btn btn-soft btn-success mt-4" @click="editing.items.push({text: '', correct: false, context: null})">
+        <button v-if="editing.items.length < 10" class="btn btn-soft btn-success mt-4" @click="addOption()">
           Add answer option
         </button>
 
