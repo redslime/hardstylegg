@@ -92,7 +92,7 @@ watch(debouncedQuery, async (val) => {
         let highlighted = result.track.artists + " - " + result.track.title
         keywords.forEach(keyword => {
           const regex = new RegExp(`(${keyword})`, 'gi')
-          highlighted = highlighted.replace(regex, '<span class=""><b>$1</b></span>')
+          highlighted = highlighted.replace(regex, '<b>$1</b>')
         })
         
         return {
