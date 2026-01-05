@@ -87,6 +87,7 @@ provide("currentIndex", 1)
 
 function cancel() {
   editing.value = undefined
+  window.history.back()
   emit('cancelled')
 }
 
@@ -134,6 +135,9 @@ function onDelete(gameId: number) {
 
 function tryEdit(instance: T) {
   editing.value = deepCopy(instance)
+  console.log(window.scrollY)
+  window.history.pushState({}, "", `?id=${instance.id}`)
+  window.scrollTo({ top: 0 })
 }
 
 async function startPreview() {
@@ -159,6 +163,17 @@ watch(editing, async () => {
 
 watch(sortMode, () => {
   instances.value = instances.value?.sort(instanceSorter.value)
+})
+
+onMounted(() => {
+  const route = useRoute()
+  const focusId: string | undefined = route.query.id as string
+
+  if(focusId) {
+    const intId = parseInt(focusId)
+    editing.value = instances.value?.find(i => i.id === intId)
+    window.scrollTo({ top: 0 })
+  }
 })
 </script>
 

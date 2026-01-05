@@ -6,6 +6,7 @@ import NoSymbolIcon from "~/components/icons/NoSymbolIcon.vue";
 import ArrowPathIcon from "~/components/icons/ArrowPathIcon.vue";
 import PlusIcon from "~/components/icons/PlusIcon.vue";
 import {watchOnce} from "@vueuse/shared";
+import ArrowTopRightOpenIcon from "~/components/icons/ArrowTopRightOpenIcon.vue";
 
 definePageMeta({
   layout: 'dashboard',
@@ -41,6 +42,10 @@ async function openSelect(typeId: number, index: number) {
   selectingIndex.value = index
   await nextTick()
   selectorModal.value?.showModal()
+}
+
+function jumpTo(game: ScheduleEntry) {
+  navigateTo({ path: '/admin/game/' + game.gameDef?.getDashedName(), query: { id: game.gameData.id }})
 }
 
 function selected(typeId: number, ins: any) {
@@ -144,6 +149,17 @@ watchOnce(packedGameData, (data) => {
             <button class="btn btn-secondary btn-outline" @click="openSelect(game.typeId!!, index)">
               <ArrowPathIcon />
               Select other
+            </button>
+            <button class="btn btn-secondary btn-outline" @click="jumpTo(game as ScheduleEntry)">
+              <ArrowTopRightOpenIcon />
+              Jump to
+            </button>
+          </div>
+
+          <div v-else class="absolute z-10 inset-0 backdrop-blur-sm rounded-lg bg-black/50 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+            <button class="btn btn-secondary btn-outline" @click="jumpTo(game as ScheduleEntry)">
+              <ArrowTopRightOpenIcon />
+              Jump to
             </button>
           </div>
         </div>
