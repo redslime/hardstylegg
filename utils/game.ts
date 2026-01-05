@@ -112,13 +112,19 @@ export function startGame(gameEnv: GameEnvironment) {
             return report
         }).then(rep => {
             skippedReports.forEach(r => {
-                const gr = {
-                    typeId: r.currentTypeId,
-                    gameId: r.currentGameId,
-                    success: false
+                const gr = rep.data.find(r => r.typeId === currentTypeId && r.gameId === currentGameId)
+
+                if(gr) {
+                    r.consumer(gr)
+                } else {
+                    const gr = {
+                        typeId: r.currentTypeId,
+                        gameId: r.currentGameId,
+                        success: false
+                    }
+                    r.consumer(gr)
+                    rep.data.push(gr)
                 }
-                r.consumer(gr)
-                rep.data.push(gr)
             })
             skippedReports.length = 0
         })
