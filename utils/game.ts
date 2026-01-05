@@ -196,6 +196,11 @@ export function reportResult(consumer: (report: GameReport) => void) {
 export function sendReport() {
     if(report === null) return
 
+    if(import.meta.env.DEV) {
+        debug("Not sending report in dev env: ", report)
+        return
+    }
+
     $fetch("/api/report/submit", {
         method: "POST",
         body: report

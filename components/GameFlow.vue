@@ -109,9 +109,9 @@ function next() {
     currentIndex.value = 0
 
     updateState(null, null)
+    sendReport()
 
     if(props.cookie) {
-      sendReport()
       advanceStreak()
 
       const data = getCookieMemory()
