@@ -45,6 +45,7 @@ interface Guess {
 
 const guessStage = ref(0)
 const isPlaying = ref(false)
+const trackInput = ref<HTMLInputElement | undefined>()
 const guesses = ref<Guess[]>([])
 const finished = computed(() => guessStage.value >= durations.value.length || guesses.value.find(g => g.correct))
 const playbackProgress = ref(0) // 0 to 100 percentage
@@ -96,7 +97,6 @@ watch(gameFinished, () => {
   if(gameFinished.value) {
     unlockIOSAudio()
     howl?.seek(0)
-    howl?.volume(0.05)
     howl?.play()
   }
 })
@@ -208,6 +208,7 @@ function unlockIOSAudio() {
             class="join-item"
             type="text"
             placeholder="Guess track to progress"
+            ref="trackInput"
         />
         <button class="btn btn-warning btn-soft join-item tooltip" v-if="hasPlayed && guessStage < durations.length-1" @click="nextStage"
           data-tip="No idea what to guess? Go to next stage now">
@@ -270,7 +271,8 @@ function unlockIOSAudio() {
             'border-error': guess.correct === false,
             'hidden': (guess.correct === undefined && gameFinished) ||
             (finished || gameFinished) && guess.correct === undefined && index > guessStage
-          }">
+          }"
+          @click="trackInput?.focus()">
       {{ guess.input }}
     </div>
   </div>
