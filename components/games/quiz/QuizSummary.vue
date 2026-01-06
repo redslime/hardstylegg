@@ -24,7 +24,7 @@ function getBackground(answer: QuizAnswer): string {
     <template v-for="answer in container.items" :key="answer.text">
       <div class="flex items-center gap-2 min-w-40">
         <div class="flex items-center justify-center rounded-md p-2 text-md font-semibold whitespace-nowrap grow basis-1/2 min-w-max
-                  sm:flex-1 pointer-coarse:p-4"
+                  sm:flex-1 pointer-coarse:p-4 place-self-stretch"
              :class="{'text-success-content bg-success ring-0': answer.correct,
                     'text-error-content bg-error ring-0': !answer.correct}"
              :style="{
