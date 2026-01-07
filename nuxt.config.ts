@@ -75,7 +75,7 @@ export default defineNuxtConfig({
         manifest: {
             name: 'hardstyle.gg',
             short_name: 'hardstyle.gg',
-            theme_color: '#34ABE1',
+            theme_color: '#0F172A',
             background_color: '#0F172A',
             icons: [
                 {
