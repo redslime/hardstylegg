@@ -82,6 +82,11 @@ export default defineNuxtConfig({
                     src: 'img/icon512.png',
                     sizes: '512x512',
                     type: 'image/png',
+                },
+                {
+                    src: 'img/icon512-maskable.png',
+                    sizes: '512x512',
+                    type: 'image/png',
                     purpose: 'any maskable'
                 }
             ],
@@ -94,7 +99,7 @@ export default defineNuxtConfig({
         },
         devOptions: {
             enabled: true,
-            type: 'module', // Ändere dies auf 'module', falls du ES-Imports in sw.js nutzt
+            type: 'module',
             navigateFallback: '/'
         }
     },
