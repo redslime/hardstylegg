@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
 
         try {
             return await prisma.report.update({
-                where: { code: report.code },
+                where: { code: report.code, completed: false },
                 data: {
                     completed: true,
                     successes,
