@@ -76,7 +76,7 @@ export default defineNuxtConfig({
             name: 'hardstyle.gg',
             short_name: 'hardstyle.gg',
             theme_color: '#34ABE1',
-            background_color: '#34ABE1',
+            background_color: '#0F172A',
             icons: [
                 {
                     src: 'img/icon512.png',
