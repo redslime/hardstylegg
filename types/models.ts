@@ -106,6 +106,7 @@ export interface ReportContainer {
     dayFriendly: string
     successes: number
     completed: boolean
+    isApp: boolean
     data: GameReport[]
 }
 

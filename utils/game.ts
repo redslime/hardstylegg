@@ -87,7 +87,7 @@ export function updateState(typeId: number | null, gameId: number | null) {
     currentGameId = gameId
 }
 
-export function startGame(gameEnv: GameEnvironment) {
+export function startGame(gameEnv: GameEnvironment, isApp: boolean) {
     gameEnvironment = gameEnv
 
     if(import.meta.env.DEV) {
@@ -107,6 +107,7 @@ export function startGame(gameEnv: GameEnvironment) {
                 dayFriendly: gameData.dayFriendly,
                 successes: 0,
                 completed: false,
+                isApp,
                 data: []
             }
             return report

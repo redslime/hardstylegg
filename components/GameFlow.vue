@@ -147,7 +147,7 @@ const copyResult = () => {
 }
 
 useOnce(() => {
-  startGame(props.gameEnv)
+  startGame(props.gameEnv, inject("isApp", false))
   getTracks().then(() => {}) // preload tracks
 })
 

@@ -219,6 +219,7 @@ model report {
   dayId       Int
   completed   Boolean       @default(dbgenerated("b'0'")) @db.Bit(1)
   successes   Int           @default(0)
+  app         Boolean       @default(dbgenerated("b'0'")) @db.Bit(1)
   report_item report_item[]
 }
 
@@ -248,13 +249,13 @@ model game_map {
 }
 
 model game_zoomer {
-  id         Int    @id @default(autoincrement())
+  id         Int     @id @default(autoincrement())
   created_by Int
-  title      String @db.VarChar(128)
-  goal       String @db.VarChar(128)
-  data       String @db.VarChar(8192)
+  title      String  @db.VarChar(128)
+  goal       String  @db.VarChar(128)
+  data       String  @db.VarChar(8192)
   context    String? @db.VarChar(1024)
-  user       user   @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "game_zoomer_user_id_fk")
+  user       user    @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "game_zoomer_user_id_fk")
 
   @@index([created_by], map: "game_zoomer_user_id_fk")
 }

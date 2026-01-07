@@ -4,20 +4,27 @@ import {usePwaInstall} from "~/composables/usePwaInstallationHandler.ts";
 
 const darkmodeCookie = useCookie('darkmode', { default: () => true })
 const isMobile = ref(false)
+const isApp = ref(false)
 const { initInstallListener } = usePwaInstall()
 
 onMounted(() => {
   document.documentElement.setAttribute('data-theme', darkmodeCookie.value ? 'night' : 'light')
 
   const mq = window.matchMedia('(max-width: 767px)')
+  const app = window.matchMedia('(display-mode: standalone)')
+
   isMobile.value = mq.matches
+  isApp.value = app.matches
+
   mq.addEventListener('change', e => isMobile.value = e.matches)
+  app.addEventListener('change', e => isApp.value = e.matches)
 
   initInstallListener()
 })
 
 provide("darkmodeCookie", darkmodeCookie)
 provide("isMobile", isMobile)
+provide("isApp", isApp)
 </script>
 
 <template>

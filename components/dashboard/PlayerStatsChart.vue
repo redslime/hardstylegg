@@ -1,5 +1,5 @@
 <script setup lang="ts">
-type Response = Record<number, { dayFriendly: string, played: number; completed: number; }>
+type Response = Record<number, { dayFriendly: string, played: number; completed: number; onApp: number; }>
 const { data, pending, error } = useFetch<Response>("/api/dashboard/stats/players")
 
 let options = reactive({})
@@ -44,8 +44,8 @@ watch(data, (d: Response | undefined) => {
     },
     stroke: {
       curve: 'smooth',
-      dashArray: [0, 5],
-      width: [4, 3],
+      dashArray: [2, 0, 2],
+      width: [4, 3, 2],
     },
     legend: {
       showForNullSeries: false,
@@ -70,6 +70,7 @@ watch(data, (d: Response | undefined) => {
 
   const startedData = Object.values(d).map(v => v.played)
   const completedData = Object.values(d).map(v => v.completed)
+  const onAppData = Object.values(d).map(v => v.onApp)
 
   series = [
     {
@@ -79,6 +80,10 @@ watch(data, (d: Response | undefined) => {
     {
       name: 'Completed',
       data: completedData
+    },
+    {
+      name: 'On app',
+      data: onAppData
     }
   ]
 })

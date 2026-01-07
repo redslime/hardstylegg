@@ -1,7 +1,7 @@
 import prisma from "~/lib/prisma";
 import {getDayIdToday, getFriendlyName} from "~/server/utils/schedule";
 
-type Response = Record<number, { dayFriendly: string, played: number; completed: number; }>
+type Response = Record<number, { dayFriendly: string, played: number; completed: number; onApp: number; }>
 let cache: Response | null = null
 
 export function resetCache() {
@@ -24,11 +24,12 @@ export default defineEventHandler(async (event) => {
     })
     cache = reports.reduce((acc, r) => {
         if (!acc[r.dayId]) {
-            acc[r.dayId] = {dayFriendly: getFriendlyName(r.dayId), played: 0, completed: 0}
+            acc[r.dayId] = {dayFriendly: getFriendlyName(r.dayId), played: 0, completed: 0, onApp: 0}
         }
 
         acc[r.dayId]!!.played += 1
         acc[r.dayId]!!.completed += r.completed ? 1 : 0
+        acc[r.dayId]!!.onApp += r.app ? 1 : 0
 
         return acc
     }, {} as Response)

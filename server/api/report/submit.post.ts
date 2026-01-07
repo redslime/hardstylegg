@@ -14,6 +14,7 @@ export default defineEventHandler(async (event) => {
                 data: {
                     completed: true,
                     successes,
+                    app: report.isApp,
                     report_item: {
                         // insert child items from report.data
                         create: report.data.map(item => {
