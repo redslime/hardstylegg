@@ -34,6 +34,7 @@ const props = defineProps({
   gameData: { type: Object as PropType<GameContainer>, required: true },
   cookie: { type: Object as PropType<CookieDayMemory[]> }
 })
+const isApp = inject<boolean>("isApp", false)
 const streak = useLocalStorage<CookieStreakMemory>("streak", { streak: 0, lastDayId: -1 })
 const emit = defineEmits(['finish'])
 const dayId = ref<number>(props.gameData.dayId)
@@ -147,7 +148,7 @@ const copyResult = () => {
 }
 
 useOnce(() => {
-  startGame(props.gameEnv, inject("isApp", false))
+  startGame(props.gameEnv, isApp)
   getTracks().then(() => {}) // preload tracks
 })
 
