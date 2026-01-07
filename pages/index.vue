@@ -126,6 +126,8 @@ useOnce(() => {
       </div>
     </div>
   </div>
+
+  <PwaNotificationManager class="w-full" :title="'Notifications'" />
 </template>
 
 <style scoped>

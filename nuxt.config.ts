@@ -54,7 +54,7 @@ export default defineNuxtConfig({
         },
     },
 
-    modules: ['nuxt-auth-utils'],
+    modules: ['nuxt-auth-utils', '@vite-pwa/nuxt'],
 
     runtimeConfig: {
         discordClientSecret: process.env.NUXT_DISCORD_CLIENT_SECRET,
@@ -65,5 +65,37 @@ export default defineNuxtConfig({
             discordClientId: process.env.NUXT_PUBLIC_DISCORD_CLIENT_ID,
             isDev: process.env.NODE_ENV !== 'production'
         }
-    }
+    },
+
+    pwa: {
+        registerType: 'autoUpdate',
+        strategies: 'injectManifest',
+        srcDir: 'public',
+        filename: 'sw.js',
+        manifest: {
+            name: 'hardstyle.gg',
+            short_name: 'hardstyle.gg',
+            theme_color: '#34ABE1',
+            background_color: '#34ABE1',
+            icons: [
+                {
+                    src: 'img/icon512.png',
+                    sizes: '512x512',
+                    type: 'image/png',
+                    purpose: 'any maskable'
+                }
+            ],
+            display: 'standalone',
+            orientation: 'portrait'
+        },
+        workbox: {
+            navigateFallback: '/',
+            globPatterns: ['**/*.{js,css,html,png,svg,ico}']
+        },
+        devOptions: {
+            enabled: true,
+            type: 'module', // Ändere dies auf 'module', falls du ES-Imports in sw.js nutzt
+            navigateFallback: '/'
+        }
+    },
 })

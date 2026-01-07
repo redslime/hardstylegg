@@ -23,6 +23,7 @@
     "@spotify/web-api-ts-sdk": "^1.2.0",
     "@tailwindcss/vite": "^4.1.15",
     "@types/leaflet": "^1.9.21",
+    "@vite-pwa/nuxt": "^1.1.0",
     "apexcharts": "^5.3.6",
     "canvas-confetti": "^1.9.3",
     "daisyui": "^5.3.8",

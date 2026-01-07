@@ -30,7 +30,7 @@ import ContextBox from "~/components/ContextBox.vue";
 
 const { $gameRegistry } = useNuxtApp();
 const props = defineProps({
-  gameEnv: { type: Object as PropType<GameEnvironment>, required: true },
+  gameEnv: { type: Number as PropType<GameEnvironment>, required: true },
   gameData: { type: Object as PropType<GameContainer>, required: true },
   cookie: { type: Object as PropType<CookieDayMemory[]> }
 })
@@ -264,6 +264,8 @@ onMounted(() => {
       </div>
     </template>
   </div>
+
+  <PwaNotificationManager class="w-full md:w-fit" v-if="summary && tracked" />
 
   <div class="flex flex-col w-full md:w-2/3 my-5 pb-5 border-secondary/50 border-1 rounded-md" v-if="summary && details">
     <div class="flex justify-center bg-base-300 flex-wrap gap-2 border-b-1 py-4 mb-4 border-secondary/50">
