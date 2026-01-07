@@ -167,16 +167,10 @@ export function countOption(id: number | undefined) {
 }
 
 export function reportResult(consumer: (report: GameReport) => void) {
-    if(!report && currentTypeId && currentGameId && gameEnvironment === GameEnvironment.DAILY) {
-        // sometimes the result will come in before the report is ready, process them later
-        const con = <TempReport>{
-            consumer,
-            currentTypeId,
-            currentGameId
-        }
-        skippedReports.push(con)
-    }
-    if(report && currentTypeId && currentGameId) {
+    if(gameEnvironment !== GameEnvironment.DAILY) return
+    if(!currentTypeId || !currentGameId) return
+
+    if(report) {
         const gr = report.data.find(r => r.typeId === currentTypeId && r.gameId === currentGameId)
 
         if(gr) {
@@ -190,6 +184,14 @@ export function reportResult(consumer: (report: GameReport) => void) {
             consumer(gr)
             report.data.push(gr)
         }
+    } else {
+        // sometimes the result will come in before the report is ready, process them later
+        const con = <TempReport>{
+            consumer,
+            currentTypeId,
+            currentGameId
+        }
+        skippedReports.push(con)
     }
 }
 
