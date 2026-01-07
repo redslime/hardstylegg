@@ -27,7 +27,7 @@ function click() {
 </script>
 
 <template>
-  <div class="bg-base-200 p-3 max-w-[600px] rounded-lg" :class="{'cursor-pointer': pointer}" @click="click()">
+  <div class="border border-base-200 bg-base-200 p-3 max-w-[600px] rounded-lg" :class="{'cursor-pointer hover:border-primary transition-colors': pointer}" @click="click()">
     <div class="text-2xl font-bold">{{ title }}</div>
     <div class="flex flex-wrap gap-1 mb-4">
       <div class="badge badge-warning badge-soft badge-xs font-mono" v-if="past">Played on: {{ scheduleData!!.dayFriendly }}</div>
