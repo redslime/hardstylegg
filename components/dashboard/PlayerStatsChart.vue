@@ -6,6 +6,11 @@ let options = reactive({})
 let series = reactive([{}])
 const valid = computed(() => data.value && Object.keys(data.value).length > 0)
 
+function map(count: number): number | null {
+  if(count === 0) return null
+  return count
+}
+
 watch(data, (d: Response | undefined) => {
   if(!d) return
 
@@ -68,9 +73,9 @@ watch(data, (d: Response | undefined) => {
     ]
   }
 
-  const startedData = Object.values(d).map(v => v.played)
-  const completedData = Object.values(d).map(v => v.completed)
-  const onAppData = Object.values(d).map(v => v.onApp)
+  const startedData = Object.values(d).map(v => map(v.played))
+  const completedData = Object.values(d).map(v => map(v.completed))
+  const onAppData = Object.values(d).map(v => map(v.onApp))
 
   series = [
     {
