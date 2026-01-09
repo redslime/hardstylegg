@@ -9,6 +9,7 @@ const { container } = defineProps({
 })
 const config = useRuntimeConfig()
 const containerRef = ref<HTMLElement | null>(null)
+const skeleton = ref<boolean>(true)
 
 const options = ref({
   height: 60,
@@ -45,12 +46,24 @@ watch(isReady, (ready) => {
         resize: false,
       } as RegionParams)
     })
+
+    skeleton.value = false
   }
 })
 </script>
 
 <template>
-  <div ref="containerRef"></div>
+  <div>
+    <div class="relative w-[500px] h-[80px]">
+      <div v-if="skeleton" class="skeleton absolute inset-0 rounded-lg transition-opacity duration-300"
+           :class="skeleton ? 'opacity-100' : 'opacity-0'"
+      ></div>
+
+      <div ref="containerRef" class="transition-opacity duration-500"
+           :class="skeleton ? 'opacity-0' : 'opacity-100'"
+      ></div>
+    </div>
+  </div>
 </template>
 
 <style scoped>
