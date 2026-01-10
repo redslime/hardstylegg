@@ -17,8 +17,6 @@
 </template>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
-
 h1 {
   font-family: "Anton", sans-serif;
 }
