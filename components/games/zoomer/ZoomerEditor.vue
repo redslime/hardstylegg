@@ -70,6 +70,7 @@ watch(ready, () => {
           <div role="alert" class="alert alert-warning">
             <span>Zoomer editing is not supported, please delete and re-create if needed.</span>
           </div>
+          <ContextField v-if="editing!!.goal" v-model:input="editing!!.context" />
         </template>
       </template>
     </DashboardGameEditor>
