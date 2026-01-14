@@ -50,10 +50,10 @@ onUnmounted(() => clear())
 <template>
   <div class="hero bg-base-300 rounded-lg" v-if="!playing">
     <div class="hero-content flex flex-col text-center">
-      <div class="max-w-lg items-center">
+      <div class="max-w-lg items-center justify-center">
         <h1 class="text-3xl md:text-4xl font-bold mb-5">Game archive</h1>
 
-        <div class="border-secondary border-1 w-fit py-3 px-10 rounded-md bg-black/10 shadow-lg mb-10">
+        <div class="border border-secondary w-fit py-3 px-3 sm:px-10 rounded-md bg-black/10 shadow-lg mb-10">
           <h2 class="text-2xl font-medium">Yesterday's challenge</h2>
           <div v-if="yesterday">
             <h4 class="text-md">{{ ydayFriendly }}</h4>
