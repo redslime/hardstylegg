@@ -252,7 +252,7 @@ function unlockIOSAudio() {
         class="w-full h-full object-cover rounded-md"
     />
     <div class="absolute inset-0 flex items-center justify-center backdrop-blur-xs">
-      <p class="text-2xl font-bold drop-shadow-lg text-white bg-black/30 p-2">
+      <p class="sm:text-lg md:text-2xl font-bold drop-shadow-lg text-center text-balance text-white bg-black/30 p-2">
         {{ track.artists }} - {{ track.title }}
       </p>
       <div class="absolute bottom-4 right-4" v-if="currentIndex === props.position">
