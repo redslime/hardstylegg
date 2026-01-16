@@ -113,9 +113,14 @@ function getTypeIds(day: number) {
           Days scheduled ahead: <div class="badge badge-soft badge-info">{{ daysAhead }}</div>
         </div>
 
-        <button class="btn btn-primary mt-5 btn-outline btn-sm" v-if="user.admin" @click="navigateTo('/admin/schedule')">
-          Go to schedule
-        </button>
+        <div class="flex flex-wrap gap-1 justify-center">
+          <button class="btn btn-primary mt-5 btn-outline btn-sm" v-if="user.admin" @click="navigateTo('/admin/schedule/' + schedule.todayId)">
+            Go to today
+          </button>
+          <button class="btn btn-primary mt-5 btn-outline btn-sm" v-if="user.admin" @click="navigateTo('/admin/schedule')">
+            Go to schedule
+          </button>
+        </div>
       </div>
     </div>
 
