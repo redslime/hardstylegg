@@ -2,18 +2,11 @@
 import type {ZoomerType} from "~/types/zoomerModels";
 import {capitalize} from "~/utils/utils";
 
-const { type, outline, style } = defineProps({
+const { type, style } = defineProps({
   type: { type: Object as PropType<ZoomerType>, required: true },
-  outline: { type: Boolean, required: false, default: false },
-  style: { type: String, required: false, default: "badge-info" },
+  style: { type: String, required: false, default: "badge-info badge-soft" },
 })
-const badgeStyle = computed(() => {
-  if(outline) {
-    return ['badge-outline', style]
-  } else {
-    return ['badge-soft', style]
-  }
-})
+const badgeStyle = computed(() => [style])
 </script>
 
 <template>

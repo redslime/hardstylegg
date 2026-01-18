@@ -13,7 +13,7 @@ const { instance, pointer } = defineProps({
 
 <template>
   <DashboardGamePreviewHeader :gameDef="gameDef" :pointer="pointer" :container="instance">
-    <ZoomerTypeBadge :type="instance.goal" :outline="true" />
+    <ZoomerTypeBadge :type="instance.goal" :style="'badge-info badge-outline'" />
     <div class="relative">
       <img :src="gameDef.getImgUrl(instance)" alt="game photo" />
 

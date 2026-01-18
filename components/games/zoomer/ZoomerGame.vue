@@ -114,7 +114,7 @@ onBeforeUnmount(() => {
     <div class="absolute bottom-10 w-full z-500" v-if="finished">
       <Teleport to="#top-dock" :disabled="!isMobile || props.position !== currentIndex || summary || details">
         <div class="flex justify-center">
-          <ZoomerTypeBadge :type="props.container.goal" :style="'badge-info badge-lg md:badge-xl'" />
+          <ZoomerTypeBadge :type="props.container.goal" :style="'badge-success badge-lg md:badge-xl'" />
         </div>
       </Teleport>
     </div>

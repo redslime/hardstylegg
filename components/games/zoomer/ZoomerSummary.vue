@@ -13,7 +13,7 @@ const { container, reports } = defineProps({
 </script>
 
 <template>
-  <ZoomerTypeBadge :type="container.goal" :outline="true" />
+  <ZoomerTypeBadge :type="container.goal" :style="'badge-info badge-outline'" />
   <div class="relative">
     <img :src="gameDef.getImgUrl(container)" alt="game photo" />
 
