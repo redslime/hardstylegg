@@ -54,7 +54,7 @@ watch(isReady, (ready) => {
 
 <template>
   <div>
-    <div class="relative w-[500px] h-[80px]">
+    <div class="relative w-[500px] h-20">
       <div v-if="skeleton" class="skeleton absolute inset-0 rounded-lg transition-opacity duration-300"
            :class="skeleton ? 'opacity-100' : 'opacity-0'"
       ></div>

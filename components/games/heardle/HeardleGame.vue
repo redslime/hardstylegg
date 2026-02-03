@@ -11,14 +11,17 @@ export default {
 
 <script setup lang="ts">
 import {onMounted, ref} from 'vue'
-import {Howl} from 'howler'
 import PlayIcon from "~/components/icons/PlayIcon.vue";
 import {GameState, type ShallowTrack, type Track} from "~/types/models";
 import {getName} from "~/utils/tracks";
 import TrackListenButton from "~/components/TrackListenButton.vue";
 import ForwardIcon from "~/components/icons/ForwardIcon.vue";
 import {countAttempt} from "~/utils/game";
+import WaveformPlayer from "~/components/games/heardle/WaveformPlayer.vue";
+import {useWaveSurfer, type UseWaveSurfer, useWaveSurferRegions} from "@meersagor/wavesurfer-vue";
+import type {RegionParams} from "wavesurfer.js/plugins/regions";
 
+const config = useRuntimeConfig()
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.HeardleDef
 const emit = defineEmits(['onFinish'])
@@ -44,38 +47,59 @@ interface Guess {
 }
 
 const guessStage = ref(0)
-const isPlaying = ref(false)
+const currentStageDuration = computed(() => durations.value[guessStage.value] ?? 0)
 const trackInput = ref<HTMLInputElement | undefined>()
 const guesses = ref<Guess[]>([])
 const finished = computed(() => guessStage.value >= durations.value.length || guesses.value.find(g => g.correct))
-const playbackProgress = ref(0) // 0 to 100 percentage
 
-// Calculate total duration (max duration)
-const totalDuration = computed(() => Math.max(...durations.value))
-
-// Calculate the incremental duration for each segment
-const segmentDurations = computed(() => {
-  return durations.value.map((d, i) => {
-    if (i === 0) return d
-    return d - durations.value[i - 1]!!
-  })
-})
-
-// Calculate width percentage for each segment based on incremental durations
-const segmentWidths = computed(() => {
-  return segmentDurations.value.map(d => (d / totalDuration.value) * 100)
-})
-
-let howl: Howl | null = null
-let timeout: number | null = null
-let progressInterval: number | null = null
+let wavesurfer: UseWaveSurfer | null = null
+const containerRef = ref<HTMLElement | null>(null)
 
 if(import.meta.client) {
-  howl = new Howl({
-    src: [`/heardle/${src.value}.mp3`],
-    preload: true,
-    volume: 0.2
-  });
+  const options = ref({
+    height: 40,
+    waveColor: '#6c6c6c',
+    progressColor: '#818cf8',
+    cursorWidth: 0,
+    interact: false,
+    barGap: 1,
+    barWidth: 3,
+    barRadius: 5,
+    url: config.public.appUrl + '/heardle/' + src.value + ".mp3",
+  })
+
+  wavesurfer = useWaveSurfer({
+    containerRef,
+    options: options.value
+  })
+  const { waveSurfer } = wavesurfer
+  const { regionsPlugin } = useWaveSurferRegions({ waveSurfer })
+
+  watch(wavesurfer.isReady, (ready) => {
+    if(ready) {
+      wavesurfer?.waveSurfer.value?.setVolume(0.2)
+
+      if(regionsPlugin.value) {
+        const durs: number[] = deepCopy(durations.value)
+        durs.pop()
+
+        durs.forEach((duration) => {
+          regionsPlugin.value!!.addRegion({
+            start: duration,
+            color: '#cbcbcb',
+            drag: false,
+            resize: false,
+          } as RegionParams)
+        })
+      }
+
+      wavesurfer?.waveSurfer.value?.on('audioprocess', (currentTime: number) => {
+        if(currentTime >= currentStageDuration.value) {
+          wavesurfer?.waveSurfer.value?.pause()
+        }
+      })
+    }
+  })
 }
 
 onMounted(() => {
@@ -96,16 +120,12 @@ onUnmounted(() => {
 watch(gameFinished, () => {
   if(gameFinished.value) {
     unlockIOSAudio()
-    howl?.seek(0)
-    howl?.play()
   }
 })
 
 function unmounted() {
-  howl?.stop()
-  howl?.unload()
-  if (timeout) clearTimeout(timeout)
-  if (progressInterval) clearInterval(progressInterval)
+  wavesurfer?.waveSurfer.value?.stop()
+  wavesurfer?.waveSurfer.value?.destroy()
 }
 
 async function playSnippet() {
@@ -113,37 +133,9 @@ async function playSnippet() {
   unlockIOSAudio()
   await nextTick()
 
-  if (!howl) return
-  const duration = durations.value[guessStage.value] ?? 0
-  const start = 0
-  howl.stop()
-  howl.seek(start)
-  howl.play()
-  isPlaying.value = true
-  playbackProgress.value = 0
-
-  // Update progress bar smoothly
-  const startTime = Date.now()
-  if (progressInterval) clearInterval(progressInterval)
-
-  progressInterval = window.setInterval(() => {
-    const elapsed = (Date.now() - startTime) / 1000 // in seconds
-    // Progress within the entire bar (0 to duration of current stage)
-    const progressInSeconds = Math.min(elapsed, duration)
-    // Convert to percentage relative to total duration
-    playbackProgress.value = (progressInSeconds / totalDuration.value) * 100
-  }, 50) // update every 50ms for smooth animation
-
-  // stop after snippet duration
-  timeout = window.setTimeout(() => {
-    howl?.stop()
-    isPlaying.value = false
-    playbackProgress.value = 0
-    if (progressInterval) {
-      clearInterval(progressInterval)
-      progressInterval = null
-    }
-  }, duration * 1000)
+  wavesurfer?.waveSurfer.value?.stop()
+  wavesurfer?.waveSurfer.value?.seekTo(0)
+  wavesurfer?.waveSurfer.value?.play()
 }
 
 function nextStage() {
@@ -154,8 +146,8 @@ function nextStage() {
     emit('onFinish', GameState.FAILED)
   }
 
-  playbackProgress.value = 0 // Reset progress when moving to next stage
   guessStage.value++
+  wavesurfer?.waveSurfer.value?.seekTo(currentStageDuration.value / 15)
 }
 
 function validate(selected: ShallowTrack, flashError: () => void, _flashSuccess: () => void, clear: () => void) {
@@ -172,8 +164,6 @@ function validate(selected: ShallowTrack, flashError: () => void, _flashSuccess:
     if (guessStage.value >= durations.value.length - 1) {
       emit('onFinish', GameState.FAILED)
     }
-
-    playbackProgress.value = 0 // Reset progress when moving to next stage
   }
 
   hasPlayed.value = false
@@ -192,13 +182,13 @@ function unlockIOSAudio() {
     <source src="/silence.mp3" type="audio/mp3">
   </audio>
 
-  <div class="w-4/5" v-if="!finished && !gameFinished">
+  <div class="w-full px-3 md:px-0 md:w-4/5" v-if="!finished && !gameFinished">
     <TrackInput
         @on-track-selected="validate"
         v-slot="{ inputBindings, inputEvents }"
     >
       <div class="join flex justify-center items-center">
-        <button class="btn btn-primary join-item" :disabled="isPlaying" @click="playSnippet">
+        <button class="btn btn-primary join-item" :disabled="wavesurfer?.isPlaying.value || !wavesurfer?.isReady.value" @click="playSnippet">
           <PlayIcon/>
           {{ isMobile ? "Play" : "Play snippet" }}
         </button>
@@ -218,50 +208,29 @@ function unlockIOSAudio() {
       </div>
     </TrackInput>
 
-    <div class="w-full h-6 divide-x divide-neutral rounded-md flex overflow-hidden mt-3 relative">
-      <div
-          v-for="(d, i) in segmentDurations"
-          :key="i"
-          class="relative border-r border-neutral last:border-r-0"
-          :class="{
-            'bg-base-100': playbackProgress >= 0,
-            'bg-secondary': playbackProgress === 0 && i <= guessStage
-          }"
-          :style="{
-            width: `${segmentWidths[i]}%`
-          }">
-        <span 
-          v-if="i === guessStage && playbackProgress === 0"
-          class="absolute inset-0 flex items-center justify-center text-xs text-secondary-content font-semibold z-5"
-        >
-          {{ durations[i] }}s
-        </span>
-      </div>
-
-      <div 
-        class="absolute inset-0 bg-secondary transition-all duration-75 ease-linear origin-left"
-        :style="{ width: `${playbackProgress}%` }"
-      ></div>
-    </div>
+    <div class="w-full mt-2" ref="containerRef"></div>
   </div>
 
-  <div class="relative w-full h-60" v-if="finished || gameFinished">
+  <div class="flex flex-col sm:flex-row justify-center bg-base-200 rounded-md shadow-md relative mt-5" v-if="finished || gameFinished">
     <img
         :src="`${getSpotifyArtwork(track.cover_art)}`"
         alt="Track artwork"
-        class="w-full h-full object-cover rounded-md"
+        class="w-auto max-h-80 sm:w-40 object-cover rounded-md rounded-r-none"
     />
-    <div class="absolute inset-0 flex items-center justify-center backdrop-blur-xs">
-      <p class="sm:text-lg md:text-2xl font-bold drop-shadow-lg text-center text-balance text-white bg-black/30 p-2">
-        {{ track.artists }} - {{ track.title }}
-      </p>
-      <div class="absolute bottom-4 right-4" v-if="currentIndex === props.position">
-        <TrackListenButton :track="track" />
-      </div>
+
+    <div class="flex flex-col p-4 justify-center bg-base-200 rounded-md sm:min-w-[380px]">
+      <p class="text-xl font-semibold text-balance">{{ track.title }}</p>
+      <p class="opacity-60">{{ track.artists }}</p>
+
+      <WaveformPlayer class="mt-3 " :container="container">
+        <template v-if="currentIndex === props.position">
+          <TrackListenButton :track="track" />
+        </template>
+      </WaveformPlayer>
     </div>
   </div>
 
-  <div class="grid w-full px-10 gap-3 mt-8">
+  <div class="grid w-full px-3 md:px-10 gap-3 mt-8">
     <div v-for="(guess, index) in guesses" :key="index"
          class="rounded-sm border p-2 min-h-[42px]"
          :class="{
