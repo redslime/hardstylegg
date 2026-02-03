@@ -37,6 +37,7 @@ const track = computed<Track>(() => props.container.track)
 const src = computed(() => props.container.src)
 const durations = computed(() => props.container.durations)
 const hasPlayed = ref<boolean>(false)
+const skeleton = ref<boolean>(true)
 const silence = ref<HTMLAudioElement | null>(null)
 const currentIndex = inject<number>('currentIndex')
 const isMobile = inject<boolean>('isMobile')
@@ -78,6 +79,7 @@ if(import.meta.client) {
   watch(wavesurfer.isReady, (ready) => {
     if(ready) {
       wavesurfer?.waveSurfer.value?.setVolume(0.2)
+      skeleton.value = false
 
       if(regionsPlugin.value) {
         const durs: number[] = deepCopy(durations.value)
@@ -208,14 +210,19 @@ function unlockIOSAudio() {
       </div>
     </TrackInput>
 
-    <div class="w-full mt-2" ref="containerRef"></div>
+    <div class="relative mt-2 w-full h-10">
+      <div v-if="skeleton" class="skeleton absolute inset-0 rounded-lg transition-opacity duration-300"
+           :class="skeleton ? 'opacity-100' : 'opacity-0'"
+      ></div>
+      <div class="w-full mt-2" ref="containerRef"></div>
+    </div>
   </div>
 
   <div class="flex flex-col sm:flex-row justify-center bg-base-200 rounded-md shadow-md relative mt-5" v-if="finished || gameFinished">
     <img
         :src="`${getSpotifyArtwork(track.cover_art)}`"
         alt="Track artwork"
-        class="w-auto max-h-80 sm:w-40 object-cover rounded-md rounded-r-none"
+        class="w-auto max-h-80 sm:w-40"
     />
 
     <div class="flex flex-col p-4 justify-center bg-base-200 rounded-md sm:min-w-[380px]">
