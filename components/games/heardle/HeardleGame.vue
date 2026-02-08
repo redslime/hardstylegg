@@ -13,7 +13,7 @@ export default {
 import {onMounted, ref} from 'vue'
 import PlayIcon from "~/components/icons/PlayIcon.vue";
 import {GameState, type ShallowTrack, type Track} from "~/types/models";
-import {getName} from "~/utils/tracks";
+import {getName, getTrackUrl} from "~/utils/tracks";
 import TrackListenButton from "~/components/TrackListenButton.vue";
 import ForwardIcon from "~/components/icons/ForwardIcon.vue";
 import {countAttempt} from "~/utils/game";
@@ -34,6 +34,7 @@ const props = defineProps({
 const state = computed(() => props.state)
 const gameFinished = computed(() => state.value == GameState.SUCCEEDED || state.value == GameState.FAILED)
 const track = computed<Track>(() => props.container.track)
+const isYouTube = computed<boolean>(() => track.value.sid.startsWith("yt:"))
 const src = computed(() => props.container.src)
 const durations = computed(() => props.container.durations)
 const hasPlayed = ref<boolean>(false)
@@ -219,17 +220,19 @@ function unlockIOSAudio() {
   </div>
 
   <div class="flex flex-col sm:flex-row justify-center bg-base-200 rounded-md shadow-md relative mt-5" v-if="finished || gameFinished">
-    <img
-        :src="`${getSpotifyArtwork(track.cover_art)}`"
-        alt="Track artwork"
-        class="w-auto max-h-80 sm:w-40"
-    />
+    <a :href="getTrackUrl(track, false)" target="_blank" v-if="!isYouTube">
+      <img
+          :src="`${getSpotifyArtwork(track.cover_art)}`"
+          alt="Track artwork"
+          class="w-auto max-h-80 sm:w-40"
+      />
+    </a>
 
     <div class="flex flex-col p-4 justify-center bg-base-200 rounded-md sm:min-w-[380px]">
       <p class="text-xl font-semibold text-balance">{{ track.title }}</p>
       <p class="opacity-60">{{ track.artists }}</p>
 
-      <WaveformPlayer class="mt-3 " :container="container">
+      <WaveformPlayer class="mt-3" :container="container">
         <template v-if="currentIndex === props.position">
           <TrackListenButton :track="track" />
         </template>

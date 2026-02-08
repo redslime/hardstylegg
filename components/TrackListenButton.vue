@@ -2,6 +2,7 @@
 import type {ShallowTrack, Track} from "~/types/models";
 import SpotifyIcon from "~/components/icons/SpotifyIcon.vue";
 import YouTubeIcon from "~/components/icons/YouTubeIcon.vue";
+import {getTrackUrl} from "~/utils/tracks";
 
 const { track, isAlbum } = defineProps({
   track: { type: Object as PropType<Track | ShallowTrack>, required: true },
@@ -9,17 +10,7 @@ const { track, isAlbum } = defineProps({
 })
 
 const isYouTube = computed<boolean>(() => track.sid.startsWith("yt:"))
-const url = computed<string>(() => {
-  if(isYouTube.value) {
-    return `https://www.youtube.com/watch?v=${track.sid.replace("yt:", "")}`
-  } else {
-    if(isAlbum) {
-      return `https://open.spotify.com/album/${track.sid}`
-    } else {
-      return `https://open.spotify.com/track/${track.sid}`
-    }
-  }
-})
+const url = computed<string>(() => getTrackUrl(track, isAlbum))
 const isMobile = inject<boolean>("isMobile", false)
 const summary = inject<boolean>("summary", false)
 const details = inject<boolean>("details", false)
