@@ -220,7 +220,7 @@ function unlockIOSAudio() {
   </div>
 
   <div class="flex flex-col sm:flex-row justify-center bg-base-200 rounded-md shadow-md relative mt-5" v-if="finished || gameFinished">
-    <a :href="getTrackUrl(track, false)" target="_blank" v-if="!isYouTube">
+    <a class="flex justify-center" :href="getTrackUrl(track, false)" target="_blank" v-if="!isYouTube">
       <img
           :src="`${getSpotifyArtwork(track.cover_art)}`"
           alt="Track artwork"
