@@ -56,6 +56,12 @@ watch(isReady, (ready) => {
     })
   }
 })
+
+onDeactivated(() => {
+  waveSurfer.value?.stop()
+  waveSurfer.value?.seekTo(0)
+  finished.value = true
+})
 </script>
 
 <template>
