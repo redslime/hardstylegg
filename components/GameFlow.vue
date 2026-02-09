@@ -266,8 +266,6 @@ onMounted(() => {
     </template>
   </div>
 
-  <PwaNotificationManager class="w-full md:w-fit" v-if="summary && tracked" />
-
   <div class="flex flex-col w-full md:w-2/3 my-5 pb-5 border-secondary/50 border-1 rounded-md" v-if="summary && details">
     <div class="flex justify-center bg-base-300 flex-wrap gap-2 border-b-1 py-4 mb-4 border-secondary/50">
       <GameIconRow :games="gameData" :outlineIndex="currentIndex" :click="index => currentIndex = index" />
@@ -277,6 +275,8 @@ onMounted(() => {
 
     </div>
   </div>
+
+  <PwaNotificationManager class="w-full md:w-fit" v-if="summary && tracked" />
 
   <div class="invisible md:visible mt-8 text-center" v-if="!summary && (currentState == GameState.FAILED || currentState == GameState.SUCCEEDED)">
     <button class="btn btn-lg bg-accent text-accent-content" @click="next">
