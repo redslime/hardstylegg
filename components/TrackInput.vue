@@ -19,10 +19,11 @@ const props = defineProps({
 })
 const isMobile = inject<boolean>("isMobile")
 const query = ref('')
-const fetchProgress = ref(0)
+const fetchProgress = ref(props.textMode ? 100 : 0)
 const { data: tracksData } = await useAsyncData('tracks', () => getTracks((p) => {
-  console.log(p)
-  fetchProgress.value = p
+  if(!props.textMode) {
+    fetchProgress.value = p
+  }
 }), {
   lazy: true,
   default: () => []
@@ -339,7 +340,7 @@ const inputEvents = {
           />
         </slot>
 
-        <div class="flex absolute inset-0 justify-center items-center backdrop-blur-xs bg-black/70 rounded-md" v-if="fetchProgress != 100">
+        <div class="flex absolute inset-0 justify-center items-center backdrop-blur-xs bg-black/70 rounded-md" v-if="!props.textMode && fetchProgress != 100">
           <div class="flex flex-col w-1/2 text-center -mt-1">
             <span class="font-light">Loading track database...</span>
             <progress class="progress progress-primary" v-if="fetchProgress == 0"></progress>
