@@ -25,6 +25,7 @@
     "@types/leaflet": "^1.9.21",
     "@vite-pwa/nuxt": "^1.1.0",
     "apexcharts": "^5.3.6",
+    "axios": "^1.13.5",
     "canvas-confetti": "^1.9.3",
     "daisyui": "^5.3.8",
     "formidable": "^3.5.4",

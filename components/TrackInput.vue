@@ -4,6 +4,7 @@ import {computed, onMounted, ref} from 'vue'
 import {getName, getTracks} from "~/utils/tracks";
 import {containsSubstring, delay} from "~/utils/utils";
 import type {ShallowTrack} from "~/types/models";
+import {useAsyncData} from "#app";
 
 interface SearchResult {
   item: ShallowTrack;
@@ -18,8 +19,16 @@ const props = defineProps({
 })
 const isMobile = inject<boolean>("isMobile")
 const query = ref('')
-const allOptions = props.textMode ? [] : await getTracks()
-let fuse: Fuse<typeof allOptions[0]>
+const fetchProgress = ref(0)
+const { data: tracksData } = await useAsyncData('tracks', () => getTracks((p) => {
+  console.log(p)
+  fetchProgress.value = p
+}), {
+  lazy: true,
+  default: () => []
+})
+const allOptions = computed(() => props.textMode ? [] : (tracksData.value || []))
+let fuse: Fuse<ShallowTrack>
 const hoverIndex = ref<number>(-1)
 const debouncedQuery = ref('')
 const filtered = ref<SearchResult[]>([])
@@ -54,7 +63,7 @@ watch(debouncedQuery, async (val) => {
   if(val.length < 3 || !fuse) filtered.value = []
 
   // First try: exact substring match
-  const exactMatches: SearchResult[] = allOptions.filter(st => {
+  const exactMatches: SearchResult[] = allOptions.value.filter(st => {
     const name = st.artists + " - " + st.title
     return name.toLowerCase().includes(val.toLowerCase())
   }).map(st => {
@@ -73,7 +82,7 @@ watch(debouncedQuery, async (val) => {
     // Second try: multi-keyword search
     const keywords = val.toLowerCase().split(/\s+/).filter(k => k.length > 2)
     
-    const keywordMatches: SearchResult[] = allOptions
+    const keywordMatches: SearchResult[] = allOptions.value
       .map(st => {
         const name = (st.artists + " - " + st.title).toLowerCase()
         const matchedKeywords = keywords.filter(keyword => name.includes(keyword))
@@ -152,7 +161,7 @@ function enter() {
     if(hoverIndex.value != -1) {
       select(filtered.value[hoverIndex.value ?? 0].item)
     } else {
-      const match = allOptions.filter(st => {
+      const match = allOptions.value.filter(st => {
         const name = getName(st)
         return query.value.toLowerCase() == name.toLowerCase()
       })
@@ -254,9 +263,19 @@ function highlightExact(text: string, region: number[] = []): string {
   return `${before}<span class=""><b>${middle}</b></span>${after}`
 }
 
+watch(tracksData, (newData) => {
+  if (newData && !props.textMode) {
+    fuse = new Fuse(newData, {
+      includeScore: true,
+      includeMatches: true,
+      keys: ['title', 'artists']
+    })
+  }
+}, { immediate: true })
+
 onMounted(() => {
-  if(!props.textMode) {
-    fuse = new Fuse(allOptions, {
+  if(!props.textMode && tracksData.value && tracksData.value.length > 0) {
+    fuse = new Fuse(tracksData.value, {
       includeScore: true,
       includeMatches: true,
       keys: ['title', 'artists']
@@ -285,7 +304,8 @@ const inputBindings = computed(() => ({
       'border-success': successFlash.value
     }
   ],
-  placeholder: placeholder.value
+  placeholder: placeholder.value,
+  disabled: fetchProgress.value != 100
 }))
 
 const inputEvents = {
@@ -306,17 +326,27 @@ const inputEvents = {
 <template>
   <div class="relative">
     <Teleport to="#top-dock" :disabled="!isMobile">
-      <slot
-          :inputBindings="inputBindings"
-          :inputEvents="inputEvents"
-          :errorFlash="errorFlash"
-          :successFlash="successFlash"
-      >
-        <input
-            v-bind="inputBindings"
-            v-on="inputEvents"
-        />
-      </slot>
+      <div class="relative">
+        <slot
+            :inputBindings="inputBindings"
+            :inputEvents="inputEvents"
+            :errorFlash="errorFlash"
+            :successFlash="successFlash"
+        >
+          <input
+              v-bind="inputBindings"
+              v-on="inputEvents"
+          />
+        </slot>
+
+        <div class="flex absolute inset-0 justify-center items-center backdrop-blur-xs bg-black/70 rounded-md" v-if="fetchProgress != 100">
+          <div class="flex flex-col w-1/2 text-center -mt-1">
+            <span class="font-light">Loading track database...</span>
+            <progress class="progress progress-primary" v-if="fetchProgress == 0"></progress>
+            <progress class="progress progress-primary" :value="fetchProgress" max="100" v-else></progress>
+          </div>
+        </div>
+      </div>
 
       <div class="absolute z-10 w-full bg-base-100 border mt-1 rounded-lg shadow overflow-hidden
           py-2 divide-dashed divide-y divide-neutral" v-if="visible && !selected && !props.textMode"
