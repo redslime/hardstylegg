@@ -14,6 +14,10 @@ export class ServerMapGame extends ServerGameDef<MapContainer> {
         return await prisma.game_map.findMany(this.whereAdminOrCreator(user))
     }
 
+    override async fetchInstances(ids: number[]): Promise<MapContainer[]> {
+        return await prisma.game_map.findMany(this.whereIdIn(ids))
+    }
+
     override async fetchInstance(gameId: number): Promise<MapContainer> {
         const parent = await prisma.game_map.findUnique({ where: { id: gameId } })
 

@@ -27,6 +27,8 @@ import {useLocalStorage} from "@vueuse/core";
 import QuestionMarkCircleIcon from "~/components/icons/QuestionMarkCircleIcon.vue";
 import type {ClientGameDef} from "~/utils/game/ClientGameDef";
 import ContextBox from "~/components/ContextBox.vue";
+import InfinityHeader from "~/components/infinity/InfinityHeader.vue";
+import {copyInfinityResult, getInfinityShareCode} from "~/utils/infinity";
 
 const { $gameRegistry } = useNuxtApp();
 const props = defineProps({
@@ -135,7 +137,7 @@ function next() {
 }
 
 const copyResult = () => {
-  if(tracked.value) {
+  if(props.gameEnv === GameEnvironment.DAILY) {
     const reportCode = getReportCode()
     let url = `https://hardstyle.gg/share?r=${shareCode.value}`
 
@@ -144,6 +146,8 @@ const copyResult = () => {
     }
 
     copyToClipboard(`I scored ${gamesWon.value}/${gameData.length} on hardstyle.gg today. Join me!\n${url}`)
+  } else if(props.gameEnv === GameEnvironment.INFINITY) {
+    copyInfinityResult(gameData)
   }
 }
 
@@ -192,9 +196,11 @@ onMounted(() => {
   </div>
 
   <div class="relative w-full">
-    <div class="flex justify-center flex-wrap gap-2 mb-8" v-if="!details">
+    <div class="flex justify-center flex-wrap gap-2 mb-8" v-if="!details && gameEnv !== GameEnvironment.INFINITY">
       <GameIconRow :games="gameData" />
     </div>
+
+    <InfinityHeader :gameData="gameData" :currentIndex="currentIndex" v-if="!summary && gameEnv === GameEnvironment.INFINITY" />
 
     <div class="invisible mt-2 md:visible absolute inset-y-0 left-4 top-14 md:top-0" v-if="currentState == GameState.PLAYING">
       <div class="p-1 text-white/50 hover:text-white/70 cursor-pointer" @click="helpModal?.showModal()">
@@ -250,7 +256,7 @@ onMounted(() => {
       </div>
     </template>
 
-    <template v-else>
+    <template v-else-if="gameEnv === GameEnvironment.ARCHIVE">
       <div>
         You scored <b>{{ gamesWon }} / {{ gameData.length }}</b>!
       </div>
@@ -262,6 +268,20 @@ onMounted(() => {
         <button class="btn btn-soft btn-secondary" @click="details=!details">
           {{ details ? "Hide" : "Show" }} detailed summary
         </button>
+      </div>
+    </template>
+
+    <template v-else-if="gameEnv === GameEnvironment.INFINITY">
+      <p>
+        You scored <b>{{ gamesWon }} / {{ gameData.length }}</b>! ({{ Math.round(gamesWon / gameData.length * 100) }}%)
+      </p>
+      <div class="mt-5" v-if="getInfinityShareCode()">
+        <p>The share code for this challenge is <span class="font-mono font-semibold">{{ getInfinityShareCode() }}</span>.</p>
+        <p>The code is embedded in the <span class="border border-white/30 p-0.5 rounded-md font-semibold">Share result</span> button below for sharing.</p>
+      </div>
+      <div class="flex flex-wrap justify-center mt-8 gap-2">
+        <button class="btn btn-primary" @click="navigateTo('/')">Back to Home</button>
+        <ResultShareButton :action="copyResult" />
       </div>
     </template>
   </div>

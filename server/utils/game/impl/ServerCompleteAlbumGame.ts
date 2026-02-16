@@ -4,6 +4,7 @@ import {GAME_METAS} from "#shared/games";
 import type {User} from "#auth-utils";
 import prisma from "~/lib/prisma";
 import type {ReportItem} from "~/types/models";
+import type { game_complete_albumModel } from "~/generated/prisma/models";
 
 export class ServerCompleteAlbumGame extends ServerGameDef<CompleteAlbumContainer> {
 
@@ -13,30 +14,12 @@ export class ServerCompleteAlbumGame extends ServerGameDef<CompleteAlbumContaine
 
     override async fetchAllInstances(user: User): Promise<CompleteAlbumContainer[]> {
         const instances = await prisma.game_complete_album.findMany(this.whereAdminOrCreator(user))
-        const albums = await prisma.album.findMany({
-            where: {
-                sid: {
-                    in: instances.map(i => i.album_id ?? "")
-                }
-            }
-        })
-        const items = await prisma.game_complete_album_item.findMany({
-            where: {
-                parent_id: {
-                    in: instances.map(i => i.id)
-                }
-            }
-        })
+        return await this.mapAll(instances)
+    }
 
-        return instances.map(i => {
-            return <CompleteAlbumContainer>{
-                id: i.id,
-                created_by: i.created_by,
-                album: albums.find(a => a.sid === i.album_id),
-                items: items.filter(item => item.parent_id === i.id),
-                context: i.context
-            }
-        })
+    override async fetchInstances(ids: number[]): Promise<CompleteAlbumContainer[]> {
+        const instances = await prisma.game_complete_album.findMany(this.whereIdIn(ids))
+        return await this.mapAll(instances)
     }
 
     override async fetchInstance(gameId: number): Promise<CompleteAlbumContainer> {
@@ -147,5 +130,32 @@ export class ServerCompleteAlbumGame extends ServerGameDef<CompleteAlbumContaine
             }
         })
         return recs.filter(r => r != null && r.album_id != null).map(r => r.album_id!!)
+    }
+
+    async mapAll(instances: game_complete_albumModel[]): Promise<CompleteAlbumContainer[]> {
+        const albums = await prisma.album.findMany({
+            where: {
+                sid: {
+                    in: instances.map(i => i.album_id ?? "")
+                }
+            }
+        })
+        const items = await prisma.game_complete_album_item.findMany({
+            where: {
+                parent_id: {
+                    in: instances.map(i => i.id)
+                }
+            }
+        })
+
+        return instances.map(i => {
+            return <CompleteAlbumContainer>{
+                id: i.id,
+                created_by: i.created_by,
+                album: albums.find(a => a.sid === i.album_id),
+                items: items.filter(item => item.parent_id === i.id),
+                context: i.context
+            }
+        })
     }
 }

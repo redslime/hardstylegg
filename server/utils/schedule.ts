@@ -4,6 +4,7 @@ import type {AvgScoresContainer, PackedDayData} from "~/types/models";
 import {resetCache} from "~/server/api/dashboard/stats/players";
 import {findGameById} from "~/server/utils/game/serverGameRegistry";
 import {resetArchiveCache} from "~/server/api/archive";
+import {resetInfinityPreviewCache} from "~/server/api/infinity";
 
 const BASE_DATE = DateTime.fromISO('2025-11-05', { zone: 'Europe/Berlin' });
 
@@ -178,6 +179,7 @@ export async function getPackedDayDataForDay(dayId: number): Promise<PackedDayDa
 async function onNewDay(newDayId: number) {
     packedCache = await getPackedDayDataForDay(newDayId)
     scoreCache = null
+    resetInfinityPreviewCache()
     resetCache()
     resetArchiveCache()
 }

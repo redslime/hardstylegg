@@ -13,7 +13,7 @@ export function getStrokeColor(state: GameState | undefined): string {
             return "var(--color-error-content)"
     }
 
-    return "var(--color-primary)"
+    return "currentColor"
 }
 
 // Define the shape of a glob import

@@ -4,6 +4,7 @@ import {GAME_METAS} from "#shared/games";
 import type {User} from "#auth-utils";
 import prisma from "~/lib/prisma";
 import type {ReportItem} from "~/types/models";
+import type {game_orderModel} from "~/generated/prisma/models";
 
 export class ServerOrderGame extends ServerGameDef<OrderContainer> {
 
@@ -13,36 +14,12 @@ export class ServerOrderGame extends ServerGameDef<OrderContainer> {
 
     override async fetchAllInstances(user: User): Promise<OrderContainer[]> {
         const instances = await prisma.game_order.findMany(this.whereAdminOrCreator(user))
-        const items = await prisma.game_order_item.findMany()
-        const trackIds = items.map(i => i.track_id)
-        const tracks = await prisma.track.findMany({
-            where: {
-                sid: {
-                    in: trackIds
-                }
-            }
-        })
+        return await this.mapAll(instances)
+    }
 
-        return instances.map(instance => {
-            const children: OrderItem[] = items.filter(item => item.parent_id === instance.id).map(item => {
-                const { track_id, ...rest } = item
-                const track = tracks.find(t => t.sid === item.track_id)
-                return <OrderItem>{
-                    ...rest,
-                    track
-                }
-            })
-            children.sort((a, b) => a.index - b.index)
-
-            return <OrderContainer>{
-                id: instance.id,
-                created_by: instance.created_by,
-                title: instance.title,
-                showNames: instance.show_names,
-                items: children,
-                context: instance.context
-            }
-        })
+    override async fetchInstances(ids: number[]): Promise<OrderContainer[]> {
+        const instances = await prisma.game_order.findMany(this.whereIdIn(ids))
+        return await this.mapAll(instances)
     }
 
     override async fetchInstance(gameId: number): Promise<OrderContainer> {
@@ -161,6 +138,39 @@ export class ServerOrderGame extends ServerGameDef<OrderContainer> {
         return await prisma.game_order_item.count({
             where: {
                 parent_id: gameId,
+            }
+        })
+    }
+
+    async mapAll(instances: game_orderModel[]): Promise<OrderContainer[]> {
+        const items = await prisma.game_order_item.findMany()
+        const trackIds = items.map(i => i.track_id)
+        const tracks = await prisma.track.findMany({
+            where: {
+                sid: {
+                    in: trackIds
+                }
+            }
+        })
+
+        return instances.map(instance => {
+            const children: OrderItem[] = items.filter(item => item.parent_id === instance.id).map(item => {
+                const { track_id, ...rest } = item
+                const track = tracks.find(t => t.sid === item.track_id)
+                return <OrderItem>{
+                    ...rest,
+                    track
+                }
+            })
+            children.sort((a, b) => a.index - b.index)
+
+            return <OrderContainer>{
+                id: instance.id,
+                created_by: instance.created_by,
+                title: instance.title,
+                showNames: instance.show_names,
+                items: children,
+                context: instance.context
             }
         })
     }

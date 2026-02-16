@@ -7,7 +7,8 @@ import {join} from "pathe";
 import {unlink} from "node:fs/promises";
 import type {ReportItem} from "~/types/models";
 import {decodeBase64Image, validateWebPBuffer} from "~/utils/image";
-import {writeFile, mkdir} from "fs/promises";
+import {mkdir, writeFile} from "fs/promises";
+import type { game_artworkModel } from "~/generated/prisma/models";
 
 export class ServerArtworkGame extends ServerGameDef<ArtworkContainer> {
 
@@ -17,24 +18,12 @@ export class ServerArtworkGame extends ServerGameDef<ArtworkContainer> {
 
     override async fetchAllInstances(user: User): Promise<ArtworkContainer[]> {
         const instances = await prisma.game_artwork.findMany(this.whereAdminOrCreator(user))
-        const trackIds = instances.map(i => i.track_id)
-        const tracks = await prisma.track.findMany({
-            where: {
-                sid: {
-                    in: trackIds
-                }
-            }
-        })
+        return await this.mapAll(instances)
+    }
 
-        return instances.map(i => {
-            return <ArtworkContainer>{
-                id: i.id,
-                created_by: i.created_by,
-                imgName: i.artwork_blank,
-                track: tracks.find(t => t.sid === i.track_id),
-                context: i.context
-            }
-        })
+    override async fetchInstances(ids: number[]): Promise<ArtworkContainer[]> {
+        const instances = await prisma.game_artwork.findMany(this.whereIdIn(ids))
+        return await this.mapAll(instances)
     }
 
     override async fetchInstance(gameId: number): Promise<ArtworkContainer> {
@@ -126,5 +115,27 @@ export class ServerArtworkGame extends ServerGameDef<ArtworkContainer> {
             }
         })
         return recs.map(r => r.track_id)
+    }
+
+    async mapAll(instances: game_artworkModel[]): Promise<ArtworkContainer[]> {
+        const trackIds = instances.map(i => i.track_id)
+        const tracks = await prisma.track.findMany({
+            where: {
+                sid: {
+                    in: trackIds
+                }
+            }
+        })
+
+
+        return instances.map(i => {
+            return <ArtworkContainer>{
+                id: i.id,
+                created_by: i.created_by,
+                imgName: i.artwork_blank,
+                track: tracks.find(t => t.sid === i.track_id),
+                context: i.context
+            }
+        })
     }
 }

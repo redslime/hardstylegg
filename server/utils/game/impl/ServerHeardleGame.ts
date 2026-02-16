@@ -6,6 +6,7 @@ import prisma from "~/lib/prisma";
 import {join} from "pathe";
 import {unlink} from "node:fs/promises";
 import type {ReportItem} from "~/types/models";
+import type { game_heardleModel } from "~/generated/prisma/models";
 
 export class ServerHeardleGame extends ServerGameDef<HeardleContainer> {
 
@@ -15,24 +16,12 @@ export class ServerHeardleGame extends ServerGameDef<HeardleContainer> {
 
     override async fetchAllInstances(user: User): Promise<HeardleContainer[]> {
         const instances = await prisma.game_heardle.findMany(this.whereAdminOrCreator(user))
-        const trackIds = instances.map(i => i.track_id)
-        const tracks = await prisma.track.findMany({
-            where: {
-                sid: {
-                    in: trackIds
-                }
-            }
-        })
+        return await this.mapAll(instances)
+    }
 
-        return <HeardleContainer[]> instances.map(i => {
-            const { track_id, durations, ...rest } = i
-            const array = JSON.parse(durations) as number[]
-            return {
-                ...rest,
-                durations: array,
-                track: tracks.find(t => t.sid === i.track_id)
-            }
-        })
+    override async fetchInstances(ids: number[]): Promise<HeardleContainer[]> {
+        const instances = await prisma.game_heardle.findMany(this.whereIdIn(ids))
+        return await this.mapAll(instances)
     }
 
     override async fetchInstance(gameId: number): Promise<HeardleContainer> {
@@ -115,5 +104,26 @@ export class ServerHeardleGame extends ServerGameDef<HeardleContainer> {
             }
         })
         return recs.map(r => r.track_id)
+    }
+
+    async mapAll(instances: game_heardleModel[]): Promise<HeardleContainer[]> {
+        const trackIds = instances.map(i => i.track_id)
+        const tracks = await prisma.track.findMany({
+            where: {
+                sid: {
+                    in: trackIds
+                }
+            }
+        })
+
+        return <HeardleContainer[]> instances.map(i => {
+            const { track_id, durations, ...rest } = i
+            const array = JSON.parse(durations) as number[]
+            return {
+                ...rest,
+                durations: array,
+                track: tracks.find(t => t.sid === i.track_id)
+            }
+        })
     }
 }

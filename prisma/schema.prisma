@@ -259,3 +259,9 @@ model game_zoomer {
 
   @@index([created_by], map: "game_zoomer_user_id_fk")
 }
+
+model infinity {
+  code     String @id @unique(map: "infinity_pk_2") @db.Char(6)
+  type_ids String @db.VarChar(1024)
+  game_ids String @db.VarChar(1024)
+}

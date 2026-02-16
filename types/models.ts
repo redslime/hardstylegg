@@ -19,7 +19,8 @@ export enum GameState {
 
 export enum GameEnvironment {
     DAILY,
-    ARCHIVE
+    ARCHIVE,
+    INFINITY
 }
 
 export interface Track {
@@ -161,6 +162,25 @@ export interface ArchiveContainer {
     baseDate: DateTime
     todayId: number
     recentGames: PackedDayData[]
+}
+
+export interface InfinityPreviewContainer {
+    games: Record<number, number>,
+    trackYears: Record<number, {year: number, count: number}[]>
+}
+
+export interface InfinityRequestContainer {
+    typeIds: number[]
+    shared: boolean
+    startYear: number
+    endYear: number
+    typeLimits?: Record<number, number>
+}
+
+export interface InfinityResponseContainer {
+    typeIds: number[]
+    gameData: EditorContainer[]
+    shareCode?: string | null
 }
 
 export enum StateFilter {

@@ -69,3 +69,21 @@ export const GAME_METAS = {
         validator: validateZoomer
     }
  } satisfies Record<string, GameMeta>
+export const YEAR_FILTER_GAMES = [GAME_METAS.Artwork.id, GAME_METAS.CompleteAlbum.id, GAME_METAS.CompleteLyrics.id, GAME_METAS.Heardle.id]
+
+export function encodeSelection(selected: GameMeta[]): string {
+    return encodeIdSelection(selected.map(g => g.id))
+}
+
+export function encodeIdSelection(ids: number[]): string {
+    let mask = 0
+    for (const id of ids) {
+        mask |= 1 << id
+    }
+    return mask.toString(16)
+}
+
+export function decodeSelection(hex: string): GameMeta[] {
+    const mask = parseInt(hex, 16)
+    return Object.values(GAME_METAS).filter(item => (mask & (1 << item.id)) !== 0)
+}

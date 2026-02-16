@@ -15,6 +15,10 @@ export class ServerTimelineGame extends ServerGameDef<TimelineContainer> {
         return await prisma.game_timeline.findMany(this.whereAdminOrCreator(user))
     }
 
+    override async fetchInstances(ids: number[]): Promise<TimelineContainer[]> {
+        return await prisma.game_timeline.findMany(this.whereIdIn(ids))
+    }
+
     override async fetchInstance(gameId: number): Promise<TimelineContainer> {
         const parent = await prisma.game_timeline.findUnique({ where: { id: gameId } })
 

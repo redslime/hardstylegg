@@ -12,6 +12,8 @@ export abstract class ServerGameDef<T extends EditorContainer> extends GameDef<T
 
     abstract fetchAllInstances(user: User): Promise<T[]>
 
+    abstract fetchInstances(ids: number[]): Promise<T[]>
+
     abstract fetchInstance(gameId: number): Promise<T>
 
     abstract createInstance(instance: T): Promise<T>
@@ -87,6 +89,16 @@ export abstract class ServerGameDef<T extends EditorContainer> extends GameDef<T
                         }
                     ]
                 })
+            }
+        }
+    }
+
+    protected whereIdIn(gameIds: number[]) {
+        return {
+            where: {
+                id: {
+                    in: gameIds
+                }
             }
         }
     }

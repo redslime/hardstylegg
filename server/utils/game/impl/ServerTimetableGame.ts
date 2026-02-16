@@ -4,6 +4,7 @@ import {GAME_METAS} from "#shared/games";
 import type {User} from "#auth-utils";
 import prisma from "~/lib/prisma";
 import type {ReportItem} from "~/types/models";
+import type {game_timetableModel} from "~/generated/prisma/models";
 
 export class ServerTimetableGame extends ServerGameDef<TimetableContainer> {
 
@@ -12,18 +13,13 @@ export class ServerTimetableGame extends ServerGameDef<TimetableContainer> {
     }
 
     override async fetchAllInstances(user: User): Promise<TimetableContainer[]> {
-        const parents = await prisma.game_timetable.findMany(this.whereAdminOrCreator(user))
-        const items = await prisma.game_timetable_item.findMany()
+        const instances = await prisma.game_timetable.findMany(this.whereAdminOrCreator(user))
+        return await this.mapAll(instances)
+    }
 
-        return parents.map(parent => {
-            const { color_bg, color_text, ...rest } = parent
-            return {
-                ...rest,
-                color_bg: "#" + color_bg,
-                color_text: "#" + color_text,
-                items: items.filter(item => item.parent_id === parent.id)
-            } as TimetableContainer
-        })
+    override async fetchInstances(ids: number[]): Promise<TimetableContainer[]> {
+        const instances = await prisma.game_timetable.findMany(this.whereIdIn(ids))
+        return await this.mapAll(instances)
     }
 
     override async fetchInstance(gameId: number): Promise<TimetableContainer> {
@@ -138,6 +134,20 @@ export class ServerTimetableGame extends ServerGameDef<TimetableContainer> {
                 parent_id: gameId,
                 hidden: true
             }
+        })
+    }
+
+    async mapAll(instances: game_timetableModel[]): Promise<TimetableContainer[]> {
+        const items = await prisma.game_timetable_item.findMany()
+
+        return instances.map(parent => {
+            const { color_bg, color_text, ...rest } = parent
+            return {
+                ...rest,
+                color_bg: "#" + color_bg,
+                color_text: "#" + color_text,
+                items: items.filter(item => item.parent_id === parent.id)
+            } as TimetableContainer
         })
     }
 }

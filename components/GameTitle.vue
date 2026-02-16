@@ -19,7 +19,7 @@ const details = inject<boolean>('details')
           <slot name="icon">
             <component
                 :is="gameDef.icon"
-                class="h-[1em] w-auto inline-block align-baseline"
+                class="h-[1em] w-auto inline-block align-baseline text-primary"
             />
           </slot>
         </span>

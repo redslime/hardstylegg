@@ -4,6 +4,7 @@ import {GAME_METAS} from "#shared/games";
 import type {User} from "#auth-utils";
 import prisma from "~/lib/prisma";
 import type {ReportItem, Track} from "~/types/models";
+import type {game_namexModel} from "~/generated/prisma/models";
 
 export class ServerNameXGame extends ServerGameDef<NameXContainer> {
 
@@ -13,39 +14,12 @@ export class ServerNameXGame extends ServerGameDef<NameXContainer> {
 
     override async fetchAllInstances(user: User): Promise<NameXContainer[]> {
         const instances = await prisma.game_namex.findMany(this.whereAdminOrCreator(user))
-        const trackIds = instances.flatMap(i => {
-            if(i.tracks) {
-                return JSON.parse(i.items) as string[]
-            } else {
-                return []
-            }
-        })
-        const tracks = await prisma.track.findMany({
-            where: {
-                sid: {
-                    in: trackIds
-                }
-            }
-        }) as Track[]
+        return await this.mapAll(instances)
+    }
 
-        return instances.map(i => {
-            const { items, ...rest } = i
-            const array = JSON.parse(i.items) as string[]
-
-            if(i.tracks) {
-                const ts: Track[] = array.map(sid => tracks.find(t => t.sid === sid)!!)
-
-                return <NameXContainer>{
-                    ...rest,
-                    items: ts
-                }
-            } else {
-                return <NameXContainer>{
-                    ...rest,
-                    items: array
-                }
-            }
-        })
+    override async fetchInstances(ids: number[]): Promise<NameXContainer[]> {
+        const instances = await prisma.game_namex.findMany(this.whereIdIn(ids))
+        return await this.mapAll(instances)
     }
 
     override async fetchInstance(gameId: number): Promise<NameXContainer> {
@@ -135,5 +109,41 @@ export class ServerNameXGame extends ServerGameDef<NameXContainer> {
             }
         })
         return nameX?.goal ?? "?"
+    }
+
+    async mapAll(instances: game_namexModel[]): Promise<NameXContainer[]> {
+        const trackIds = instances.flatMap(i => {
+            if(i.tracks) {
+                return JSON.parse(i.items) as string[]
+            } else {
+                return []
+            }
+        })
+        const tracks = await prisma.track.findMany({
+            where: {
+                sid: {
+                    in: trackIds
+                }
+            }
+        }) as Track[]
+
+        return instances.map(i => {
+            const { items, ...rest } = i
+            const array = JSON.parse(i.items) as string[]
+
+            if(i.tracks) {
+                const ts: Track[] = array.map(sid => tracks.find(t => t.sid === sid)!!)
+
+                return <NameXContainer>{
+                    ...rest,
+                    items: ts
+                }
+            } else {
+                return <NameXContainer>{
+                    ...rest,
+                    items: array
+                }
+            }
+        })
     }
 }

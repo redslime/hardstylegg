@@ -3,6 +3,7 @@ import type {CompleteLyricsContainer} from "~/types/gameModels";
 import {GAME_METAS} from "#shared/games";
 import type {User} from "#auth-utils";
 import prisma from "~/lib/prisma";
+import type { game_complete_lyricsModel } from "~/generated/prisma/models";
 
 export class ServerCompleteLyricsGame extends ServerGameDef<CompleteLyricsContainer> {
 
@@ -12,23 +13,12 @@ export class ServerCompleteLyricsGame extends ServerGameDef<CompleteLyricsContai
 
     override async fetchAllInstances(user: User): Promise<CompleteLyricsContainer[]> {
         const instances = await prisma.game_complete_lyrics.findMany(this.whereAdminOrCreator(user))
-        const trackIds = instances.map(i => i.track_id)
-        const tracks = await prisma.track.findMany({
-            where: {
-                sid: {
-                    in: trackIds
-                }
-            }
-        })
+        return await this.mapAll(instances)
+    }
 
-        return instances.map(i => {
-            const { track_id, ...rest } = i
-            const track = tracks.find(t => t.sid === track_id)
-            return <CompleteLyricsContainer>{
-                ...rest,
-                track
-            }
-        })
+    override async fetchInstances(ids: number[]): Promise<CompleteLyricsContainer[]> {
+        const instances = await prisma.game_complete_lyrics.findMany(this.whereIdIn(ids))
+        return await this.mapAll(instances)
     }
 
     override async fetchInstance(gameId: number): Promise<CompleteLyricsContainer> {
@@ -98,5 +88,25 @@ export class ServerCompleteLyricsGame extends ServerGameDef<CompleteLyricsContai
             }
         })
         return recs.map(r => r.track_id)
+    }
+
+    async mapAll(instances: game_complete_lyricsModel[]): Promise<CompleteLyricsContainer[]> {
+        const trackIds = instances.map(i => i.track_id)
+        const tracks = await prisma.track.findMany({
+            where: {
+                sid: {
+                    in: trackIds
+                }
+            }
+        })
+
+        return instances.map(i => {
+            const { track_id, ...rest } = i
+            const track = tracks.find(t => t.sid === track_id)
+            return <CompleteLyricsContainer>{
+                ...rest,
+                track
+            }
+        })
     }
 }

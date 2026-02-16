@@ -87,6 +87,11 @@ export class ServerZoomerGame extends ServerGameDef<ZoomerContainer> {
         return instances.map(i => this.mapRecord(i))
     }
 
+    override async fetchInstances(ids: number[]): Promise<ZoomerContainer[]> {
+        const instances = await prisma.game_zoomer.findMany(this.whereIdIn(ids))
+        return instances.map(i => this.mapRecord(i))
+    }
+
     override async fetchInstance(gameId: number): Promise<ZoomerContainer> {
         const i = await prisma.game_zoomer.findUnique({ where: { id: gameId } })
         return this.mapRecord(i!!)

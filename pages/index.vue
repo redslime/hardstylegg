@@ -6,6 +6,8 @@ import {refreshCookie} from "#app";
 import CookieChart from "~/components/CookieChart.vue";
 import {watchOnce} from "@vueuse/shared";
 import {getYesterdayGame} from "~/utils/archive";
+import {GAME_METAS} from "#shared/games";
+import {getInfinityPreview} from "~/utils/infinity";
 
 definePageMeta({
   layout: 'hero'
@@ -13,6 +15,7 @@ definePageMeta({
 
 const { data: gameData, pending } = await useAsyncData(() => getGameContainer(), { lazy: true })
 const { data: avgScores } = await useAsyncData(() => $fetch<AvgScoresContainer>('/api/scores'), { lazy: true })
+const { data: infinityPreview } = await useAsyncData(() => getInfinityPreview(), { lazy: true })
 const gameDataPast = ref<GameContainer>()
 const cookie = useCookie<CookieDayMemory[]>("memory", {
   maxAge: 60 * 60 * 24 * 365,
@@ -36,6 +39,10 @@ async function play() {
   navigateTo('/play')
 }
 
+async function playInfinity() {
+  navigateTo('/play/infinity')
+}
+
 function navigateArchive() {
   navigateTo('/archive')
 }
@@ -55,7 +62,7 @@ useOnce(() => {
 </script>
 
 <template>
-  <div class="hero bg-base-300 rounded-lg border-1 border-primary">
+  <div class="hero bg-base-300 rounded-lg border border-primary">
     <div class="hero-content flex flex-col text-center">
       <div class="max-w-lg">
         <h1 class="text-3xl md:text-5xl font-bold">Daily challenge</h1>
@@ -87,7 +94,29 @@ useOnce(() => {
     </div>
   </div>
 
-  <div class="hero bg-base-300 rounded-lg mt-7 border-1 border-neutral" v-if="avgScores && (cookie.length > 0 || dev)">
+  <div class="hero bg-base-300 rounded-lg border border-accent mt-7">
+    <div class="hero-content flex flex-col text-center">
+      <div class="flex flex-col gap-2">
+        <div class="flex gap-2 justify-center">
+          <span class="badge md:badge-lg badge-soft badge-accent font-bold self-center">NEW</span>
+          <h1 class="text-2xl md:text-4xl font-bold">Infinity mode</h1>
+        </div>
+
+        <p class="text-xl">Play all old questions</p>
+
+        <div class="flex justify-center flex-wrap gap-2 my-2">
+          <div v-for="game in GAME_METAS" :key="game.id" class="p-3 rounded-md bg-base-100 indicator">
+            <span class="indicator-item indicator-end badge badge-sm badge-soft px-1.5" v-if="infinityPreview">{{ infinityPreview.games[game.id] }}</span>
+            <component :is="$gameRegistry.findGameById(game.id)!!.icon" :state="GameState.UPCOMING" />
+          </div>
+        </div>
+      </div>
+
+      <button class="btn btn-accent btn-xl" @click="playInfinity">Play</button>
+    </div>
+  </div>
+
+  <div class="hero bg-base-300 rounded-lg mt-7 border border-neutral" v-if="avgScores && (cookie.length > 0 || dev)">
     <div class="hero-content flex flex-col text-center px-0 sm:px-1 md:px-4 w-full">
       <div class="w-full md:max-w-lg">
         <h1 class="text-2xl md:text-4xl font-bold">Past challenge scores</h1>
@@ -96,7 +125,7 @@ useOnce(() => {
     </div>
   </div>
 
-  <div class="hero bg-base-300 rounded-lg mt-7 border-1 border-neutral">
+  <div class="hero bg-base-300 rounded-lg mt-7 border border-neutral">
     <div class="hero-content flex flex-col text-center px-0 sm:px-1 md:px-4 w-full">
       <h1 class="text-2xl md:text-4xl font-bold">Game archive</h1>
 
@@ -105,7 +134,7 @@ useOnce(() => {
           You can find <b>all past challenges</b> in the <NuxtLink to="/archive" class="text-primary"><b>Archive</b></NuxtLink>.
         </div>
         <div class="w-full flex justify-center">
-          <div class="border-secondary border-1 w-fit py-3 px-10 rounded-md bg-black/10 shadow-lg">
+          <div class="border-secondary border w-fit py-3 px-10 rounded-md bg-black/10 shadow-lg">
             <h2 class="text-xl md:text-2xl font-medium">Yesterday's challenge</h2>
             <div v-if="gameDataPast">
               <h4 class="text-md mb-2">

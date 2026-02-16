@@ -3,6 +3,7 @@ import type {QuizContainer} from "~/types/gameModels";
 import {GAME_METAS} from "#shared/games";
 import type {User} from "#auth-utils";
 import prisma from "~/lib/prisma";
+import type {game_quizModel} from "~/generated/prisma/models";
 
 export class ServerQuizGame extends ServerGameDef<QuizContainer> {
 
@@ -11,17 +12,13 @@ export class ServerQuizGame extends ServerGameDef<QuizContainer> {
     }
 
     override async fetchAllInstances(user: User): Promise<QuizContainer[]> {
-        const parents = await prisma.game_quiz.findMany(this.whereAdminOrCreator(user))
-        const items = await prisma.game_quiz_item.findMany()
+        const instances = await prisma.game_quiz.findMany(this.whereAdminOrCreator(user))
+        return await this.mapAll(instances)
+    }
 
-        const mapped = parents.map(parent => {
-            return {
-                ...parent,
-                items: items.filter(item => item.parent_id === parent.id)
-            }
-        })
-
-        return <QuizContainer[]> mapped
+    override async fetchInstances(ids: number[]): Promise<QuizContainer[]> {
+        const instances = await prisma.game_quiz.findMany(this.whereIdIn(ids))
+        return await this.mapAll(instances)
     }
 
     override async fetchInstance(gameId: number): Promise<QuizContainer> {
@@ -107,5 +104,18 @@ export class ServerQuizGame extends ServerGameDef<QuizContainer> {
 
     override getPreviewIcon(): string {
         return '<path stroke="currentColor" fill="none" stroke-width="1.5" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />'
+    }
+
+    async mapAll(instances: game_quizModel[]): Promise<QuizContainer[]> {
+        const items = await prisma.game_quiz_item.findMany()
+
+        const mapped = instances.map(parent => {
+            return {
+                ...parent,
+                items: items.filter(item => item.parent_id === parent.id)
+            }
+        })
+
+        return <QuizContainer[]> mapped
     }
 }

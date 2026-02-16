@@ -201,3 +201,44 @@ export function shallowRecordEquals(a?: Record<string, string>, b?: Record<strin
 
     return keysA.every(k => a[k] === b[k]);
 }
+
+export function pickRandomItems<T>(array: T[], size: number): T[] {
+    if (array.length <= size) return shuffleArray(array)
+    const shuffled = shuffleArray(array)
+    return shuffled.slice(0, size)
+}
+
+export function inflate<K extends string | number | symbol, V>(record: Record<K, V[]>): [K, V][] {
+    const result: [K, V][] = []
+    for (const key in record) {
+        for (const value of record[key]) {
+            result.push([key as K, value])
+        }
+    }
+    return result
+}
+
+export function unzip<K, V>(array: [K, V][]): [K[], V[]] {
+    const keys: K[] = []
+    const values: V[] = []
+    for (const [key, value] of array) {
+        keys.push(key)
+        values.push(value)
+    }
+    return [keys, values]
+}
+
+export function zip<K, V>(array1: K[], array2: V[]): [K, V][] {
+    const result: [K, V][] = []
+    const length = Math.min(array1.length, array2.length)
+
+    for (let i = 0; i < length; i++) {
+        result.push([array1[i] as K, array2[i] as V])
+    }
+
+    return result
+}
+
+export function distinct<T>(array: T[]): T[] {
+    return [...new Set(array)]
+}
