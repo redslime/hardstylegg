@@ -14,7 +14,6 @@ const props = defineProps({
   years: { type: Object as PropType<{ start: number; end: number }>, required: false}
 })
 
-console.log(props.years)
 const emit = defineEmits<{
   done: [container: InfinityRequestContainer | { code: string }]
 }>()

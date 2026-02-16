@@ -33,8 +33,6 @@ async function expand() {
     }
   }
 
-  console.log(ids)
-
   await Promise.all(ids.map(id => getArchiveGame(id)))
   loading.value = false
 }
