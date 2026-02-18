@@ -7,6 +7,8 @@ import ArrowPathIcon from "~/components/icons/ArrowPathIcon.vue";
 import PlusIcon from "~/components/icons/PlusIcon.vue";
 import {watchOnce} from "@vueuse/shared";
 import ArrowTopRightOpenIcon from "~/components/icons/ArrowTopRightOpenIcon.vue";
+import ChevronLeftIcon from "~/components/icons/ChevronLeftIcon.vue";
+import ChevronRightArrow from "~/components/icons/ChevronRightArrow.vue";
 
 definePageMeta({
   layout: 'dashboard',
@@ -16,12 +18,13 @@ definePageMeta({
 const { $gameRegistry } = useNuxtApp();
 const dashboardData = await getDashboardData()
 const todayId = dashboardData.schedule.todayId
-const dayId: number = parseInt(useRoute().params.dayId?.toString()!!)
-const friendly = await getFriendlyName(dayId, 'LLLL d')
-const { data: packedGameData, pending, error, clear } = await useAsyncData<PackedDayData>(dayId + "", () => $fetch("/api/day/" + dayId), { lazy: true })
+const route = useRoute()
+const dayId = computed<number>(() => Number(route.params.dayId))
+let friendly = await getFriendlyName(dayId.value, 'LLLL d')
+let { data: packedGameData, pending, error, clear, refresh } = await useAsyncData<PackedDayData>(dayId.value + "", () => $fetch("/api/day/" + dayId.value), { lazy: true })
 const editable = computed(() => {
   return packedGameData.value &&
-      (dayId > todayId || (dayId === todayId && packedGameData.value.typeIds.length < GAMES_PER_DAY))
+      (dayId.value > todayId || (dayId.value === todayId && packedGameData.value.typeIds.length < GAMES_PER_DAY))
 })
 const games = ref<ScheduleEntry[]>([])
 const selectorModal = ref<HTMLDialogElement | null>(null)
@@ -62,7 +65,7 @@ async function save() {
   saving.value = true
 
   const dayData = <ScheduleDay>{
-    day: dayId,
+    day: dayId.value,
     dayFriendly: friendly,
     gameIds: games.value!!.map(g => g.gameData?.id).filter(t => t !== undefined) as number[],
     typeIds: games.value!!.map(g => g.typeId).filter(t => t !== undefined) as number[]
@@ -91,6 +94,13 @@ function modalClosed() {
   selectType.value = undefined
 }
 
+function getHrefTo(newId: number) {
+  return {
+    name: route.name as string,
+    params: { ...route.params, dayId: newId }
+  }
+}
+
 watchOnce(packedGameData, (data) => {
   if(data) {
     // seems to be well-defined already, just fill
@@ -117,6 +127,11 @@ watchOnce(packedGameData, (data) => {
     })
   }
 })
+
+watch(() => route.params.dayId, async () => {
+  friendly = await getFriendlyName(dayId.value, 'LLLL d')
+  await refresh()
+})
 </script>
 
 <template>
@@ -126,10 +141,15 @@ watchOnce(packedGameData, (data) => {
     <span class="font-medium" v-if="packedGameData?.theme">({{ packedGameData.theme }})</span>
   </div>
 
+  <div class="join mt-5">
+    <NuxtLink :to="getHrefTo(dayId-1)"><button class="btn join-item"><ChevronLeftIcon class="text-info" /> Previous day</button></NuxtLink>
+    <NuxtLink :to="getHrefTo(dayId+1)"><button class="btn join-item">Next day <ChevronRightArrow class="text-info" /></button></NuxtLink>
+  </div>
+
   <DashboardGameLoadingSpinner :pending="pending" :error="error" />
 
   <div class="w-full" v-if="games">
-    <div class="stats stats-vertical border-1 border-neutral/50 my-8 w-full">
+    <div class="stats stats-vertical border border-neutral/50 my-8 w-full">
 
       <div class="stat" v-for="(game, index) in games" :key="index">
         <div class="stat-title">Game {{ index + 1 }}</div>

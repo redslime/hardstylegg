@@ -9,7 +9,9 @@ const { pending, error } = defineProps({
 </script>
 
 <template>
-  <span class="loading loading-spinner loading-xl" v-if="pending"></span>
+  <div class="mt-5 [&:empty]:hidden">
+    <span class="loading loading-spinner loading-xl" v-if="pending"></span>
+  </div>
 
   <div role="alert" class="alert alert-error alert-soft" v-if="error">
     <span>Failed to load</span>
