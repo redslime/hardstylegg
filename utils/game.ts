@@ -15,6 +15,7 @@ let currentGameId: number | null = null
 let report: ReportContainer | null = null
 let packedGameData: GameContainer | null = null
 let gameEnvironment: GameEnvironment | null = null
+let gameActive = ref<boolean>(false)
 
 type TempReport = {
     consumer: (report: GameReport) => void,
@@ -85,6 +86,11 @@ export function getGameName(type_id: number): string {
 export function updateState(typeId: number | null, gameId: number | null) {
     currentTypeId = typeId
     currentGameId = gameId
+    gameActive.value = !(typeId === null && gameId === null);
+}
+
+export function isGameActive(): boolean {
+    return gameActive.value
 }
 
 export function startGame(gameEnv: GameEnvironment, isApp: boolean) {

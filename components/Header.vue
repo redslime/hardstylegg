@@ -1,12 +1,18 @@
 <script setup lang="ts">
-import {getGameContainer} from "~/utils/game";
+import {getGameContainer, isGameActive} from "~/utils/game";
 
 const { data: gameData } = await useAsyncData(() => getGameContainer(), { lazy: true })
 const path = useRoute().path
 const target = computed(() => {
-  if(path.startsWith("/play")) return path
+  if(path == "/play") {
+    if(isGameActive()) {
+      return path
+    }
+  }
+
   return "/"
 })
+
 </script>
 
 <template>
