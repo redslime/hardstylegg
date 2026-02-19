@@ -36,6 +36,7 @@ const editingExample = computed<boolean>(() => editing.value?.id === 1)
 const editingSchedule = computed<ScheduleDay | undefined>(() => getScheduleForGame(gameDef.id, editing.value?.id))
 const editingIsPast = computed<boolean>(() => editingSchedule.value?.day !== undefined && editingSchedule.value.day < todayId.value)
 const editingGameReports = ref<GameReportFlat[]>([])
+const editingForced = ref<boolean>(false)
 const previewModal = ref<HTMLDialogElement | undefined>()
 const previewState = ref<GameState>(GameState.PLAYING)
 const previewCounter = ref<number>(0)
@@ -87,6 +88,7 @@ provide("currentIndex", 1)
 
 function cancel() {
   editing.value = undefined
+  editingForced.value = false
   window.history.back()
   emit('cancelled')
 }
@@ -219,7 +221,7 @@ onMounted(() => {
     <div class="flex flex-wrap gap-5">
       <div class="flex flex-col gap-3">
         <div class="bg-base-200 w-fit min-w-2xl p-3 rounded-lg">
-          <template v-if="!editingIsPast">
+          <template v-if="!editingIsPast || editingForced">
             <div class="font-bold mb-4">
               <slot name="editTitle">
 
@@ -247,7 +249,7 @@ onMounted(() => {
         </div>
 
         <div class="flex gap-5">
-          <template v-if="!editingIsPast">
+          <template v-if="!editingIsPast || editingForced">
             <div class="join">
               <button class="btn btn-neutral join-item" @click="cancel">Cancel</button>
               <button class="btn btn-success join-item" @click="save" :disabled="editingErrors.length > 0 || editingExample">Save</button>
@@ -260,6 +262,8 @@ onMounted(() => {
           </template>
 
           <button class="btn btn-soft btn-info" :disabled="editingErrors.length > 0" @click="startPreview()"><PlayIcon /> Live preview</button>
+
+          <button class="btn btn-soft btn-accent" v-if="user.admin && editingIsPast && !editingForced" @click="editingForced = true">Admin: Edit game</button>
         </div>
       </div>
 
