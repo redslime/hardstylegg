@@ -171,6 +171,7 @@ function validate(selected: ShallowTrack, flashError: () => void, _flashSuccess:
 
   hasPlayed.value = false
   guessStage.value++
+  wavesurfer?.waveSurfer.value?.seekTo(currentStageDuration.value / 15)
 }
 
 function unlockIOSAudio() {
