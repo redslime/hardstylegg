@@ -16,7 +16,8 @@ function getPercentage(index: number) {
 
 <template>
   <div class="flex justify-center">
-    <ul class="list bg-base-100 rounded-box shadow-md divide-y divide-base-300">
+    <ul class="grid bg-base-100 rounded-box shadow-md divide-y divide-base-300 text-sm"
+        :class="{ 'grid-cols-2': container.items.length >= 10 }">
       <template v-if="container.tracks">
         <li
             v-for="(track, index) in container.items as Track[]"

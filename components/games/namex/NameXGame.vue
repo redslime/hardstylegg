@@ -5,6 +5,7 @@ import {countAttempt, countItem} from "~/utils/game";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.NameXDef
+const isMobile = inject<boolean>('isMobile')
 const emit = defineEmits(['onFinish'])
 const props = defineProps({
   state: { type: Number as PropType<GameState>, required: true },
@@ -89,7 +90,8 @@ function censor(text: string, censor: boolean): string {
 <template>
   <GameTitle :gameDef="gameDef" :container="props.container" />
 
-  <ul class="list bg-base-100 rounded-box shadow-md divide-y divide-base-300">
+  <ul class="grid bg-base-100 rounded-box shadow-md divide-y divide-base-300 text-sm"
+      :class="{ 'grid-cols-2': items.length >= 6 && !isMobile, 'grid-cols-3': items.length >= 15 && !isMobile }">
     <li
         v-for="(item, index) in items"
         :key="index"

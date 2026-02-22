@@ -63,7 +63,8 @@ watchOnce(data, () => instances.value = data.value)
           <button class="btn btn-primary" :class="{'btn-outline': editing.tracks}" @click="setTrackMode(editing, false)">Text</button>
         </div>
 
-        <ul class="list bg-base-100 rounded-box shadow-md divide-y divide-base-300">
+        <ul class="grid bg-base-100 rounded-box shadow-md divide-y divide-base-300 text-sm"
+            :class="{ 'grid-cols-2': editing.items.length >= 10 }">
           <li
               v-for="(item, index) in editing.items"
               :key="index"
