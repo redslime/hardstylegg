@@ -28,7 +28,7 @@ function setTrackMode(editing: NameXContainer, tracks: boolean) {
 }
 
 function enter(editing: NameXContainer) {
-  (editing.items as string[]).push(input.value)
+  (editing.items as string[]).push(input.value.trim())
   input.value = ""
 }
 

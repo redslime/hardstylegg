@@ -45,8 +45,8 @@ export class ServerCompleteAlbumGame extends ServerGameDef<CompleteAlbumContaine
                 game_complete_album_item: {
                     create: instance.items.map(item => {
                         return {
-                            name: item.name,
-                            artist: item.artist,
+                            name: item.name.trim(),
+                            artist: item.artist.trim(),
                             hidden: item.hidden
                         }
                     })
@@ -76,14 +76,14 @@ export class ServerCompleteAlbumGame extends ServerGameDef<CompleteAlbumContaine
                     upsert: instance.items.map((item) => ({
                         where: { id: item.id ?? -1 },
                         create: {
-                            name: item.name,
-                            artist: item.artist,
+                            name: item.name.trim(),
+                            artist: item.artist.trim(),
                             hidden: item.hidden,
                             context: item.context
                         },
                         update: {
-                            name: item.name,
-                            artist: item.artist,
+                            name: item.name.trim(),
+                            artist: item.artist.trim(),
                             hidden: item.hidden,
                             context: item.context
                         },

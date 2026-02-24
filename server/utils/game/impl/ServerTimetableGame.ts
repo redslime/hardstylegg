@@ -48,7 +48,7 @@ export class ServerTimetableGame extends ServerGameDef<TimetableContainer> {
                 game_timetable_item: {
                     create: instance.items.map(item => {
                         return {
-                            name: item.name,
+                            name: item.name.trim(),
                             begin: item.begin,
                             end: item.end,
                             hidden: item.hidden,
@@ -86,14 +86,14 @@ export class ServerTimetableGame extends ServerGameDef<TimetableContainer> {
                     upsert: instance.items.map((item) => ({
                         where: { id: item.id ?? -1 },
                         create: {
-                            name: item.name,
+                            name: item.name.trim(),
                             begin: item.begin,
                             end: item.end,
                             hidden: item.hidden,
                             context: item.context
                         },
                         update: {
-                            name: item.name,
+                            name: item.name.trim(),
                             begin: item.begin,
                             end: item.end,
                             hidden: item.hidden,

@@ -25,7 +25,7 @@ const validateGuess = (item: CompleteAlbumItem) => {
     return
   }
 
-  item.correct = item.guess.trim().toLowerCase() === item.name.toLowerCase()
+  item.correct = item.guess.trim().toLowerCase() === item.name.trim().toLowerCase()
 
   if(item.correct) {
     countItem(item.id, item.correct)

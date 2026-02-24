@@ -23,7 +23,7 @@ const validateGuess = (item: TimetableItem) => {
     item.correct = null
     return
   }
-  item.correct = item.guess.trim().toLowerCase() === item.name.toLowerCase()
+  item.correct = item.guess.trim().toLowerCase() === item.name.trim().toLowerCase()
 
   if(item.correct) {
     countItem(item.id, true)
