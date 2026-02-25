@@ -68,6 +68,7 @@ export interface QuizAnswer extends EditorContainer {
     tempId?: number
     text: string
     correct: boolean
+    context: string | null
 }
 
 export interface TimelineContainer extends EditorContainer {

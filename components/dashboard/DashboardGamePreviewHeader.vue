@@ -19,6 +19,19 @@ const upcoming = computed(() => todayId.value && scheduleData.value && todayId.v
 const past = computed(() => todayId.value && scheduleData.value && todayId.value > scheduleData.value.day)
 const example = computed(() => container.id === 1)
 const editor = computed(() => dashboardData.editors.find(e => e.id === container.created_by))
+const hasContext = computed(() => {
+  if(container.context !== null) {
+    return true
+  }
+
+  // also check for context within items
+  if('items' in container) {
+    const items = container.items as any[]
+    return items.filter(i => typeof i === 'object' && 'context' in i && i.context !== null).length > 0
+  }
+
+  return false
+})
 
 function click() {
   if(pointer) {
@@ -38,7 +51,7 @@ function click() {
       <div class="badge badge-neutral badge-xs font-mono">
         Created by {{ editor?.name }}
       </div>
-      <div class="badge badge-info badge-soft badge-xs font-mono px-0 tooltip" data-tip="has context" v-if="container.context"><LightBulbIcon :size="'size-4'" /></div>
+      <div class="badge badge-info badge-soft badge-xs font-mono px-0 tooltip" data-tip="has context" v-if="hasContext"><LightBulbIcon :size="'size-4'" /></div>
     </div>
     <div class="flex flex-wrap gap-2">
       <slot>
