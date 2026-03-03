@@ -15,7 +15,7 @@ export default defineEventHandler(async (event) => {
 
             if(gameDef) {
                 // this endpoint is only called on games in the past, so the reports won't change
-                setHeader(event, 'Cache-Control', 'public, max-age=2592000') // 1 month
+                setHeader(event, 'Cache-Control', 'private, max-age=2592000') // 1 month
                 const fetched = await prisma.report_item.findMany({
                     select: {
                         success: true,
