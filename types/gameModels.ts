@@ -105,3 +105,10 @@ export interface ZoomerContainer extends EditorContainer {
     goal: ZoomerType
     data: ZoomerImageData
 }
+
+export interface LostInTranslationContainer extends EditorContainer {
+    track: Track
+    textTranslated: String
+    textOriginal: String
+    translationChain: String
+}

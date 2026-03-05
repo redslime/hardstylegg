@@ -10,6 +10,7 @@ import {ServerQuizGame} from "~/server/utils/game/impl/ServerQuizGame";
 import {ServerTimelineGame} from "~/server/utils/game/impl/ServerTimelineGame";
 import {ServerTimetableGame} from "~/server/utils/game/impl/ServerTimetableGame";
 import {ServerZoomerGame} from "~/server/utils/game/impl/ServerZoomerGame";
+import {ServerLostInTranslationGame} from "~/server/utils/game/impl/ServerLostInTranslationGame";
 
 const games: ServerGameDef<any>[] = []
 
@@ -44,6 +45,7 @@ export function registerGames() {
         new ServerTimelineGame(),
         new ServerTimetableGame(),
         new ServerMapGame(),
-        new ServerZoomerGame()
+        new ServerZoomerGame(),
+        new ServerLostInTranslationGame()
     )
 }

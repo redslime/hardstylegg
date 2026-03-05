@@ -4,12 +4,14 @@ import {
     validateCompleteAlbum,
     validateCompleteLyrics,
     validateHeardle,
+    validateLostInTranslation,
     validateMap,
     validateNameX,
     validateOrder,
     validateQuiz,
     validateTimeline,
-    validateTimetable, validateZoomer
+    validateTimetable,
+    validateZoomer
 } from "#shared/gameValidators";
 
 export const GAME_METAS = {
@@ -67,6 +69,11 @@ export const GAME_METAS = {
         id: 11,
         name: "Zoomer",
         validator: validateZoomer
+    },
+    LostInTranslation: {
+        id: 12,
+        name: "LostInTranslation",
+        validator: validateLostInTranslation
     }
  } satisfies Record<string, GameMeta>
 export const YEAR_FILTER_GAMES = [GAME_METAS.Artwork.id, GAME_METAS.CompleteAlbum.id, GAME_METAS.CompleteLyrics.id, GAME_METAS.Heardle.id]

@@ -179,32 +179,34 @@ model game_timetable_item {
 }
 
 model track {
-  sid             String            @id @db.Char(22)
-  artists         String?           @db.VarChar(128)
-  title           String?           @db.VarChar(128)
-  year            Int?              @db.Year
-  cover_art       String?           @db.Char(40)
-  game_artwork    game_artwork[]
-  game_heardle    game_heardle[]
-  game_order_item game_order_item[]
+  sid                      String                     @id @db.Char(22)
+  artists                  String?                    @db.VarChar(128)
+  title                    String?                    @db.VarChar(128)
+  year                     Int?                       @db.Year
+  cover_art                String?                    @db.Char(40)
+  game_artwork             game_artwork[]
+  game_heardle             game_heardle[]
+  game_lost_in_translation game_lost_in_translation[]
+  game_order_item          game_order_item[]
 }
 
 model user {
-  id                   Int                    @id @default(autoincrement())
-  discord_id           String                 @unique(map: "user_pk") @db.Char(18)
-  name                 String                 @db.VarChar(32)
-  admin                Boolean                @default(dbgenerated("b'0'")) @db.Bit(1)
-  game_artwork         game_artwork[]
-  game_complete_album  game_complete_album[]
-  game_complete_lyrics game_complete_lyrics[]
-  game_heardle         game_heardle[]
-  game_map             game_map[]
-  game_namex           game_namex[]
-  game_order           game_order[]
-  game_quiz            game_quiz[]
-  game_timeline        game_timeline[]
-  game_timetable       game_timetable[]
-  game_zoomer          game_zoomer[]
+  id                       Int                        @id @default(autoincrement())
+  discord_id               String                     @unique(map: "user_pk") @db.Char(18)
+  name                     String                     @db.VarChar(32)
+  admin                    Boolean                    @default(dbgenerated("b'0'")) @db.Bit(1)
+  game_artwork             game_artwork[]
+  game_complete_album      game_complete_album[]
+  game_complete_lyrics     game_complete_lyrics[]
+  game_heardle             game_heardle[]
+  game_lost_in_translation game_lost_in_translation[]
+  game_map                 game_map[]
+  game_namex               game_namex[]
+  game_order               game_order[]
+  game_quiz                game_quiz[]
+  game_timeline            game_timeline[]
+  game_timetable           game_timetable[]
+  game_zoomer              game_zoomer[]
 }
 
 model day_schedule {
@@ -264,4 +266,19 @@ model infinity {
   code     String @id @unique(map: "infinity_pk_2") @db.Char(6)
   type_ids String @db.VarChar(1024)
   game_ids String @db.VarChar(1024)
+}
+
+model game_lost_in_translation {
+  id                Int     @id @unique(map: "game_lost_in_translation_pk_2") @default(autoincrement())
+  created_by        Int
+  track_id          String  @db.Char(22)
+  original_text     String  @db.Text
+  translated_text   String  @db.Text
+  translation_chain String  @db.VarChar(512)
+  context           String? @db.VarChar(1024)
+  track             track   @relation(fields: [track_id], references: [sid], onDelete: NoAction, onUpdate: NoAction, map: "game_lost_in_translation_track_sid_fk")
+  user              user    @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "game_lost_in_translation_user_id_fk")
+
+  @@index([track_id], map: "game_lost_in_translation_track_sid_fk")
+  @@index([created_by], map: "game_lost_in_translation_user_id_fk")
 }

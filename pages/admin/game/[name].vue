@@ -6,7 +6,7 @@ definePageMeta({
 })
 
 const { $gameRegistry } = useNuxtApp();
-const name = ((useRoute().params.name) as string).replace("-", "")
+const name = ((useRoute().params.name) as string).replaceAll("-", "")
 const gameDef = $gameRegistry.findGameByName(name)
 
 if(!gameDef) {

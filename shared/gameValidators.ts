@@ -3,6 +3,7 @@ import type {
     CompleteAlbumContainer,
     CompleteLyricsContainer,
     HeardleContainer,
+    LostInTranslationContainer,
     MapContainer,
     NameXContainer,
     OrderContainer,
@@ -267,6 +268,28 @@ export function validateZoomer(zoomer: ZoomerContainer): string[] {
 
     if(!zoomer.goal) {
         errors.push("Goal is required")
+    }
+
+    return errors
+}
+
+export function validateLostInTranslation(lit: LostInTranslationContainer): string[] {
+    const errors: string[] = []
+
+    if(!lit.track) {
+        errors.push("Track is required")
+    }
+
+    if(!lit.textTranslated || lit.textTranslated.trim().length === 0) {
+        errors.push("Translation is required")
+    }
+
+    if(!lit.textOriginal || lit.textOriginal.trim().length === 0) {
+        errors.push("Original lyrics are required")
+    }
+
+    if(!lit.translationChain || lit.translationChain.length === 0) {
+        errors.push("Translation chain is required")
     }
 
     return errors
