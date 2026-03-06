@@ -16,6 +16,7 @@ model album {
   title               String?               @db.VarChar(128)
   year                Int?                  @db.Year
   cover_art           String?               @db.Char(40)
+  hidden              Boolean               @default(dbgenerated("b'0'")) @db.Bit(1)
   game_complete_album game_complete_album[]
 }
 

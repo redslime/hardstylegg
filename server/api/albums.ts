@@ -7,6 +7,9 @@ export default defineEventHandler(async (event) => {
             sid: true,
             title: true,
             artists: true
+        },
+        where: {
+            hidden: false
         }
     })
 })
