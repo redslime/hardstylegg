@@ -11,7 +11,7 @@ const { instance, pointer } = defineProps({
 
 <template>
   <DashboardGamePreviewHeader :gameDef="gameDef" :pointer="pointer" :container="instance">
-    <div class="badge badge-outline badge-info">{{ instance.translationChain }}</div>
+    <div class="badge badge-outline badge-info h-auto">{{ instance.translationChain }}</div>
   </DashboardGamePreviewHeader>
 </template>
 
