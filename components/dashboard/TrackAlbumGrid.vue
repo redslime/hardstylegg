@@ -264,12 +264,16 @@ const computedPageProvider = computed(() => {
               class="h-full bg-base-200 rounded-lg shadow p-2 flex flex-col justify-start"
               :class="{
                 'cursor-pointer hover:outline-1 outline-primary': selectable,
-                'outline-1 outline-warning': existing.includes(item.item.sid)
+                'outline-1 outline-warning': existing.includes(item.item.sid),
+                'outline-1 outline-neutral': item.item.hidden
               }"
               @click="select(item)"
           >
             <div class="flex justify-center mb-2" v-if="existing.includes(item.item.sid)">
               <div class="badge badge-soft badge-warning">Already exists</div>
+            </div>
+            <div class="flex justify-center mb-2" v-if="item.item.hidden">
+              <div class="badge badge-soft">Hidden</div>
             </div>
             <div class="relative group">
               <img class="w-full overflow-hidden object-contain max-h-[200px]" :src="`https://i.scdn.co/image/${item.item.cover_art}`" alt="" />

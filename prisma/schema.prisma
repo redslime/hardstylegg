@@ -184,6 +184,7 @@ model track {
   title                    String?                    @db.VarChar(128)
   year                     Int?                       @db.Year
   cover_art                String?                    @db.Char(40)
+  hidden                   Boolean                    @default(dbgenerated("b'0'")) @db.Bit(1)
   game_artwork             game_artwork[]
   game_heardle             game_heardle[]
   game_lost_in_translation game_lost_in_translation[]

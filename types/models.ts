@@ -29,6 +29,7 @@ export interface Track {
     title: string
     year: number
     cover_art: string
+    hidden: boolean
 }
 
 export interface ShallowTrack {
