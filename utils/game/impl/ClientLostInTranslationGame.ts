@@ -16,7 +16,7 @@ export class ClientLostInTranslationGame extends ClientGameDef<LostInTranslation
     }
 
     override getIconPreviewTitle(container: LostInTranslationContainer): string {
-        return "Which track do these lyrics belong to?"
+        return "Which track do these translated lyrics belong to?"
     }
 
     override getDashboardHeaderTitle(container: LostInTranslationContainer): string {
