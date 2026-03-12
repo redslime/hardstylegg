@@ -14,6 +14,7 @@ const goal = ref<ZoomerType>()
 const emit = defineEmits<{
   selectFestival: [festival: Festival],
   selectArtist: [artist: Artist],
+  next: [void: void]
 }>()
 const isMobile = inject<boolean>('isMobile', false)
 const festivalNames = computed<string[]>(() => festivalOptions.map(f => f.name))
@@ -64,6 +65,8 @@ function selectFestival() {
 function finish() {
   if(goal.value && goal.value.id === "festival") {
     emit("selectFestival", goal.value)
+  } else if(goal.value && goal.value.id === "artist") {
+    emit("next")
   }
 }
 

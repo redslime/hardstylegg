@@ -127,7 +127,7 @@ onBeforeUnmount(() => {
 
   <ZoomerProgressbar ref="progressbar" :step="step" :finished="finished" class="my-5" />
   <ZoomerGoalSelector v-if="!finished" :target="goal" :game="true" :step="step" :finished="finished"
-      @selectFestival="submitFestival" @selectArtist="submitArtist" />
+      @selectFestival="submitFestival" @selectArtist="submitArtist" @next="next(false)" />
 </template>
 
 <style>
