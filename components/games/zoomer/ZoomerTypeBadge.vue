@@ -12,7 +12,7 @@ const badgeStyle = computed(() => [style])
 <template>
 <div class="flex gap-3">
   <template v-if="type.id === 'artist'">
-    <div class="badge" :class="badgeStyle">Artist: {{ type.name }}</div>
+    <div class="badge" :class="badgeStyle">Artist: {{ type.instance.name }}</div>
   </template>
   <template v-if="type.id === 'festival'">
     <div class="badge" :class="badgeStyle">{{ type.name }} {{ type.years }}</div>

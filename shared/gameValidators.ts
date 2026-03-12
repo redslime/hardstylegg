@@ -13,7 +13,6 @@ import type {
     TimetableItem,
     ZoomerContainer
 } from "~/types/gameModels";
-import type {Track} from "~/types/models";
 
 export function validateArtwork(artwork: ArtworkContainer): string[] {
     const errors: string[] = []
@@ -126,20 +125,28 @@ export function validateHeardleDurations(durations: number[], errors: string[]) 
 
 export function validateNameX(namex : NameXContainer): string[] {
     const errors: string[] = []
-    const itemKeys = namex.tracks ? (namex.items as Track[]).map(t => t.sid) : namex.items as string[]
+    let itemKeys: string[]
+
+    if(namex.items.type === 'artist') {
+        itemKeys = namex.items.items.map(a => a.id)
+    } else if(namex.items.type === 'album' || namex.items.type === 'track') {
+        itemKeys = namex.items.items.map(c => c.sid)
+    } else {
+        itemKeys = namex.items.items
+    }
 
     validateTitle(namex.title, errors)
 
     if(!namex.goal) {
         errors.push("Goal is required")
     }
-    if(namex.goal === 0 || namex.goal > namex.items.length) {
-        errors.push("Goal must be between 1 and " + namex.items.length)
+    if(namex.goal === 0 || namex.goal > namex.items.items.length) {
+        errors.push("Goal must be between 1 and " + namex.items.items.length)
     }
-    if(!namex.items || namex.items.length === 0) {
+    if(!namex.items || namex.items.items.length === 0) {
         errors.push("At least one item is required")
     }
-    if(new Set(itemKeys).size < namex.items.length) {
+    if(new Set(itemKeys).size < namex.items.items.length) {
         errors.push("Each track item be unique")
     }
 

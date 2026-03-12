@@ -1,6 +1,7 @@
 import {createError, defineEventHandler, getQuery} from "h3";
 import {getSpotifyApi} from "~/server/utils/spotify";
-import type {Track} from "~/types/models";
+import {RichArtist, type RichTrack} from "~/types/content";
+import prisma from "~/lib/prisma";
 
 export default defineEventHandler(async (event) => {
     try {
@@ -17,12 +18,26 @@ export default defineEventHandler(async (event) => {
         }
 
         const track = await getSpotifyApi().tracks.get(trackId as string)
-        return <Track>{
+        const artistIds = track.artists.map(a => a.id)
+        const artists = await prisma.artist.findMany({
+            where: {
+                id: {
+                    in: artistIds
+                }
+            }
+        }).then(a => a.map(RichArtist.mapJson))
+
+        if(artistIds.length !== artists.length) {
+            // todo import rich artist
+        }
+
+        return <RichTrack>{
             sid: track.id,
             title: track.name,
-            artists: track.artists.map((a: any) => a.name).join(', '),
+            artists,
             year: parseInt(track.album.release_date.split('-')[0] ?? "1970"),
-            cover_art: track.album.images[0]?.url?.replace("https://i.scdn.co/image/", "")
+            image: track.album.images[0]?.url?.replace("https://i.scdn.co/image/", ""),
+            hidden: false
         }
     } catch (err: any) {
         // Convert to HTTP error

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import {GameState, type ShallowTrack} from "~/types/models";
+import {GameState} from "~/types/models";
 import type {LostInTranslationContainer} from "~/types/gameModels";
-import {getName} from "~/utils/tracks";
 import {countAttempt} from "~/utils/game";
+import {FlatTrack} from "~/types/content";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.LostInTranslationDef
@@ -12,14 +12,16 @@ const props = defineProps({
   position: { type: Number as PropType<number>, required: true },
   container: { type: Object as PropType<LostInTranslationContainer>, required: true }
 })
+
 const currentIndex = inject<number>('currentIndex')
 const finished = computed(() => props.state == GameState.SUCCEEDED || props.state == GameState.FAILED)
 const showTranslated = ref<boolean>(true)
+const track = computed<FlatTrack>(() => FlatTrack.fromJson(props.container.track))
 
-async function validate(selected: ShallowTrack, flashError: () => void, flashSuccess: () => void, clear: () => void) {
+async function validate(selected: FlatTrack, flashError: () => void, flashSuccess: () => void, clear: () => void) {
   countAttempt()
 
-  if(selected.sid === props.container.track.sid) {
+  if(selected.sid === track.value.sid) {
     flashSuccess()
     emit("onFinish", GameState.SUCCEEDED)
   } else {
@@ -35,7 +37,7 @@ watch(finished, () => showTranslated.value = false)
   <GameTitle :gameDef="gameDef" :container="props.container" />
 
   <div class="flex flex-col items-center w-full">
-    <div class="text-2xl md:text-3xl text-center mb-4 text-balance" v-if="finished">{{ getName(props.container.track) }}</div>
+    <div class="text-2xl md:text-3xl text-center mb-4 text-balance" v-if="finished">{{ track.getDisplayName() }}</div>
     <div role="tablist" class="tabs tabs-lift" v-if="finished">
       <a role="tab" class="tab" :class="{'tab-active font-semibold': showTranslated }" @click="showTranslated = true">Translation</a>
       <a role="tab" class="tab" :class="{'tab-active font-semibold': !showTranslated }" @click="showTranslated = false">Original</a>
@@ -63,7 +65,7 @@ watch(finished, () => showTranslated.value = false)
     </div>
 
     <div class="mt-4" v-if="finished && currentIndex === props.position">
-      <TrackListenButton :track="props.container?.track" />
+      <TrackListenButton :track="track" />
     </div>
   </div>
 </template>

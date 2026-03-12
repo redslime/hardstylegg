@@ -27,4 +27,8 @@ export class ClientTimelineGame extends ClientGameDef<TimelineContainer> {
             "You only have one attempt at guessing!\n" +
             "Can't figure it out? Use the skip button!";
     }
+
+    override remap(data: any): TimelineContainer {
+        return data
+    }
 }

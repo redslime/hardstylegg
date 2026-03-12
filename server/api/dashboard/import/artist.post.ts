@@ -1,13 +1,15 @@
 import {readBody} from "h3";
-import type {Track} from "~/types/models";
 import prisma from "~/lib/prisma";
 import {invalidateCacheKeys} from "~/server/utils/cacheKeys";
+import {type RichAlbum, RichTrack} from "~/types/content";
 
 export default defineEventHandler(async (event) => {
     const {user} = await requireUserSession(event)
 
+    // todo upsert relationship
+
     if (user.admin) {
-        const { albums, tracks } = await readBody<{ albums: Track[], tracks: Track[] }>(event)
+        const { albums, tracks } = await readBody<{ albums: RichAlbum[], tracks: RichTrack[] }>(event)
 
         await prisma.$transaction(
             albums.map(album => prisma.album.upsert({

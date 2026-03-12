@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type {CompleteLyricsContainer} from "~/types/gameModels";
 import type {GameReportFlat} from "~/types/models";
-import InfoIcon from "~/components/icons/InfoIcon.vue";
 
 const { container, reports } = defineProps({
   container: { type: Object as PropType<CompleteLyricsContainer>, required: true },

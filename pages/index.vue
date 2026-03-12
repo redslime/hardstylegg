@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {getGameContainer, hasPlayedToday} from "~/utils/game";
 import {type AvgScoresContainer, type CookieDayMemory, type GameContainer, GameState} from "~/types/models";
-import {getTracks} from "~/utils/tracks";
+import {getTracks} from "~/utils/contentCache";
 import {refreshCookie} from "#app";
 import CookieChart from "~/components/CookieChart.vue";
 import {watchOnce} from "@vueuse/shared";

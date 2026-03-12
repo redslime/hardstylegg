@@ -1,21 +1,11 @@
-<script lang="ts">
-import {getSpotifyArtwork} from "~/utils/utils";
-import type {OrderContainer} from "~/types/gameModels";
-
-export default {
-  getPreloadUrls: (container: OrderContainer): string[] => {
-    return container.items.map(item => getSpotifyArtwork(item.track.cover_art))
-  }
-}
-</script>
-
 <script setup lang="ts">
 import {computed, ref} from 'vue'
+import type {OrderContainer, OrderItem} from "~/types/gameModels";
 import Draggable from 'vuedraggable'
 import {GameState} from "~/types/models";
 import {shuffleArray} from "~/utils/utils";
-import type {OrderItem} from "~/types/gameModels";
 import {countItem} from "~/utils/game";
+import {FlatTrack} from "~/types/content";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.OrderDef
@@ -95,7 +85,7 @@ function isWrong(item: OrderItem, index: number) {
             }"
         >
           <img
-              :src="`${getSpotifyArtwork(element.track.cover_art)}`"
+              :src="FlatTrack.fromJson(element.track).getImageUrl()"
               :alt="element.track.title"
               class="object-cover rounded-xl shadow-md"
               :class="{
@@ -130,9 +120,9 @@ function isWrong(item: OrderItem, index: number) {
       </div>
       <div class="flex justify-center gap-4 overflow-x-auto md:p-4">
         <div v-for="item in goalItems" :key="item.index"
-             class="flex-1 flex-shrink active:cursor-grabbing transform transition-transform duration-300 ease-in-out">
+             class="flex-1 shrink active:cursor-grabbing transform transition-transform duration-300 ease-in-out">
           <img
-              :src="`${getSpotifyArtwork(item.track.cover_art)}`"
+              :src="item.track.getImageUrl()"
               :alt="item.track.title"
               class="object-cover rounded-xl shadow-md"
           />

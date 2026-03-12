@@ -26,4 +26,8 @@ export class ClientMapGame extends ClientGameDef<MapContainer> {
             "You only have one attempt at guessing!\n" +
             "Can't figure it out? Use the skip button!";
     }
+
+    override remap(data: any): MapContainer {
+        return data
+    }
 }

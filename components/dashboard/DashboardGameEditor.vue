@@ -109,7 +109,7 @@ async function save() {
 
       if (data) {
         if (!Array.isArray(data)) {
-          const fetchedGameInstance = data as T
+          const fetchedGameInstance = gameDef.remap(data as T)
           instances.value?.splice(0, instances.value.length, ...instances.value.filter((i) => i.id !== fetchedGameInstance.id))
           instances.value?.push(fetchedGameInstance)
           instances.value = instances.value?.sort(instanceSorter.value)
@@ -136,14 +136,14 @@ function onDelete(gameId: number) {
 }
 
 function tryEdit(instance: T) {
-  editing.value = deepCopy(instance)
-  console.log(window.scrollY)
+  editing.value = gameDef.remap(deepCopy(instance))
   window.history.pushState({}, "", `?id=${instance.id}`)
   window.scrollTo({ top: 0 })
 }
 
 async function startPreview() {
   // silly workaround to get the component to fully reset and clear any local consts
+  editing.value = gameDef.remap(editing.value)
   previewCounter.value++
   previewOpen.value = true
   await nextTick()
@@ -185,7 +185,7 @@ onMounted(() => {
     <div v-if="!editing">
       {{ typeName }} instances
       <div v-if="instances" class="badge badge-soft badge-primary badge-xl">{{ filteredInstances.length }}</div>
-      <button class="btn btn-success btn-soft btn-sm ml-2" @click="editing=deepCopy({title: '', items: []})">
+      <button class="btn btn-success btn-soft btn-sm ml-2" @click="editing=gameDef.remap(deepCopy({title: '', items: []}))">
         Create new
       </button>
     </div>
@@ -306,7 +306,7 @@ onMounted(() => {
       <div class="badge badge-error badge-xs" v-if="previewState === GameState.FAILED">State: Failed</div>
 
       <div class="flex flex-col items-center">
-        <component :is="gameDef.gameComponent" :key="previewCounter" :state="previewState" :position="1" :container="deepCopyReactive(editing)" @onFinish="previewListener" />
+        <component :is="gameDef.gameComponent" :key="previewCounter" :state="previewState" :position="1" :container="gameDef.remap(deepCopyReactive(editing))" @onFinish="previewListener" />
         <ContextBox :container="editing as unknown as AnyGameContainer" v-if="previewState !== GameState.PLAYING" />
       </div>
 

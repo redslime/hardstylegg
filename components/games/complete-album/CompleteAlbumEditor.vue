@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type {CompleteAlbumContainer} from "~/types/gameModels";
 import DashboardGameLoadingSpinner from "~/components/dashboard/DashboardGameLoadingSpinner.vue";
-import {getName} from "~/utils/tracks";
 import TrackPicker from "~/components/dashboard/TrackPicker.vue";
 import InfoIcon from "~/components/icons/InfoIcon.vue";
 import TrashIcon from "~/components/icons/TrashIcon.vue";
@@ -9,6 +8,7 @@ import Checkmark from "~/components/icons/Checkmark.vue";
 import CompleteAlbumPreview from "~/components/games/complete-album/CompleteAlbumPreview.vue";
 import PencilIcon from "~/components/icons/PencilIcon.vue";
 import {watchOnce} from "@vueuse/shared";
+import type {RichAlbum} from "~/types/content";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.CompleteAlbumDef
@@ -19,6 +19,15 @@ const editing = ref<CompleteAlbumContainer | undefined>()
 const editingIndex = ref<number | undefined>(-1)
 
 watchOnce(data, () => instances.value = data.value)
+
+function selectAlbum(album: RichAlbum) {
+  editing.value!!.album = album.toFlatAlbum()
+  editing.value!!.items = []
+
+  album.tracks.forEach(track => {
+    editing.value!!.items.push({name: track.title, artist: track.getArtistsString(), hidden: false, context: null})
+  })
+}
 
 function del(index: number) {
   editing.value!!.items.splice(index, 1)
@@ -47,8 +56,8 @@ function add() {
 
       <template #editTitle v-if="editing">
         <div class="flex gap-2 items-center">
-          <div class="text-2xl font-bold" v-if="editing.album">{{ getName(editing.album!!) }}</div>
-          <TrackPicker :albums="true" @selected="t => (editing!!.album = t)" :title="editing!!.album ? 'Replace' : 'Select'" :existing="existingIds" />
+          <div class="text-2xl font-bold" v-if="editing.album">{{ editing.album?.getDisplayName() }}</div>
+          <TrackPicker :albums="true" @selected="selectAlbum" :title="editing!!.album ? 'Replace' : 'Select'" :existing="existingIds" />
         </div>
       </template>
 

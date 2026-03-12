@@ -1,20 +1,20 @@
 <script setup lang="ts">
 import {ref} from "vue";
-import type {Track} from "~/types/models";
 import Fuse from "fuse.js";
 import Grid from "vue-virtual-scroll-grid";
 import SearchIcon from "~/components/icons/SearchIcon.vue";
 import {deleteAlbum, deleteTrack} from "~/utils/dashboard";
+import {RichAlbum, RichTrack} from "~/types/content";
 
 interface SearchResult {
-  item: Track;
+  item: RichTrack;
   score: number | undefined;
   matches: ReadonlyArray<Fuse.FuseResultMatch> | undefined;
 }
 
 const emit = defineEmits(['selected'])
 const { items, albums, title, selectable, editable, existing } = defineProps({
-  items: { type: Array as PropType<Track[]>, required: true },
+  items: { type: Array as PropType<RichTrack[] | RichAlbum[]>, required: true },
   albums: { type: Boolean, default: false },
   title: { type: String, default: "Select" },
   hideTitle: { type: Boolean, default: false },
@@ -36,13 +36,13 @@ const filteredLength = ref<number>(0)
 const debouncedQuery = ref('')
 
 const editingModal = ref<HTMLDialogElement | null>();
-const editingItem = ref<Track | null>(null);
+const editingItem = ref<RichTrack | RichAlbum | null>(null);
 const editingSaving = ref<boolean>(false)
 const editingResponse = ref<boolean | undefined>()
 const editingError = ref<string | undefined>()
 
 const deletingModal = ref<HTMLDialogElement | null>();
-const deletingItem = ref<Track | null>(null);
+const deletingItem = ref<RichTrack | RichAlbum | null>(null);
 const deletingSaving = ref<boolean>(false)
 const deletingResponse = ref<boolean | undefined>()
 
@@ -73,13 +73,13 @@ async function del() {
 
   try {
     // delete from database
-    await $fetch<Track>(albums ? "/api/dashboard/delete/album" : "/api/dashboard/delete/track", {
+    await $fetch(albums ? "/api/dashboard/delete/album" : "/api/dashboard/delete/track", {
       method: "POST",
       body: deletingItem.value
     })
 
     // delete from local data
-    const index = items.indexOf(deletingItem.value)
+    const index = items.indexOf(deletingItem.value as RichAlbum)
     items.splice(index, 1)
 
     // update grid
@@ -87,10 +87,10 @@ async function del() {
     filteredLength.value = filteredLength.value - 1
 
     // delete from fuse
-    fuse.remove((doc, idx) => doc.sid === deletingItem.value?.sid)
+    fuse.remove((doc, _) => doc.sid === deletingItem.value?.sid)
 
     // delete from cache
-    if(albums) {
+    if(deletingItem.value instanceof RichAlbum) {
       deleteAlbum(deletingItem.value)
     } else {
       deleteTrack(deletingItem.value)
@@ -112,7 +112,7 @@ async function saveEditing() {
   editingResponse.value = undefined
 
   try {
-    await $fetch<Track>(albums ? "/api/dashboard/edit/album" : "/api/dashboard/edit/track", {
+    await $fetch(albums ? "/api/dashboard/edit/album" : "/api/dashboard/edit/track", {
       method: "POST",
       body: editingItem.value
     })
@@ -150,8 +150,7 @@ watch(debouncedQuery, async (val) => {
 
   // First try: exact substring match
   const exactMatches: SearchResult[] = items.filter(st => {
-    const name = st.artists + " - " + st.title
-    return name.toLowerCase().includes(val.toLowerCase())
+    return st.getDisplayName().toLowerCase().includes(val.toLowerCase())
   }).map(st => {
     return {
       item: st,
@@ -168,8 +167,7 @@ watch(debouncedQuery, async (val) => {
 
     const keywordMatches: SearchResult[] = items
         .map(st => {
-          const name = (st.artists + " - " + st.title).toLowerCase()
-          const matchedKeywords = keywords.filter(keyword => name.includes(keyword))
+          const matchedKeywords = keywords.filter(keyword => st.getDisplayName().toLowerCase().includes(keyword))
 
           return {
             track: st,
@@ -181,7 +179,7 @@ watch(debouncedQuery, async (val) => {
         .sort((a, b) => b.matchScore - a.matchScore)
         .map(result => {
           // Highlight all matched keywords
-          let highlighted = result.track.artists + " - " + result.track.title
+          let highlighted = result.track.getDisplayName()
           keywords.forEach(keyword => {
             const regex = new RegExp(`(${keyword})`, 'gi')
             highlighted = highlighted.replace(regex, '<span class=""><b>$1</b></span>')
@@ -198,7 +196,7 @@ watch(debouncedQuery, async (val) => {
     // Third try: fill up with Fuse.js results if we have fewer than 5
     if (keywordMatches.length < 5) {
       const fuseResults = fuse.search(val)
-          .filter(r => val.toLowerCase() !== getName(r.item).toLowerCase())
+          .filter(r => val.toLowerCase() !== r.item.title.toLowerCase())
           .map(i => {
             const {item, score, matches} = i
             return {item, score, matches}
@@ -207,7 +205,7 @@ watch(debouncedQuery, async (val) => {
       // Combine keyword matches with fuse results, avoiding duplicates
       const combined = [...keywordMatches]
       fuseResults.forEach(fr => {
-        if (combined.length < 5 && !combined.find(km => getName(km.item) === getName(fr.item))) {
+        if (combined.length < 5 && !combined.find(km => km.item.title === fr.item.title)) {
           combined.push(fr)
         }
       })
@@ -232,7 +230,7 @@ const computedPageProvider = computed(() => {
 </script>
 
 <template>
-  <h3 class="text-2xl font-bold" v-if="!hideTitle">{{ title }} {{ mode }}</h3>
+  <h3 class="text-2xl font-bold text-white" v-if="!hideTitle">{{ title }} {{ mode }}</h3>
 
   <label class="input my-3">
     <SearchIcon />
@@ -276,14 +274,14 @@ const computedPageProvider = computed(() => {
               <div class="badge badge-soft">Hidden</div>
             </div>
             <div class="relative group">
-              <img class="w-full overflow-hidden object-contain max-h-[200px]" :src="`https://i.scdn.co/image/${item.item.cover_art}`" alt="" />
+              <img class="w-full overflow-hidden object-contain max-h-[200px]" :src="`https://i.scdn.co/image/${item.item.image}`" alt="" />
               <div v-if="editable" class="absolute z-10 inset-0 backdrop-blur-sm bg-black/50 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                 <button class="btn btn-sm btn-outline btn-primary" @click="edit(item)">Edit</button>
                 <button class="btn btn-sm btn-outline btn-error" @click="promptDelete(item)">Delete</button>
               </div>
             </div>
             <div class="text-lg font-semibold">{{ item.item.title }}</div>
-            <div class="text-sm opacity-70">{{ item.item.artists }}</div>
+            <div class="text-sm opacity-70">{{ item.item.getArtistsString() }}</div>
             <div class="text-xs opacity-70">{{ item.item.year }}</div>
           </div>
         </div>
@@ -298,9 +296,9 @@ const computedPageProvider = computed(() => {
   <dialog ref="editingModal" id="editingModal" class="modal" v-if="editingItem">
     <div class="modal-box max-w-1/2" v-if="!editingSaving">
       <div class="flex flex-col justify-center items-center gap-1">
-        <img class="w-full overflow-hidden object-contain max-h-[300px] mb-2" :src="`https://i.scdn.co/image/${editingItem.cover_art}`" alt="" />
+        <img class="w-full overflow-hidden object-contain max-h-[300px] mb-2" :src="`https://i.scdn.co/image/${editingItem.image}`" alt="" />
         <input class="input w-xl text-center input-lg text-lg font-semibold" v-model="editingItem.title" />
-        <input class="input w-xl text-sm text-center opacity-70" v-model="editingItem.artists" />
+        <input class="input w-xl text-sm text-center opacity-70" :value="editingItem.getArtistsString()" readonly />
         <input class="input w-20 text-xs text-center opacity-70" type="number" v-model="editingItem.year" />
 
         <div class="flex gap-3 self-start mt-7">

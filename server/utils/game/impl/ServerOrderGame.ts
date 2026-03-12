@@ -5,6 +5,7 @@ import type {User} from "#auth-utils";
 import prisma from "~/lib/prisma";
 import type {ReportItem} from "~/types/models";
 import type {game_orderModel} from "~/generated/prisma/models";
+import {FlatTrack} from "~/types/content";
 
 export class ServerOrderGame extends ServerGameDef<OrderContainer> {
 
@@ -29,7 +30,7 @@ export class ServerOrderGame extends ServerGameDef<OrderContainer> {
         const tracks = await prisma.track.findMany({ where: { sid: { in: trackIds } } })
         const itemsFat = items.map(i => {
             const trackId = i.track_id
-            const track = tracks.find(i => i.sid == trackId)
+            const track = FlatTrack.mapJson(tracks.find(i => i.sid == trackId))
             return <OrderItem>{
                 parent_id: i.parent_id,
                 index: i.index,
@@ -156,7 +157,7 @@ export class ServerOrderGame extends ServerGameDef<OrderContainer> {
         return instances.map(instance => {
             const children: OrderItem[] = items.filter(item => item.parent_id === instance.id).map(item => {
                 const { track_id, ...rest } = item
-                const track = tracks.find(t => t.sid === item.track_id)
+                const track = FlatTrack.mapJson(tracks.find(t => t.sid === item.track_id))
                 return <OrderItem>{
                     ...rest,
                     track

@@ -9,6 +9,7 @@ import type {ReportItem} from "~/types/models";
 import {decodeBase64Image, validateWebPBuffer} from "~/utils/image";
 import {mkdir, writeFile} from "fs/promises";
 import type { game_artworkModel } from "~/generated/prisma/models";
+import {FlatTrack} from "~/types/content";
 
 export class ServerArtworkGame extends ServerGameDef<ArtworkContainer> {
 
@@ -33,7 +34,7 @@ export class ServerArtworkGame extends ServerGameDef<ArtworkContainer> {
         return <ArtworkContainer>{
             id: parent!!.id,
             created_by: parent!!.created_by,
-            track: track,
+            track: FlatTrack.mapJson(track),
             imgName: parent!!.artwork_blank,
             context: parent!!.context
         }
@@ -133,7 +134,7 @@ export class ServerArtworkGame extends ServerGameDef<ArtworkContainer> {
                 id: i.id,
                 created_by: i.created_by,
                 imgName: i.artwork_blank,
-                track: tracks.find(t => t.sid === i.track_id),
+                track: FlatTrack.mapJson(tracks.find(t => t.sid === i.track_id)),
                 context: i.context
             }
         })

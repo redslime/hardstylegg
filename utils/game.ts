@@ -47,6 +47,7 @@ export function transform(data: PackedDayData): GameContainer {
 
             if(type && data) {
                 const gameDef = $gameRegistry.findGameById(type)!!
+                const container = gameDef.remap(data)
 
                 transformed.push({
                     name: gameDef.name,
@@ -54,7 +55,7 @@ export function transform(data: PackedDayData): GameContainer {
                         state: i === 0 ? GameState.PLAYING : GameState.UPCOMING,
                         position: i,
                         container: {
-                            ...data
+                            ...container
                         }
                     }
                 })

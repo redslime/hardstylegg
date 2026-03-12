@@ -23,21 +23,6 @@ export enum GameEnvironment {
     INFINITY
 }
 
-export interface Track {
-    sid: string
-    artists: string
-    title: string
-    year: number
-    cover_art: string
-    hidden: boolean
-}
-
-export interface ShallowTrack {
-    sid: string
-    title: string
-    artists: string
-}
-
 export interface GameContainer {
     dayId: number
     dayFriendly: string
@@ -100,6 +85,7 @@ export interface DashboardItem {
     name: string
     icon: string
     url: string
+    children?: DashboardItem[]
 }
 
 export interface ReportContainer {
@@ -141,6 +127,7 @@ export interface CookieStreakMemory {
 export interface KeyCache {
     tracks: string
     albums: string
+    artists: string
 }
 
 export interface ReportItem {
@@ -194,4 +181,26 @@ export enum StateFilter {
 export enum SortMode {
     ID = "Creation date",
     SCHEDULE = "Schedule date"
+}
+
+export interface InboxAlbum {
+    sid: String
+    artists: InboxArtist[]
+    tracks: InboxTrack[]
+    title: String
+    year: Number
+    cover_art: String
+}
+
+export interface InboxTrack {
+    sid: String
+    artists: InboxArtist[]
+    title: String
+    year: Number
+    cover_art: String
+}
+
+export interface InboxArtist {
+    id: String
+    name: String
 }

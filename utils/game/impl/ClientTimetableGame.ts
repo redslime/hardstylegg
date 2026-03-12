@@ -28,4 +28,8 @@ export class ClientTimetableGame extends ClientGameDef<TimetableContainer> {
             "You have unlimited attempts at guessing.\n" +
             "Can't figure it out? Use the skip button!";
     }
+
+    override remap(data: any): TimetableContainer {
+        return data
+    }
 }

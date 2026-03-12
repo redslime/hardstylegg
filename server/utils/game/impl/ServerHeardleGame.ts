@@ -6,7 +6,8 @@ import prisma from "~/lib/prisma";
 import {join} from "pathe";
 import {unlink} from "node:fs/promises";
 import type {ReportItem} from "~/types/models";
-import type { game_heardleModel } from "~/generated/prisma/models";
+import type {game_heardleModel} from "~/generated/prisma/models";
+import {FlatTrack} from "~/types/content";
 
 export class ServerHeardleGame extends ServerGameDef<HeardleContainer> {
 
@@ -32,7 +33,7 @@ export class ServerHeardleGame extends ServerGameDef<HeardleContainer> {
         return <HeardleContainer>{
             id: parent!!.id,
             created_by: parent!!.created_by,
-            track: track,
+            track: FlatTrack.mapJson(track),
             src: parent!!.src,
             durations: flattenDurations,
             context: parent!!.context
@@ -122,7 +123,7 @@ export class ServerHeardleGame extends ServerGameDef<HeardleContainer> {
             return {
                 ...rest,
                 durations: array,
-                track: tracks.find(t => t.sid === i.track_id)
+                track: FlatTrack.mapJson(tracks.find(t => t.sid === i.track_id))
             }
         })
     }

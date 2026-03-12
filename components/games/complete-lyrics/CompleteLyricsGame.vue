@@ -3,6 +3,7 @@ import {GameState} from "~/types/models";
 import type {PropType} from 'vue'
 import {computed, reactive, watch} from 'vue'
 import type {CompleteLyricsContainer} from "~/types/gameModels";
+import {FlatTrack} from "~/types/content";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.CompleteLyricsDef
@@ -21,7 +22,8 @@ const props = defineProps({
 
 const state = computed(() => props.state)
 const finished = computed(() => state.value == GameState.SUCCEEDED || state.value == GameState.FAILED)
-const description = computed(() => props.container?.track?.artists + ' - ' + props.container?.track?.title)
+const track = computed<FlatTrack>(() => FlatTrack.fromJson(props.container.track))
+const description = computed(() => track.value.getDisplayName())
 const text = computed(() => props.container.text)
 const currentIndex = inject<number>('currentIndex')
 
@@ -111,7 +113,7 @@ watch(answers, (newAnswers) => {
     </div>
 
     <div class="mt-4" v-if="finished && currentIndex === props.position">
-      <TrackListenButton :track="props.container?.track" />
+      <TrackListenButton :track="track" />
     </div>
   </div>
 </template>

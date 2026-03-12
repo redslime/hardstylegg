@@ -1,17 +1,17 @@
-import type {Track} from "~/types/models";
 import type {ZoomerImageData, ZoomerType} from "~/types/zoomerModels";
+import {FlatAlbum, FlatArtist, FlatTrack} from "~/types/content";
 
 export type AnyGameContainer = ArtworkContainer | CompleteAlbumContainer | CompleteLyricsContainer | HeardleContainer | NameXContainer | OrderContainer | QuizContainer | TimelineContainer | TimetableContainer | MapContainer | ZoomerContainer
 export type AnyGameContainers = AnyGameContainer[]
 
 export interface ArtworkContainer extends EditorContainer {
-    track: Track
+    track: FlatTrack
     imgName: string
     img64?: string // only used during creation
 }
 
 export interface CompleteAlbumContainer extends EditorContainer {
-    album: Track | null
+    album: FlatAlbum | null
     items: CompleteAlbumItem[]
 }
 
@@ -28,11 +28,11 @@ export interface CompleteAlbumItem {
 
 export interface CompleteLyricsContainer extends EditorContainer {
     text: string
-    track: Track
+    track: FlatTrack
 }
 
 export interface HeardleContainer extends EditorContainer {
-    track: Track
+    track: FlatTrack
     src: string
     durations: number[]
     tempFile?: File
@@ -42,9 +42,14 @@ export interface HeardleContainer extends EditorContainer {
 export interface NameXContainer extends EditorContainer {
     goal: number
     title: string
-    tracks: boolean
-    items: Track[] | string[]
+    items: NameXItemContainer
 }
+
+export type NameXItemContainer =
+    { type: 'artist', items: FlatArtist[] }
+    | { type: 'album', items: FlatAlbum[] }
+    | { type: 'track', items: FlatTrack[] }
+    | { type: 'text', items: string[] }
 
 export interface OrderContainer extends EditorContainer {
     title: string
@@ -55,7 +60,7 @@ export interface OrderContainer extends EditorContainer {
 export interface OrderItem {
     parent_id?: number
     index: number
-    track: Track
+    track: FlatTrack
     context: string | null
 }
 
@@ -107,7 +112,7 @@ export interface ZoomerContainer extends EditorContainer {
 }
 
 export interface LostInTranslationContainer extends EditorContainer {
-    track: Track
+    track: FlatTrack
     textTranslated: String
     textOriginal: String
     translationChain: String

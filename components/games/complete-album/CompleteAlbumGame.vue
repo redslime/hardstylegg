@@ -2,7 +2,8 @@
 import {GameState} from "~/types/models";
 import type {CompleteAlbumContainer, CompleteAlbumItem} from "~/types/gameModels";
 import {countItem} from "~/utils/game";
-import {getName} from "~/utils/tracks";
+import {FlatAlbum} from "~/types/content";
+import {computed} from "vue";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.CompleteAlbumDef
@@ -16,7 +17,8 @@ const props = defineProps({
 const state = computed(() => props.state)
 const finished = computed(() => state.value == GameState.SUCCEEDED || state.value == GameState.FAILED)
 const items = computed(() => props.container.items)
-const title = computed(() => getName(props.container.album!!))
+const album = computed<FlatAlbum>(() => FlatAlbum.fromJson(props.container.album))
+const title = computed(() => album.value.getDisplayName())
 const currentIndex = inject<number>('currentIndex')
 
 const validateGuess = (item: CompleteAlbumItem) => {
@@ -82,7 +84,7 @@ const validateGuess = (item: CompleteAlbumItem) => {
   </div>
 
   <div class="mt-4 text-center" v-if="finished && props.container.album && currentIndex === props.position">
-    <TrackListenButton :track="props.container.album" :isAlbum="true" />
+    <TrackListenButton :track="album" />
   </div>
 </template>
 

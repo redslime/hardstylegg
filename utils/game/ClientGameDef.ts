@@ -28,9 +28,11 @@ export abstract class ClientGameDef<T extends EditorContainer> extends GameDef<T
 
     abstract getHelpText(container: T): string
 
+    abstract remap(data: any): T
+
     public async getAllInstances(): Promise<T[]> {
         if(this.instances !== null) return this.instances
-        this.instances = await $fetch<T[]>('/api/dashboard/' + this.name.toLowerCase())
+        this.instances = (await $fetch<T[]>('/api/dashboard/' + this.name.toLowerCase())).map(this.remap)
         return this.instances
     }
 
@@ -41,5 +43,9 @@ export abstract class ClientGameDef<T extends EditorContainer> extends GameDef<T
 
     public async getGameReports(gameId: number): Promise<GameReportFlat[]> {
         return await $fetch<GameReportFlat[]>('/api/dashboard/stats/' + this.name.toLowerCase() + '?gid=' + gameId)
+    }
+
+    public getPreloadUrls(container: T): string[] {
+        return []
     }
 }

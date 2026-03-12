@@ -1,17 +1,10 @@
-<script lang="ts">
-import type {ArtworkContainer} from "~/types/gameModels";
-import {getLocalArtwork, getSpotifyArtwork} from "~/utils/utils";
-
-export default {
-  getPreloadUrls: (container: ArtworkContainer): string[] => {
-    return [getLocalArtwork(container.imgName)!!, getSpotifyArtwork(container.track.cover_art)!!]
-  }
-}
-</script>
 <script setup lang="ts">
-import {GameState, type ShallowTrack, type Track} from "~/types/models";
+import type {ArtworkContainer} from "~/types/gameModels";
+import {getLocalArtwork} from "~/utils/utils";
+import {GameState} from "~/types/models";
 import TrackListenButton from "~/components/TrackListenButton.vue";
 import {countAttempt} from "~/utils/game";
+import {FlatTrack} from "~/types/content";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.ArtworkDef
@@ -25,18 +18,18 @@ const props = defineProps({
 
 const state = computed(() => props.state)
 const finished = computed(() => state.value == GameState.SUCCEEDED || state.value == GameState.FAILED)
-const track = computed<Track>(() => props.container.track)
+const track = computed<FlatTrack>(() => FlatTrack.fromJson(props.container.track))
 const currentIndex = inject<number>('currentIndex')
 
 const src = computed(() => {
   if(finished.value) {
-    return getSpotifyArtwork(track.value.cover_art)
+    return track.value.getImageUrl()
   } else {
     return props.container.img64 ?? getLocalArtwork(props.container.imgName)
   }
 })
 
-async function validate(selected: ShallowTrack, flashError: () => void, flashSuccess: () => void, clear: () => void) {
+async function validate(selected: FlatTrack, flashError: () => void, flashSuccess: () => void, clear: () => void) {
   countAttempt()
 
   if(selected.sid === track.value.sid) {
@@ -64,7 +57,7 @@ async function validate(selected: ShallowTrack, flashError: () => void, flashSuc
           'text-xl md:text-3xl': !details,
           'text-xl': details
         }">
-        {{ track.artists }} - {{ track.title }}
+        {{ track.getDisplayName() }}
       </p>
       <div class="mt-4 text-center" v-if="currentIndex === props.position">
         <TrackListenButton :track="track" />

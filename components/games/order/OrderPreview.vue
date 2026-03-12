@@ -14,7 +14,7 @@ const { instance, pointer } = defineProps({
     <div class="w-full flex gap-2">
       <div class="shrink w-1/4 sm:w-1/3 xs:w-1/2" v-for="item in instance.items" :key="item.track.sid">
         <img
-            :src="`${getSpotifyArtwork(item.track.cover_art)}`"
+            :src="item.track.getImageUrl()"
             :alt="item.track.title"
             class="w-full h-auto rounded-xl shrink shadow-md"
         />

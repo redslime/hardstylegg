@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import Fuse from 'fuse.js'
 import {computed, onMounted, ref} from 'vue'
-import {getName, getTracks} from "~/utils/tracks";
+import {getTracks} from "~/utils/contentCache";
 import {containsSubstring, delay} from "~/utils/utils";
-import type {ShallowTrack} from "~/types/models";
 import {useAsyncData} from "#app";
+import type {FlatTrack} from "~/types/content";
+import {highlight, highlightExact} from "~/utils/fuse";
 
 interface SearchResult {
-  item: ShallowTrack;
+  item: FlatTrack;
   score: number | undefined;
   matches: ReadonlyArray<Fuse.FuseResultMatch> | undefined;
   highlighted: string
@@ -20,7 +21,7 @@ const props = defineProps({
 const isMobile = inject<boolean>("isMobile")
 const query = ref('')
 const fetchProgress = ref(props.textMode ? 100 : 0)
-const { data: tracksData } = await useAsyncData('tracks', () => getTracks((p) => {
+const { data: tracksData } = await useAsyncData('tracksflat', () => getTracks((p) => {
   if(!props.textMode) {
     fetchProgress.value = p
   }
@@ -29,7 +30,7 @@ const { data: tracksData } = await useAsyncData('tracks', () => getTracks((p) =>
   default: () => []
 })
 const allOptions = computed(() => props.textMode ? [] : (tracksData.value || []))
-let fuse: Fuse<ShallowTrack>
+let fuse: Fuse<FlatTrack>
 const hoverIndex = ref<number>(-1)
 const debouncedQuery = ref('')
 const filtered = ref<SearchResult[]>([])
@@ -116,7 +117,7 @@ watch(debouncedQuery, async (val) => {
     // Third try: fill up with Fuse.js results if we have fewer than 5
     if (keywordMatches.length < 5) {
       const fuseResults = fuse.search(val)
-          .filter(r => val.toLowerCase() !== getName(r.item).toLowerCase())
+          .filter(r => val.toLowerCase() !== r.item.getDisplayName().toLowerCase())
           .map(i => {
             const {item, score, matches} = i
             const artistMatch = matches?.filter(m => m.key === 'artists') ?? []
@@ -133,7 +134,7 @@ watch(debouncedQuery, async (val) => {
       // Combine keyword matches with fuse results, avoiding duplicates
       const combined = [...keywordMatches]
       fuseResults.forEach(fr => {
-        if (combined.length < 5 && !combined.find(km => getName(km.item) === getName(fr.item))) {
+        if (combined.length < 5 && !combined.find(km => km.item.getDisplayName() === fr.item.getDisplayName())) {
           combined.push(fr)
         }
       })
@@ -145,8 +146,8 @@ watch(debouncedQuery, async (val) => {
   }
 })
 
-function select(item: ShallowTrack) {
-  query.value = getName(item)
+function select(item: FlatTrack) {
+  query.value = item.getDisplayName()
   selected.value = true
   hoverIndex.value = -1
   emit('onTrackSelected', item, flashError, flashSuccess, clear)
@@ -160,15 +161,15 @@ function enter() {
 
   if(visible.value) {
     if(hoverIndex.value != -1) {
-      select(filtered.value[hoverIndex.value ?? 0].item)
+      select(filtered.value[hoverIndex.value ?? 0]!!.item as FlatTrack)
     } else {
       const match = allOptions.value.filter(st => {
-        const name = getName(st)
+        const name = st.getDisplayName()
         return query.value.toLowerCase() == name.toLowerCase()
       })
 
       if(match.length === 1) {
-        select(match[0])
+        select(match[0]!!)
       } else {
         flashError()
       }
@@ -210,58 +211,6 @@ const clear = () => {
   query.value = ""
   debouncedQuery.value = ""
   hoverIndex.value = -1
-}
-
-function highlight(text: string, matches: readonly Fuse.FuseResultMatch[] = []): string {
-  if (!matches || matches.length === 0) return text
-
-  // Collect all index ranges from Fuse
-  const indices = matches
-      .flatMap(m => m.indices)
-      .sort((a, b) => a[0] - b[0])
-
-  // Merge overlapping or adjacent highlight regions
-  const merged: [number, number][] = []
-  for (const [start, end] of indices) {
-    if (!merged.length || start > merged[merged.length - 1][1] + 1) {
-      merged.push([start, end])
-    } else {
-      merged[merged.length - 1][1] = Math.max(merged[merged.length - 1][1], end)
-    }
-  }
-
-  // Build final HTML with highlights
-  let result = ''
-  let lastIndex = 0
-
-  for (const [start, end] of merged) {
-    result += text.slice(lastIndex, start)
-    result += `<span class=""><b>${text.slice(start, end + 1)}</b></span>`
-    lastIndex = end + 1
-  }
-
-  result += text.slice(lastIndex)
-
-  return result
-}
-
-function highlightExact(text: string, region: number[] = []): string {
-  if (!region || region.length < 2) return text
-
-  let [start, end] = region
-  if (start > end) [start, end] = [end, start]
-
-  // Clamp to text bounds
-  start = Math.max(0, Math.min(start, text.length))
-  end = Math.max(0, Math.min(end, text.length - 1))
-
-  if (start > end) return text
-
-  const before = text.slice(0, start)
-  const middle = text.slice(start, end + 1)
-  const after = text.slice(end + 1)
-
-  return `${before}<span class=""><b>${middle}</b></span>${after}`
 }
 
 watch(tracksData, (newData) => {
@@ -357,7 +306,7 @@ const inputEvents = {
         <div v-for="(item, index) in filtered" :key="index"
              class="px-3 hover:bg-base-300 cursor-pointer font-xs md:font-3xl"
              :class="{'bg-base-300': hoverIndex === index}"
-             @click="select(item.item)"
+             @click="select(item.item as FlatTrack)"
              v-html="item.highlighted"
         >
         </div>

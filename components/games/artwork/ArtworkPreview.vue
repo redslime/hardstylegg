@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import type {ArtworkContainer} from "~/types/gameModels";
-import {getSpotifyArtwork} from "~/utils/utils";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.ArtworkDef
@@ -19,7 +18,7 @@ const localError = ref(false)
     <div class="w-full flex gap-2">
       <div class="shrink w-1/4 sm:w-1/3 xs:w-1/2 relative aspect-square">
         <div v-if="!spotifyLoaded" class="skeleton w-full h-full rounded-xl absolute inset-0"></div>
-        <img :src="`${getSpotifyArtwork(instance.track.cover_art)}`" 
+        <img :src="instance.track.getImageUrl()"
              :alt="instance.track.title"
              @load="spotifyLoaded = true"
              :class="['w-full h-auto rounded-xl shrink shadow-md transition-opacity duration-300', spotifyLoaded ? 'opacity-100' : 'opacity-0']"/>

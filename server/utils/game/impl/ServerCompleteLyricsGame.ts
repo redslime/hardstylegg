@@ -4,6 +4,7 @@ import {GAME_METAS} from "#shared/games";
 import type {User} from "#auth-utils";
 import prisma from "~/lib/prisma";
 import type { game_complete_lyricsModel } from "~/generated/prisma/models";
+import {FlatTrack} from "~/types/content";
 
 export class ServerCompleteLyricsGame extends ServerGameDef<CompleteLyricsContainer> {
 
@@ -29,7 +30,7 @@ export class ServerCompleteLyricsGame extends ServerGameDef<CompleteLyricsContai
             id: parent!!.id,
             created_by: parent!!.created_by,
             text: parent!!.text,
-            track: track,
+            track: FlatTrack.mapJson(track),
             context: parent!!.context
         }
     }
@@ -43,9 +44,9 @@ export class ServerCompleteLyricsGame extends ServerGameDef<CompleteLyricsContai
                 context: instance.context
             }
         })
-        const track = await prisma.track.findUnique({
+        const track = FlatTrack.mapJson(await prisma.track.findUnique({
             where: { sid: instance.track.sid }
-        })
+        }))
 
         return <CompleteLyricsContainer>{
             ...rest,
@@ -62,9 +63,9 @@ export class ServerCompleteLyricsGame extends ServerGameDef<CompleteLyricsContai
                 context: instance.context
             }
         })
-        const track = await prisma.track.findUnique({
+        const track = FlatTrack.mapJson(await prisma.track.findUnique({
             where: { sid: instance.track.sid }
-        })
+        }))
 
         return <CompleteLyricsContainer> {
             ...rest,
@@ -102,7 +103,7 @@ export class ServerCompleteLyricsGame extends ServerGameDef<CompleteLyricsContai
 
         return instances.map(i => {
             const { track_id, ...rest } = i
-            const track = tracks.find(t => t.sid === track_id)
+            const track = FlatTrack.mapJson(tracks.find(t => t.sid === track_id))
             return <CompleteLyricsContainer>{
                 ...rest,
                 track

@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import type {ArtworkContainer} from "~/types/gameModels";
 import DashboardGameLoadingSpinner from "~/components/dashboard/DashboardGameLoadingSpinner.vue";
-import {getName} from "~/utils/tracks";
-import {getLocalArtwork, getSpotifyArtwork} from "~/utils/utils";
+import {getLocalArtwork} from "~/utils/utils";
 import TrackPicker from "~/components/dashboard/TrackPicker.vue";
 import ArtworkUploader from "~/components/games/artwork/ArtworkUploader.vue";
 import {ref} from "vue";
@@ -55,7 +54,7 @@ function clearUpload() {
 
       <template #editTitle v-if="editing">
         <div class="flex gap-2 items-center">
-          <div class="text-2xl font-bold" v-if="editing.track">{{ getName(editing.track) }}</div>
+          <div class="text-2xl font-bold" v-if="editing.track">{{ editing.track.getDisplayName() }}</div>
           <TrackPicker @selected="t => (editing!!.track = t)" :title="editing!!.track ? 'Replace' : 'Select'" :existing="existingIds" />
         </div>
       </template>
@@ -65,7 +64,7 @@ function clearUpload() {
           <div class="shrink w-1/4 sm:w-1/3 xs:w-1/2">
             <div class="bg-black/20 rounded-box shadow-md p-2">
               <p class="text-center text-xl mb-2">Original artwork</p>
-              <img :src="`${getSpotifyArtwork(editing.track.cover_art)}`" :alt="editing.track.title"
+              <img :src="editing.track.getImageUrl()" :alt="editing.track.title"
                    class="w-full h-auto rounded-xl shrink shadow-md"/>
             </div>
           </div>

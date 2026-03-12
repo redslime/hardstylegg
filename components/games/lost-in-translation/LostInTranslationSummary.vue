@@ -12,28 +12,19 @@ const { container, reports } = defineProps({
   <div class="flex gap-3 w-full">
     <fieldset class="fieldset mt-2 w-1/2">
       <legend class="fieldset-legend">Original lyrics</legend>
-      <div class="border border-white/15 p-3 text-md rounded-md whitespace-pre-line bg-base-100 text-xmd">
-        {{ container.textOriginal }}
-      </div>
+      <textarea class="textarea w-full" rows="20" placeholder="Enter original lyrics..." :value="container.textOriginal" readonly></textarea>
     </fieldset>
     <fieldset class="fieldset mt-2 w-1/2">
       <legend class="fieldset-legend">Translated lyrics</legend>
-      <div class="border border-white/15 p-3 text-md rounded-md whitespace-pre-line bg-base-100 text-xmd">
-        {{ container.textTranslated }}
-      </div>
+      <textarea class="textarea w-full" rows="20" placeholder="Enter translated lyrics..." :value="container.textTranslated" readonly></textarea>
     </fieldset>
   </div>
 
   <fieldset class="fieldset mt-2 w-full">
     <legend class="fieldset-legend">Translation chain</legend>
-    <div class="border border-white/15 p-3 text-md rounded-md bg-base-100 text-xmd">
-      {{ container.translationChain }}
-    </div>
+    <input type="text" class="input w-full" placeholder="English ➔ ..." :value="container.translationChain" readonly />
   </fieldset>
 </template>
 
 <style scoped>
-.text-xmd {
-  font-size: 14px;
-}
 </style>

@@ -2,22 +2,13 @@ import type {KeyCache} from "~/types/models";
 
 let keys: KeyCache | null = null
 
-export async function getTrackCacheParam(): Promise<string> {
-    return `?v=${await getTrackCacheKey()}`
+export async function getCacheParam(key: keyof KeyCache): Promise<string> {
+    return `?v=${await getCacheKey(key)}`
 }
 
-export async function getTrackCacheKey(): Promise<string> {
-    if(keys !== null) return keys.tracks
-    return (await loadKeys()).tracks
-}
-
-export async function getAlbumCacheParam(): Promise<string> {
-    return `?v=${await getAlbumCacheKey()}`
-}
-
-export async function getAlbumCacheKey(): Promise<string> {
-    if(keys !== null) return keys.albums
-    return (await loadKeys()).albums
+export async function getCacheKey(key: keyof KeyCache): Promise<string> {
+    if(keys !== null) return keys[key]
+    return (await loadKeys())[key]
 }
 
 async function loadKeys(): Promise<KeyCache> {
@@ -26,7 +17,8 @@ async function loadKeys(): Promise<KeyCache> {
     } catch (e: any) {
         keys = {
             tracks: Date.now().toString(),
-            albums: Date.now().toString()
+            albums: Date.now().toString(),
+            artists: Date.now().toString()
         }
     }
 

@@ -13,7 +13,7 @@ const { gameDef, container, pointer } = defineProps({
 
 const dashboardData = await getDashboardData()
 const scheduleData = computed<ScheduleDay | undefined>(() => getScheduleForGame(gameDef.id, container.id))
-const title = computed(() => gameDef.getDashboardHeaderTitle(container))
+const title = gameDef.getDashboardHeaderTitle(container)
 const todayId = computed(() => dashboardData.schedule.todayId)
 const upcoming = computed(() => todayId.value && scheduleData.value && todayId.value <= scheduleData.value.day)
 const past = computed(() => todayId.value && scheduleData.value && todayId.value > scheduleData.value.day)
@@ -26,8 +26,10 @@ const hasContext = computed(() => {
 
   // also check for context within items
   if('items' in container) {
-    const items = container.items as any[]
-    return items.filter(i => typeof i === 'object' && 'context' in i && i.context !== null).length > 0
+    if(Array.isArray(container.items)) {
+      const items = container.items as any[]
+      return items.filter(i => typeof i === 'object' && 'context' in i && i.context !== null).length > 0
+    }
   }
 
   return false

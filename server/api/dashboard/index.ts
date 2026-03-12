@@ -17,15 +17,26 @@ function getStructure(user: User): DashboardGroup[] {
     })
 
     overviewItems.push({
-        name: "Track database",
+        name: "Content database",
         icon: "CircleStackIcon",
-        url: "/admin/tracks"
-    })
-
-    overviewItems.push({
-        name: "Album database",
-        icon: "CircleStackIcon",
-        url: "/admin/albums"
+        url: "/admin/content",
+        children: [
+            {
+                name: "Artists",
+                icon: "CircleStackIcon",
+                url: "/admin/content/artists",
+            },
+            {
+                name: "Albums",
+                icon: "CircleStackIcon",
+                url: "/admin/content/albums",
+            },
+            {
+                name: "Tracks",
+                icon: "CircleStackIcon",
+                url: "/admin/content/tracks",
+            }
+        ]
     })
 
     overviewItems.push({
@@ -34,7 +45,6 @@ function getStructure(user: User): DashboardGroup[] {
         url: "/admin/editors"
     })
 
-
     // admin items
     adminItems.push({
         name: "Schedule",
@@ -42,17 +52,17 @@ function getStructure(user: User): DashboardGroup[] {
         url: "/admin/schedule"
     })
 
-    adminItems.push({
-        name: "Import artist",
-        icon: "CloudArrowDownIcon",
-        url: "/admin/import/artist"
-    })
-
-    adminItems.push({
-        name: "Import track",
-        icon: "CloudArrowDownIcon",
-        url: "/admin/import/track"
-    })
+    // adminItems.push({
+    //     name: "Import artist",
+    //     icon: "CloudArrowDownIcon",
+    //     url: "/admin/import/artist"
+    // })
+    //
+    // adminItems.push({
+    //     name: "Import track",
+    //     icon: "CloudArrowDownIcon",
+    //     url: "/admin/import/track"
+    // })
 
     // game items
     getGames().forEach(game => {

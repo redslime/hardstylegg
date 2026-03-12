@@ -19,7 +19,7 @@ function getPercentage(index: number) {
     <div class="shrink w-1/4 sm:w-1/3 xs:w-1/2" v-for="(item, index) in container.items" :key="item.track.sid">
       <div class="flex flex-col items-center gap-2">
         <img
-            :src="`${getSpotifyArtwork(item.track.cover_art)}`"
+            :src="item.track.getImageUrl()"
             :alt="item.track.title"
             class="w-full h-auto rounded-xl shrink shadow-md"
         />

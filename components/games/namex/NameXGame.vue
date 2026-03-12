@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import {GameState, type ShallowTrack, type Track} from "~/types/models";
+import {GameState} from "~/types/models";
 import type {NameXContainer} from "~/types/gameModels";
 import {countAttempt, countItem} from "~/utils/game";
+import {BaseTrack, FlatAlbum, FlatArtist, FlatTrack} from "~/types/content";
+import BaseTrackInput from "~/components/BaseTrackInput.vue";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.NameXDef
@@ -13,12 +15,12 @@ const props = defineProps({
   container: { type: Object as PropType<NameXContainer>, required: true }
 })
 
-const tracks = computed(() => props.container.tracks)
+const type = computed(() => props.container.items.type)
 const state = computed(() => props.state)
 const finished = computed(() => state.value == GameState.SUCCEEDED || state.value == GameState.FAILED)
 const goal = computed(() => props.container.goal)
-const items = ref<{index: number, item: Track | string, guessed: boolean}[]>(
-    props.container.items.map((item, index) => ({
+const items = ref<{index: number, item: FlatArtist | FlatAlbum | FlatTrack | string, guessed: boolean}[]>(
+    props.container.items.items.map((item, index) => ({
       index,
       item,
       guessed: false
@@ -26,44 +28,17 @@ const items = ref<{index: number, item: Track | string, guessed: boolean}[]>(
 )
 const guessed = computed(() => items.value.filter(i => i.guessed).length)
 
-function validateTrack(selected: ShallowTrack, flashError: () => void, flashSuccess: () => void, clear: () => void) {
+function validate(selected: FlatArtist | FlatAlbum | FlatTrack | string, flashError: () => void, flashSuccess: () => void, clear: () => void) {
   let success = false;
   countAttempt()
 
   for(const [_, item] of Object.entries(items.value)) {
-    if(tracks.value) {
-      if(selected.sid === (item.item as Track).sid) {
-        countItem(item.index, true)
-        item.guessed = true;
-        success = true;
-      }
-    }
-  }
-
-  clear()
-
-  if(success) {
-    if(guessed.value >= goal.value) {
-      emit("onFinish", GameState.SUCCEEDED)
-    }
-
-    flashSuccess()
-  } else {
-    flashError()
-  }
-}
-
-function validateInput(selected: string, flashError: () => void, flashSuccess: () => void, clear: () => void) {
-  let success = false;
-  countAttempt()
-
-  for(const [_, item] of Object.entries(items.value)) {
-    if(!tracks.value) {
-      if(selected.trim().toLowerCase() === (item.item as string).trim().toLowerCase()) {
-        countItem(item.index, true)
-        item.guessed = true;
-        success = true;
-      }
+    if((item.item instanceof BaseTrack && selected instanceof BaseTrack && selected.sid === item.item.sid)
+      || (item.item instanceof FlatArtist && selected instanceof FlatArtist && selected.id === item.item.id)
+      || (item.item instanceof String && selected instanceof String && selected.trim().toLowerCase() === (item.item as string).trim().toLowerCase())) {
+      countItem(item.index, true)
+      item.guessed = true;
+      success = true;
     }
   }
 
@@ -108,8 +83,11 @@ function censor(text: string, censor: boolean): string {
       <div class="flex-1">
         <div class="flex items-center gap-2 font-semibold">
           <div :class="{'blur-sm': !item.guessed && guessed < goal && !finished}">
-            <template v-if="tracks">
-              {{ censor((item.item as Track).title, !item.guessed && guessed < goal && !finished) }}
+            <template v-if="item.item instanceof BaseTrack">
+              {{ censor(item.item.title, !item.guessed && guessed < goal && !finished) }}
+            </template>
+            <template v-else-if="item.item instanceof FlatArtist">
+              {{ censor(item.item.getDisplayName(), !item.guessed && guessed < goal && !finished) }}
             </template>
             <template v-else>
               {{ censor(item.item as string, !item.guessed && guessed < goal && !finished) }}
@@ -117,9 +95,9 @@ function censor(text: string, censor: boolean): string {
           </div>
         </div>
 
-        <div class="text-xs opacity-60" v-if="tracks">
+        <div class="text-xs opacity-60" v-if="item.item instanceof BaseTrack">
           <div :class="{'blur-sm': !item.guessed && guessed < goal && !finished}">
-            {{ censor((item.item as Track).artists, !item.guessed && guessed < goal && !finished) }}
+            {{ censor(item.item.getArtistsString(), !item.guessed && guessed < goal && !finished) }}
           </div>
         </div>
       </div>
@@ -127,32 +105,90 @@ function censor(text: string, censor: boolean): string {
   </ul>
 
   <div class="mt-8 w-2/3" v-if="!finished">
-    <TrackInput
-        :textMode="!tracks"
-        @onTrackSelected="validateTrack"
-        @onTextInput="validateInput"
+    <template v-if="type === 'artist'">
+      <ArtistInput
+        @onSelected="validate"
         v-slot="{ inputBindings, inputEvents, errorFlash, successFlash }"
-    >
-      <label
-          class="w-full input"
-          :class="{
+        >
+        <label
+            class="w-full input"
+            :class="{
+            'border-error': errorFlash,
+            'border-success': successFlash
+          }"
+        >
+          <input
+              v-bind="inputBindings"
+              v-on="inputEvents"
+              type="text"
+          />
+          <span
+              class="badge badge-neutral"
+              :class="{'badge-success': guessed >= goal}"
+          >
+            {{ Math.min(goal, guessed) }}/{{ goal }}
+          </span>
+        </label>
+      </ArtistInput>
+    </template>
+
+    <template v-else-if="type === 'album' || type === 'track'">
+      <BaseTrackInput
+        @onSelected="validate"
+        :isAlbums="type === 'album'"
+        :titleOnly="type === 'album'"
+        v-slot="{ inputBindings, inputEvents, errorFlash, successFlash }"
+        >
+        <label
+            class="w-full input"
+            :class="{
+            'border-error': errorFlash,
+            'border-success': successFlash
+          }"
+        >
+          <input
+              v-bind="inputBindings"
+              v-on="inputEvents"
+              type="text"
+          />
+          <span
+              class="badge badge-neutral"
+              :class="{'badge-success': guessed >= goal}"
+          >
+            {{ Math.min(goal, guessed) }}/{{ goal }}
+          </span>
+        </label>
+      </BaseTrackInput>
+    </template>
+
+    <template v-else>
+      <TrackInput
+          :textMode="type === 'text'"
+          @onTrackSelected="validate"
+          @onTextInput="validate"
+          v-slot="{ inputBindings, inputEvents, errorFlash, successFlash }"
+      >
+        <label
+            class="w-full input"
+            :class="{
         'border-error': errorFlash,
         'border-success': successFlash
       }"
-      >
-        <input
-            v-bind="inputBindings"
-            v-on="inputEvents"
-            type="text"
-        />
-        <span
-            class="badge badge-neutral"
-            :class="{'badge-success': guessed >= goal}"
         >
-        {{ Math.min(goal, guessed) }}/{{ goal }}
-      </span>
-      </label>
-    </TrackInput>
+          <input
+              v-bind="inputBindings"
+              v-on="inputEvents"
+              type="text"
+          />
+          <span
+              class="badge badge-neutral"
+              :class="{'badge-success': guessed >= goal}"
+              >
+            {{ Math.min(goal, guessed) }}/{{ goal }}
+          </span>
+        </label>
+      </TrackInput>
+    </template>
   </div>
 </template>
 

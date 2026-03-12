@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type {Track} from "~/types/models";
 import CloudArrowDownIcon from "~/components/icons/CloudArrowDownIcon.vue";
 import Checkmark from "~/components/icons/Checkmark.vue";
+import type {RichTrack} from "~/types/content";
 
 definePageMeta({
   layout: 'dashboard',
@@ -12,8 +12,8 @@ const trackRegex = /https:\/\/open.spotify.com\/track\/([A-z0-9]{22})/
 const url = ref<string | undefined>()
 const validUrl = computed<boolean>(() => trackRegex.test(url.value ?? ""))
 const importing = ref(false)
-const data = ref<Track>()
-const editing = ref<Track | null>(null)
+const data = ref<RichTrack>()
+const editing = ref<RichTrack | null>(null)
 
 async function start() {
   if(!validUrl.value) return
@@ -22,12 +22,12 @@ async function start() {
 
   if(id) {
     importing.value = true
-    data.value = await $fetch<Track>("/api/dashboard/import/fetchTrack?trackId=" + id)
+    data.value = await $fetch<RichTrack>("/api/dashboard/import/fetchTrack?trackId=" + id)
     importing.value = false
   }
 }
 
-function edit(item: Track) {
+function edit(item: RichTrack) {
   editing.value = item
 }
 
@@ -83,7 +83,7 @@ async function finish() {
                     'w-90': editing?.sid === data.sid}"
     >
       <div class="relative group">
-        <img class="w-full overflow-hidden object-contain max-h-[200px]" :src="`https://i.scdn.co/image/${data.cover_art}`" alt="Cover art" />
+        <img class="w-full overflow-hidden object-contain max-h-[200px]" :src="data.getImageUrl()" alt="Cover art" />
         <div v-if="!editing" class="absolute z-10 inset-0 backdrop-blur-sm bg-black/50 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <button class="btn btn-sm btn-outline btn-primary" @click="edit(data)">Edit</button>
         </div>

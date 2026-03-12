@@ -1,21 +1,21 @@
 <script setup lang="ts">
-import type {Track} from "~/types/models";
 import {ref} from "vue";
 import {getDashboardAlbums, getDashboardTracks} from "~/utils/dashboard";
 import TrackAlbumGrid from "~/components/dashboard/TrackAlbumGrid.vue";
+import {RichTrack} from "~/types/content";
 
 const { albums, title, disabled } = defineProps({
   albums: { type: Boolean, default: false },
   title: { type: String, default: "Select" },
   disabled: { type: Boolean, default: false },
-  existing: { type: Array as PropType<string[]>, default: ["6pqmG1bGvYe1eboml5y3hM"] }
+  existing: { type: Array as PropType<string[]>, default: [] }
 })
 const emit = defineEmits(['selected'])
 const mode = albums ? "album" : "track"
 const modal = ref<HTMLDialogElement | null>();
-const { data: allOptions, pending, error } = await useAsyncData(mode, () => (mode === "album" ? getDashboardAlbums() : getDashboardTracks()), { lazy: true })
+const { data: allOptions, pending, error } = await useAsyncData(mode, () => (mode === "album" ? getDashboardAlbums(true) : getDashboardTracks(true)), { lazy: true })
 
-function select(track: Track) {
+function select(track: RichTrack) {
   modal.value?.close()
   emit("selected", track)
 }

@@ -1,16 +1,14 @@
 <script setup lang="ts">
-import type {ShallowTrack, Track} from "~/types/models";
 import SpotifyIcon from "~/components/icons/SpotifyIcon.vue";
 import YouTubeIcon from "~/components/icons/YouTubeIcon.vue";
-import {getTrackUrl} from "~/utils/tracks";
+import {FlatAlbum, FlatTrack} from "~/types/content";
 
-const { track, isAlbum } = defineProps({
-  track: { type: Object as PropType<Track | ShallowTrack>, required: true },
-  isAlbum: { type: Boolean, default: false },
+const { track } = defineProps({
+  track: { type: Object as PropType<FlatTrack | FlatAlbum>, required: true}
 })
 
-const isYouTube = computed<boolean>(() => track.sid.startsWith("yt:"))
-const url = computed<string>(() => getTrackUrl(track, isAlbum))
+const isYouTube = track.isYouTube()
+const url = computed<string>(() => track.getPlayUrl())
 const isMobile = inject<boolean>("isMobile", false)
 const summary = inject<boolean>("summary", false)
 const details = inject<boolean>("details", false)

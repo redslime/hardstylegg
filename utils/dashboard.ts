@@ -1,12 +1,14 @@
-import type {DashboardData, ScheduleDay, Track} from "~/types/models";
+import type {DashboardData, ScheduleDay} from "~/types/models";
 import {DateTime} from "luxon";
-import {getAlbumCacheParam, getTrackCacheParam} from "~/utils/cacheKeys";
+import {getCacheParam} from "~/utils/cacheKeys";
+import {RichAlbum, RichArtist, RichTrack} from "~/types/content";
 
 export const GAMES_PER_DAY = 5
 
 let dashboardData: DashboardData | null = null;
-let tracks: Track[] | null = null;
-let albums: Track[] | null = null;
+let tracks: RichTrack[] | null = null;
+let albums: RichAlbum[] | null = null;
+let artists: RichArtist[] | null = null;
 
 export async function getDashboardData(): Promise<DashboardData> {
     if(dashboardData !== null) return dashboardData
@@ -14,18 +16,64 @@ export async function getDashboardData(): Promise<DashboardData> {
     return dashboardData
 }
 
-export async function getDashboardTracks(): Promise<Track[]> {
+export async function getDashboardTracks(skipHidden: boolean = false): Promise<RichTrack[]> {
     if(tracks !== null) return tracks
-    const v = await getTrackCacheParam()
-    tracks = await $fetch<Track[]>('/api/dashboard/tracks' + v)
-    return tracks
+    const v = await getCacheParam("tracks")
+    tracks = (await $fetch<RichTrack[]>('/api/dashboard/content/tracks' + v)).map(RichTrack.fromJson)
+
+    if(skipHidden) {
+        return tracks.filter(t => !t.hidden)
+    } else {
+        return tracks
+    }
 }
 
-export async function getDashboardAlbums(): Promise<Track[]> {
+export function updateDashboardTrack(track: RichTrack) {
+    if(tracks !== null) {
+        tracks.splice(tracks.findIndex(t => t.sid === track.sid), 1)
+        tracks.push(track)
+    }
+}
+
+export async function getDashboardAlbums(skipHidden: boolean = false): Promise<RichAlbum[]> {
     if(albums !== null) return albums
-    const v = await getAlbumCacheParam()
-    albums = await $fetch<Track[]>('/api/dashboard/albums' + v)
-    return albums
+    const v = await getCacheParam("albums")
+    albums = (await $fetch<RichAlbum[]>('/api/dashboard/content/albums' + v)).map(RichAlbum.fromJson)
+
+    if(skipHidden) {
+        return albums.filter(t => !t.hidden)
+    } else {
+        return albums
+    }
+}
+
+export function updateDashboardAlbum(album: RichAlbum) {
+    if(albums !== null) {
+        albums.splice(albums.findIndex(t => t.sid === album.sid), 1)
+        albums.push(album)
+    }
+}
+
+export async function getDashboardArtists(): Promise<RichArtist[]> {
+    if(artists !== null) return artists
+    const v = await getCacheParam("artists")
+    artists = (await $fetch<RichArtist[]>('/api/dashboard/content/artists' + v)).map(RichArtist.fromJson)
+    return artists
+}
+
+export function updateDashboardArtist(artist: RichArtist) {
+    if(artists !== null) {
+        artists.splice(artists.findIndex(a => a.id === artist.id), 1)
+        artists.push(artist)
+    }
+    if(tracks !== null) {
+        tracks.filter(t => t.artists.map(a => a.id).includes(artist.id))
+            .forEach(t => t.artists.filter(a => a.id === artist.id).forEach(m => m.name = artist.name))
+    }
+    if(albums !== null) {
+        albums.filter(a => a.artists.map(a => a.id).includes(artist.id))
+            .forEach(a => a.artists.filter(a => a.id === artist.id).forEach(m => m.name = artist.name))
+    }
 }
 
 export function getScheduleForGame(typeId: number, gameId: number | undefined): ScheduleDay | undefined {
@@ -73,10 +121,10 @@ export async function updateScheduleDay(day: ScheduleDay) {
     })
 }
 
-export function deleteTrack(track: Track) {
+export function deleteTrack(track: RichTrack) {
     tracks?.splice(tracks.indexOf(track), 1)
 }
 
-export function deleteAlbum(album: Track) {
+export function deleteAlbum(album: RichAlbum) {
     albums?.splice(albums.indexOf(album), 1)
 }

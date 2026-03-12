@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import CloudArrowDownIcon from "~/components/icons/CloudArrowDownIcon.vue";
-import type {Track} from "~/types/models";
 import Checkmark from "~/components/icons/Checkmark.vue";
 import {findDuplicates} from "~/utils/duplicates";
+import {type RichAlbum, RichTrack} from "~/types/content";
 
 definePageMeta({
   layout: 'dashboard',
@@ -13,9 +13,9 @@ const artistRegex = /https:\/\/open.spotify.com\/artist\/([A-z0-9]{22})/
 const url = ref<string | undefined>()
 const validUrl = computed<boolean>(() => artistRegex.test(url.value ?? ""))
 const importing = ref(false)
-const data = ref<{ albums: Track[], tracks: Track[] }>()
-const editing = ref<Track | null>(null)
-const duplicates = ref<Record<string, Track[]>>(findDuplicates(data.value?.tracks ?? []))
+const data = ref<{ albums: RichAlbum[], tracks: RichTrack[] }>()
+const editing = ref<RichAlbum | RichTrack | null>(null)
+const duplicates = ref<Record<string, RichTrack[]>>(findDuplicates(data.value?.tracks ?? []))
 
 async function start() {
   if(!validUrl.value) return
@@ -24,7 +24,7 @@ async function start() {
 
   if(id) {
     importing.value = true
-    data.value = await $fetch<{ albums: Track[], tracks: Track[] }>("/api/dashboard/import/fetchArtist?artistId=" + id)
+    data.value = await $fetch<{ albums: RichAlbum[], tracks: RichTrack[] }>("/api/dashboard/import/fetchArtist?artistId=" + id)
     importing.value = false
   }
 }
@@ -52,11 +52,11 @@ async function finish() {
   }
 }
 
-function edit(item: Track) {
+function edit(item: RichAlbum | RichTrack) {
   editing.value = item
 }
 
-function remove(item: Track) {
+function remove(item: RichAlbum | RichTrack) {
   const albumIndex = data.value!!.albums.findIndex(a => a.sid === item.sid)
   const trackIndex = data.value!!.tracks.findIndex(t => t.sid === item.sid)
 
@@ -76,13 +76,17 @@ watchEffect(() => {
     Import artist
   </div>
 
+  <div role="alert" class="alert alert-error alert-soft">
+    <span>Disabled due to Spotify API changes.</span>
+  </div>
+
   <fieldset class="fieldset" v-if="!data">
     <legend class="fieldset-legend">Insert artist url</legend>
     <div class="join">
       <div>
         <label class="input join-item w-96"
           :class="{'border-1 border-error': !validUrl}">
-          <input class="w-full" type="url" required :disabled="importing" v-model="url" />
+          <input class="w-full" type="url" required :disabled="importing || true" v-model="url" />
         </label>
         <div class="text-error" v-if="!validUrl">Enter valid artist url</div>
       </div>
@@ -110,7 +114,7 @@ watchEffect(() => {
             :key="item.sid"
         >
           <div class="relative group">
-            <img class="w-full overflow-hidden object-contain max-h-[200px]" :src="`https://i.scdn.co/image/${item.cover_art}`" alt="Cover art" />
+            <img class="w-full overflow-hidden object-contain max-h-[200px]" :src="item.getImageUrl()" alt="Cover art" />
             <div v-if="!editing" class="absolute z-10 inset-0 backdrop-blur-sm bg-black/50 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               <button class="btn btn-sm btn-outline btn-primary" @click="edit(item)">Edit</button>
               <button class="btn btn-sm btn-outline btn-error" @click="remove(item)">Remove</button>
@@ -143,7 +147,7 @@ watchEffect(() => {
             :key="item.sid"
         >
           <div class="relative group">
-            <img class="w-full overflow-hidden object-contain max-h-[200px]" :src="`https://i.scdn.co/image/${item.cover_art}`" alt="Cover art" />
+            <img class="w-full overflow-hidden object-contain max-h-[200px]" :src="item.getImageUrl()" alt="Cover art" />
             <div v-if="!editing" class="absolute z-10 inset-0 backdrop-blur-sm bg-black/50 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
               <button class="btn btn-sm btn-outline btn-primary" @click="edit(item)">Edit</button>
               <button class="btn btn-sm btn-outline btn-error" @click="remove(item)">Remove</button>
@@ -190,7 +194,7 @@ watchEffect(() => {
                 :key="index"
             >
               <div class="relative group">
-                <img class="w-full overflow-hidden object-contain max-h-[200px]" :src="`https://i.scdn.co/image/${item.cover_art}`" alt="Cover art" />
+                <img class="w-full overflow-hidden object-contain max-h-[200px]" :src="item.getImageUrl()" alt="Cover art" />
                 <div v-if="!editing" class="absolute z-10 inset-0 backdrop-blur-sm bg-black/50 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <button class="btn btn-sm btn-outline btn-primary" @click="edit(item)">Edit</button>
                   <button class="btn btn-sm btn-outline btn-error" @click="remove(item)">Remove</button>

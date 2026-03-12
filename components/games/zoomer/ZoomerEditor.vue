@@ -3,7 +3,7 @@ import type {ZoomerContainer} from "~/types/gameModels";
 import {watchOnce} from "@vueuse/shared";
 import ZoomerPreview from "~/components/games/zoomer/ZoomerPreview.vue";
 import {constructImageData} from "~/utils/zoomer";
-import type {ZoomerImageData, ZoomerType} from "~/types/zoomerModels";
+import type {Artist, Festival, ZoomerImageData} from "~/types/zoomerModels";
 import ZoomerCropper from "~/components/games/zoomer/ZoomerCropper.vue";
 import ZoomerGoalSelector from "~/components/games/zoomer/ZoomerGoalSelector.vue";
 import ZoomerTypeBadge from "~/components/games/zoomer/ZoomerTypeBadge.vue";
@@ -21,14 +21,14 @@ function reset() {
   cropResult.value = constructImageData("", "", 0, 0) as ZoomerImageData
 }
 
-function select(type: ZoomerType) {
-  editing.value!!.goal = type
+function selectFestival(festival: Festival) {
+  editing.value!!.goal = festival
+  editing.value!!.title = "Which festival is pictured here?"
+}
 
-  if(type.id === "artist") {
-    editing.value!!.title = "Which artist is pictured here?"
-  } else if(type.id === "festival") {
-    editing.value!!.title = "Which festival is pictured here?"
-  }
+function selectArtist(artist: Artist) {
+  editing.value!!.goal = artist
+  editing.value!!.title = "Which artist is pictured here?"
 }
 
 watchOnce(data, () => instances.value = data.value)
@@ -60,7 +60,7 @@ watch(ready, () => {
 
       <template #editBody>
         <template v-if="!editing!!.id">
-          <ZoomerGoalSelector v-if="!editing!!.goal" @select="g => select(g)" />
+          <ZoomerGoalSelector v-if="!editing!!.goal" @selectFestival="selectFestival" @selectArtist="selectArtist" />
           <ZoomerTypeBadge v-if="editing!!.goal" :type="editing!!.goal" />
           <div class="mt-5"></div>
           <ZoomerCropper v-if="editing!!.goal" v-model="cropResult" />

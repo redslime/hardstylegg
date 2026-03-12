@@ -6,6 +6,7 @@ import OrderIcon from "~/components/games/order/OrderIcon.vue";
 import OrderPreview from "~/components/games/order/OrderPreview.vue";
 import OrderEditor from "~/components/games/order/OrderEditor.vue";
 import OrderSummary from "~/components/games/order/OrderSummary.vue";
+import {FlatTrack} from "~/types/content";
 
 export class ClientOrderGame extends ClientGameDef<OrderContainer> {
 
@@ -27,5 +28,16 @@ export class ClientOrderGame extends ClientGameDef<OrderContainer> {
             "You can submit your order by pressing 'Submit'.\n\n" +
             "You only have one attempt at guessing!\n" +
             "Can't figure it out? Use the skip button!";
+    }
+
+    override getPreloadUrls(container: OrderContainer): string[] {
+        return container.items.map(item => item.track.getImageUrl())
+    }
+
+    override remap(data: any): OrderContainer {
+        return <OrderContainer>{
+            ...data,
+            items: data.items.map((item: any) => ({...item, track: FlatTrack.fromJson(item.track)}))
+        }
     }
 }

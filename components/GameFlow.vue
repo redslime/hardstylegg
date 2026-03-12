@@ -22,7 +22,7 @@ import {
   GameEnvironment,
   GameState
 } from "~/types/models";
-import {getTracks} from "~/utils/tracks";
+import {getTracks} from "~/utils/contentCache";
 import {useLocalStorage} from "@vueuse/core";
 import QuestionMarkCircleIcon from "~/components/icons/QuestionMarkCircleIcon.vue";
 import type {ClientGameDef} from "~/utils/game/ClientGameDef";
@@ -43,7 +43,8 @@ const dayId = ref<number>(props.gameData.dayId)
 const gameData = reactive<GameData[]>(props.gameData.data)
 const currentIndex = ref(0)
 const currentGameData = computed<GameData>(() => gameData[currentIndex.value]!!)
-const currentGameComp = computed<ClientGameDef<any>>(() => $gameRegistry.findGameByName(currentGameData.value.name)!!)
+const currentGameDef = computed<ClientGameDef<any>>(() => $gameRegistry.findGameByName(currentGameData.value.name)!!)
+const currentGameContainer = computed(() => currentGameDef.value.remap(currentGameData.value.props.container))
 const currentState = computed<GameState>(() => currentGameData.value.props.state)
 const summary = ref<boolean>(false)
 const details = ref<boolean>(false)
@@ -63,8 +64,8 @@ const shareCode = computed<string>(() => {
 })
 const played = computed(() => hasPlayedToday(props.cookie, dayId.value))
 
-const currentTypeId = computed<number>(() => currentGameComp.value.id)
-const currentGameId = computed<number>(() => currentGameData.value.props.container.id)
+const currentTypeId = computed<number>(() => currentGameDef.value.id)
+const currentGameId = computed<number>(() => currentGameContainer.value.id)
 const tracked = computed<boolean>(() => props.gameEnv === GameEnvironment.DAILY)
 
 provide("details", details)
@@ -307,8 +308,8 @@ onMounted(() => {
 
   <dialog ref="helpModal" id="helpModal" class="modal">
     <div class="modal-box">
-      <h3 class="text-lg font-bold">Game help: {{ currentGameComp.getSpacedName() }}</h3>
-      <p class="py-4 whitespace-pre-wrap">{{ currentGameComp.getHelpText(currentGameData.props.container) }}</p>
+      <h3 class="text-lg font-bold">Game help: {{ currentGameDef.getSpacedName() }}</h3>
+      <p class="py-4 whitespace-pre-wrap">{{ currentGameDef.getHelpText(currentGameContainer) }}</p>
       <div class="modal-action">
         <form method="dialog">
           <button class="btn">Close</button>
@@ -319,9 +320,9 @@ onMounted(() => {
 
   <Teleport :to="teleportTo" v-if="mounted">
     <KeepAlive>
-      <component v-if="!summary || (summary && details)" :is="currentGameComp.gameComponent" :key="currentIndex" v-bind="currentGameData.props" @onFinish="listener" />
+      <component v-if="!summary || (summary && details)" :is="currentGameDef.gameComponent" :key="currentIndex" v-bind="currentGameData.props" @onFinish="listener" />
     </KeepAlive>
-    <ContextBox :container="currentGameData.props.container"
+    <ContextBox :container="currentGameContainer"
                 v-if="(!summary || (summary && details)) && (currentState == GameState.FAILED || currentState == GameState.SUCCEEDED)" />
   </Teleport>
 

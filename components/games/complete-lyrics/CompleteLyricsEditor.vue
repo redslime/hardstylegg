@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type {CompleteLyricsContainer} from "~/types/gameModels";
 import DashboardGameLoadingSpinner from "~/components/dashboard/DashboardGameLoadingSpinner.vue";
-import {getName} from "~/utils/tracks";
 import {computed} from "vue";
 import TrackPicker from "~/components/dashboard/TrackPicker.vue";
 import InfoIcon from "~/components/icons/InfoIcon.vue";
@@ -83,7 +82,7 @@ function reset() {
 
       <template #editTitle v-if="editing">
         <div class="flex gap-2 items-center">
-          <div class="text-2xl font-bold" v-if="editing.track">{{ getName(editing.track) }}</div>
+          <div class="text-2xl font-bold" v-if="editing.track">{{ editing.track.getDisplayName() }}</div>
           <TrackPicker @selected="t => (editing!!.track = t)" :title="editing!!.track ? 'Replace' : 'Select'" :existing="existingIds" />
         </div>
       </template>

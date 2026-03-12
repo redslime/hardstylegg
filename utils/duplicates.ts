@@ -1,4 +1,4 @@
-import type {Track} from "~/types/models";
+import {BaseTrack} from "~/types/content";
 
 const suffixes = [
     " - Original Mix",
@@ -14,8 +14,8 @@ const suffixes = [
     " - DJ Version Deluxe"
 ]
 
-export function findDuplicates(items: Track[]): Record<string, Track[]> {
-    const duplicates: Record<string, Track[]> = {}
+export function findDuplicates<T extends BaseTrack>(items: T[]): Record<string, T[]> {
+    const duplicates: Record<string, T[]> = {}
 
     findExactDuplicates(items, duplicates)
     findObviousSuffixes(items, duplicates)
@@ -25,14 +25,14 @@ export function findDuplicates(items: Track[]): Record<string, Track[]> {
     return duplicates
 }
 
-function findExactDuplicates(items: Track[], duplicates: Record<string, Track[]>) {
+function findExactDuplicates<T extends BaseTrack>(items: T[], duplicates: Record<string, T[]>) {
     for(let item of items) {
         const sameTitles = items.filter(t => t.title === item.title && t.sid !== item.sid)
         sameTitles.forEach(t => addDuplicate(item, t, duplicates))
     }
 }
 
-function findObviousSuffixes(items: Track[], duplicates: Record<string, Track[]>) {
+function findObviousSuffixes<T extends BaseTrack>(items: T[], duplicates: Record<string, T[]>) {
     for(let item of items) {
         const title = item.title.toLowerCase()
 
@@ -43,7 +43,7 @@ function findObviousSuffixes(items: Track[], duplicates: Record<string, Track[]>
     }
 }
 
-function findExtendedRemixDuplicates(items: Track[], duplicates: Record<string, Track[]>) {
+function findExtendedRemixDuplicates<T extends BaseTrack>(items: T[], duplicates: Record<string, T[]>) {
     for(let item of items) {
         const title = item.title.toLowerCase()
 
@@ -54,8 +54,8 @@ function findExtendedRemixDuplicates(items: Track[], duplicates: Record<string, 
     }
 }
 
-function findVersionsDuplicates(items: Track[], duplicates: Record<string, Track[]>) {
-    let checked: Track[] = []
+function findVersionsDuplicates<T extends BaseTrack>(items: T[], duplicates: Record<string, T[]>) {
+    let checked: T[] = []
 
     for(let item of items) {
         if(checked.includes(item)) continue
@@ -64,7 +64,7 @@ function findVersionsDuplicates(items: Track[], duplicates: Record<string, Track
         const title = item.title.toLowerCase()
 
         if(title.includes("-")) {
-            const samies = items.filter(t => t.cover_art === item.cover_art && t.sid !== item.sid)
+            const samies = items.filter(t => t.image === item.image && t.sid !== item.sid)
 
             for(const same of samies) {
                 const sameTitle = same.title.toLowerCase()
@@ -89,7 +89,7 @@ function findVersionsDuplicates(items: Track[], duplicates: Record<string, Track
     }
 }
 
-function addDuplicate(sample: Track, duplicate: Track, duplicates: Record<string, Track[]>) {
+function addDuplicate<T extends BaseTrack>(sample: T, duplicate: T, duplicates: Record<string, T[]>) {
     const key = sample.title
     duplicates[key] = duplicates[key] || []
     

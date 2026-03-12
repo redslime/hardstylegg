@@ -1,25 +1,15 @@
-<script lang="ts">
-import type {HeardleContainer} from "~/types/gameModels";
-import {getSpotifyArtwork} from "~/utils/utils";
-
-export default {
-  getPreloadUrls: (container: HeardleContainer): string[] => {
-    return [getSpotifyArtwork(container.track.cover_art)]
-  }
-}
-</script>
-
 <script setup lang="ts">
-import {onMounted, ref} from 'vue'
+import type {HeardleContainer} from "~/types/gameModels";
+import {computed, onMounted, ref} from 'vue'
 import PlayIcon from "~/components/icons/PlayIcon.vue";
-import {GameState, type ShallowTrack, type Track} from "~/types/models";
-import {getName, getTrackUrl} from "~/utils/tracks";
+import {GameState} from "~/types/models";
 import TrackListenButton from "~/components/TrackListenButton.vue";
 import ForwardIcon from "~/components/icons/ForwardIcon.vue";
 import {countAttempt} from "~/utils/game";
 import WaveformPlayer from "~/components/games/heardle/WaveformPlayer.vue";
 import {useWaveSurfer, type UseWaveSurfer, useWaveSurferRegions} from "@meersagor/wavesurfer-vue";
 import type {RegionParams} from "wavesurfer.js/plugins/regions";
+import {FlatTrack} from "~/types/content";
 
 const config = useRuntimeConfig()
 const { $gameRegistry } = useNuxtApp();
@@ -33,8 +23,8 @@ const props = defineProps({
 
 const state = computed(() => props.state)
 const gameFinished = computed(() => state.value == GameState.SUCCEEDED || state.value == GameState.FAILED)
-const track = computed<Track>(() => props.container.track)
-const isYouTube = computed<boolean>(() => track.value.sid.startsWith("yt:"))
+const track = computed<FlatTrack>(() => FlatTrack.fromJson(props.container.track))
+const isYouTube = computed<boolean>(() => track.value.isYouTube())
 const src = computed(() => props.container.src)
 const durations = computed(() => props.container.durations)
 const hasPlayed = ref<boolean>(false)
@@ -153,14 +143,14 @@ function nextStage() {
   wavesurfer?.waveSurfer.value?.seekTo(currentStageDuration.value / 15)
 }
 
-function validate(selected: ShallowTrack, flashError: () => void, _flashSuccess: () => void, clear: () => void) {
+function validate(selected: FlatTrack, flashError: () => void, _flashSuccess: () => void, clear: () => void) {
   countAttempt()
 
   if(selected.sid === track.value.sid) {
-    guesses.value[guessStage.value] = {input: getName(selected), correct: true}
+    guesses.value[guessStage.value] = {input: selected.getDisplayName(), correct: true}
     emit('onFinish', GameState.SUCCEEDED)
   } else {
-    guesses.value[guessStage.value] = {input: getName(selected), correct: false}
+    guesses.value[guessStage.value] = {input: selected.getDisplayName(), correct: false}
     flashError()
     clear()
 
@@ -221,9 +211,9 @@ function unlockIOSAudio() {
   </div>
 
   <div class="flex flex-col sm:flex-row justify-center bg-base-200 rounded-md shadow-md relative mt-5" v-if="finished || gameFinished">
-    <a class="flex justify-center" :href="getTrackUrl(track, false)" target="_blank" v-if="!isYouTube">
+    <a class="flex justify-center" :href="track.getPlayUrl()" target="_blank" v-if="!isYouTube">
       <img
-          :src="`${getSpotifyArtwork(track.cover_art)}`"
+          :src="track.getImageUrl()"
           alt="Track artwork"
           class="w-auto max-h-80 sm:w-40"
       />
@@ -231,7 +221,7 @@ function unlockIOSAudio() {
 
     <div class="flex flex-col p-4 justify-center bg-base-200 rounded-md sm:min-w-[380px]">
       <p class="text-xl font-semibold text-balance">{{ track.title }}</p>
-      <p class="opacity-60">{{ track.artists }}</p>
+      <p class="opacity-60">{{ track.getArtistsString() }}</p>
 
       <WaveformPlayer class="mt-3" :container="container">
         <template v-if="currentIndex === props.position">

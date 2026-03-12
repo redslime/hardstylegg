@@ -12,23 +12,30 @@ export function invalidateCacheKeys() {
 }
 
 async function loadKeys(): Promise<KeyCache> {
+    const track = await getChecksum("track")
+    const album = await getChecksum("album")
+    const artist = await getChecksum("artist")
+    const trackArtist = await getChecksum("track_artist")
+    const albumArtist = await getChecksum("album_artist")
+
     try {
-        const trackChecksum = await prisma.$queryRawUnsafe<any[]>("CHECKSUM TABLE track")
-        const trackCacheKey = `${trackChecksum[0].f1}`
-
-        const albumChecksum = await prisma.$queryRawUnsafe<any[]>("CHECKSUM TABLE album")
-        const albumCacheKey = `${albumChecksum[0].f1}`
-
         keys = {
-            tracks: trackCacheKey,
-            albums: albumCacheKey
+            tracks: `${track}${trackArtist}${artist}`,
+            albums: `${album}${albumArtist}${artist}`,
+            artists: artist
         }
     } catch (e: any) {
         keys = {
             tracks: Date.now().toString(),
-            albums: Date.now().toString()
+            albums: Date.now().toString(),
+            artists: Date.now().toString()
         }
     }
 
     return keys
+}
+
+async function getChecksum(table: string): Promise<string> {
+    const checksum = await prisma.$queryRawUnsafe<any[]>(`CHECKSUM TABLE ${table}`)
+    return `${checksum[0].f1}`
 }

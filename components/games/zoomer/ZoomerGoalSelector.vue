@@ -2,6 +2,7 @@
 import {type Artist, type Festival, festivalOptions, type ZoomerType} from "~/types/zoomerModels";
 import {capitalize, getYearsInbetween, getYearsUntilToday} from "~/utils/utils";
 import ZoomOutIcon from "~/components/icons/ZoomOutIcon.vue";
+import type {FlatArtist} from "~/types/content";
 
 const { target, game, step } = defineProps({
   target: { type: Object as PropType<ZoomerType>, required: false },
@@ -10,7 +11,10 @@ const { target, game, step } = defineProps({
   finished: { type: Boolean, required: false },
 })
 const goal = ref<ZoomerType>()
-const emit = defineEmits(['select'])
+const emit = defineEmits<{
+  selectFestival: [festival: Festival],
+  selectArtist: [artist: Artist],
+}>()
 const isMobile = inject<boolean>('isMobile', false)
 const festivalNames = computed<string[]>(() => festivalOptions.map(f => f.name))
 const festivalInfo = computed<Festival | undefined>(() => {
@@ -46,7 +50,7 @@ const festivalReady = computed(() => {
 function selectArtist() {
   goal.value = <Artist>{
     id: "artist",
-    name: ""
+    name: "" // not used
   }
 }
 
@@ -58,11 +62,16 @@ function selectFestival() {
 }
 
 function finish() {
-  emit("select", goal.value)
-
-  if(goal.value?.id === 'artist' && game) {
-    goal.value.name = ""
+  if(goal.value && goal.value.id === "festival") {
+    emit("selectFestival", goal.value)
   }
+}
+
+function finishArtist(artist: FlatArtist) {
+  emit("selectArtist", <Artist>{
+    id: "artist",
+    instance: artist
+  })
 }
 
 // make sure all festival data is cleared properly when re-selecting
@@ -98,15 +107,18 @@ onMounted(() => {
 
     <template v-else>
       <template v-if="goal.id === 'artist'">
-        <Teleport to="#top-dock" :disabled="!isMobile || !game">
-          <fieldset class="fieldset flex gap-2 justify-center">
-            <input type="text" class="input" v-model="goal.name" @keyup.enter="finish()" placeholder="Artist name..." />
 
+        <ArtistInput @onSelected="finishArtist"
+           v-slot="{ inputBindings, inputEvents, errorFlash, successFlash }" >
+          <fieldset class="fieldset flex gap-2 justify-center">
+            <label class="w-full input" :class="{ 'border-error': errorFlash, 'border-success': successFlash }">
+              <input v-bind="inputBindings" v-on="inputEvents" type="text" />
+            </label>
             <button class="btn btn-warning btn-soft tooltip" v-if="game && step < 5" @click="finish()" data-tip="No idea what to guess? Zoom out!">
               <ZoomOutIcon />Next
             </button>
           </fieldset>
-        </Teleport>
+        </ArtistInput>
 
         <button class="btn btn-soft btn-success" v-if="!game" :disabled="goal.name.trim().length < 1" @click="finish()">Continue</button>
 

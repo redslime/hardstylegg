@@ -30,9 +30,8 @@ export class ClientZoomerGame extends ClientGameDef<ZoomerContainer> {
     }
 
     public isEqual(goal: ZoomerType, val: ZoomerType): boolean {
-        if(goal.id === "artist" && goal.id === val.id) {
-            return goal.name.toLowerCase().trim() === val.name.toLowerCase().trim()
-        } else if(goal.id === "festival" && goal.id === val.id) {
+        // artist matching is handled elsewhere
+        if(goal.id === "festival" && goal.id === val.id) {
             if(goal.name !== val.name) return false
             if(goal.years as number !== val.years as number) return false
             return shallowRecordEquals(goal.fields, val.fields);
@@ -56,5 +55,13 @@ export class ClientZoomerGame extends ClientGameDef<ZoomerContainer> {
 
     getIconPreviewTitle(container: ZoomerContainer): string {
         return container.title
+    }
+
+    override getPreloadUrls(container: ZoomerContainer): string[] {
+        return ['/zoomer/' + container.data.imgName + ".webp"]
+    }
+
+    override remap(data: any): ZoomerContainer {
+        return data
     }
 }

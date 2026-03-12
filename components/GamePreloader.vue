@@ -11,13 +11,13 @@ debug("Preloading...")
 
 requestIdleCallback(() => {
   gameData.forEach(game => {
-    const comp: any = $gameRegistry.findGameByName(game.name)
+    const gameDef = $gameRegistry.findGameByName(game.name)
 
-    if(comp && comp.gameComponent && comp.gameComponent.getPreloadUrls) {
-      const urls: string[] = comp.gameComponent.getPreloadUrls(game.props.container)
+    if(gameDef) {
+      const container = gameDef.remap(game.props.container)
+      gameDef.getPreloadUrls(container).forEach(url => {
+        debug(`Preloading ${url} for ${game.name}`)
 
-      debug(`Preloading ${urls.length} images for ${game.name}`)
-      urls.forEach(url => {
         const img = new Image()
         img.src = url
       })

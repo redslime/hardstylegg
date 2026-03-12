@@ -112,7 +112,7 @@ watchOnce(packedGameData, (data) => {
       games.value.push({
         typeId,
         gameDef,
-        gameData
+        gameData: gameDef!!.remap(gameData)
       })
     }
   }
@@ -171,14 +171,14 @@ watch(() => route.params.dayId, async () => {
               Select other
             </button>
             <button class="btn btn-secondary btn-outline" @click="jumpTo(game as ScheduleEntry)">
-              <ArrowTopRightOpenIcon />
+              <ArrowTopRightOpenIcon class="size-6" />
               Jump to
             </button>
           </div>
 
           <div v-else class="absolute z-10 inset-0 backdrop-blur-sm rounded-lg bg-black/50 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <button class="btn btn-secondary btn-outline" @click="jumpTo(game as ScheduleEntry)">
-              <ArrowTopRightOpenIcon />
+              <ArrowTopRightOpenIcon class="size-6" />
               Jump to
             </button>
           </div>

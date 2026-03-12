@@ -1,21 +1,12 @@
-<script lang="ts">
-import type {ZoomerContainer} from "~/types/gameModels";
-
-export default {
-  getPreloadUrls: (container: ZoomerContainer): string[] => {
-    return ['/zoomer/' + container.data.imgName + ".webp"]
-  }
-}
-</script>
-
 <script setup lang="ts">
+import type {ZoomerContainer} from "~/types/gameModels";
 import {GameState} from "~/types/models";
 import {Preview} from "vue-advanced-cropper";
 import CameraIcon from "~/components/icons/CameraIcon.vue";
 import {translateDataStep} from "~/utils/zoomer";
 import ZoomerProgressbar from "~/components/games/zoomer/ZoomerProgressbar.vue";
 import ZoomerGoalSelector from "~/components/games/zoomer/ZoomerGoalSelector.vue";
-import type {ZoomerType} from "~/types/zoomerModels";
+import type {Artist, Festival} from "~/types/zoomerModels";
 import {countAttempt} from "~/utils/game";
 import ZoomerTypeBadge from "~/components/games/zoomer/ZoomerTypeBadge.vue";
 
@@ -71,8 +62,14 @@ function next(success: boolean) {
   }
 }
 
-function submit(val: ZoomerType) {
-  next(gameDef.isEqual(goal.value, val))
+function submitFestival(festival: Festival) {
+  next(gameDef.isEqual(goal.value, festival))
+}
+
+function submitArtist(artist: Artist) {
+  if(goal.value.id === "artist") {
+    next(goal.value.instance.id === artist.instance.id)
+  }
 }
 
 img.value = translateDataStep(1, props.container.data)
@@ -129,7 +126,8 @@ onBeforeUnmount(() => {
   </div>
 
   <ZoomerProgressbar ref="progressbar" :step="step" :finished="finished" class="my-5" />
-  <ZoomerGoalSelector v-if="!finished" :target="goal" :game="true" :step="step" :finished="finished" @select="g => submit(g)" />
+  <ZoomerGoalSelector v-if="!finished" :target="goal" :game="true" :step="step" :finished="finished"
+      @selectFestival="submitFestival" @selectArtist="submitArtist" />
 </template>
 
 <style>

@@ -30,12 +30,6 @@ export function getToday(): Date {
     return today
 }
 
-export function getSpotifyArtwork(id: string) {
-    if(id === undefined) return undefined
-    if(id === null) return "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="
-    return `https://i.scdn.co/image/${id}`
-}
-
 export function getLocalArtwork(id: string) {
     if(id === undefined) return undefined
     if(id === null) return "data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw=="

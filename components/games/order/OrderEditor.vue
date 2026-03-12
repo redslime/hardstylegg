@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import type {OrderContainer} from "~/types/gameModels";
-import {computed} from "vue";
 import DashboardGameLoadingSpinner from "~/components/dashboard/DashboardGameLoadingSpinner.vue";
 import Draggable from "vuedraggable";
 import TrackPicker from "~/components/dashboard/TrackPicker.vue";
-import type {Track} from "~/types/models";
 import OrderPreview from "~/components/games/order/OrderPreview.vue";
 import {watchOnce} from "@vueuse/shared";
+import {RichTrack} from "~/types/content";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.OrderDef
@@ -20,8 +19,8 @@ function del(index: number) {
   editing.value!!.items.splice(index, 1)
 }
 
-function add(track: Track) {
-  editing.value!!.items.push({track: track, index: editing.value!!.items.length})
+function add(track: RichTrack) {
+  editing.value!!.items.push({track: track.toFlatTrack(), index: editing.value!!.items.length, context: null})
 }
 
 function update() {
@@ -68,7 +67,7 @@ function update() {
                 class="relative cursor-grab shrink w-1/4 sm:w-1/3 xs:w-1/2 active:cursor-grabbing transform transition-transform duration-300 ease-in-out"
             >
               <img
-                  :src="`${getSpotifyArtwork(element.track.cover_art)}`"
+                  :src="element.track.getImageUrl()"
                   :alt="element.track.title"
                   class="w-full h-auto shrink object-cover rounded-xl shadow-md hover:scale-105 transition-transform duration-200 ease-in-out"
               />

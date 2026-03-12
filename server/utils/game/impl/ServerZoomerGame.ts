@@ -9,6 +9,7 @@ import {join} from "pathe";
 import {mkdir, writeFile} from "fs/promises";
 import {decodeBase64Image, validateWebPBuffer} from "~/utils/image";
 import {unlink} from "node:fs/promises";
+import {FlatArtist} from "~/types/content";
 
 export class ServerZoomerGame extends ServerGameDef<ZoomerContainer> {
 
@@ -16,13 +17,18 @@ export class ServerZoomerGame extends ServerGameDef<ZoomerContainer> {
         super(GAME_METAS.Zoomer);
     }
 
-    private serializeType(goal: string): ZoomerType {
+    private async serializeType(goal: string): Promise<ZoomerType> {
         const parts = goal.split(":");
 
         if(goal.startsWith("artist")) {
-            return <Artist>{
-                id: "artist",
-                name: parts[1]
+            const artist = await prisma.artist.findUnique({ where: { id: parts[1] }})
+
+            if(artist) {
+                return <Artist>{
+                    id: "artist",
+                    name: "", // not used
+                    instance: FlatArtist.fromJson(artist)
+                }
             }
         } else if(goal.startsWith("festival")) {
             // example: 'festival:defqon.1:2024:stage=Red'
@@ -46,14 +52,15 @@ export class ServerZoomerGame extends ServerGameDef<ZoomerContainer> {
             }
         }
 
-        return <Artist>{
-            name: "invalid"
+        return <Festival>{
+            name: "<invalid>",
+            years: 1970
         }
     }
 
     private deserializeType(type: ZoomerType): string {
         if(type.id === "artist") {
-            return "artist:" + type.name
+            return "artist:" + type.instance.id
         } else if(type.id === "festival") {
             const name = type.name
             const year = type.years as number
@@ -64,19 +71,19 @@ export class ServerZoomerGame extends ServerGameDef<ZoomerContainer> {
         return "invalid"
     }
 
-    private mapRecord(rec: {
+    private async mapRecord(rec: {
         id: number
         created_by: number
         title: string
         goal: string
         data: string,
         context: string | null
-    }): ZoomerContainer {
+    }): Promise<ZoomerContainer> {
         return <ZoomerContainer>{
             id: rec!!.id,
             created_by: rec!!.created_by!!,
             title: rec!!.title,
-            goal: this.serializeType(rec!!.goal),
+            goal: await this.serializeType(rec!!.goal),
             data: JSON.parse(rec!!.data) as ZoomerImageData,
             context: rec!!.context
         }
@@ -84,17 +91,17 @@ export class ServerZoomerGame extends ServerGameDef<ZoomerContainer> {
 
     override async fetchAllInstances(user: User): Promise<ZoomerContainer[]> {
         const instances = await prisma.game_zoomer.findMany(this.whereAdminOrCreator(user))
-        return instances.map(i => this.mapRecord(i))
+        return await Promise.all(instances.map(i => this.mapRecord(i)))
     }
 
     override async fetchInstances(ids: number[]): Promise<ZoomerContainer[]> {
         const instances = await prisma.game_zoomer.findMany(this.whereIdIn(ids))
-        return instances.map(i => this.mapRecord(i))
+        return await Promise.all( instances.map(i => this.mapRecord(i)))
     }
 
     override async fetchInstance(gameId: number): Promise<ZoomerContainer> {
         const i = await prisma.game_zoomer.findUnique({ where: { id: gameId } })
-        return this.mapRecord(i!!)
+        return await this.mapRecord(i!!)
     }
 
     override async createInstance(instance: ZoomerContainer): Promise<ZoomerContainer> {
@@ -159,7 +166,7 @@ export class ServerZoomerGame extends ServerGameDef<ZoomerContainer> {
         const deleted = await prisma.game_zoomer.delete(this.whereGameIdAndAdminOrCreator(gameId, user))
 
         if(gameId === deleted.id) {
-            const record = this.mapRecord(deleted)
+            const record = await this.mapRecord(deleted)
             const path = join(process.cwd(), 'data', 'zoomer', record.data.imgName!! + '.webp')
             await unlink(path)
             return true

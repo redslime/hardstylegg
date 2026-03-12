@@ -3,8 +3,9 @@ import type {LostInTranslationContainer} from "~/types/gameModels";
 import {GAME_METAS} from "#shared/games";
 import type {User} from "#auth-utils";
 import prisma from "~/lib/prisma";
-import type {game_lost_in_translationModel, trackModel} from "~/generated/prisma/models";
+import type {game_lost_in_translationModel} from "~/generated/prisma/models";
 import type {ReportItem} from "~/types/models";
+import {FlatTrack} from "~/types/content";
 
 export class ServerLostInTranslationGame extends ServerGameDef<LostInTranslationContainer> {
 
@@ -25,7 +26,7 @@ export class ServerLostInTranslationGame extends ServerGameDef<LostInTranslation
     override async fetchInstance(gameId: number): Promise<LostInTranslationContainer> {
         const instance = await prisma.game_lost_in_translation.findUnique({ where: { id: gameId } })
         const track = await prisma.track.findUnique({ where: { sid: instance!!.track_id } })
-        return this.map(instance!!, track!!)
+        return this.map(instance!!, FlatTrack.mapJson(track!!))
     }
 
     override async createInstance(instance: LostInTranslationContainer): Promise<LostInTranslationContainer> {
@@ -76,7 +77,7 @@ export class ServerLostInTranslationGame extends ServerGameDef<LostInTranslation
         return recs.map(r => r.track_id)
     }
 
-    map(i: game_lost_in_translationModel, track: trackModel): LostInTranslationContainer {
+    map(i: game_lost_in_translationModel, track: FlatTrack): LostInTranslationContainer {
         return <LostInTranslationContainer>{
             id: i.id,
             created_by: i.created_by,
@@ -97,6 +98,6 @@ export class ServerLostInTranslationGame extends ServerGameDef<LostInTranslation
                 }
             }
         })
-        return instances.map(i => this.map(i, tracks.find(t => t.sid === i.track_id)!!))
+        return instances.map(i => this.map(i, FlatTrack.mapJson(tracks.find(t => t.sid === i.track_id)!!)))
     }
 }

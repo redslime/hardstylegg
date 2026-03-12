@@ -1,8 +1,11 @@
+import type {FlatArtist} from "~/types/content";
+
 export type ZoomerType = Artist | Festival
 
 export interface Artist {
     id: "artist"
-    name: string
+    name: string // not used
+    instance: FlatArtist
 }
 
 export interface Festival {

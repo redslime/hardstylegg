@@ -1,0 +1,272 @@
+export abstract class BaseTrack {
+    protected constructor(
+        public sid: string,
+        public title: string,
+        public image: string,
+    ) {}
+
+    public abstract getArtistsString(): string
+
+    protected abstract isAlbum(): boolean
+
+    public getDisplayName(onlyTitle: boolean = false): string {
+        if(onlyTitle) return this.title
+        return `${this.getArtistsString()} - ${this.title}`
+    }
+
+    public getImageUrl(): string {
+        return `https://i.scdn.co/image/${this.image}`
+    }
+
+    public isYouTube(): boolean {
+        return this.sid.startsWith("yt:")
+    }
+
+    public getPlayUrl(): string {
+        if(this.isYouTube()) {
+            return `https://www.youtube.com/watch?v=${this.sid.replace("yt:", "")}`
+        } else {
+            if(this.isAlbum()) {
+                return `https://open.spotify.com/album/${this.sid}`
+            } else {
+                return `https://open.spotify.com/track/${this.sid}`
+            }
+        }
+    }
+}
+
+export class FlatTrack extends BaseTrack {
+    constructor(
+        sid: string,
+        title: string,
+        public artists: string,
+        image: string
+    ) { super(sid, title, image) }
+
+    static fromJson(data: any): FlatTrack {
+        return new FlatTrack(
+            data.sid,
+            data.title,
+            data.artists,
+            data.image ?? data.cover_art
+        )
+    }
+
+    static mapJson(data: any): FlatTrack {
+        return <FlatTrack>{
+            sid: data.sid,
+            title: data.title,
+            artists: data.artists,
+            image: data.image ?? data.cover_art
+        }
+    }
+
+    public override getArtistsString(): string {
+        return this.artists
+    }
+
+    protected override isAlbum(): boolean {
+        return false
+    }
+}
+
+export class RichTrack extends BaseTrack {
+    constructor(
+        sid: string,
+        title: string,
+        public artists: RichArtist[],
+        public year: number,
+        image: string,
+        public hidden: boolean = false
+    ) {
+        super(sid, title, image)
+    }
+
+    static fromJson(data: any): RichTrack {
+        return new RichTrack(
+            data.sid,
+            data.title,
+            data.artists?.map((a: any) => RichArtist.fromJson(a)) || [],
+            data.year,
+            data.image,
+            data.hidden
+        )
+    }
+
+    static mapJson(data: any): RichTrack {
+        return <RichTrack>{
+            sid: data.sid,
+            title: data.title,
+            artists: data.artists?.map((a: any) => RichArtist.fromJson(a)) || [],
+            year: data.year,
+            image: data.image,
+            hidden: data.hidden
+        }
+    }
+
+    public override getArtistsString(): string {
+        return this.artists.map(a => a.name).join(' & ')
+    }
+
+    protected override isAlbum(): boolean {
+        return false
+    }
+
+    public toFlatTrack(): FlatTrack {
+        return new FlatTrack(
+            this.sid,
+            this.title,
+            this.getArtistsString(),
+            this.image
+        )
+    }
+}
+
+export class FlatAlbum extends FlatTrack {
+    constructor(
+        sid: string,
+        title: string,
+        artists: string,
+        image: string
+    ) {
+        super(sid, title, artists, image);
+    }
+
+    static override fromJson(data: any) {
+        return new FlatAlbum(
+            data.sid,
+            data.title,
+            data.artists,
+            data.image
+        )
+    }
+
+    static override mapJson(data: any) {
+        return <FlatAlbum>{
+            sid: data.sid,
+            title: data.title,
+            artists: data.artists,
+            image: data.image
+        }
+    }
+
+    protected override isAlbum(): boolean {
+        return true
+    }
+}
+
+export class RichAlbum extends RichTrack {
+    constructor(
+        sid: string,
+        title: string,
+        artists: RichArtist[],
+        public tracks: RichTrack[],
+        year: number,
+        image: string,
+        hidden: boolean = false
+    ) {
+        super(sid, title, artists, year, image, hidden)
+    }
+
+    static override fromJson(data: any) {
+        return new RichAlbum(
+            data.sid,
+            data.title,
+            data.artists?.map((a: any) => RichArtist.fromJson(a)) || [],
+            data.tracks?.map((t: any) => RichTrack.fromJson(t)) || [],
+            data.year,
+            data.image,
+            data.hidden
+        )
+    }
+
+    static override mapJson(data: any) {
+        return <RichAlbum>{
+            sid: data.sid,
+            title: data.title,
+            artists: data.artists?.map((a: any) => RichArtist.fromJson(a)) || [],
+            tracks: data.tracks?.map((t: any) => RichTrack.fromJson(t)) || [],
+            year: data.year,
+            image: data.image,
+            hidden: data.hidden
+        }
+    }
+
+    protected override isAlbum(): boolean {
+        return true
+    }
+
+    public toFlatAlbum(): FlatAlbum {
+        return new FlatAlbum(
+            this.sid,
+            this.title,
+            this.getArtistsString(),
+            this.image
+        )
+    }
+
+    public getTrackCount(): number {
+        return this.tracks.length
+    }
+
+    public override getArtistsString(): string {
+        return this.artists.map(a => a.name).join(' & ')
+    }
+}
+
+export class FlatArtist {
+    constructor(
+        public id: string,
+        public name: string
+    ) {}
+
+    static fromJson(data: any) {
+        return new FlatArtist(
+            data.id,
+            data.name
+        )
+    }
+
+    static mapJson(data: any) {
+        return <FlatArtist>{
+            id: data.id,
+            name: data.name
+        }
+    }
+
+    public getDisplayName(): string {
+        return this.name
+    }
+}
+
+export class RichArtist extends FlatArtist {
+    constructor(
+        id: string,
+        name: string,
+        public image: string | null
+    ) { super(id, name) }
+
+    static override fromJson(data: any) {
+        return new RichArtist(
+            data.id,
+            data.name,
+            data.image
+        )
+    }
+
+    static override mapJson(data: any) {
+        return <RichArtist>{
+            id: data.id,
+            name: data.name,
+            image: data.image
+        }
+    }
+
+    public toFlatArtist(): FlatArtist {
+        return new FlatArtist(this.id, this.name)
+    }
+
+    public getImageUrl(): string {
+        return `https://i.scdn.co/image/${this.image}`
+    }
+}
