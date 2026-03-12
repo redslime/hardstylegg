@@ -45,7 +45,11 @@ const currentIndex = ref(0)
 const currentGameData = computed<GameData>(() => gameData[currentIndex.value]!!)
 const currentGameDef = computed<ClientGameDef<any>>(() => $gameRegistry.findGameByName(currentGameData.value.name)!!)
 const currentGameContainer = computed(() => currentGameDef.value.remap(currentGameData.value.props.container))
-const currentState = computed<GameState>(() => currentGameData.value.props.state)
+const currentGameProps = computed(() => ({
+  ...currentGameData.value.props,
+  container: currentGameContainer.value
+}))
+const currentState = computed<GameState>(() => currentGameProps.value.state)
 const summary = ref<boolean>(false)
 const details = ref<boolean>(false)
 const mounted = ref<boolean>(false)
@@ -320,7 +324,7 @@ onMounted(() => {
 
   <Teleport :to="teleportTo" v-if="mounted">
     <KeepAlive>
-      <component v-if="!summary || (summary && details)" :is="currentGameDef.gameComponent" :key="currentIndex" v-bind="currentGameData.props" @onFinish="listener" />
+      <component v-if="!summary || (summary && details)" :is="currentGameDef.gameComponent" :key="currentIndex" v-bind="currentGameProps" @onFinish="listener" />
     </KeepAlive>
     <ContextBox :container="currentGameContainer"
                 v-if="(!summary || (summary && details)) && (currentState == GameState.FAILED || currentState == GameState.SUCCEEDED)" />
