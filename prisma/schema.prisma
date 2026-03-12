@@ -13,7 +13,6 @@ datasource db {
 
 model album {
   sid                 String                @id @db.Char(22)
-  artists             String?               @db.VarChar(128)
   title               String?               @db.VarChar(128)
   year                Int?                  @db.Year
   cover_art           String?               @db.Char(40)
@@ -185,7 +184,6 @@ model game_timetable_item {
 
 model track {
   sid                      String                     @id @db.Char(22)
-  artists                  String?                    @db.VarChar(128)
   title                    String?                    @db.VarChar(128)
   year                     Int?                       @db.Year
   cover_art                String?                    @db.Char(40)

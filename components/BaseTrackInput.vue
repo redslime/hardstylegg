@@ -231,7 +231,7 @@ const placeholder = computed(() => {
   if(errorFlash.value) {
     return "Incorrect"
   } else {
-    return "Album..."
+    return isAlbums ? "Album..." : "Track..."
   }
 })
 

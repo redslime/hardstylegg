@@ -15,7 +15,7 @@ export async function getTracks(progress?: (percent: number) => void): Promise<F
 
     progress?.(0)
     const v = await getCacheParam("tracks")
-    const response = await axios.get<FlatTrack[]>('/api/tracks' + v, {
+    const response = await axios.get<FlatTrack[]>('/api/content/tracks' + v, {
         onDownloadProgress: (progressEvent) => {
             if (progressEvent.total) {
                 const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
@@ -38,7 +38,7 @@ export async function getAlbums(progress?: (percent: number) => void): Promise<F
 
     progress?.(0)
     const v = await getCacheParam("albums")
-    const response = await axios.get<FlatTrack[]>('/api/albums' + v, {
+    const response = await axios.get<FlatTrack[]>('/api/content/albums' + v, {
         onDownloadProgress: (progressEvent) => {
             if (progressEvent.total) {
                 const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
