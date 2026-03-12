@@ -4,8 +4,8 @@ import {GAME_METAS} from "#shared/games";
 import type {User} from "#auth-utils";
 import prisma from "~/lib/prisma";
 import type {ReportItem} from "~/types/models";
-import type { game_complete_albumModel } from "~/generated/prisma/models";
-import {FlatAlbum} from "~/types/content";
+import type {game_complete_albumModel} from "~/generated/prisma/models";
+import {getAlbum, getFlatAlbums} from "~/server/utils/content";
 
 export class ServerCompleteAlbumGame extends ServerGameDef<CompleteAlbumContainer> {
 
@@ -25,7 +25,7 @@ export class ServerCompleteAlbumGame extends ServerGameDef<CompleteAlbumContaine
 
     override async fetchInstance(gameId: number): Promise<CompleteAlbumContainer> {
         const parent = await prisma.game_complete_album.findUnique({ where: { id: gameId } })
-        const album = FlatAlbum.mapJson(await prisma.album.findUnique({ where: { sid: parent!!.album_id ?? "" } }))
+        const album = await getAlbum(parent!!.album_id!!)
         const items = await prisma.game_complete_album_item.findMany({ where: { parent_id: gameId } })
 
         return <CompleteAlbumContainer>{
@@ -134,13 +134,8 @@ export class ServerCompleteAlbumGame extends ServerGameDef<CompleteAlbumContaine
     }
 
     async mapAll(instances: game_complete_albumModel[]): Promise<CompleteAlbumContainer[]> {
-        const albums = await prisma.album.findMany({
-            where: {
-                sid: {
-                    in: instances.map(i => i.album_id ?? "")
-                }
-            }
-        })
+        const albumIds = instances.map(i => i.album_id!!)
+        const albums = await getFlatAlbums(albumIds)
         const items = await prisma.game_complete_album_item.findMany({
             where: {
                 parent_id: {
@@ -153,7 +148,7 @@ export class ServerCompleteAlbumGame extends ServerGameDef<CompleteAlbumContaine
             return <CompleteAlbumContainer>{
                 id: i.id,
                 created_by: i.created_by,
-                album: FlatAlbum.mapJson(albums.find(a => a.sid === i.album_id)),
+                album: albums.find(a => a.sid === i.album_id),
                 items: items.filter(item => item.parent_id === i.id),
                 context: i.context
             }

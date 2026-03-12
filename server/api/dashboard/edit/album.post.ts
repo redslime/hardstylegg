@@ -31,16 +31,15 @@ export default defineEventHandler(async (event) => {
                         connect: {id: artist.id}
                     }
                 }))
+            },
+            album_track: {
+                create: album.tracks.map((track, index) => ({
+                    index,
+                    track: {
+                        connect: {sid: track.sid}
+                    }
+                }))
             }
-            // ,
-            // album_track: {
-            //     create: album.tracks.map((track, index) => ({
-            //         index,
-            //         track: {
-            //             connect: {sid: track.sid}
-            //         }
-            //     }))
-            // }
         },
         update: {
             title: album.title,
@@ -54,17 +53,16 @@ export default defineEventHandler(async (event) => {
                         connect: {id: artist.id}
                     }
                 }))
+            },
+            album_track: {
+                deleteMany: {},
+                create: album.tracks.map((track, index) => ({
+                    index,
+                    track: {
+                        connect: {sid: track.sid}
+                    }
+                }))
             }
-            // ,
-            // album_track: {
-            //     deleteMany: {},
-            //     create: album.tracks.map((track, index) => ({
-            //         index,
-            //         track: {
-            //             connect: {sid: track.sid}
-            //         }
-            //     }))
-            // }
         },
         include: {
             album_artist: {

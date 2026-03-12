@@ -6,6 +6,7 @@ import prisma from "~/lib/prisma";
 import type {game_lost_in_translationModel} from "~/generated/prisma/models";
 import type {ReportItem} from "~/types/models";
 import {FlatTrack} from "~/types/content";
+import {getFlatTrack, getFlatTracks} from "~/server/utils/content";
 
 export class ServerLostInTranslationGame extends ServerGameDef<LostInTranslationContainer> {
 
@@ -25,8 +26,8 @@ export class ServerLostInTranslationGame extends ServerGameDef<LostInTranslation
 
     override async fetchInstance(gameId: number): Promise<LostInTranslationContainer> {
         const instance = await prisma.game_lost_in_translation.findUnique({ where: { id: gameId } })
-        const track = await prisma.track.findUnique({ where: { sid: instance!!.track_id } })
-        return this.map(instance!!, FlatTrack.mapJson(track!!))
+        const track = await getFlatTrack(instance!!.track_id)
+        return this.map(instance!!, track!!)
     }
 
     override async createInstance(instance: LostInTranslationContainer): Promise<LostInTranslationContainer> {
@@ -91,13 +92,8 @@ export class ServerLostInTranslationGame extends ServerGameDef<LostInTranslation
 
     async mapAll(instances: game_lost_in_translationModel[]): Promise<LostInTranslationContainer[]> {
         const trackIds = instances.map(i => i.track_id)
-        const tracks = await prisma.track.findMany({
-            where: {
-                sid: {
-                    in: trackIds
-                }
-            }
-        })
-        return instances.map(i => this.map(i, FlatTrack.mapJson(tracks.find(t => t.sid === i.track_id)!!)))
+        const tracks = await getFlatTracks(trackIds)
+
+        return instances.map(i => this.map(i, tracks.find(t => t.sid === i.track_id)!!))
     }
 }

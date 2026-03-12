@@ -3,8 +3,8 @@ import type {CompleteLyricsContainer} from "~/types/gameModels";
 import {GAME_METAS} from "#shared/games";
 import type {User} from "#auth-utils";
 import prisma from "~/lib/prisma";
-import type { game_complete_lyricsModel } from "~/generated/prisma/models";
-import {FlatTrack} from "~/types/content";
+import type {game_complete_lyricsModel} from "~/generated/prisma/models";
+import {getFlatTrack, getFlatTracks} from "~/server/utils/content";
 
 export class ServerCompleteLyricsGame extends ServerGameDef<CompleteLyricsContainer> {
 
@@ -24,13 +24,13 @@ export class ServerCompleteLyricsGame extends ServerGameDef<CompleteLyricsContai
 
     override async fetchInstance(gameId: number): Promise<CompleteLyricsContainer> {
         const parent = await prisma.game_complete_lyrics.findUnique({ where: { id: gameId } })
-        const track = await prisma.track.findUnique({ where: { sid: parent!!.track_id } })
+        const track = await getFlatTrack(parent!!.track_id)
 
         return <CompleteLyricsContainer>{
             id: parent!!.id,
             created_by: parent!!.created_by,
             text: parent!!.text,
-            track: FlatTrack.mapJson(track),
+            track,
             context: parent!!.context
         }
     }
@@ -44,9 +44,7 @@ export class ServerCompleteLyricsGame extends ServerGameDef<CompleteLyricsContai
                 context: instance.context
             }
         })
-        const track = FlatTrack.mapJson(await prisma.track.findUnique({
-            where: { sid: instance.track.sid }
-        }))
+        const track = await getFlatTrack(instance.track.sid)
 
         return <CompleteLyricsContainer>{
             ...rest,
@@ -63,9 +61,7 @@ export class ServerCompleteLyricsGame extends ServerGameDef<CompleteLyricsContai
                 context: instance.context
             }
         })
-        const track = FlatTrack.mapJson(await prisma.track.findUnique({
-            where: { sid: instance.track.sid }
-        }))
+        const track = await getFlatTrack(instance.track.sid)
 
         return <CompleteLyricsContainer> {
             ...rest,
@@ -93,17 +89,11 @@ export class ServerCompleteLyricsGame extends ServerGameDef<CompleteLyricsContai
 
     async mapAll(instances: game_complete_lyricsModel[]): Promise<CompleteLyricsContainer[]> {
         const trackIds = instances.map(i => i.track_id)
-        const tracks = await prisma.track.findMany({
-            where: {
-                sid: {
-                    in: trackIds
-                }
-            }
-        })
+        const tracks = await getFlatTracks(trackIds)
 
         return instances.map(i => {
             const { track_id, ...rest } = i
-            const track = FlatTrack.mapJson(tracks.find(t => t.sid === track_id))
+            const track = tracks.find(t => t.sid === track_id)
             return <CompleteLyricsContainer>{
                 ...rest,
                 track

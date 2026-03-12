@@ -8,8 +8,8 @@ import {unlink} from "node:fs/promises";
 import type {ReportItem} from "~/types/models";
 import {decodeBase64Image, validateWebPBuffer} from "~/utils/image";
 import {mkdir, writeFile} from "fs/promises";
-import type { game_artworkModel } from "~/generated/prisma/models";
-import {FlatTrack} from "~/types/content";
+import type {game_artworkModel} from "~/generated/prisma/models";
+import {getFlatTrack, getFlatTracks} from "~/server/utils/content";
 
 export class ServerArtworkGame extends ServerGameDef<ArtworkContainer> {
 
@@ -29,12 +29,12 @@ export class ServerArtworkGame extends ServerGameDef<ArtworkContainer> {
 
     override async fetchInstance(gameId: number): Promise<ArtworkContainer> {
         const parent = await prisma.game_artwork.findUnique({ where: { id: gameId } })
-        const track = await prisma.track.findUnique({ where: { sid: parent!!.track_id } })
+        const track = await getFlatTrack(parent!!.track_id)
 
         return <ArtworkContainer>{
             id: parent!!.id,
             created_by: parent!!.created_by,
-            track: FlatTrack.mapJson(track),
+            track: track,
             imgName: parent!!.artwork_blank,
             context: parent!!.context
         }
@@ -120,21 +120,14 @@ export class ServerArtworkGame extends ServerGameDef<ArtworkContainer> {
 
     async mapAll(instances: game_artworkModel[]): Promise<ArtworkContainer[]> {
         const trackIds = instances.map(i => i.track_id)
-        const tracks = await prisma.track.findMany({
-            where: {
-                sid: {
-                    in: trackIds
-                }
-            }
-        })
-
+        const tracks = await getFlatTracks(trackIds)
 
         return instances.map(i => {
             return <ArtworkContainer>{
                 id: i.id,
                 created_by: i.created_by,
                 imgName: i.artwork_blank,
-                track: FlatTrack.mapJson(tracks.find(t => t.sid === i.track_id)),
+                track: tracks.find(t => t.sid === i.track_id),
                 context: i.context
             }
         })

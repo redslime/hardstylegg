@@ -5,7 +5,7 @@ import type {User} from "#auth-utils";
 import prisma from "~/lib/prisma";
 import type {ReportItem} from "~/types/models";
 import type {game_orderModel} from "~/generated/prisma/models";
-import {FlatTrack} from "~/types/content";
+import {getFlatTracks} from "~/server/utils/content";
 
 export class ServerOrderGame extends ServerGameDef<OrderContainer> {
 
@@ -27,10 +27,10 @@ export class ServerOrderGame extends ServerGameDef<OrderContainer> {
         const parent = await prisma.game_order.findUnique({ where: { id: gameId } })
         const items = await prisma.game_order_item.findMany({ where: { parent_id: gameId } })
         const trackIds: string[] = items.map(i => i.track_id)
-        const tracks = await prisma.track.findMany({ where: { sid: { in: trackIds } } })
+        const tracks = await getFlatTracks(trackIds)
         const itemsFat = items.map(i => {
             const trackId = i.track_id
-            const track = FlatTrack.mapJson(tracks.find(i => i.sid == trackId))
+            const track = tracks.find(i => i.sid == trackId)
             return <OrderItem>{
                 parent_id: i.parent_id,
                 index: i.index,
@@ -146,18 +146,12 @@ export class ServerOrderGame extends ServerGameDef<OrderContainer> {
     async mapAll(instances: game_orderModel[]): Promise<OrderContainer[]> {
         const items = await prisma.game_order_item.findMany()
         const trackIds = items.map(i => i.track_id)
-        const tracks = await prisma.track.findMany({
-            where: {
-                sid: {
-                    in: trackIds
-                }
-            }
-        })
+        const tracks = await getFlatTracks(trackIds)
 
         return instances.map(instance => {
             const children: OrderItem[] = items.filter(item => item.parent_id === instance.id).map(item => {
                 const { track_id, ...rest } = item
-                const track = FlatTrack.mapJson(tracks.find(t => t.sid === item.track_id))
+                const track = tracks.find(t => t.sid === item.track_id)
                 return <OrderItem>{
                     ...rest,
                     track

@@ -5,7 +5,8 @@ import type {User} from "#auth-utils";
 import prisma from "~/lib/prisma";
 import type {ReportItem} from "~/types/models";
 import type {game_namexModel} from "~/generated/prisma/models";
-import {FlatAlbum, FlatArtist, FlatTrack} from "~/types/content";
+import {FlatArtist} from "~/types/content";
+import {getFlatAlbums, getFlatTracks} from "~/server/utils/content";
 
 export class ServerNameXGame extends ServerGameDef<NameXContainer> {
 
@@ -44,8 +45,8 @@ export class ServerNameXGame extends ServerGameDef<NameXContainer> {
             }
         } else if(parent!!.type === 'album') {
             const albumIds = JSON.parse(parent!!.items) as string[]
-            const albumData = await prisma.album.findMany({ where: { sid: { in: albumIds } } })
-            const albums = albumIds.map(sid => albumData.find(a => a.sid === sid)).map(FlatAlbum.fromJson)
+            const albumData = await getFlatAlbums(albumIds)
+            const albums = albumIds.map(sid => albumData.find(a => a.sid === sid))
 
             return <NameXContainer>{
                 ...container,
@@ -53,8 +54,8 @@ export class ServerNameXGame extends ServerGameDef<NameXContainer> {
             }
         } else if(parent!!.type === 'track') {
             const trackIds = JSON.parse(parent!!.items) as string[]
-            const trackData = await prisma.track.findMany({ where: { sid: { in: trackIds } } })
-            const tracks = trackIds.map(sid => trackData.find(a => a.sid === sid)).map(FlatTrack.fromJson)
+            const trackData = await getFlatTracks(trackIds)
+            const tracks = trackIds.map(sid => trackData.find(a => a.sid === sid))
 
             return <NameXContainer>{
                 ...container,
@@ -165,9 +166,9 @@ export class ServerNameXGame extends ServerGameDef<NameXContainer> {
         const artistIds = instances.filter(i => i.type === 'artist').flatMap(i => JSON.parse(i.items) as string[])
         const albumIds = instances.filter(i => i.type === 'album').flatMap(i => JSON.parse(i.items) as string[])
         const trackIds = instances.filter(i => i.type === 'track').flatMap(i => JSON.parse(i.items) as string[])
-        const artistData = (await prisma.artist.findMany({ where: { id: { in: artistIds }}}))
-        const albumData = (await prisma.album.findMany({ where: { sid: { in: albumIds }}}))
-        const trackData = (await prisma.track.findMany({ where: { sid: { in: trackIds }}}))
+        const artistData = await prisma.artist.findMany({ where: { id: { in: artistIds }}})
+        const albumData = await getFlatAlbums(albumIds)
+        const trackData = await getFlatTracks(trackIds)
 
         return instances.map(parent => {
             const rawItems = JSON.parse(parent!!.items) as string[]
@@ -187,14 +188,14 @@ export class ServerNameXGame extends ServerGameDef<NameXContainer> {
                     items: { type: 'artist', items: artists },
                 }
             } else if(parent!!.type === 'album') {
-                const albums = rawItems.map(sid => albumData.find(a => a.sid === sid)).map(FlatAlbum.fromJson)
+                const albums = rawItems.map(sid => albumData.find(a => a.sid === sid))
 
                 return <NameXContainer>{
                     ...container,
                     items: { type: 'album', items: albums },
                 }
             } else if(parent!!.type === 'track') {
-                const tracks = rawItems.map(sid => trackData.find(a => a.sid === sid)).map(FlatTrack.fromJson)
+                const tracks = rawItems.map(sid => trackData.find(a => a.sid === sid))
 
                 return <NameXContainer>{
                     ...container,

@@ -8,6 +8,7 @@ import {unlink} from "node:fs/promises";
 import type {ReportItem} from "~/types/models";
 import type {game_heardleModel} from "~/generated/prisma/models";
 import {FlatTrack} from "~/types/content";
+import {getFlatTrack, getFlatTracks} from "~/server/utils/content";
 
 export class ServerHeardleGame extends ServerGameDef<HeardleContainer> {
 
@@ -28,7 +29,7 @@ export class ServerHeardleGame extends ServerGameDef<HeardleContainer> {
     override async fetchInstance(gameId: number): Promise<HeardleContainer> {
         const parent = (await prisma.game_heardle.findUnique({ where: { id: gameId } }))
         const flattenDurations: number[] = JSON.parse(parent!!.durations)
-        const track = await prisma.track.findUnique({ where: { sid: parent!!.track_id } })
+        const track = await getFlatTrack(parent!!.track_id)
 
         return <HeardleContainer>{
             id: parent!!.id,
@@ -109,13 +110,7 @@ export class ServerHeardleGame extends ServerGameDef<HeardleContainer> {
 
     async mapAll(instances: game_heardleModel[]): Promise<HeardleContainer[]> {
         const trackIds = instances.map(i => i.track_id)
-        const tracks = await prisma.track.findMany({
-            where: {
-                sid: {
-                    in: trackIds
-                }
-            }
-        })
+        const tracks = await getFlatTracks(trackIds)
 
         return <HeardleContainer[]> instances.map(i => {
             const { track_id, durations, ...rest } = i
@@ -123,7 +118,7 @@ export class ServerHeardleGame extends ServerGameDef<HeardleContainer> {
             return {
                 ...rest,
                 durations: array,
-                track: FlatTrack.mapJson(tracks.find(t => t.sid === i.track_id))
+                track: tracks.find(t => t.sid === i.track_id)
             }
         })
     }
