@@ -17,6 +17,12 @@ function getStructure(user: User): DashboardGroup[] {
     })
 
     overviewItems.push({
+        name: "Editors",
+        icon: "UsersIcon",
+        url: "/admin/editors"
+    })
+
+    overviewItems.push({
         name: "Content database",
         icon: "CircleStackIcon",
         url: "/admin/content",
@@ -37,12 +43,6 @@ function getStructure(user: User): DashboardGroup[] {
                 url: "/admin/content/tracks",
             }
         ]
-    })
-
-    overviewItems.push({
-        name: "Editors",
-        icon: "UsersIcon",
-        url: "/admin/editors"
     })
 
     // admin items
