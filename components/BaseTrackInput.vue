@@ -123,7 +123,7 @@ watch(debouncedQuery, async (val) => {
             const titleMatch = matches?.filter(m => m.key === 'title') ?? []
             const artistHtml = highlight(item.getArtistsString(), artistMatch)
             const titleHtml = highlight(item.title, titleMatch)
-            const highlighted = `${artistHtml} - ${titleHtml}`
+            const highlighted = titleOnly ? `${titleHtml}` : `${artistHtml} - ${titleHtml}`
 
             return {
               item, score, matches, highlighted
@@ -212,7 +212,7 @@ watch(albumsData, (newData) => {
     fuse = new Fuse(newData, {
       includeScore: true,
       includeMatches: true,
-      keys: ['title', 'artists']
+      keys: titleOnly ? ['title'] : ['title', 'artists']
     })
   }
 }, { immediate: true })
@@ -222,7 +222,7 @@ onMounted(() => {
     fuse = new Fuse(albumsData.value, {
       includeScore: true,
       includeMatches: true,
-      keys: ['title', 'artists']
+      keys: titleOnly ? ['title'] : ['title', 'artists']
     })
   }
 })
