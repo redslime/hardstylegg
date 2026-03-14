@@ -63,7 +63,8 @@ export async function getDashboardArtists(): Promise<RichArtist[]> {
 
 export function updateDashboardArtist(artist: RichArtist) {
     if(artists !== null) {
-        artists.splice(artists.findIndex(a => a.id === artist.id), 1)
+        const index = artists.findIndex(a => a.id === artist.id)
+        if(index !== -1) artists.splice(index, 1)
         artists.push(artist)
     }
     if(tracks !== null) {

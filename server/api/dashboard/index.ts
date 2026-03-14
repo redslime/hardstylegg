@@ -52,6 +52,12 @@ function getStructure(user: User): DashboardGroup[] {
         url: "/admin/schedule"
     })
 
+    adminItems.push({
+        name: "Radar Inbox",
+        icon: "InboxIcon",
+        url: "/admin/radar-inbox",
+    })
+
     // adminItems.push({
     //     name: "Import artist",
     //     icon: "CloudArrowDownIcon",

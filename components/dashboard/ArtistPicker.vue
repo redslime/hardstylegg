@@ -10,7 +10,9 @@ const { title, disabled, style } = defineProps({
   existing: { type: Array as PropType<string[]>, default: [] },
   style: { type: String, default: "" }
 })
-const emit = defineEmits(['selected'])
+const emit = defineEmits<{
+  selected: [artist: RichArtist]
+}>()
 const modal = ref<HTMLDialogElement | null>();
 const { data: allOptions, pending, error } = await useAsyncData("artist", () => getDashboardArtists(), { lazy: true })
 
@@ -35,8 +37,8 @@ function select(track: RichArtist) {
       </slot>
     </button>
 
-    <dialog id="trackPickerModal" ref="modal" class="modal">
-      <div class="modal-box max-w-4/5 bg-base-300">
+    <dialog id="artistPickerModal" ref="modal" class="modal">
+      <div class="modal-box absolute max-w-4/5 bg-base-300">
         <ArtistGrid :items="allOptions" :title="title" :existing="existing" @selected="select" />
       </div>
     </dialog>

@@ -183,24 +183,35 @@ export enum SortMode {
     SCHEDULE = "Schedule date"
 }
 
+export interface InboxSlice {
+    totalCount: number
+    itemCount: number
+    offset: number
+    items: Record<string, InboxItem[]>
+}
+
+export type InboxItem = InboxAlbum | InboxTrack
+
 export interface InboxAlbum {
-    sid: String
+    sid: string
     artists: InboxArtist[]
     tracks: InboxTrack[]
-    title: String
-    year: Number
-    cover_art: String
+    title: string
+    year: number
+    cover_art: string
+    hidden: boolean
 }
 
 export interface InboxTrack {
-    sid: String
+    sid: string
     artists: InboxArtist[]
-    title: String
-    year: Number
-    cover_art: String
+    title: string
+    year: number
+    cover_art: string
+    hidden: boolean
 }
 
 export interface InboxArtist {
-    id: String
-    name: String
+    id: string
+    name: string
 }

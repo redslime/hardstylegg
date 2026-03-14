@@ -12,7 +12,9 @@ interface SearchResult {
   matches: ReadonlyArray<Fuse.FuseResultMatch> | undefined;
 }
 
-const emit = defineEmits(['selected'])
+const emit = defineEmits<{
+  selected: [artist: RichArtist]
+}>()
 const { items, title, selectable, existing } = defineProps({
   items: { type: Array as PropType<RichArtist[]>, required: true },
   title: { type: String, default: "Select" },
