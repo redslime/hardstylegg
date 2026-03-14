@@ -177,8 +177,8 @@ function unlockIOSAudio() {
   </audio>
 
   <div class="w-full px-3 md:px-0 md:w-4/5" v-if="!finished && !gameFinished">
-    <TrackInput
-        @on-track-selected="validate"
+    <BaseTrackInput
+        @onSelected="validate"
         v-slot="{ inputBindings, inputEvents }"
     >
       <div class="join flex justify-center items-center">
@@ -200,7 +200,7 @@ function unlockIOSAudio() {
           <ForwardIcon />
         </button>
       </div>
-    </TrackInput>
+    </BaseTrackInput>
 
     <div class="relative mt-2 w-full h-10">
       <div v-if="skeleton" class="skeleton absolute inset-0 rounded-lg transition-opacity duration-300"

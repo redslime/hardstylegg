@@ -61,7 +61,7 @@ watch(finished, () => showTranslated.value = false)
     </div>
 
     <div class="flex w-full justify-center items-center mt-5" v-if="!finished">
-      <TrackInput class="w-2/3" @onTrackSelected="validate" />
+      <BaseTrackInput class="w-2/3" @onSelected="validate" />
     </div>
 
     <div class="mt-4" v-if="finished && currentIndex === props.position">

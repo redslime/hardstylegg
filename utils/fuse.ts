@@ -3,12 +3,10 @@ import Fuse from "fuse.js";
 export function highlight(text: string, matches: readonly Fuse.FuseResultMatch[] = []): string {
     if (!matches || matches.length === 0) return text
 
-    // Collect all index ranges from Fuse
     const indices = matches
         .flatMap(m => m.indices)
         .sort((a, b) => a[0] - b[0])
 
-    // Merge overlapping or adjacent highlight regions
     const merged: [number, number][] = []
     for (const [start, end] of indices) {
         if (!merged.length || start > merged[merged.length - 1]!![1] + 1) {
@@ -18,7 +16,6 @@ export function highlight(text: string, matches: readonly Fuse.FuseResultMatch[]
         }
     }
 
-    // Build final HTML with highlights
     let result = ''
     let lastIndex = 0
 
@@ -40,7 +37,6 @@ export function highlightExact(text: string, region: number[] = []): string {
     let end = region[1]!!
     if (start > end) [start, end] = [end, start]
 
-    // Clamp to text bounds
     start = Math.max(0, Math.min(start, text.length))
     end = Math.max(0, Math.min(end, text.length - 1))
 
@@ -51,4 +47,20 @@ export function highlightExact(text: string, region: number[] = []): string {
     const after = text.slice(end + 1)
 
     return `${before}<span class=""><b>${middle}</b></span>${after}`
+}
+
+export function highlightKeywords(text: string, query: string): string {
+    const keywords = query
+        .toLowerCase()
+        .split(/\s+/)
+        .filter((keyword) => keyword.length > 2)
+
+    let highlighted = text
+
+    for (const keyword of keywords) {
+        const regex = new RegExp(`(${keyword})`, "gi")
+        highlighted = highlighted.replace(regex, "<b>$1</b>")
+    }
+
+    return highlighted
 }

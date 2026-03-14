@@ -64,7 +64,7 @@ async function validate(selected: FlatTrack, flashError: () => void, flashSucces
       </div>
     </div>
     <div class="flex w-full justify-center items-center" v-else>
-      <TrackInput class="w-2/3" @onTrackSelected="validate" />
+      <BaseTrackInput class="w-2/3" @onSelected="validate" />
     </div>
   </div>
 </template>

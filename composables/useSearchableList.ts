@@ -1,4 +1,4 @@
-import {computed, ref, watch, type Ref} from "vue"
+import {computed, ref, watch} from "vue"
 import Fuse from "fuse.js"
 
 export interface SearchableResult<T> {
@@ -129,6 +129,14 @@ export function useSearchableList<T>(
 
     const resultsLength = computed(() => results.value.length)
     const isSearching = computed(() => debouncedQuery.value.length >= minQueryLength)
+    const computedPageProvider = computed(() => {
+        const copyComputed = results.value // required to trigger re-calculation
+        return async function pageProvider(pageNumber: number, pageSize: number) {
+            const start = pageNumber * pageSize
+            const end = Math.min(start + pageSize, resultsLength.value)
+            return results.value.slice(start, end)
+        }
+    })
 
     return {
         query,
@@ -137,6 +145,7 @@ export function useSearchableList<T>(
         resultsLength,
         isSearching,
         minQueryLength,
-        maxFuseResults
+        maxFuseResults,
+        computedPageProvider
     }
 }

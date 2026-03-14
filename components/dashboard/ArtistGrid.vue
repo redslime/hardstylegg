@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import Fuse from "fuse.js";
 import {ref} from "vue";
-import SearchIcon from "~/components/icons/SearchIcon.vue";
 import Grid from "vue-virtual-scroll-grid";
-import type {RichArtist} from "~/types/content";
+import {type RichArtist} from "~/types/content";
+import {useSearchableList} from "~/composables/useSearchableList";
+import SearchInput from "~/components/dashboard/SearchInput.vue";
 
 interface SearchResult {
   item: RichArtist;
@@ -12,24 +13,13 @@ interface SearchResult {
 }
 
 const emit = defineEmits(['selected'])
-const { items, title, selectable, editable, existing } = defineProps({
+const { items, title, selectable, existing } = defineProps({
   items: { type: Array as PropType<RichArtist[]>, required: true },
   title: { type: String, default: "Select" },
   hideTitle: { type: Boolean, default: false },
   selectable: { type: Boolean, default: true },
-  editable: { type: Boolean, default: false },
   existing: { type: Array as PropType<string[]>, default: [] }
 })
-
-const fuse = new Fuse(items, {
-  includeScore: true,
-  includeMatches: true,
-  keys: ['name']
-})
-const query = ref<string>("");
-const filtered = ref<SearchResult[]>([])
-const filteredLength = ref<number>(0)
-const debouncedQuery = ref('')
 
 const editingModal = ref<HTMLDialogElement | null>();
 const editingItem = ref<RichArtist | null>(null);
@@ -72,121 +62,36 @@ async function saveEditing() {
   }
 }
 
-// debounce
-let timeout: number
-watch(query, (val) => {
-  const trimmed = val.trim()
-
-  if(debouncedQuery.value !== trimmed) {
-    clearTimeout(timeout)
-    filteredLength.value = 0
-    timeout = window.setTimeout(() => {
-      debouncedQuery.value = val.trim()
-    }, 300)
-  }
-})
-
-watch(debouncedQuery, async (val) => {
-  if(val.length < 5 || !fuse) {
-    filtered.value = []
-    filteredLength.value = 0
-    return
-  }
-
-  // First try: exact substring match
-  const exactMatches: SearchResult[] = items.filter(st => {
-    const name = st.name
-    return name.toLowerCase().includes(val.toLowerCase())
-  }).map(st => {
-    return {
-      item: st,
-      score: 0,
-      matches: undefined
-    }
-  })
-
-  if(exactMatches.length > 0) {
-    filtered.value = exactMatches
-  } else {
-    // Second try: multi-keyword search
-    const keywords = val.toLowerCase().split(/\s+/).filter(k => k.length > 2)
-
-    const keywordMatches: SearchResult[] = items
-        .map(st => {
-          const name = st.name.toLowerCase()
-          const matchedKeywords = keywords.filter(keyword => name.includes(keyword))
-
-          return {
-            artist: st,
-            matchCount: matchedKeywords.length,
-            matchScore: matchedKeywords.length / keywords.length
-          }
-        })
-        .filter(result => result.matchCount >= Math.min(2, keywords.length)) // At least 2 keywords or all if fewer
-        .sort((a, b) => b.matchScore - a.matchScore)
-        .map(result => {
-          // Highlight all matched keywords
-          let highlighted = result.artist.name
-          keywords.forEach(keyword => {
-            const regex = new RegExp(`(${keyword})`, 'gi')
-            highlighted = highlighted.replace(regex, '<span class=""><b>$1</b></span>')
-          })
-
-          return {
-            item: result.artist,
-            score: 1 - result.matchScore,
-            matches: undefined,
-            highlighted
-          }
-        })
-
-    // Third try: fill up with Fuse.js results if we have fewer than 5
-    if (keywordMatches.length < 5) {
-      const fuseResults = fuse.search(val)
-          .filter(r => val.toLowerCase() !== r.item.name.toLowerCase())
-          .map(i => {
-            const {item, score, matches} = i
-            return {item, score, matches}
-          })
-
-      // Combine keyword matches with fuse results, avoiding duplicates
-      const combined = [...keywordMatches]
-      fuseResults.forEach(fr => {
-        if (combined.length < 5 && !combined.find(km => km.item.name === fr.item.name)) {
-          combined.push(fr)
-        }
-      })
-
-      filtered.value = combined
-    } else {
-      filtered.value = keywordMatches
-    }
-  }
-
-  filteredLength.value = filtered.value.length
-})
-
-const computedPageProvider = computed(() => {
-  const copyComputed = filtered.value // required to trigger re-calculation
-  return async function pageProvider(pageNumber: number, pageSize: number) {
-    const start = pageNumber * pageSize
-    const end = Math.min(start + pageSize, filteredLength.value)
-    return filtered.value.slice(start, end)
-  }
+const {
+  query,
+  resultsLength: filteredLength,
+  minQueryLength,
+  computedPageProvider
+} = useSearchableList(ref(items), {
+  minQueryLength: 3,
+  debounceMs: 300,
+  maxFuseResults: 10,
+  fuseKeys: ["name"],
+  getSearchText: a => a.getDisplayName()
 })
 </script>
 
 <template>
   <h3 class="text-2xl font-bold text-white" v-if="!hideTitle">{{ title }} artists</h3>
 
-  <label class="input my-3">
-    <SearchIcon />
-    <input type="text" class="grow" placeholder="Search" v-model="query" />
-    {{ filteredLength }}
-  </label>
+  <div class="flex justify-center">
+    <div class="my-3 w-2/5">
+      <SearchInput
+          v-model:query="query"
+          placeholder="Search"
+          :result-count="filteredLength"
+          :min-query-length="minQueryLength"
+      />
+    </div>
+  </div>
 
   <div class="w-full bg-base-100 rounded-md p-3 h-[1000px] overflow-auto">
-    <div v-if="(query?.trim().length ?? 0) < 5">
+    <div v-if="(query?.trim().length ?? 0) < minQueryLength">
       Begin searching to see results...
     </div>
 
@@ -220,10 +125,6 @@ const computedPageProvider = computed(() => {
               <img v-if="item.item.image" class="w-full overflow-hidden object-contain max-h-[200px]" :src="`https://i.scdn.co/image/${item.item.image}`" alt="" />
               <div v-if="!item.item.image" class="w-full min-h-[200px] rounded-xl bg-base-300 flex items-center justify-center border-2 border-dashed border-base-content/20">
                 <span class="text-xs opacity-50 text-center px-1">No image</span>
-              </div>
-              <div v-if="editable" class="absolute z-10 inset-0 backdrop-blur-sm bg-black/50 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <button class="btn btn-sm btn-outline btn-primary" @click="edit(item)">Edit</button>
-<!--                <button class="btn btn-sm btn-outline btn-error" @click="promptDelete(item)">Delete</button>-->
               </div>
             </div>
             <div class="text-lg font-semibold text-center">{{ item.item.name }}</div>

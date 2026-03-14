@@ -4,6 +4,7 @@ import type {NameXContainer} from "~/types/gameModels";
 import {countAttempt, countItem} from "~/utils/game";
 import {BaseTrack, FlatAlbum, FlatArtist, FlatTrack} from "~/types/content";
 import BaseTrackInput from "~/components/BaseTrackInput.vue";
+import TextInput from "~/components/TextInput.vue";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.NameXDef
@@ -28,7 +29,32 @@ const items = ref<{index: number, item: FlatArtist | FlatAlbum | FlatTrack | str
 )
 const guessed = computed(() => items.value.filter(i => i.guessed).length)
 
-function validate(selected: FlatArtist | FlatAlbum | FlatTrack | string, flashError: () => void, flashSuccess: () => void, clear: () => void) {
+function validateText(text: string, flashError: () => Promise<void>, flashSuccess: () => Promise<void>, clear: () => void) {
+  let success = false;
+  countAttempt()
+
+  for(const [_, item] of Object.entries(items.value)) {
+    if (text.trim().toLowerCase() === (item.item as string).trim().toLowerCase()) {
+      countItem(item.index, true)
+      item.guessed = true;
+      success = true;
+    }
+  }
+
+  clear()
+
+  if(success) {
+    if(guessed.value >= goal.value) {
+      emit("onFinish", GameState.SUCCEEDED)
+    }
+
+    flashSuccess().then(() => {})
+  } else {
+    flashError().then(() => {})
+  }
+}
+
+function validate(selected: FlatArtist | FlatAlbum | FlatTrack | string, flashError: () => Promise<void>, flashSuccess: () => Promise<void>, clear: () => void) {
   let success = false;
   countAttempt()
 
@@ -49,9 +75,9 @@ function validate(selected: FlatArtist | FlatAlbum | FlatTrack | string, flashEr
       emit("onFinish", GameState.SUCCEEDED)
     }
 
-    flashSuccess()
+    flashSuccess().then(() => {})
   } else {
-    flashError()
+    flashError().then(() => {})
   }
 }
 
@@ -162,18 +188,16 @@ function censor(text: string, censor: boolean): string {
     </template>
 
     <template v-else>
-      <TrackInput
-          :textMode="type === 'text'"
-          @onTrackSelected="validate"
-          @onTextInput="validate"
+      <TextInput
+          @onTextInput="validateText"
           v-slot="{ inputBindings, inputEvents, errorFlash, successFlash }"
       >
         <label
             class="w-full input"
             :class="{
-        'border-error': errorFlash,
-        'border-success': successFlash
-      }"
+            'border-error': errorFlash,
+            'border-success': successFlash
+          }"
         >
           <input
               v-bind="inputBindings"
@@ -187,7 +211,7 @@ function censor(text: string, censor: boolean): string {
             {{ Math.min(goal, guessed) }}/{{ goal }}
           </span>
         </label>
-      </TrackInput>
+      </TextInput>
     </template>
   </div>
 </template>
