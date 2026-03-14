@@ -13,7 +13,7 @@ const { target, game, step } = defineProps({
 const goal = ref<ZoomerType>()
 const emit = defineEmits<{
   selectFestival: [festival: Festival],
-  selectArtist: [artist: Artist],
+  selectArtist: [artist: Artist, flashError: () => Promise<void>, flashSuccess: () => Promise<void>, clear: () => void],
   next: [void: void]
 }>()
 const isMobile = inject<boolean>('isMobile', false)
@@ -70,11 +70,11 @@ function finish() {
   }
 }
 
-function finishArtist(artist: FlatArtist) {
+function finishArtist(artist: FlatArtist, flashError: () => Promise<void>, flashSuccess: () => Promise<void>, clear: () => void) {
   emit("selectArtist", <Artist>{
     id: "artist",
     instance: artist
-  })
+  }, flashError, flashSuccess, clear)
 }
 
 // make sure all festival data is cleared properly when re-selecting
