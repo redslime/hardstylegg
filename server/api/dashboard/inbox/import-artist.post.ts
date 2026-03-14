@@ -1,6 +1,7 @@
 import type {InboxArtist} from "~/types/models";
 import {getSpotifyApi} from "~/server/utils/spotify";
 import {RichArtist} from "~/types/content";
+import prisma from "~/lib/prisma";
 
 export default defineEventHandler(async (event): Promise<RichArtist> => {
     const artist = await readBody<InboxArtist>(event)
