@@ -30,7 +30,8 @@ export async function getDashboardTracks(skipHidden: boolean = false): Promise<R
 
 export function updateDashboardTrack(track: RichTrack) {
     if(tracks !== null) {
-        tracks.splice(tracks.findIndex(t => t.sid === track.sid), 1)
+        const index = tracks.findIndex(t => t.sid === track.sid)
+        if(index !== -1) tracks.splice(index, 1)
         tracks.push(track)
     }
 }
@@ -49,7 +50,8 @@ export async function getDashboardAlbums(skipHidden: boolean = false): Promise<R
 
 export function updateDashboardAlbum(album: RichAlbum) {
     if(albums !== null) {
-        albums.splice(albums.findIndex(t => t.sid === album.sid), 1)
+        const index = albums.findIndex(t => t.sid === album.sid)
+        if(index !== -1) albums.splice(index, 1)
         albums.push(album)
     }
 }

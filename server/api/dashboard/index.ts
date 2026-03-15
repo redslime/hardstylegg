@@ -58,17 +58,17 @@ function getStructure(user: User): DashboardGroup[] {
         url: "/admin/radar-inbox",
     })
 
-    // adminItems.push({
-    //     name: "Import artist",
-    //     icon: "CloudArrowDownIcon",
-    //     url: "/admin/import/artist"
-    // })
-    //
-    // adminItems.push({
-    //     name: "Import track",
-    //     icon: "CloudArrowDownIcon",
-    //     url: "/admin/import/track"
-    // })
+    adminItems.push({
+        name: "Import artist",
+        icon: "CloudArrowDownIcon",
+        url: "/admin/import/artist"
+    })
+
+    adminItems.push({
+        name: "Import track",
+        icon: "CloudArrowDownIcon",
+        url: "/admin/import/track"
+    })
 
     // game items
     getGames().forEach(game => {

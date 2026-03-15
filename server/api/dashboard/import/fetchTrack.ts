@@ -1,7 +1,8 @@
 import {createError, defineEventHandler, getQuery} from "h3";
 import {getSpotifyApi} from "~/server/utils/spotify";
-import {RichArtist, type RichTrack} from "~/types/content";
+import {type RichTrack} from "~/types/content";
 import prisma from "~/lib/prisma";
+import {invalidateCacheKeys} from "~/server/utils/cacheKeys";
 
 export default defineEventHandler(async (event) => {
     try {
@@ -18,26 +19,73 @@ export default defineEventHandler(async (event) => {
         }
 
         const track = await getSpotifyApi().tracks.get(trackId as string)
-        const artistIds = track.artists.map(a => a.id)
-        const artists = await prisma.artist.findMany({
+        const rec =await prisma.track.upsert({
             where: {
-                id: {
-                    in: artistIds
-                }
-            }
-        }).then(a => a.map(RichArtist.mapJson))
+                sid: track.id,
+            },
+            create: {
+                sid: track.id,
+                title: track.name,
+                year: parseInt(track.album.release_date.split('-')[0] ?? "1970"),
+                cover_art: track.album.images[0]?.url?.replace("https://i.scdn.co/image/", ""),
+                hidden: false,
+                track_artist: {
+                    create: track.artists.map((artist) => ({
+                        artist: {
+                            connectOrCreate: {
+                                where: {
+                                    id: artist.id
+                                },
+                                create: {
+                                    id: artist.id,
+                                    name: artist.name
+                                }
+                            }
+                        },
+                    })),
+                },
+            },
+            update: {
+                sid: track.id,
+                title: track.name,
+                year: parseInt(track.album.release_date.split('-')[0] ?? "1970"),
+                cover_art: track.album.images[0]?.url?.replace("https://i.scdn.co/image/", ""),
+                hidden: false,
+                track_artist: {
+                    deleteMany: {},
+                    create: track.artists.map((artist) => ({
+                        artist: {
+                            connectOrCreate: {
+                                where: {
+                                    id: artist.id
+                                },
+                                create: {
+                                    id: artist.id,
+                                    name: artist.name
+                                }
+                            }
+                        },
+                    })),
+                },
+            },
+            include: {
+                track_artist: {
+                    include: {
+                        artist: true,
+                    },
+                },
+            },
+        })
 
-        if(artistIds.length !== artists.length) {
-            // todo import rich artist
-        }
+        invalidateCacheKeys()
 
         return <RichTrack>{
-            sid: track.id,
-            title: track.name,
-            artists,
-            year: parseInt(track.album.release_date.split('-')[0] ?? "1970"),
-            image: track.album.images[0]?.url?.replace("https://i.scdn.co/image/", ""),
-            hidden: false
+            sid: rec.sid,
+            title: rec.title,
+            year: rec.year,
+            artists: rec.track_artist.map(a => a.artist),
+            image: rec.cover_art,
+            hidden: rec.hidden
         }
     } catch (err: any) {
         // Convert to HTTP error
