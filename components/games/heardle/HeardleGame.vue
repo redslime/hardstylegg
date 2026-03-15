@@ -9,7 +9,7 @@ import {countAttempt} from "~/utils/game";
 import WaveformPlayer from "~/components/games/heardle/WaveformPlayer.vue";
 import {useWaveSurfer, type UseWaveSurfer, useWaveSurferRegions} from "@meersagor/wavesurfer-vue";
 import type {RegionParams} from "wavesurfer.js/plugins/regions";
-import {FlatTrack} from "~/types/content";
+import {BaseTrack, FlatTrack} from "~/types/content";
 
 const config = useRuntimeConfig()
 const { $gameRegistry } = useNuxtApp();
@@ -143,16 +143,14 @@ function nextStage() {
   wavesurfer?.waveSurfer.value?.seekTo(currentStageDuration.value / 15)
 }
 
-function validate(selected: FlatTrack, flashError: () => void, _flashSuccess: () => void, clear: () => void) {
+function validate(selected: BaseTrack, inputFeedback: (success: boolean) => boolean) {
   countAttempt()
 
-  if(selected.sid === track.value.sid) {
+  if(inputFeedback(selected.sid === track.value.sid)) {
     guesses.value[guessStage.value] = {input: selected.getDisplayName(), correct: true}
     emit('onFinish', GameState.SUCCEEDED)
   } else {
     guesses.value[guessStage.value] = {input: selected.getDisplayName(), correct: false}
-    flashError()
-    clear()
 
     if (guessStage.value >= durations.value.length - 1) {
       emit('onFinish', GameState.FAILED)

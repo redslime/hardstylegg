@@ -66,12 +66,9 @@ function submitFestival(festival: Festival) {
   next(gameDef.isEqual(goal.value, festival))
 }
 
-function submitArtist(artist: Artist, flashError: () => Promise<void>, flashSuccess: () => Promise<void>, clear: () => void) {
-  if(goal.value.id === "artist") {
-    const correct = goal.value.instance.id === artist.instance.id
-    next(correct)
-    clear()
-    correct ? flashSuccess() : flashError()
+function submitArtist(artist: Artist, inputFeedback: (success: boolean) => boolean) {
+  if(goal.value.id === "artist" && inputFeedback(goal.value.instance.id === artist.instance.id)) {
+    next(true)
   }
 }
 

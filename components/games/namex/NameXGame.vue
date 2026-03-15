@@ -29,7 +29,7 @@ const items = ref<{index: number, item: FlatArtist | FlatAlbum | FlatTrack | str
 )
 const guessed = computed(() => items.value.filter(i => i.guessed).length)
 
-function validateText(text: string, flashError: () => Promise<void>, flashSuccess: () => Promise<void>, clear: () => void) {
+function validateText(text: string, inputFeedback: (success: boolean) => boolean) {
   let success = false;
   countAttempt()
 
@@ -41,20 +41,12 @@ function validateText(text: string, flashError: () => Promise<void>, flashSucces
     }
   }
 
-  clear()
-
-  if(success) {
-    if(guessed.value >= goal.value) {
-      emit("onFinish", GameState.SUCCEEDED)
-    }
-
-    flashSuccess().then(() => {})
-  } else {
-    flashError().then(() => {})
+  if(inputFeedback(success) && guessed.value >= goal.value) {
+    emit("onFinish", GameState.SUCCEEDED)
   }
 }
 
-function validate(selected: FlatArtist | FlatAlbum | FlatTrack | string, flashError: () => Promise<void>, flashSuccess: () => Promise<void>, clear: () => void) {
+function validate(selected: FlatArtist | BaseTrack | string, inputFeedback: (success: boolean) => boolean) {
   let success = false;
   countAttempt()
 
@@ -68,16 +60,8 @@ function validate(selected: FlatArtist | FlatAlbum | FlatTrack | string, flashEr
     }
   }
 
-  clear()
-
-  if(success) {
-    if(guessed.value >= goal.value) {
-      emit("onFinish", GameState.SUCCEEDED)
-    }
-
-    flashSuccess().then(() => {})
-  } else {
-    flashError().then(() => {})
+  if(inputFeedback(success) && guessed.value >= goal.value) {
+    emit("onFinish", GameState.SUCCEEDED)
   }
 }
 

@@ -4,7 +4,7 @@ import {getLocalArtwork} from "~/utils/utils";
 import {GameState} from "~/types/models";
 import TrackListenButton from "~/components/TrackListenButton.vue";
 import {countAttempt} from "~/utils/game";
-import {FlatTrack} from "~/types/content";
+import {BaseTrack, FlatTrack} from "~/types/content";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.ArtworkDef
@@ -29,15 +29,11 @@ const src = computed(() => {
   }
 })
 
-async function validate(selected: FlatTrack, flashError: () => void, flashSuccess: () => void, clear: () => void) {
+async function validate(selected: BaseTrack, inputFeedback: (success: boolean) => boolean) {
   countAttempt()
 
-  if(selected.sid === track.value.sid) {
-    flashSuccess()
+  if(inputFeedback(selected.sid === track.value.sid)) {
     emit("onFinish", GameState.SUCCEEDED)
-  } else {
-    flashError()
-    clear()
   }
 }
 </script>

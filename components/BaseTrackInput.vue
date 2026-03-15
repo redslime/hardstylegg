@@ -80,7 +80,12 @@ const filtered = computed<SearchResult[]>(() => {
       })
 })
 
-const emit = defineEmits(['onSelected'])
+const emit = defineEmits<{
+  onSelected: [
+    track: BaseTrack,
+    inputFeedback: (success: boolean) => boolean
+  ]
+}>()
 
 const {
   hoverIndex,
@@ -97,8 +102,8 @@ const {
   filtered,
   allOptions,
   getItemLabel: (item) => item.getDisplayName(titleOnly),
-  onSelect: (item, helpers) => {
-    emit('onSelected', item, helpers.flashError, helpers.flashSuccess, helpers.clear)
+  onSelect: (item, inputFeedback) => {
+    emit('onSelected', item, inputFeedback)
   },
   defaultPlaceholder: isAlbums ? "Album..." : "Track...",
   fetchProgress,

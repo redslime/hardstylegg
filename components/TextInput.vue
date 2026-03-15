@@ -15,9 +15,7 @@ const allOptions = computed(() => [])
 const emit = defineEmits<{
   onTextInput: [
     text: string,
-    flashError: (() => Promise<void>),
-    flashSuccess: (() => Promise<void>),
-    clear: (() => void)
+    inputFeedback: (success: boolean) => boolean
   ]
 }>()
 
@@ -32,8 +30,8 @@ const {
   allOptions,
   getItemLabel: (item) => item,
   onSelect: () => {},
-  onTextEnter: (value, helpers) => {
-    emit("onTextInput", value, helpers.flashError, helpers.flashSuccess, helpers.clear)
+  onTextEnter: (value, inputFeedback) => {
+    emit("onTextInput", value, inputFeedback)
   },
   defaultPlaceholder: "",
   fetchProgress,

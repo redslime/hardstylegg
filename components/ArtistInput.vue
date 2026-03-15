@@ -65,9 +65,7 @@ const filtered = computed<SearchResult[]>(() => {
 const emit = defineEmits<{
   onSelected: [
     artist: FlatArtist,
-    flashError: (() => Promise<void>),
-    flashSuccess: (() => Promise<void>),
-    clear: (() => void)
+    inputFeedback: (success: boolean) => boolean
   ]
 }>()
 
@@ -86,8 +84,8 @@ const {
   filtered,
   allOptions,
   getItemLabel: (artist) => artist.name,
-  onSelect: (artist, helpers) => {
-    emit("onSelected", artist, helpers.flashError, helpers.flashSuccess, helpers.clear)
+  onSelect: (artist, inputFeedback) => {
+    emit("onSelected", artist, inputFeedback)
   },
   defaultPlaceholder: "Artist...",
   fetchProgress,

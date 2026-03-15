@@ -1,14 +1,8 @@
-import {computed, ref, toValue, type MaybeRefOrGetter, type Ref} from "vue"
+import {computed, type MaybeRefOrGetter, ref, type Ref, toValue} from "vue"
 import {delay} from "~/utils/utils"
 
 interface SearchInputItem<T> {
     item: T
-}
-
-interface SearchInputHelpers {
-    flashError: () => Promise<void>
-    flashSuccess: () => Promise<void>
-    clear: () => void
 }
 
 interface UseSelectableSearchInputOptions<T> {
@@ -17,8 +11,8 @@ interface UseSelectableSearchInputOptions<T> {
     filtered: MaybeRefOrGetter<SearchInputItem<T>[]>
     allOptions: MaybeRefOrGetter<T[]>
     getItemLabel: (item: T) => string
-    onSelect: (item: T, helpers: SearchInputHelpers) => void
-    onTextEnter?: (query: string, helpers: SearchInputHelpers) => void
+    onSelect: (item: T, inputFeedback: (success: boolean) => boolean) => void
+    onTextEnter?: (query: string, inputFeedback: (success: boolean) => boolean) => void
     defaultPlaceholder: MaybeRefOrGetter<string>
     fetchProgress: MaybeRefOrGetter<number>
     minQueryLength?: MaybeRefOrGetter<number>
@@ -62,37 +56,34 @@ export function useSelectableSearchInput<T>(options: UseSelectableSearchInputOpt
         return toValue(defaultPlaceholder)
     })
 
-    const clear = () => {
+    const inputFeedback = (success: boolean): boolean => {
         query.value = ""
         if (debouncedQuery) {
             debouncedQuery.value = ""
         }
         hoverIndex.value = -1
-    }
 
-    const flashError = async () => {
-        query.value = ""
-        errorFlash.value = true
-        await delay(400)
-        errorFlash.value = false
-    }
+        if(success) {
+            successFlash.value = true
+            delay(400).then(() => successFlash.value = false)
+        } else {
+            errorFlash.value = true
+            delay(400).then(() => errorFlash.value = false)
+        }
 
-    const flashSuccess = async () => {
-        successFlash.value = true
-        await delay(400)
-        successFlash.value = false
+        return success
     }
 
     function select(item: T) {
         query.value = getItemLabel(item)
         selected.value = true
         hoverIndex.value = -1
-        onSelect(item, {flashError, flashSuccess, clear})
+        onSelect(item, inputFeedback)
     }
 
     function enter() {
         if (toValue(textMode)) {
-            onTextEnter?.(query.value, {flashError, flashSuccess, clear})
+            onTextEnter?.(query.value, inputFeedback)
             return
         }
 
@@ -115,7 +106,7 @@ export function useSelectableSearchInput<T>(options: UseSelectableSearchInputOpt
         if (exactMatches.length === 1) {
             select(exactMatches[0]!)
         } else {
-            flashError()
+            inputFeedback(false)
         }
     }
 
@@ -177,8 +168,5 @@ export function useSelectableSearchInput<T>(options: UseSelectableSearchInputOpt
         enter,
         down,
         up,
-        clear,
-        flashError,
-        flashSuccess
     }
 }

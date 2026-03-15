@@ -2,7 +2,7 @@
 import {GameState} from "~/types/models";
 import type {LostInTranslationContainer} from "~/types/gameModels";
 import {countAttempt} from "~/utils/game";
-import {FlatTrack} from "~/types/content";
+import {BaseTrack, FlatTrack} from "~/types/content";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.LostInTranslationDef
@@ -18,15 +18,11 @@ const finished = computed(() => props.state == GameState.SUCCEEDED || props.stat
 const showTranslated = ref<boolean>(true)
 const track = computed<FlatTrack>(() => FlatTrack.fromJson(props.container.track))
 
-async function validate(selected: FlatTrack, flashError: () => void, flashSuccess: () => void, clear: () => void) {
+async function validate(selected: BaseTrack, inputFeedback: (success: boolean) => boolean) {
   countAttempt()
 
-  if(selected.sid === track.value.sid) {
-    flashSuccess()
+  if(inputFeedback(selected.sid === track.value.sid)) {
     emit("onFinish", GameState.SUCCEEDED)
-  } else {
-    flashError()
-    clear()
   }
 }
 
