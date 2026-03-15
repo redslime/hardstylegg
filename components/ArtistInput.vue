@@ -41,7 +41,7 @@ const filtered = computed<SearchResult[]>(() => {
       .map((result) => {
         const name = result.item.getDisplayName()
 
-        if (result.score === 0) {
+        if (result.score === 99) {
           return {
             ...result,
             highlighted: highlightExact(name, containsSubstring(name, debouncedQuery.value))

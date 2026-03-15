@@ -51,7 +51,7 @@ const filtered = computed<SearchResult[]>(() => {
       .map((result) => {
         const displayName = result.item.getDisplayName(titleOnly)
 
-        if (result.score === 0) {
+        if (result.score === 99) {
           return {
             ...result,
             item: result.item as BaseTrack,

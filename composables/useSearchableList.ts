@@ -72,7 +72,7 @@ export function useSearchableList<T>(
             .filter((item) => getSearchText(item).toLowerCase().includes(normalizedQuery))
             .map((item) => ({
                 item,
-                score: 0
+                score: 99
             }))
 
         if (exactMatches.length > 0) {
