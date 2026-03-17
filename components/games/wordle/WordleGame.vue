@@ -7,7 +7,7 @@ import {useAsyncData} from "#app";
 import {getArtists} from "~/utils/contentCache";
 import WordleKeyboard from "~/components/games/wordle/WordleKeyboard.vue";
 import {LetterState} from "~/utils/game/impl/ClientWordleGame";
-import {reportResult} from "~/utils/game";
+import {countAttempt, reportResult} from "~/utils/game";
 
 // Wordle core game code see https://github.com/yyx990803/vue-wordle, adjusted a lot
 const { $gameRegistry } = useNuxtApp();
@@ -131,6 +131,8 @@ function completeRow() {
     })
 
     allowInput = false
+    countAttempt()
+
     if (currentRow.value.every((tile) => tile.state === LetterState.CORRECT)) {
       // yay!
       setTimeout(() => {
