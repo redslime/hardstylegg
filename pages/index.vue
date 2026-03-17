@@ -105,10 +105,12 @@ useOnce(() => {
         <p class="text-xl">Play all old questions</p>
 
         <div class="flex justify-center flex-wrap gap-2 my-2">
-          <div v-for="game in GAME_METAS" :key="game.id" class="p-3 rounded-md bg-base-100 indicator">
-            <span class="indicator-item indicator-end badge badge-sm badge-soft px-1.5" v-if="infinityPreview">{{ infinityPreview.games[game.id] }}</span>
-            <component :is="$gameRegistry.findGameById(game.id)!!.icon" :state="GameState.UPCOMING" />
-          </div>
+          <template v-for="game in GAME_METAS" :key="game.id">
+            <div class="p-3 rounded-md bg-base-100 indicator" v-if="!infinityPreview || infinityPreview.games[game.id]!! > 0">
+              <span class="indicator-item indicator-end badge badge-sm badge-soft px-1.5" v-if="infinityPreview">{{ infinityPreview.games[game.id] }}</span>
+              <component :is="$gameRegistry.findGameById(game.id)!!.icon" :state="GameState.UPCOMING" />
+            </div>
+          </template>
         </div>
       </div>
 

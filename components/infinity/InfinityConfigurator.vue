@@ -207,18 +207,20 @@ watch(endYear, () => updateYears())
       <h2 class="text-xl font-semibold text-center">Select games:</h2>
 
       <div class="flex flex-wrap gap-4 justify-center">
-        <div class="rounded-md btn btn-primary indicator" v-for="game in $gameRegistry.getGames()"
-             :class="{ '': selected.includes(game.id), 'btn-soft': !selected.includes(game.id) }"
-             @click="toggle(game.id)">
-          <div class="flex gap-1">
-            <component :is="game.icon" :key="game.id" :game="game" />
-            {{ game.getSpacedName() }}
+        <template v-for="game in $gameRegistry.getGames()">
+          <div class="rounded-md btn btn-primary indicator" @click="toggle(game.id)"
+               :class="{ '': selected.includes(game.id), 'btn-soft': !selected.includes(game.id) }"
+               v-if="!infinityPreview || infinityPreview.games[game.id]!! > 0">
+            <div class="flex gap-1">
+              <component :is="game.icon" :key="game.id" :game="game" />
+              {{ game.getSpacedName() }}
+            </div>
+            <span class="indicator-item indicator-end badge badge-sm badge-soft px-1.5 transition-all duration-100" v-if="infinityPreview"
+                  :class="{ 'badge-primary': selected.includes(game.id) }">
+            {{ infinityPreview.games[game.id] }}
+          </span>
           </div>
-          <span class="indicator-item indicator-end badge badge-sm badge-soft px-1.5 transition-all duration-100" v-if="infinityPreview"
-                :class="{ 'badge-primary': selected.includes(game.id) }">
-          {{ infinityPreview.games[game.id] }}
-        </span>
-        </div>
+        </template>
       </div>
 
       <div class="text-center border-t border-white/20 pt-6 border-dashed"
