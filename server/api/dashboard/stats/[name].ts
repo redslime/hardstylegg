@@ -21,7 +21,8 @@ export default defineEventHandler(async (event) => {
                         success: true,
                         attempts: true,
                         items_completed: true,
-                        items_clicked: true
+                        items_clicked: true,
+                        custom: true
                     },
                     where: {
                         AND: [
@@ -35,7 +36,8 @@ export default defineEventHandler(async (event) => {
                         success: report.success,
                         attempts: report.attempts,
                         itemsCompleted: report.items_completed ? JSON.parse(report.items_completed) as { [key: string]: boolean } : {},
-                        itemsClicked: report.items_clicked ? JSON.parse(report.items_clicked) as number[] : []
+                        itemsClicked: report.items_clicked ? JSON.parse(report.items_clicked) as number[] : [],
+                        custom: report.custom
                     }
                 })
             } else {

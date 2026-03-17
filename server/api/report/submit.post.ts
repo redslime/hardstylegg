@@ -24,7 +24,8 @@ export default defineEventHandler(async (event) => {
                                 success: item.success,
                                 attempts: item.attempts,
                                 items_completed: JSON.stringify(item.itemsCompleted),
-                                items_clicked: JSON.stringify(item.itemsClicked)
+                                items_clicked: JSON.stringify(item.itemsClicked),
+                                custom: item.custom
                             }
                         })
                     }

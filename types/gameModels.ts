@@ -117,3 +117,7 @@ export interface LostInTranslationContainer extends EditorContainer {
     textOriginal: String
     translationChain: String
 }
+
+export interface WordleContainer extends EditorContainer {
+    artist: FlatArtist
+}

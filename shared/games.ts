@@ -11,6 +11,7 @@ import {
     validateQuiz,
     validateTimeline,
     validateTimetable,
+    validateWordle,
     validateZoomer
 } from "#shared/gameValidators";
 
@@ -74,6 +75,11 @@ export const GAME_METAS = {
         id: 12,
         name: "LostInTranslation",
         validator: validateLostInTranslation
+    },
+    Wordle: {
+        id: 13,
+        name: "Wordle",
+        validator: validateWordle
     }
  } satisfies Record<string, GameMeta>
 export const YEAR_FILTER_GAMES = [GAME_METAS.Artwork.id, GAME_METAS.CompleteAlbum.id, GAME_METAS.CompleteLyrics.id, GAME_METAS.Heardle.id]

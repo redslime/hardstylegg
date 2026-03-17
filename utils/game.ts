@@ -95,21 +95,22 @@ export function isGameActive(): boolean {
 }
 
 export function startGame(gameEnv: GameEnvironment, isApp: boolean) {
+    let local = false
     gameEnvironment = gameEnv
 
     if(import.meta.env.DEV) {
         debug("Not creating a performance report in dev mode")
-        return
+        local = true
     }
     if(gameEnv !== GameEnvironment.DAILY) {
         debug("Not creating a performance report for non-daily challenges")
-        return
+        local = true
     }
 
     getGameContainer().then(gameData => {
-        $fetch<string>("/api/report/start").then(code => {
+        if(local) {
             report = {
-                code,
+                code: 'local',
                 dayId: gameData.dayId,
                 dayFriendly: gameData.dayFriendly,
                 successes: 0,
@@ -117,25 +118,37 @@ export function startGame(gameEnv: GameEnvironment, isApp: boolean) {
                 isApp,
                 data: []
             }
-            return report
-        }).then(rep => {
-            skippedReports.forEach(r => {
-                const gr = rep.data.find(r => r.typeId === currentTypeId && r.gameId === currentGameId)
-
-                if(gr) {
-                    r.consumer(gr)
-                } else {
-                    const gr = {
-                        typeId: r.currentTypeId,
-                        gameId: r.currentGameId,
-                        success: false
-                    }
-                    r.consumer(gr)
-                    rep.data.push(gr)
+        } else {
+            $fetch<string>("/api/report/start").then(code => {
+                report = {
+                    code,
+                    dayId: gameData.dayId,
+                    dayFriendly: gameData.dayFriendly,
+                    successes: 0,
+                    completed: false,
+                    isApp,
+                    data: []
                 }
+                return report
+            }).then(rep => {
+                skippedReports.forEach(r => {
+                    const gr = rep.data.find(r => r.typeId === currentTypeId && r.gameId === currentGameId)
+
+                    if(gr) {
+                        r.consumer(gr)
+                    } else {
+                        const gr = {
+                            typeId: r.currentTypeId,
+                            gameId: r.currentGameId,
+                            success: false
+                        }
+                        r.consumer(gr)
+                        rep.data.push(gr)
+                    }
+                })
+                skippedReports.length = 0
             })
-            skippedReports.length = 0
-        })
+        }
     })
 }
 
@@ -210,6 +223,10 @@ export function sendReport() {
         debug("Not sending report in dev env: ", report)
         return
     }
+    if(report.code === 'local') {
+        debug("Not sending local report")
+        return
+    }
 
     $fetch("/api/report/submit", {
         method: "POST",
@@ -222,7 +239,7 @@ export function getReportCode() {
 }
 
 export function getCookieMemory(): CookieDayMemory | undefined {
-    if(report === null) return undefined
+    if(report === null || report.code === 'local') return undefined
 
     return {
         day: report.dayId,
@@ -240,4 +257,8 @@ export function hasPlayedToday(cookie: CookieDayMemory[] | undefined, todayId: n
     }
 
     return false
+}
+
+export function getReportAt(index: number): GameReport | undefined {
+    return report?.data[index]
 }

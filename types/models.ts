@@ -105,6 +105,7 @@ export interface GameReport {
     attempts?: number
     itemsCompleted?: Record<number, boolean>
     itemsClicked?: number[]
+    custom?: string
 }
 
 export interface GameReportFlat {
@@ -112,6 +113,7 @@ export interface GameReportFlat {
     attempts?: number
     itemsCompleted: Record<number, boolean>
     itemsClicked: number[]
+    custom?: string
 }
 
 export interface CookieDayMemory {

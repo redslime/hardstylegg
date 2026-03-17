@@ -212,6 +212,7 @@ model user {
   game_quiz                game_quiz[]
   game_timeline            game_timeline[]
   game_timetable           game_timetable[]
+  game_wordle              game_wordle[]
   game_zoomer              game_zoomer[]
 }
 
@@ -239,6 +240,7 @@ model report_item {
   attempts        Int?
   items_completed String? @db.VarChar(128)
   items_clicked   String? @db.VarChar(32)
+  custom          String? @db.VarChar(128)
   report          report  @relation(fields: [parent_code], references: [code], onDelete: Cascade, map: "report_item_report_code_fk")
 
   @@id([parent_code, typeId, gameId])
@@ -311,11 +313,12 @@ model album_track {
 }
 
 model artist {
-  id           String         @id @db.Char(22)
-  name         String         @db.VarChar(128)
-  image        String?        @db.Char(40)
-  album_artist album_artist[]
-  track_artist track_artist[]
+  id                                     String         @id @db.Char(22)
+  name                                   String         @db.VarChar(128)
+  image                                  String?        @db.Char(40)
+  album_artist                           album_artist[]
+  game_wordle_game_wordle_artistToartist game_wordle[]  @relation("game_wordle_artistToartist")
+  track_artist                           track_artist[]
 }
 
 model radar_inbox {
@@ -333,4 +336,16 @@ model track_artist {
 
   @@id([track_id, artist_id])
   @@index([artist_id], map: "track_artist_artist_id_fk")
+}
+
+model game_wordle {
+  id                                Int     @id @default(autoincrement())
+  created_by                        Int
+  artist                            String  @db.Char(22)
+  context                           String? @db.VarChar(1024)
+  artist_game_wordle_artistToartist artist  @relation("game_wordle_artistToartist", fields: [artist], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "game_wordle_artist_id_fk")
+  user                              user    @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "game_wordle_user_id_fk")
+
+  @@index([artist], map: "game_wordle_artist_id_fk")
+  @@index([created_by], map: "game_wordle_user_id_fk")
 }

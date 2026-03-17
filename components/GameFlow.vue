@@ -146,7 +146,7 @@ const copyResult = () => {
     const reportCode = getReportCode()
     let url = `https://hardstyle.gg/share?r=${shareCode.value}`
 
-    if(reportCode) {
+    if(reportCode && reportCode !== 'local') {
       url = `https://hardstyle.gg/share?c=${reportCode}`
     }
 

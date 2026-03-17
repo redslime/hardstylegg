@@ -68,6 +68,42 @@ async function buildSvg(markup: any, event: H3Event<EventHandlerRequest>, width:
     return png;
 }
 
+function buildWordleIcon(boardString: string): string {
+    const rows = boardString.split(',')
+    const lastRow = rows.length - 1;
+
+    let html = `<div style="width:40px;height:40px;display:flex;flex-direction:column;">`;
+
+    rows.forEach((row, rowIndex) => {
+        const cols = [...row];
+        const lastCol = cols.length - 1;
+
+        html += `<div style="display:flex;flex-direction:row;flex:1;">`;
+
+        cols.forEach((col, colIndex) => {
+            let style = "display:flex;flex:1;";
+
+            // colors
+            if (col === "-") style += "background:#1E293B;";
+            if (col === "o") style += "background:#F4BF51;";
+            if (col === "x") style += "background:#2ED4BF;";
+
+            // corners
+            if (rowIndex === 0 && colIndex === 0) style += "border-top-left-radius:6px;";
+            if (rowIndex === 0 && colIndex === lastCol) style += "border-top-right-radius:6px;";
+            if (rowIndex === lastRow && colIndex === 0) style += "border-bottom-left-radius:6px;";
+            if (rowIndex === lastRow && colIndex === lastCol) style += "border-bottom-right-radius:6px;";
+
+            html += `<div style="${style}"></div>`;
+        });
+
+        html += `</div>`;
+    });
+
+    html += `</div>`;
+    return html;
+}
+
 async function replyLegacyString(resultsQuery: string, event: H3Event<EventHandlerRequest>) {
     const parts = resultsQuery.split(';').map(p => p.trim())
     const dayId = parseInt(parts[0] ?? "1")
@@ -182,16 +218,20 @@ async function replyCode(code: string, event: H3Event<EventHandlerRequest>) {
                 textColor = '#150406';
             }
 
-            return `
-    <div style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start">
-      <div style="display: flex; padding: 8px; border-radius: 6px; background-color: ${bgColor};">
-        <svg width="24" height="24" viewBox="0 0 24 24" stroke-width="1" style="color: ${textColor}">
-          ${iconSvg}
-        </svg>
-      </div>
-      <p style="color: darkgray; margin-top: 0; padding: 0; font-size: 13px;">${details}</p>    
-    </div>
-    `;
+            if(gameDef.id === 13 && reportItem && reportItem.custom && reportItem.custom.split(",").length > 1) {
+                return buildWordleIcon(reportItem.custom)
+            } else {
+                return `
+                    <div style="display: flex; flex-direction: column; align-items: center; justify-content: flex-start">
+                      <div style="display: flex; padding: 8px; border-radius: 6px; background-color: ${bgColor};">
+                        <svg width="24" height="24" viewBox="0 0 24 24" stroke-width="1" style="color: ${textColor}">
+                          ${iconSvg}
+                        </svg>
+                      </div>
+                      <p style="color: darkgray; margin-top: 0; padding: 0; font-size: 13px;">${details}</p>    
+                    </div>
+                    `;
+            }
         }))
 
         const iconString = iconElements.join('')

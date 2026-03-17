@@ -15,7 +15,7 @@ export class ClientHeardleGame extends ClientGameDef<HeardleContainer> {
     }
 
     override getIconPreviewTitle(container: HeardleContainer): string {
-        return "What is the name of this track?";
+        return "What is the name of this track?"
     }
 
     override getDashboardHeaderTitle(container: HeardleContainer): string {

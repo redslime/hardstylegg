@@ -11,6 +11,7 @@ import type {
     TimelineContainer,
     TimetableContainer,
     TimetableItem,
+    WordleContainer,
     ZoomerContainer
 } from "~/types/gameModels";
 
@@ -297,6 +298,20 @@ export function validateLostInTranslation(lit: LostInTranslationContainer): stri
 
     if(!lit.translationChain || lit.translationChain.length === 0) {
         errors.push("Translation chain is required")
+    }
+
+    return errors
+}
+
+export function validateWordle(wordle: WordleContainer): string[] {
+    const errors: string[] = []
+
+    if(!wordle.artist) {
+        errors.push("Artist is required")
+    } else {
+        if(!(/^[a-zA-Z,-]*$/.test(wordle.artist.name.toLowerCase()))) {
+            errors.push("Artist name can only contain - and letters (no spaces!)")
+        }
     }
 
     return errors
