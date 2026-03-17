@@ -20,7 +20,7 @@ const props = defineProps({
 })
 
 const fetchProgress = ref<number>(0)
-const { data: artists } = await useAsyncData<FlatArtist[]>('artists-flat', () => getArtists((p) => {
+const { data: artists, pending } = await useAsyncData<FlatArtist[]>('artists-flat', () => getArtists((p) => {
   fetchProgress.value = p
 }), { lazy: true })
 const state = computed(() => props.state)
@@ -244,7 +244,7 @@ watch(gameFinished, () => reportBoard(state.value === GameState.SUCCEEDED))
     Solution: {{ props.container.artist.name }}
   </div>
 
-  <WordleKeyboard @key="onKey" :letter-states="letterStates" v-if="!gameFinished" />
+  <WordleKeyboard @key="onKey" :letterStates="letterStates" :ready="!pending" v-if="!gameFinished" />
 </template>
 
 <style scoped>
