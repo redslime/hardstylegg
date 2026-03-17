@@ -194,6 +194,8 @@ function reportBoard(win: boolean = false) {
     gr.success = win
   })
 }
+
+watch(gameFinished, () => reportBoard(state.value === GameState.SUCCEEDED))
 </script>
 
 <template>
@@ -216,14 +218,14 @@ function reportBoard(win: boolean = false) {
     >
       <div
           v-for="(tile, index) in row"
-          class="w-14 h-14"
+          class="w-11 h-11 sm:w-14 sm:h-14"
           :class="['tile', tile.letter && 'filled', tile.state && 'revealed']"
       >
-        <div class="front rounded-md" :style="{ transitionDelay: `${index * 300}ms` }">
+        <div class="front rounded-md text-xl sm:text-3xl" :style="{ transitionDelay: `${index * 300}ms` }">
           {{ tile.letter }}
         </div>
         <div
-            class="rounded-md"
+            class="rounded-md text-xl sm:text-3xl"
             :class="['back', tile.state]"
             :style="{
           transitionDelay: `${index * 300}ms`,
@@ -236,7 +238,7 @@ function reportBoard(win: boolean = false) {
     </div>
   </div>
 
-  <div class="badge badge-success badge-soft badge-xl mt-4" v-if="state === GameState.FAILED">
+  <div class="badge badge-success badge-soft badge-lg sm:badge-xl mt-4" v-if="state === GameState.FAILED">
     Solution: {{ props.container.artist.name }}
   </div>
 

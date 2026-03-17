@@ -19,9 +19,10 @@ const getState = props.getState ?? ((index: number) => {
   }
 })
 
-function showWordleIcon(game: GameData): boolean {
-  return game.name === 'Wordle' &&
-      (game.props.state === GameState.SUCCEEDED || game.props.state === GameState.FAILED)
+function showWordleIcon(game: GameData, index: number): boolean {
+  return game.name === 'Wordle'
+      && (game.props.state === GameState.SUCCEEDED || game.props.state === GameState.FAILED)
+      && !([...getWordleBoard(index).split(",").join("")].every(c => c === '-' || c === ','))
 }
 
 function getWordleBoard(gameIndex: number): string {
@@ -33,7 +34,7 @@ function getWordleBoard(gameIndex: number): string {
   <template v-if="props.games" v-for="(game, index) in props.games" :key="game.name">
     <div class="p-3 rounded-md tooltip" :data-tip="getPreviewTitle(game)"
          @click="props.click?.(index)"
-         v-if="!showWordleIcon(game)"
+         v-if="!showWordleIcon(game, index)"
          :class="[props.style, {
             'outline-2 outline-primary': props.outlineIndex === index,
             'bg-base-100': getState(index) === GameState.UPCOMING,

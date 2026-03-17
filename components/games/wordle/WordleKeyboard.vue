@@ -9,15 +9,18 @@ defineEmits<{
   (e: 'key', key: string): void
 }>()
 
+const isGerman = navigator.language.startsWith('de');
+const top = isGerman ? 'qwertzuiop'.split('') : 'qwertyuiop'.split('')
+const bottom = isGerman ? 'yxcvbnm'.split('') : 'zxcvbnm'.split('')
 const rows = [
-  'qwertyuiop'.split(''),
+  top,
   'asdfghjkl-'.split(''),
-  ['Enter', ...'zxcvbnm'.split(''), 'Backspace']
+  ['Enter', ...bottom, 'Backspace']
 ]
 </script>
 
 <template>
-  <div id="keyboard" class="w-full sm:w-2/3">
+  <div id="keyboard" class="w-full sm:w-4/5 md:2/3">
     <div class="row" v-for="(row, i) in rows">
       <div class="spacer" v-if="i === 1"></div>
       <button

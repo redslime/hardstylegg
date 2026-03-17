@@ -218,7 +218,8 @@ async function replyCode(code: string, event: H3Event<EventHandlerRequest>) {
                 textColor = '#150406';
             }
 
-            if(gameDef.id === 13 && reportItem && reportItem.custom && reportItem.custom.split(",").length > 1) {
+            if(gameDef.id === 13 && reportItem && reportItem.custom && reportItem.custom.split(",").length > 1
+                && ![...reportItem.custom.split(",").join("")].every(c => c === '-' || c === ',')) {
                 return buildWordleIcon(reportItem.custom)
             } else {
                 return `
