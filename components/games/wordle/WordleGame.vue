@@ -240,9 +240,14 @@ watch(gameFinished, () => reportBoard(state.value === GameState.SUCCEEDED))
     </div>
   </div>
 
-  <div class="badge badge-success badge-soft badge-lg sm:badge-xl mt-4" v-if="state === GameState.FAILED">
-    Solution: {{ props.container.artist.name }}
-  </div>
+  <template v-if="state === GameState.FAILED">
+    <h3 class="text-lg font-bold text-center">Solution:</h3>
+    <div class="flex gap-1">
+      <div v-for="letter in props.container.artist.name.split('')" class="w-8 h-8 text-xl bg-[#6aaa64] rounded-sm text-center text-white uppercase font-bold">
+        {{ letter }}
+      </div>
+    </div>
+  </template>
 
   <WordleKeyboard @key="onKey" :letterStates="letterStates" :ready="!pending" v-if="!gameFinished" />
 </template>
