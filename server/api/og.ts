@@ -72,16 +72,31 @@ function buildWordleIcon(boardString: string): string {
     const rows = boardString.split(',')
     const lastRow = rows.length - 1;
 
-    let html = `<div style="width:40px;height:40px;display:flex;flex-direction:column;">`;
+    const totalSize = 40;
+    const rowHeight = Math.floor(totalSize / rows.length);
+    const remainder = totalSize - rowHeight * rows.length;
+
+    let html = `<div style="width:${totalSize}px;height:${totalSize}px;display:flex;flex-direction:column;overflow:hidden;">`;
 
     rows.forEach((row, rowIndex) => {
         const cols = [...row];
         const lastCol = cols.length - 1;
 
-        html += `<div style="display:flex;flex-direction:row;flex:1;">`;
+        // distribute leftover pixels to last row
+        const currentRowHeight =
+            rowIndex === lastRow ? rowHeight + remainder : rowHeight;
+
+        html += `<div style="display:flex;flex-direction:row;height:${currentRowHeight}px;">`;
+
+        const colWidth = Math.floor(totalSize / cols.length);
+        const colRemainder = totalSize - colWidth * cols.length;
 
         cols.forEach((col, colIndex) => {
-            let style = "display:flex;flex:1;";
+            // distribute leftover pixels to last column
+            const currentColWidth =
+                colIndex === lastCol ? colWidth + colRemainder : colWidth;
+
+            let style = `display:flex;width:${currentColWidth}px;height:100%;`;
 
             // colors
             if (col === "-") style += "background:#1E293B;";
