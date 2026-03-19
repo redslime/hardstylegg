@@ -36,7 +36,7 @@ watchOnce(data, () => instances.value = data.value)
       </template>
 
       <template #editBody v-if="editing">
-
+        <ContextField v-model:input="editing.context" />
       </template>
     </DashboardGameEditor>
   </div>
