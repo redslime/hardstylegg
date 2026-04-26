@@ -138,6 +138,14 @@ function next() {
     currentIndex.value++
     currentGameData.value.props.state = GameState.PLAYING
     updateState(currentTypeId.value, currentGameId.value)
+    checkHelpModal()
+  }
+}
+
+function checkHelpModal() {
+  if(currentGameId.value <= 2 && currentTypeId.value > 13) {
+    // first/second game of new gamemode, show help modal
+    helpModal.value?.showModal()
   }
 }
 
@@ -167,6 +175,7 @@ onMounted(() => {
   } else {
     mounted.value = true
     updateState(currentTypeId.value, currentGameId.value)
+    checkHelpModal()
   }
 })
 </script>
