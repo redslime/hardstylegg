@@ -336,6 +336,9 @@ export function validateNavigator(navigator: NavigatorContainer): string[] {
     if(navigator.steps < 2) {
         errors.push("Max step count must be at least 2")
     }
+    if(navigator.steps > 5) {
+        errors.push("Max step count must be at most 5")
+    }
 
     return errors
 }
