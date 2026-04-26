@@ -3,13 +3,13 @@ import type {PropType} from "vue";
 import type {RichArtist} from "~/types/content";
 
 const { artist, clickable } = defineProps({
-  artist: { type: Object as PropType<RichArtist>, required: true },
+  artist: { type: Object as PropType<RichArtist | undefined>, required: true },
   clickable: { type: Boolean, default: true },
 })
 const imgLoaded = ref<boolean>(false)
 
 function navigate() {
-  if(clickable) {
+  if(clickable && artist) {
     navigateTo(`/admin/content/artist/${artist.id}`)
   }
 }
@@ -19,7 +19,8 @@ function navigate() {
   <div class="bg-base-300 rounded-lg shadow p-2 flex flex-col justify-start
             border border-neutral/50"
        :class="{'transition-colors hover:border-primary cursor-pointer': clickable}"
-       @click="navigate()">
+       @click="navigate()"
+      v-if="artist">
     <div class="h-[130px] w-[130px]">
       <div v-if="!imgLoaded && artist.image" class="skeleton w-full h-full rounded-xl inset-0"></div>
       <img class="w-full h-full overflow-hidden object-cover rounded-xl"

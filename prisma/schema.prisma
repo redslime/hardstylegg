@@ -208,6 +208,7 @@ model user {
   game_lost_in_translation game_lost_in_translation[]
   game_map                 game_map[]
   game_namex               game_namex[]
+  game_navigator           game_navigator[]
   game_order               game_order[]
   game_quiz                game_quiz[]
   game_timeline            game_timeline[]
@@ -313,12 +314,14 @@ model album_track {
 }
 
 model artist {
-  id                                     String         @id @db.Char(22)
-  name                                   String         @db.VarChar(128)
-  image                                  String?        @db.Char(40)
-  album_artist                           album_artist[]
-  game_wordle_game_wordle_artistToartist game_wordle[]  @relation("game_wordle_artistToartist")
-  track_artist                           track_artist[]
+  id                                                   String           @id @db.Char(22)
+  name                                                 String           @db.VarChar(128)
+  image                                                String?          @db.Char(40)
+  album_artist                                         album_artist[]
+  game_navigator_game_navigator_from_artist_idToartist game_navigator[] @relation("game_navigator_from_artist_idToartist")
+  game_navigator_game_navigator_to_artist_idToartist   game_navigator[] @relation("game_navigator_to_artist_idToartist")
+  game_wordle_game_wordle_artistToartist               game_wordle[]    @relation("game_wordle_artistToartist")
+  track_artist                                         track_artist[]
 }
 
 model radar_inbox {
@@ -348,4 +351,20 @@ model game_wordle {
 
   @@index([artist], map: "game_wordle_artist_id_fk")
   @@index([created_by], map: "game_wordle_user_id_fk")
+}
+
+model game_navigator {
+  id                                           Int     @id @default(autoincrement())
+  created_by                                   Int
+  from_artist_id                               String  @db.Char(22)
+  to_artist_id                                 String  @db.Char(22)
+  max_steps                                    Int
+  context                                      String? @db.VarChar(1024)
+  artist_game_navigator_from_artist_idToartist artist  @relation("game_navigator_from_artist_idToartist", fields: [from_artist_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "game_navigator_artist_id_fk")
+  artist_game_navigator_to_artist_idToartist   artist  @relation("game_navigator_to_artist_idToartist", fields: [to_artist_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "game_navigator_artist_id_fk_2")
+  user                                         user    @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "game_navigator_user_id_fk")
+
+  @@index([from_artist_id], map: "game_navigator_artist_id_fk")
+  @@index([to_artist_id], map: "game_navigator_artist_id_fk_2")
+  @@index([created_by], map: "game_navigator_user_id_fk")
 }

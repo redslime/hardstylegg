@@ -1,4 +1,4 @@
-import {FlatAlbum, FlatArtist, FlatTrack} from "~/types/content";
+import {FlatAlbum, FlatArtist, FlatTrack, RichArtist} from "~/types/content";
 import prisma from "~/lib/prisma";
 
 export async function getArtist(artistId: string): Promise<FlatArtist> {
@@ -17,6 +17,21 @@ export async function getArtists(artistIds: string[]): Promise<FlatArtist[]> {
             }
         }
     }).then(a => a.map(FlatArtist.fromJson))
+}
+
+export async function getRichArtists(artistIds: string[]): Promise<RichArtist[]> {
+    return await prisma.artist.findMany({
+        select: {
+            id: true,
+            name: true,
+            image: true
+        },
+        where: {
+            id: {
+                in: artistIds
+            }
+        }
+    }).then(a => a.map(RichArtist.fromJson))
 }
 
 export async function getAlbum(albumId: string): Promise<FlatAlbum> {

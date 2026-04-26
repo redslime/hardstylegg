@@ -12,6 +12,7 @@ import {ClientMapGame} from "~/utils/game/impl/ClientMapGame";
 import {ClientZoomerGame} from "~/utils/game/impl/ClientZoomerGame";
 import {ClientLostInTranslationGame} from "~/utils/game/impl/ClientLostInTranslationGame";
 import {ClientWordleGame} from "~/utils/game/impl/ClientWordleGame";
+import {ClientNavigatorGame} from "~/utils/game/impl/ClientNavigatorGame";
 
 export class ClientGameRegistry {
     private games: ClientGameDef<any>[] = []
@@ -29,6 +30,7 @@ export class ClientGameRegistry {
     public ZoomerDef = new ClientZoomerGame()
     public LostInTranslationDef = new ClientLostInTranslationGame()
     public WordleDef = new ClientWordleGame()
+    public NavigatorDef = new ClientNavigatorGame()
 
     constructor() {
         this.games.push(
@@ -44,7 +46,8 @@ export class ClientGameRegistry {
             this.MapDef,
             this.ZoomerDef,
             this.LostInTranslationDef,
-            this.WordleDef
+            this.WordleDef,
+            this.NavigatorDef
         )
     }
 

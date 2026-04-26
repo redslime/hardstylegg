@@ -6,6 +6,7 @@ import type {
     LostInTranslationContainer,
     MapContainer,
     NameXContainer,
+    NavigatorContainer,
     OrderContainer,
     QuizContainer,
     TimelineContainer,
@@ -312,6 +313,28 @@ export function validateWordle(wordle: WordleContainer): string[] {
         if(!(/^[a-zA-Z,-]*$/.test(wordle.artist.name.toLowerCase()))) {
             errors.push("Artist name can only contain - and letters (no spaces!)")
         }
+    }
+
+    return errors
+}
+
+export function validateNavigator(navigator: NavigatorContainer): string[] {
+    const errors: string[] = []
+
+    if(!navigator.from) {
+        errors.push("Start artist is required")
+    }
+    if(!navigator.to) {
+        errors.push("End artist is required")
+    }
+    if(navigator?.to?.id === navigator?.from?.id) {
+        errors.push("Start and end artists must be different")
+    }
+    if(!navigator.steps) {
+        errors.push("Max step count is required")
+    }
+    if(navigator.steps < 2) {
+        errors.push("Max step count must be at least 2")
     }
 
     return errors

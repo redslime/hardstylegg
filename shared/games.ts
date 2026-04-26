@@ -7,6 +7,7 @@ import {
     validateLostInTranslation,
     validateMap,
     validateNameX,
+    validateNavigator,
     validateOrder,
     validateQuiz,
     validateTimeline,
@@ -80,6 +81,11 @@ export const GAME_METAS = {
         id: 13,
         name: "Wordle",
         validator: validateWordle
+    },
+    Navigator: {
+        id: 14,
+        name: "Navigator",
+        validator: validateNavigator
     }
  } satisfies Record<string, GameMeta>
 export const YEAR_FILTER_GAMES = [GAME_METAS.Artwork.id, GAME_METAS.CompleteAlbum.id, GAME_METAS.CompleteLyrics.id, GAME_METAS.Heardle.id]
