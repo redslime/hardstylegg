@@ -1,10 +1,11 @@
 import {getCacheParam} from "~/utils/cacheKeys";
 import axios from "axios";
-import {FlatAlbum, FlatArtist, FlatTrack} from "~/types/content";
+import {FlatAlbum, FlatArtist, FlatTrack, RichArtist} from "~/types/content";
 
 let tracks: FlatTrack[] | null = null
 let albums: FlatAlbum[] | null = null
 let artists: FlatArtist[] | null = null
+let recentArtists: RichArtist[] = []
 
 export async function getTracks(progress?: (percent: number) => void): Promise<FlatTrack[]> {
     // If already cached, report complete and return
@@ -73,4 +74,17 @@ export async function getArtists(progress?: (percent: number) => void): Promise<
     artists = response.data.map(FlatArtist.fromJson);
     progress?.(100)
     return artists
+}
+
+export function getRecentArtists(): RichArtist[] {
+    return recentArtists.map(RichArtist.fromJson)
+}
+
+export function addRecentArtist(artist: RichArtist) {
+    if(recentArtists.length >= 5) {
+        recentArtists.pop()
+    }
+
+    recentArtists = recentArtists.filter(a => a.id !== artist.id)
+    recentArtists.unshift(artist)
 }
