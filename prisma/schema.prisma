@@ -318,6 +318,7 @@ model artist {
   name                                                 String           @db.VarChar(128)
   image                                                String?          @db.Char(40)
   album_artist                                         album_artist[]
+  artist_stats                                         artist_stats[]
   game_navigator_game_navigator_from_artist_idToartist game_navigator[] @relation("game_navigator_from_artist_idToartist")
   game_navigator_game_navigator_to_artist_idToartist   game_navigator[] @relation("game_navigator_to_artist_idToartist")
   game_wordle_game_wordle_artistToartist               game_wordle[]    @relation("game_wordle_artistToartist")
@@ -367,4 +368,22 @@ model game_navigator {
   @@index([from_artist_id], map: "game_navigator_artist_id_fk")
   @@index([to_artist_id], map: "game_navigator_artist_id_fk_2")
   @@index([created_by], map: "game_navigator_user_id_fk")
+}
+
+model artist_stats {
+  parent_id           Int
+  artist_id           String              @db.Char(22)
+  count               Int
+  artist              artist              @relation(fields: [artist_id], references: [id], onDelete: Cascade, map: "artist_stats_artist_id_fk")
+  artist_stats_parent artist_stats_parent @relation(fields: [parent_id], references: [id], onDelete: Cascade, map: "artist_stats_artist_stats_parent_id_fk")
+
+  @@id([parent_id, artist_id])
+  @@index([artist_id], map: "artist_stats_artist_id_fk")
+}
+
+model artist_stats_parent {
+  id           Int            @id @default(autoincrement())
+  date         DateTime       @db.Date
+  count        Int
+  artist_stats artist_stats[]
 }
