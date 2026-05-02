@@ -55,7 +55,7 @@ function clearUpload() {
       <template #editTitle v-if="editing">
         <div class="flex gap-2 items-center">
           <div class="text-2xl font-bold" v-if="editing.track">{{ editing.track.getDisplayName() }}</div>
-          <TrackPicker @selected="t => (editing!!.track = t)" :title="editing!!.track ? 'Replace' : 'Select'" :existing="existingIds" />
+          <TrackPicker @selected="t => (editing!!.track = t.toFlatTrack())" :title="editing!!.track ? 'Replace' : 'Select'" :existing="existingIds" />
         </div>
       </template>
 

@@ -2,7 +2,7 @@
 import {ref} from "vue";
 import {getDashboardAlbums, getDashboardTracks} from "~/utils/dashboard";
 import TrackAlbumGrid from "~/components/dashboard/TrackAlbumGrid.vue";
-import {RichTrack} from "~/types/content";
+import {RichAlbum, RichTrack} from "~/types/content";
 
 const { albums, title, disabled } = defineProps({
   albums: { type: Boolean, default: false },
@@ -10,7 +10,9 @@ const { albums, title, disabled } = defineProps({
   disabled: { type: Boolean, default: false },
   existing: { type: Array as PropType<string[]>, default: [] }
 })
-const emit = defineEmits(['selected'])
+const emit = defineEmits<{
+  selected: [track: RichTrack | RichAlbum]
+}>()
 const mode = albums ? "album" : "track"
 const modal = ref<HTMLDialogElement | null>();
 const { data: allOptions, pending, error } = await useAsyncData(mode, () => (mode === "album" ? getDashboardAlbums(true) : getDashboardTracks(true)), { lazy: true })

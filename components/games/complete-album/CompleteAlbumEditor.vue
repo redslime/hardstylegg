@@ -57,7 +57,7 @@ function add() {
       <template #editTitle v-if="editing">
         <div class="flex gap-2 items-center">
           <div class="text-2xl font-bold" v-if="editing.album">{{ editing.album?.getDisplayName() }}</div>
-          <TrackPicker :albums="true" @selected="selectAlbum" :title="editing!!.album ? 'Replace' : 'Select'" :existing="existingIds" />
+          <TrackPicker :albums="true" @selected="a => selectAlbum(a as RichAlbum)" :title="editing!!.album ? 'Replace' : 'Select'" :existing="existingIds" />
         </div>
       </template>
 

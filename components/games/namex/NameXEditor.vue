@@ -150,7 +150,7 @@ watch(editing, (newVal, oldVal) => {
           </template>
 
           <template v-else-if="editing.items.type === 'album'">
-            <TrackPicker :albums="true" :title="'Add'" @selected="addAlbum" />
+            <TrackPicker :albums="true" :title="'Add'" @selected="a => addAlbum(a as RichAlbum)" />
           </template>
 
           <template v-else-if="editing.items.type === 'artist'">
