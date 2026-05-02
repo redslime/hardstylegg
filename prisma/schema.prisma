@@ -14,7 +14,7 @@ datasource db {
 model album {
   sid                 String                @id @db.Char(22)
   title               String?               @db.VarChar(128)
-  year                Int?                  @db.Year
+  date                DateTime              @default(dbgenerated("'1970-01-01'")) @db.Date
   cover_art           String?               @db.Char(40)
   hidden              Boolean               @default(dbgenerated("b'0'")) @db.Bit(1)
   album_artist        album_artist[]
@@ -185,7 +185,7 @@ model game_timetable_item {
 model track {
   sid                      String                     @id @db.Char(22)
   title                    String?                    @db.VarChar(128)
-  year                     Int?                       @db.Year
+  date                     DateTime                   @default(dbgenerated("'1970-01-01'")) @db.Date
   cover_art                String?                    @db.Char(40)
   hidden                   Boolean                    @default(dbgenerated("b'0'")) @db.Bit(1)
   album_track              album_track[]

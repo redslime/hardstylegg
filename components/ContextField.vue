@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import LightBulbIcon from "~/components/icons/LightBulbIcon.vue";
 
-const input = defineModel<string | null>('input', { required: true })
+const input = defineModel<string | undefined | null>('input', { required: true })
 const hasInput = computed(() => (input.value?.trim().length ?? 0) > 0)
 const opened = ref<boolean>(hasInput.value)
 const { hasItems } = defineProps({

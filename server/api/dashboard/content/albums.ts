@@ -37,7 +37,7 @@ export default defineEventHandler(async (event): Promise<RichAlbum[]> => {
         return <RichAlbum>{
             sid: rec.sid,
             title: rec.title,
-            year: rec.year,
+            date: rec.date,
             artists: rec.album_artist.map(a => a.artist),
             tracks: rec.album_track.map(t => t.index)
                 .sort((n1, n2) => n1 - n2) // ensure the index order is kept
@@ -45,7 +45,7 @@ export default defineEventHandler(async (event): Promise<RichAlbum[]> => {
                 .map(t => <RichTrack>{
                     sid: t.sid,
                     title: t.title,
-                    year: t.year,
+                    date: t.date,
                     artists: t.track_artist.map(a => a.artist),
                     image: t.cover_art,
                     hidden: t.hidden

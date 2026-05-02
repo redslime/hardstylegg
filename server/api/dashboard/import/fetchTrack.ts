@@ -26,7 +26,7 @@ export default defineEventHandler(async (event) => {
             create: {
                 sid: track.id,
                 title: track.name,
-                year: parseInt(track.album.release_date.split('-')[0] ?? "1970"),
+                date: new Date(track.album.release_date),
                 cover_art: track.album.images[0]?.url?.replace("https://i.scdn.co/image/", ""),
                 hidden: false,
                 track_artist: {
@@ -48,7 +48,7 @@ export default defineEventHandler(async (event) => {
             update: {
                 sid: track.id,
                 title: track.name,
-                year: parseInt(track.album.release_date.split('-')[0] ?? "1970"),
+                date: new Date(track.album.release_date),
                 cover_art: track.album.images[0]?.url?.replace("https://i.scdn.co/image/", ""),
                 hidden: false,
                 track_artist: {
@@ -82,7 +82,7 @@ export default defineEventHandler(async (event) => {
         return <RichTrack>{
             sid: rec.sid,
             title: rec.title,
-            year: rec.year,
+            date: rec.date,
             artists: rec.track_artist.map(a => a.artist),
             image: rec.cover_art,
             hidden: rec.hidden

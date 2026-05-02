@@ -14,7 +14,7 @@ export default defineEventHandler(async (event): Promise<RichTrack[]> => {
         select: {
             sid: true,
             title: true,
-            year: true,
+            date: true,
             cover_art: true,
             hidden: true,
             track_artist: {
@@ -29,7 +29,7 @@ export default defineEventHandler(async (event): Promise<RichTrack[]> => {
         return <RichTrack>{
             sid: rec.sid,
             title: rec.title,
-            year: rec.year,
+            date: rec.date,
             artists: rec.track_artist.map(a => a.artist),
             image: rec.cover_art,
             hidden: rec.hidden

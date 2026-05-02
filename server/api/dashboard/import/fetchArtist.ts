@@ -12,7 +12,7 @@ function mapAlbum(album: SimplifiedAlbum, tracks: SimplifiedTrack[]): InboxAlbum
         title: album.name,
         artists: album.artists.map(a => mapArtist(a)),
         tracks: tracks.map(t => mapTrack(t, album)),
-        year: parseInt(album.release_date.split('-')[0] ?? "1970"),
+        date: new Date(album.release_date),
         cover_art: album.images[0]?.url?.replace("https://i.scdn.co/image/", ""),
         hidden: false
     }
@@ -23,7 +23,7 @@ function mapTrack(track: SimplifiedTrack, album: SimplifiedAlbum): InboxTrack {
         sid: track.id,
         title: track.name,
         artists: track.artists.map(a => mapArtist(a)),
-        year: parseInt(album.release_date.split('-')[0] ?? "1970"),
+        date: new Date(album.release_date),
         cover_art: album.images[0]?.url?.replace("https://i.scdn.co/image/", ""),
         hidden: false
     }
@@ -75,7 +75,7 @@ export default defineEventHandler(async (event) => {
             offset += data.items.length
         }
 
-        tracks.sort((a, b) => b.year - a.year)
+        tracks.sort((a, b) => b.date.getTime() - a.date.getTime())
 
         // insert artist
         const artist = await getSpotifyApi().artists.get(artistId as string)

@@ -33,7 +33,7 @@ const editUrl = computed<string>(() => isAlbum.value ? `/admin/content/album/${i
 
         <span class="w-fit text-sm hover:underline hover:text-white cursor-pointer">
           <NuxtLink :to="`/admin/content/year/${item.year}`">
-            {{ item.year }}
+            {{ item.getFriendlyDate() }}
           </NuxtLink>
         </span>
 

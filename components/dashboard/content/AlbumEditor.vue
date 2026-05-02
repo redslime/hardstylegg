@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import {RichAlbum, RichArtist} from "~/types/content";
+import {RichAlbum, RichArtist, RichTrack} from "~/types/content";
 import Xmark from "~/components/icons/Xmark.vue";
 import PlusIcon from "~/components/icons/PlusIcon.vue";
 import ArtistPicker from "~/components/dashboard/ArtistPicker.vue";
+import {isValidDate} from "~/utils/utils";
 
 const { album } = defineProps({
   album: { type: Object as PropType<RichAlbum>, required: true }
@@ -10,23 +11,37 @@ const { album } = defineProps({
 const emit = defineEmits<{
   edited: [track: RichAlbum]
 }>()
+const validDate = ref<boolean>(true)
 const errors = computed<string[]>(() => {
   const errors: string[] = []
 
   if(album.artists.length === 0) {
-    errors.push("Track must have at least one artist")
+    errors.push("Album must have at least one artist")
   }
   if(album.title.length === 0) {
-    errors.push("Track must have a title")
+    errors.push("Album must have a title")
   }
   if(album.title.length > 128) {
-    errors.push("Track title is too long")
+    errors.push("Album title is too long")
   }
-  if(!album.year) {
-    errors.push("Track must have a year")
+  if(!album.date || !validDate.value) {
+    errors.push("Album must have a date")
   }
 
   return errors
+})
+const date = computed<string>({
+  get() {
+    return RichAlbum.fromJson(album).getFriendlyDate()
+  },
+  set(value) {
+    if(isValidDate(value)) {
+      album.date = new Date(value)
+      validDate.value = true
+    } else {
+      validDate.value = false
+    }
+  }
 })
 
 function save() {
@@ -73,7 +88,7 @@ function addArtist(artist: RichArtist) {
           </div>
 
           <span class="text-sm hover:underline hover:text-white cursor-pointer w-fit">
-            <input type="number" class="input input-sm w-14" v-model="album.year" min="1900" max="2100" />
+            <input type="date" class="input input-sm" v-model="date" />
           </span>
 
           <div class="text-xl text-base-content/80 flex flex-wrap gap-3">

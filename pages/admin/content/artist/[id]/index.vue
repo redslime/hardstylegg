@@ -23,7 +23,7 @@ function getAlbums(): RichAlbum[] {
   if(artist.value && albums.value) {
     return albums.value
         .filter(a => a.artists.find(a => a.id === artist.value!!.id))
-        .sort((a, b) => b.year - a.year)
+        .sort((a, b) => b.date.getTime() - a.date.getTime())
   }
 
   return []
@@ -33,7 +33,7 @@ function getTracks(): RichTrack[] {
   if(artist.value && tracks.value) {
     return tracks.value
         .filter(a => a.artists.find(a => a.id === artist.value!!.id))
-        .sort((a, b) => (b.year - a.year) || String(a.image).localeCompare(String(b.image)))
+        .sort((a, b) => (b.date.getTime() - a.date.getTime()) || String(a.image).localeCompare(String(b.image)))
   }
 
   return []
@@ -55,8 +55,13 @@ function getTracks(): RichTrack[] {
 
       <div class="flex items-center gap-5">
         <img :src="artist.getImageUrl()" class="size-30 rounded-full object-cover" alt="Artist image" v-if="artist.image" />
-        <div class="text-5xl font-extrabold">
-          {{ artist?.name }}
+        <div class="flex flex-col gap-2">
+          <div class="text-5xl font-extrabold">
+            {{ artist?.name }}
+          </div>
+          <div class="opacity-80 text-lg font-light" v-if="artist?.listeners">
+            {{ artist?.getListenersFriendly() }} monthly listeners
+          </div>
         </div>
       </div>
     </div>

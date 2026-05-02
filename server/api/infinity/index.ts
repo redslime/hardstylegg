@@ -94,7 +94,7 @@ export async function getInfinityPreview(): Promise<InfinityPreviewContainer> {
 
 async function fetchTrackYearCounts(trackIds: string[]): Promise<{ year: number, count: number }[]> {
     return (await prisma.track.groupBy({
-        by: ['year'],
+        by: ['date'],
         where: {
             sid: {
                 in: trackIds
@@ -102,14 +102,14 @@ async function fetchTrackYearCounts(trackIds: string[]): Promise<{ year: number,
         },
         _count: { _all: true }
     })).map(r => ({
-        year: r.year ?? 0,
+        year: new Date(r.date).getFullYear() ?? 0,
         count: r._count._all,
     }))
 }
 
 async function fetchAlbumYearCounts(trackIds: string[]): Promise<{ year: number, count: number }[]> {
     return (await prisma.album.groupBy({
-        by: ['year'],
+        by: ['date'],
         where: {
             sid: {
                 in: trackIds
@@ -117,7 +117,7 @@ async function fetchAlbumYearCounts(trackIds: string[]): Promise<{ year: number,
         },
         _count: { _all: true }
     })).map(r => ({
-        year: r.year ?? 0,
+        year: new Date(r.date).getFullYear() ?? 0,
         count: r._count._all,
     }))
 }

@@ -10,9 +10,47 @@ export default defineEventHandler(async (event): Promise<RichArtist[]> => {
         setHeader(event, 'Cache-Control', 'private, max-age=600') // 10 minutes
     }
 
-    return (await prisma.artist.findMany()).map(a => <RichArtist>{
-        id: a.id,
-        name: a.name,
-        image: a.image
-    })
+    const lastId = await prisma.artist_stats_parent.findMany({
+        select: {
+            id: true
+        },
+        orderBy: {
+            id: 'desc'
+        },
+        take: 1
+    }).then(arr => arr[0])
+
+    if(!lastId) {
+        return await prisma.artist.findMany({
+            select: {
+                id: true,
+                name: true,
+                image: true
+            },
+        }).then(a => a.map(RichArtist.mapJson))
+    } else {
+        const fetched = await prisma.artist.findMany({
+            select: {
+                id: true,
+                name: true,
+                image: true,
+                artist_stats: {
+                    select: {
+                        count: true
+                    },
+                    where: {
+                        parent_id: lastId.id
+                    }
+                }
+            }
+        })
+
+        return fetched.map(row => {
+            const { artist_stats, ...rest } = row
+            return RichArtist.fromJson(<RichArtist>{
+                ...rest,
+                listeners: artist_stats[0]?.count
+            })
+        })
+    }
 })

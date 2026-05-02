@@ -1,3 +1,5 @@
+import {formatDate} from "compatx";
+
 export abstract class BaseTrack {
     protected constructor(
         public sid: string,
@@ -75,11 +77,12 @@ export class RichTrack extends BaseTrack {
         sid: string,
         title: string,
         public artists: RichArtist[],
-        public year: number,
+        public date: Date,
         image: string,
         public hidden: boolean = false
     ) {
         super(sid, title, image)
+        this.date = new Date(date)
     }
 
     static fromJson(data: any): RichTrack {
@@ -87,7 +90,7 @@ export class RichTrack extends BaseTrack {
             data.sid,
             data.title,
             data.artists?.map((a: any) => RichArtist.fromJson(a)) || [],
-            data.year,
+            new Date(data.date),
             data.image,
             data.hidden
         )
@@ -98,14 +101,22 @@ export class RichTrack extends BaseTrack {
             sid: data.sid,
             title: data.title,
             artists: data.artists?.map((a: any) => RichArtist.fromJson(a)) || [],
-            year: data.year,
+            date: new Date(data.date),
             image: data.image,
             hidden: data.hidden
         }
     }
 
+    public get year(): number {
+        return this.date.getFullYear()
+    }
+
     public override getArtistsString(): string {
         return this.artists.map(a => a.name).join(' & ')
+    }
+
+    public getFriendlyDate(): string {
+        return formatDate(this.date)
     }
 
     protected override isAlbum(): boolean {
@@ -161,11 +172,11 @@ export class RichAlbum extends RichTrack {
         title: string,
         artists: RichArtist[],
         public tracks: RichTrack[],
-        year: number,
+        date: Date,
         image: string,
         hidden: boolean = false
     ) {
-        super(sid, title, artists, year, image, hidden)
+        super(sid, title, artists, date, image, hidden)
     }
 
     static override fromJson(data: any) {
@@ -174,7 +185,7 @@ export class RichAlbum extends RichTrack {
             data.title,
             data.artists?.map((a: any) => RichArtist.fromJson(a)) || [],
             data.tracks?.map((t: any) => RichTrack.fromJson(t)) || [],
-            data.year,
+            new Date(data.date),
             data.image,
             data.hidden
         )
@@ -186,7 +197,7 @@ export class RichAlbum extends RichTrack {
             title: data.title,
             artists: data.artists?.map((a: any) => RichArtist.fromJson(a)) || [],
             tracks: data.tracks?.map((t: any) => RichTrack.fromJson(t)) || [],
-            year: data.year,
+            date: new Date(data.date),
             image: data.image,
             hidden: data.hidden
         }
@@ -243,14 +254,16 @@ export class RichArtist extends FlatArtist {
     constructor(
         id: string,
         name: string,
-        public image: string | null
+        public image: string | null,
+        public listeners: number | null
     ) { super(id, name) }
 
     static override fromJson(data: any) {
         return new RichArtist(
             data.id,
             data.name,
-            data.image
+            data.image,
+            data.listeners
         )
     }
 
@@ -258,8 +271,13 @@ export class RichArtist extends FlatArtist {
         return <RichArtist>{
             id: data.id,
             name: data.name,
-            image: data.image
+            image: data.image,
+            listeners: data.listeners
         }
+    }
+
+    public getListenersFriendly(): string | undefined {
+        return this.listeners?.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
     public toFlatArtist(): FlatArtist {

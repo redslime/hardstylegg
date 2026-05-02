@@ -199,7 +199,7 @@ export interface InboxAlbum {
     artists: InboxArtist[]
     tracks: InboxTrack[]
     title: string
-    year: number
+    date: Date
     cover_art: string
     hidden: boolean
 }
@@ -208,7 +208,7 @@ export interface InboxTrack {
     sid: string
     artists: InboxArtist[]
     title: string
-    year: number
+    date: Date
     cover_art: string
     hidden: boolean
 }

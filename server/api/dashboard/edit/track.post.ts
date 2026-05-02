@@ -22,7 +22,7 @@ export default defineEventHandler(async (event) => {
         create: {
             sid: track.sid,
             title: track.title,
-            year: track.year,
+            date: track.date,
             cover_art: track.image,
             hidden: track.hidden ?? false,
             track_artist: {
@@ -35,7 +35,7 @@ export default defineEventHandler(async (event) => {
         },
         update: {
             title: track.title,
-            year: track.year,
+            date: track.date,
             cover_art: track.image,
             hidden: track.hidden ?? false,
             track_artist: {
@@ -59,7 +59,7 @@ export default defineEventHandler(async (event) => {
     return <RichTrack>{
         sid: rec.sid,
         title: rec.title,
-        year: rec.year,
+        date: rec.date,
         artists: rec.track_artist.map(a => a.artist),
         image: rec.cover_art,
         hidden: rec.hidden

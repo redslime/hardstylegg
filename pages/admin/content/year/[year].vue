@@ -17,10 +17,10 @@ const { data: trackData, pending } = await useAsyncData("track", () => getDashbo
 const { data: albumData, pending: ap } = await useAsyncData("album", () => getDashboardAlbums(), { lazy: true })
 
 const albums = computed<RichAlbum[]>(() => {
-  return albumData.value?.filter(a => a.year === year.value) ?? []
+  return albumData.value?.filter(a => a.year === year.value)?.sort((a, b) => a.date.getTime() - b.date.getTime() || String(a.image).localeCompare(String(b.image))) ?? []
 })
 const tracks = computed<RichTrack[]>(() => {
-  return trackData.value?.filter(a => a.year === year.value) ?? []
+  return trackData.value?.filter(a => a.year === year.value)?.sort((a, b) => a.date.getTime() - b.date.getTime() || String(a.image).localeCompare(String(b.image))) ?? []
 })
 </script>
 

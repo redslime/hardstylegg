@@ -45,7 +45,7 @@ async function upsertAlbum(tx: TransactionClient, album: InboxAlbum) {
         create: {
             sid: album.sid,
             title: album.title,
-            year: album.year,
+            date: album.date,
             cover_art: album.cover_art,
             hidden: album.hidden ?? false,
             album_artist: {
@@ -66,7 +66,7 @@ async function upsertAlbum(tx: TransactionClient, album: InboxAlbum) {
         },
         update: {
             title: album.title,
-            year: album.year,
+            date: album.date,
             cover_art: album.cover_art,
             hidden: album.hidden ?? false,
             album_artist: {
@@ -96,7 +96,7 @@ async function upsertTrack(tx: TransactionClient, track: InboxTrack) {
         create: {
             sid: track.sid,
             title: track.title,
-            year: track.year,
+            date: track.date,
             cover_art: track.cover_art,
             hidden: track.hidden ?? false,
             track_artist: {
@@ -110,7 +110,7 @@ async function upsertTrack(tx: TransactionClient, track: InboxTrack) {
         update: {
             sid: track.sid,
             title: track.title,
-            year: track.year,
+            date: track.date,
             cover_art: track.cover_art,
             hidden: track.hidden ?? false,
             track_artist: {

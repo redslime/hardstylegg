@@ -236,3 +236,25 @@ export function zip<K, V>(array1: K[], array2: V[]): [K, V][] {
 export function distinct<T>(array: T[]): T[] {
     return [...new Set(array)]
 }
+
+export function isValidDate(value: string): boolean {
+    // Strict format check
+    const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+    if (!match) return false;
+
+    const year = Number(match[1]);
+    const month = Number(match[2]);
+    const day = Number(match[3]);
+
+    // Optional: enforce sensible year range
+    if (year < 1990 || year > 2100) return false;
+
+    // Month range
+    if (month < 1 || month > 12) return false;
+
+    // Days in month
+    const daysInMonth = new Date(year, month, 0).getDate();
+    if (day < 1 || day > daysInMonth) return false;
+
+    return true;
+}

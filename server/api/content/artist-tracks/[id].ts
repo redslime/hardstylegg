@@ -16,7 +16,7 @@ export default defineEventHandler(async (event): Promise<RichTrack[]> => {
             },
             orderBy: [
                 {
-                    year: "desc"
+                    date: "desc"
                 },
                 {
                     cover_art: "asc"
@@ -25,7 +25,7 @@ export default defineEventHandler(async (event): Promise<RichTrack[]> => {
             select: {
                 sid: true,
                 title: true,
-                year: true,
+                date: true,
                 cover_art: true,
                 track_artist: {
                     select: {
