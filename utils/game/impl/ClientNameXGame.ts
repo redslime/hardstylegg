@@ -7,6 +7,7 @@ import NameXPreview from "~/components/games/namex/NameXPreview.vue";
 import NameXEditor from "~/components/games/namex/NameXEditor.vue";
 import NameXSummary from "~/components/games/namex/NameXSummary.vue";
 import {FlatAlbum, FlatArtist, FlatTrack} from "~/types/content";
+import type {GameReport} from "~/types/models";
 
 export class ClientNameXGame extends ClientGameDef<NameXContainer> {
 
@@ -27,6 +28,18 @@ export class ClientNameXGame extends ClientGameDef<NameXContainer> {
             "Start typing in the search bar to find the track you're looking for.\n\n" +
             "You have unlimited attempts at guessing.\n" +
             "Can't figure it out? Use the skip button!";
+    }
+
+    override getPreviewDetails(reportItem: GameReport, container: NameXContainer): string {
+        if(reportItem.success) {
+            return this.respondAttempts(reportItem)
+        } else {
+            return this.respondCompleted(reportItem, container)
+        }
+    }
+
+    protected override getPreviewOptions(container: NameXContainer): number | "?" {
+        return container.goal
     }
 
     override remap(data: any): NameXContainer {

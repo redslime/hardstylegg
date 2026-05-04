@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import {getGameContainer, hasPlayedToday} from "~/utils/game";
-import {type AvgScoresContainer, type CookieDayMemory, type GameContainer, GameState} from "~/types/models";
+import {
+  type AvgScoresContainer,
+  type CookieDayMemory,
+  type CookieLastReportMemory,
+  type GameContainer,
+  type GameReport,
+  GameState
+} from "~/types/models";
 import {getTracks} from "~/utils/contentCache";
 import {refreshCookie} from "#app";
 import CookieChart from "~/components/CookieChart.vue";
@@ -8,6 +15,8 @@ import {watchOnce} from "@vueuse/shared";
 import {getYesterdayGame} from "~/utils/archive";
 import {GAME_METAS} from "#shared/games";
 import {getInfinityPreview} from "~/utils/infinity";
+import {copyToClipboard} from "~/utils/utils";
+import ResultShareButton from "~/components/ResultShareButton.vue";
 
 definePageMeta({
   layout: 'hero'
@@ -16,15 +25,28 @@ definePageMeta({
 const { data: gameData, pending } = await useAsyncData(() => getGameContainer(), { lazy: true })
 const { data: avgScores } = await useAsyncData(() => $fetch<AvgScoresContainer>('/api/scores'), { lazy: true })
 const { data: infinityPreview } = await useAsyncData(() => getInfinityPreview(), { lazy: true })
-const gameDataPast = ref<GameContainer>()
+
+const config = useRuntimeConfig()
 const cookie = useCookie<CookieDayMemory[]>("memory", {
   maxAge: 60 * 60 * 24 * 365,
   sameSite: "strict",
   default: () => []
 })
+const lastReportCookie = useCookie<CookieLastReportMemory | undefined>("lastReport", {
+  maxAge: 60 * 60 * 24 * 2,
+  sameSite: "strict",
+  default: () => undefined
+})
+
+const gameDataPast = ref<GameContainer>()
 const exists = computed(() => gameData.value !== undefined && gameData.value.dayId !== -1)
 const played = computed(() => hasPlayedToday(cookie.value, gameData.value?.dayId))
 const dataToday = computed(() => cookie.value?.find(d => d.day === gameData.value?.dayId)?.data)
+const reportsToday = computed<GameReport[] | undefined>(() => {
+  if(lastReportCookie.value?.dayId === gameData.value?.dayId) {
+    return lastReportCookie.value?.reports
+  }
+})
 const dev = import.meta.env.DEV
 
 function getState(index: number): GameState {
@@ -32,6 +54,17 @@ function getState(index: number): GameState {
     return GameState.UPCOMING
   } else {
     return dataToday.value[index] ? GameState.SUCCEEDED : GameState.FAILED
+  }
+}
+
+function copyResult() {
+  if(lastReportCookie.value && lastReportCookie.value.reports?.length > 0) {
+    const baseUrl = config.public.appUrl
+    const url = `${baseUrl}/share?c=${lastReportCookie.value.shareCode}`
+    const gamesWon = lastReportCookie.value.reports.filter(g => g.success).length
+    const gameCount = lastReportCookie.value.reports.length
+
+    copyToClipboard(`I scored ${gamesWon}/${gameCount} on hardstyle.gg today. Join me!\n${url}`)
   }
 }
 
@@ -78,13 +111,14 @@ useOnce(() => {
       </template>
       <template v-else-if="gameData && exists">
         <div class="flex justify-center flex-wrap gap-2 mb-3">
-          <GameIconRow :games="gameData.data" :getState="getState" />
+          <GameIconRow :games="gameData.data" :getState="getState" :reports="reportsToday" />
         </div>
         <button class="btn btn-primary btn-xl" v-if="!played" @click="play">Play</button>
 
         <div class="text-lg" v-if="played">
           You already played today! Next challenge starts in <Countdown />
         </div>
+        <ResultShareButton :action="copyResult" v-if="played && lastReportCookie" />
       </template>
       <template v-else>
         <div class="max-w-md">

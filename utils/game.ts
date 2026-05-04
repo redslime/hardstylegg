@@ -1,5 +1,5 @@
 import {
-    type CookieDayMemory,
+    type CookieDayMemory, type CookieLastReportMemory,
     type GameContainer,
     type GameData,
     GameEnvironment,
@@ -94,11 +94,11 @@ export function isGameActive(): boolean {
     return gameActive.value
 }
 
-export function startGame(gameEnv: GameEnvironment, isApp: boolean) {
+export function startGame(gameEnv: GameEnvironment, isApp: boolean, testCookies: boolean) {
     let local = false
     gameEnvironment = gameEnv
 
-    if(import.meta.env.DEV) {
+    if(import.meta.env.DEV && !testCookies) {
         debug("Not creating a performance report in dev mode")
         local = true
     }
@@ -216,10 +216,10 @@ export function reportResult(consumer: (report: GameReport) => void) {
     }
 }
 
-export function sendReport() {
+export function sendReport(testCookies: boolean) {
     if(report === null) return
 
-    if(import.meta.env.DEV) {
+    if(import.meta.env.DEV && !testCookies) {
         debug("Not sending report in dev env: ", report)
         return
     }
@@ -238,12 +238,26 @@ export function getReportCode() {
     return report?.code
 }
 
+export function getCurrentReport(): ReportContainer | null {
+    return report
+}
+
 export function getCookieMemory(): CookieDayMemory | undefined {
     if(report === null || report.code === 'local') return undefined
 
     return {
         day: report.dayId,
         data: report.data.map(d => d.success)
+    }
+}
+
+export function getReportCookieMemory(): CookieLastReportMemory | undefined {
+    if(report === null || report.code === 'local') return undefined
+
+    return {
+        dayId: report.dayId,
+        shareCode: report.code,
+        reports: report.data
     }
 }
 

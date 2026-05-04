@@ -7,6 +7,7 @@ import HeardlePreview from "~/components/games/heardle/HeardlePreview.vue";
 import HeardleEditor from "~/components/games/heardle/HeardleEditor.vue";
 import HeardleSummary from "~/components/games/heardle/HeardleSummary.vue";
 import {FlatTrack} from "~/types/content";
+import type {GameReport} from "~/types/models";
 
 export class ClientHeardleGame extends ClientGameDef<HeardleContainer> {
 
@@ -33,6 +34,10 @@ export class ClientHeardleGame extends ClientGameDef<HeardleContainer> {
 
     override getPreloadUrls(container: HeardleContainer): string[] {
         return [container.track.getImageUrl()]
+    }
+
+    override getPreviewDetails(reportItem: GameReport, container: HeardleContainer): string {
+        return this.respondAttempts(reportItem)
     }
 
     override remap(data: any): HeardleContainer {

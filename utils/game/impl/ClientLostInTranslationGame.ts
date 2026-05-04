@@ -7,6 +7,7 @@ import LostInTranslationPreview from "~/components/games/lost-in-translation/Los
 import LostInTranslationEditor from "~/components/games/lost-in-translation/LostInTranslationEditor.vue";
 import LostInTranslationSummary from "~/components/games/lost-in-translation/LostInTranslationSummary.vue";
 import {FlatTrack} from "~/types/content";
+import type {GameReport} from "~/types/models";
 
 export class ClientLostInTranslationGame extends ClientGameDef<LostInTranslationContainer> {
 
@@ -29,6 +30,10 @@ export class ClientLostInTranslationGame extends ClientGameDef<LostInTranslation
             "Start typing in the search bar to find the track you're looking for.\n\n" +
             "You have unlimited attempts at guessing.\n" +
             "Can't figure it out? Use the skip button!";
+    }
+
+    override getPreviewDetails(reportItem: GameReport, container: LostInTranslationContainer): string {
+        return this.respondAttempts(reportItem)
     }
 
     override remap(data: any): LostInTranslationContainer {

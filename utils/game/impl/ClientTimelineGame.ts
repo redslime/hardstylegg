@@ -6,6 +6,7 @@ import TimelineIcon from "~/components/games/timeline/TimelineIcon.vue";
 import TimelinePreview from "~/components/games/timeline/TimelinePreview.vue";
 import TimelineEditor from "~/components/games/timeline/TimelineEditor.vue";
 import TimelineSummary from "~/components/games/timeline/TimelineSummary.vue";
+import type {GameReport} from "~/types/models";
 
 export class ClientTimelineGame extends ClientGameDef<TimelineContainer> {
 
@@ -26,6 +27,22 @@ export class ClientTimelineGame extends ClientGameDef<TimelineContainer> {
             "You can submit your order by pressing 'Submit'.\n\n" +
             "You only have one attempt at guessing!\n" +
             "Can't figure it out? Use the skip button!";
+    }
+
+    override getPreviewDetails(reportItem: GameReport, container: TimelineContainer): string {
+        if(!reportItem.success && reportItem.itemsClicked) {
+            try {
+                const array = reportItem.itemsClicked
+
+                if(array.length === 1 && array[0] && array[0] > 0) {
+                    return array[0] + " off"
+                }
+            } catch(e: any) {
+                console.error(e)
+            }
+        }
+
+        return ""
     }
 
     override remap(data: any): TimelineContainer {

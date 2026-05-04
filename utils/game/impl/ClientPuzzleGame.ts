@@ -7,6 +7,7 @@ import PuzzleIcon from "~/components/games/puzzle/PuzzleIcon.vue";
 import PuzzlePreview from "~/components/games/puzzle/PuzzlePreview.vue";
 import PuzzleEditor from "~/components/games/puzzle/PuzzleEditor.vue";
 import PuzzleSummary from "~/components/games/puzzle/PuzzleSummary.vue";
+import type {GameReport} from "~/types/models";
 
 export class ClientPuzzleGame extends ClientGameDef<PuzzleContainer> {
 
@@ -41,6 +42,18 @@ export class ClientPuzzleGame extends ClientGameDef<PuzzleContainer> {
         }
 
         return data
+    }
+
+    override getPreviewDetails(reportItem: GameReport, container: PuzzleContainer): string {
+        if(reportItem.success) {
+            return this.respondAttempts(reportItem)
+        } else {
+            return this.respondCompleted(reportItem, container)
+        }
+    }
+
+    protected override getPreviewOptions(container: PuzzleContainer): number | "?" {
+        return container.tracks.length
     }
 
     public calculatePoolItems(container: PuzzleContainer): PuzzleItem[] {

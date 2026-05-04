@@ -8,6 +8,7 @@ import ZoomerEditor from "~/components/games/zoomer/ZoomerEditor.vue";
 import ZoomerSummary from "~/components/games/zoomer/ZoomerSummary.vue";
 import type {ZoomerType} from "~/types/zoomerModels";
 import {shallowRecordEquals} from "~/utils/utils";
+import type {GameReport} from "~/types/models";
 
 export class ClientZoomerGame extends ClientGameDef<ZoomerContainer> {
 
@@ -59,6 +60,10 @@ export class ClientZoomerGame extends ClientGameDef<ZoomerContainer> {
 
     override getPreloadUrls(container: ZoomerContainer): string[] {
         return ['/zoomer/' + container.data.imgName + ".webp"]
+    }
+
+    override getPreviewDetails(reportItem: GameReport, container: ZoomerContainer): string {
+        return this.respondAttempts(reportItem)
     }
 
     override remap(data: any): ZoomerContainer {

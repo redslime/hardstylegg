@@ -7,6 +7,7 @@ import OrderPreview from "~/components/games/order/OrderPreview.vue";
 import OrderEditor from "~/components/games/order/OrderEditor.vue";
 import OrderSummary from "~/components/games/order/OrderSummary.vue";
 import {FlatTrack} from "~/types/content";
+import type {GameReport} from "~/types/models";
 
 export class ClientOrderGame extends ClientGameDef<OrderContainer> {
 
@@ -32,6 +33,14 @@ export class ClientOrderGame extends ClientGameDef<OrderContainer> {
 
     override getPreloadUrls(container: OrderContainer): string[] {
         return container.items.map(item => item.track.getImageUrl())
+    }
+
+    override getPreviewDetails(reportItem: GameReport, container: OrderContainer): string {
+        return this.respondCompleted(reportItem, container)
+    }
+
+    protected override getPreviewOptions(container: OrderContainer): number | "?" {
+        return container.items.length
     }
 
     override remap(data: any): OrderContainer {

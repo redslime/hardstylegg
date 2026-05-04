@@ -6,6 +6,7 @@ import TimetablePreview from "~/components/games/timetable/TimetablePreview.vue"
 import TimetableEditor from "~/components/games/timetable/TimetableEditor.vue";
 import TimetableIcon from "~/components/games/timetable/TimetableIcon.vue";
 import TimetableSummary from "~/components/games/timetable/TimetableSummary.vue";
+import type {GameReport} from "~/types/models";
 
 export class ClientTimetableGame extends ClientGameDef<TimetableContainer> {
 
@@ -27,6 +28,14 @@ export class ClientTimetableGame extends ClientGameDef<TimetableContainer> {
             "Correct ones are automatically accepted!\n\n" +
             "You have unlimited attempts at guessing.\n" +
             "Can't figure it out? Use the skip button!";
+    }
+
+    override getPreviewDetails(reportItem: GameReport, container: TimetableContainer): string {
+        return this.respondCompleted(reportItem, container)
+    }
+
+    protected override getPreviewOptions(container: TimetableContainer): number | "?" {
+        return container.items.length
     }
 
     override remap(data: any): TimetableContainer {

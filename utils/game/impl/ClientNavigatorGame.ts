@@ -7,6 +7,7 @@ import NavigatorIcon from "~/components/games/navigator/NavigatorIcon.vue";
 import NavigatorPreview from "~/components/games/navigator/NavigatorPreview.vue";
 import NavigatorEditor from "~/components/games/navigator/NavigatorEditor.vue";
 import NavigatorSummary from "~/components/games/navigator/NavigatorSummary.vue";
+import type {GameReport} from "~/types/models";
 
 export class ClientNavigatorGame extends ClientGameDef<NavigatorContainer> {
 
@@ -34,6 +35,10 @@ export class ClientNavigatorGame extends ClientGameDef<NavigatorContainer> {
             + "Every time you jump to another artist counts as one step.\n"
             + "You have " + container.steps + " steps to navigate to " + container.to.getDisplayName() + "!\n\n"
             + "Can't figure it out? Use the skip button!";
+    }
+
+    override getPreviewDetails(reportItem: GameReport, container: NavigatorContainer): string {
+        return this.respondAttempts(reportItem)
     }
 
     override remap(data: any): NavigatorContainer {

@@ -8,6 +8,7 @@ import ResultShareButton from "~/components/ResultShareButton.vue";
 import {
   getCookieMemory,
   getReportCode,
+  getReportCookieMemory,
   hasPlayedToday,
   reportResult,
   sendReport,
@@ -16,6 +17,7 @@ import {
 } from "~/utils/game";
 import {
   type CookieDayMemory,
+  type CookieLastReportMemory,
   type CookieStreakMemory,
   type GameContainer,
   type GameData,
@@ -31,14 +33,24 @@ import InfinityHeader from "~/components/infinity/InfinityHeader.vue";
 import {copyInfinityResult, getInfinityShareCode} from "~/utils/infinity";
 
 const { $gameRegistry } = useNuxtApp();
+const streak = useLocalStorage<CookieStreakMemory>("streak", { streak: 0, lastDayId: -1 })
+const lastReportCookie = useCookie<CookieLastReportMemory | undefined>("lastReport", {
+  maxAge: 60 * 60 * 24 * 2,
+  sameSite: "strict",
+  default: () => undefined
+})
+
 const props = defineProps({
   gameEnv: { type: Number as PropType<GameEnvironment>, required: true },
   gameData: { type: Object as PropType<GameContainer>, required: true },
   cookie: { type: Object as PropType<CookieDayMemory[]> }
 })
+
+const config = useRuntimeConfig()
+const testCookies = Boolean(config.public.testCookies)
 const isApp = inject<boolean>("isApp", false) as unknown as Ref<boolean>
-const streak = useLocalStorage<CookieStreakMemory>("streak", { streak: 0, lastDayId: -1 })
 const emit = defineEmits(['finish'])
+
 const dayId = ref<number>(props.gameData.dayId)
 const gameData = reactive<GameData[]>(props.gameData.data)
 const currentIndex = ref(0)
@@ -113,33 +125,41 @@ function advanceStreak() {
 
 function next() {
   if(currentIndex.value+1 >= gameData.length) {
-    summary.value = true
-    currentIndex.value = 0
-
-    updateState(null, null)
-    sendReport()
-
-    if(props.cookie) {
-      advanceStreak()
-
-      const data = getCookieMemory()
-
-      if(data) {
-        if(props.cookie.length >= 14) {
-          debug("removing oldest cookie memory data")
-          props.cookie.shift()
-        }
-
-        debug("pushing data into cookie: ", data)
-        props.cookie.push(data)
-      }
-    }
+    finish()
   } else {
     currentIndex.value++
     currentGameData.value.props.state = GameState.PLAYING
     updateState(currentTypeId.value, currentGameId.value)
     checkHelpModal()
   }
+}
+
+function finish() {
+  summary.value = true
+  currentIndex.value = 0
+
+  updateState(null, null)
+  sendReport(testCookies)
+
+  // CookieDayMemory
+  if(props.cookie) {
+    advanceStreak()
+
+    const data = getCookieMemory()
+
+    if(data) {
+      if(props.cookie.length >= 14) {
+        debug("removing oldest cookie memory data")
+        props.cookie.shift()
+      }
+
+      debug("pushing data into cookie: ", data)
+      props.cookie.push(data)
+    }
+  }
+
+  // CookieLastReportMemory
+  lastReportCookie.value = getReportCookieMemory()
 }
 
 function checkHelpModal() {
@@ -150,22 +170,24 @@ function checkHelpModal() {
 }
 
 const copyResult = () => {
+  const baseUrl = config.public.appUrl
+
   if(props.gameEnv === GameEnvironment.DAILY) {
     const reportCode = getReportCode()
-    let url = `https://hardstyle.gg/share?r=${shareCode.value}`
+    let url = `${baseUrl}/share?r=${shareCode.value}`
 
     if(reportCode && reportCode !== 'local') {
-      url = `https://hardstyle.gg/share?c=${reportCode}`
+      url = `${baseUrl}/share?c=${reportCode}`
     }
 
     copyToClipboard(`I scored ${gamesWon.value}/${gameData.length} on hardstyle.gg today. Join me!\n${url}`)
   } else if(props.gameEnv === GameEnvironment.INFINITY) {
-    copyInfinityResult(gameData)
+    copyInfinityResult(gameData, baseUrl)
   }
 }
 
 useOnce(() => {
-  startGame(props.gameEnv, isApp.value)
+  startGame(props.gameEnv, isApp.value, testCookies)
   getTracks().then(() => {}) // preload tracks
 })
 

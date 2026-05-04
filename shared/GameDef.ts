@@ -1,4 +1,5 @@
 import type {GameMeta} from "#shared/GameMeta";
+import type {GameReport, ReportItem} from "~/types/models";
 
 export abstract class GameDef<T extends EditorContainer> {
 
@@ -29,5 +30,13 @@ export abstract class GameDef<T extends EditorContainer> {
 
     public getSpacedName(): string {
         return this.name.replace(/[A-Z]/g, m => " " + m);
+    }
+
+    protected respondAttempts(reportItem: ReportItem | GameReport): string {
+        if(reportItem.success) {
+            return "in " + reportItem.attempts
+        }
+
+        return ""
     }
 }

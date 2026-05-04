@@ -8,6 +8,7 @@ import ArtworkEditor from "~/components/games/artwork/ArtworkEditor.vue";
 import ArtworkSummary from "~/components/games/artwork/ArtworkSummary.vue";
 import {FlatTrack} from "~/types/content";
 import {getLocalArtwork} from "~/utils/utils";
+import type {GameReport} from "~/types/models";
 
 export class ClientArtworkGame extends ClientGameDef<ArtworkContainer> {
 
@@ -32,6 +33,10 @@ export class ClientArtworkGame extends ClientGameDef<ArtworkContainer> {
 
     override getPreloadUrls(container: ArtworkContainer): string[] {
         return [getLocalArtwork(container.imgName)!!, container.track.getImageUrl()]
+    }
+
+    override getPreviewDetails(reportItem: GameReport, container: ArtworkContainer): string {
+        return this.respondAttempts(reportItem)
     }
 
     override remap(data: any): ArtworkContainer {

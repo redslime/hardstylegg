@@ -63,7 +63,8 @@ export default defineNuxtConfig({
         public: {
             appUrl: process.env.NUXT_PUBLIC_APP_URL,
             discordClientId: process.env.NUXT_PUBLIC_DISCORD_CLIENT_ID,
-            isDev: process.env.NODE_ENV !== 'production'
+            isDev: process.env.NODE_ENV !== 'production',
+            testCookies: process.env.TEST_COOKIES,
         }
     },
 

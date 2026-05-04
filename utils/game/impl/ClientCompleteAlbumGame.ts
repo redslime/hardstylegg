@@ -7,6 +7,7 @@ import CompleteAlbumPreview from "~/components/games/complete-album/CompleteAlbu
 import CompleteAlbumEditor from "~/components/games/complete-album/CompleteAlbumEditor.vue";
 import CompleteAlbumSummary from "~/components/games/complete-album/CompleteAlbumSummary.vue";
 import {FlatAlbum} from "~/types/content";
+import type {GameReport} from "~/types/models";
 
 export class ClientCompleteAlbumGame extends ClientGameDef<CompleteAlbumContainer> {
 
@@ -30,6 +31,14 @@ export class ClientCompleteAlbumGame extends ClientGameDef<CompleteAlbumContaine
             "The order of the tracks matters!\n\n" +
             "You have unlimited attempts at guessing.\n" +
             "Can't figure it out? Use the skip button!";
+    }
+
+    override getPreviewDetails(reportItem: GameReport, container: CompleteAlbumContainer): string {
+        return this.respondCompleted(reportItem, container)
+    }
+
+    protected override getPreviewOptions(container: CompleteAlbumContainer): number | "?" {
+        return container.items.length
     }
 
     override remap(data: any): CompleteAlbumContainer {

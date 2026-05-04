@@ -121,6 +121,12 @@ export interface CookieDayMemory {
     data: boolean[]
 }
 
+export interface CookieLastReportMemory {
+    dayId: number
+    shareCode: string
+    reports: GameReport[]
+}
+
 export interface CookieStreakMemory {
     streak: number
     lastDayId: number

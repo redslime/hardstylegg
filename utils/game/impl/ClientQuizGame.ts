@@ -6,6 +6,7 @@ import QuizIcon from "~/components/games/quiz/QuizIcon.vue";
 import QuizPreview from "~/components/games/quiz/QuizPreview.vue";
 import QuizEditor from "~/components/games/quiz/QuizEditor.vue";
 import QuizSummary from "~/components/games/quiz/QuizSummary.vue";
+import type {GameReport} from "~/types/models";
 
 export class ClientQuizGame extends ClientGameDef<QuizContainer> {
 
@@ -26,6 +27,14 @@ export class ClientQuizGame extends ClientGameDef<QuizContainer> {
             "Some questions may accept multiple answers.\n\n" +
             "You only have one attempt at guessing!\n" +
             "Can't figure it out? Use the skip button!";
+    }
+
+    override getPreviewDetails(reportItem: GameReport, container: QuizContainer): string {
+        return this.respondCompleted(reportItem, container)
+    }
+
+    protected override getPreviewOptions(container: QuizContainer): number | "?" {
+        return container.items.length
     }
 
     override remap(data: any): QuizContainer {

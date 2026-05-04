@@ -29,7 +29,7 @@ export function getInfinityShareCode(): string | undefined | null {
     return infinityData?.shareCode
 }
 
-export function copyInfinityResult(gameData: GameData[]) {
+export function copyInfinityResult(gameData: GameData[], baseUrl: string) {
     const { $gameRegistry } = useNuxtApp()
     const total = gameData.length
     const successful = gameData.filter(g => g.props.state === GameState.SUCCEEDED).length
@@ -40,14 +40,14 @@ export function copyInfinityResult(gameData: GameData[]) {
 
         if(infinityData.shareCode) {
             // ?icc
-            const url = `https://hardstyle.gg/share?icc=${infinityData.shareCode}&s=${successful}/${total}${yearParam}`
+            const url = `${baseUrl}/share?icc=${infinityData.shareCode}&s=${successful}/${total}${yearParam}`
             copyToClipboard(`I scored ${percentage}% in Infinity challenge ${infinityData.shareCode}. Can you beat me?\n${url}`)
         } else {
             // ?ic
             const gameDefs = distinct(gameData.map(g => g.name)).map(s => $gameRegistry.findGameByName(s))
             const typeIds = gameDefs.filter(s => s !== undefined).map(s => s.id!!)
             const typeIdsEncoding = encodeIdSelection(typeIds)
-            const url = `https://hardstyle.gg/share?ic=${typeIdsEncoding}&s=${successful}/${total}${yearParam}`
+            const url = `${baseUrl}/share?ic=${typeIdsEncoding}&s=${successful}/${total}${yearParam}`
             copyToClipboard(`I scored ${percentage}% in Infinity mode. Can you beat me?\n${url}`)
         }
     }

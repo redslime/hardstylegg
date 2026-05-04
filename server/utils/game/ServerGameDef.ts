@@ -40,14 +40,6 @@ export abstract class ServerGameDef<T extends EditorContainer> extends GameDef<T
         return await readBody<T>(event)
     }
 
-    protected respondAttempts(reportItem: ReportItem): string {
-        if(reportItem.success) {
-            return "in " + reportItem.attempts
-        }
-
-        return ""
-    }
-
     protected async respondCompleted(reportItem: ReportItem): Promise<string> {
         if(!reportItem.success && reportItem.items_completed) {
             try {

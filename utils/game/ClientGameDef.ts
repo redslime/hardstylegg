@@ -1,6 +1,6 @@
 import type {GameMeta} from "#shared/GameMeta";
 import {GameDef} from "#shared/GameDef";
-import type {GameReportFlat} from "~/types/models";
+import type {GameReport, GameReportFlat} from "~/types/models";
 
 export abstract class ClientGameDef<T extends EditorContainer> extends GameDef<T> {
 
@@ -43,6 +43,33 @@ export abstract class ClientGameDef<T extends EditorContainer> extends GameDef<T
 
     public async getGameReports(gameId: number): Promise<GameReportFlat[]> {
         return await $fetch<GameReportFlat[]>('/api/dashboard/stats/' + this.name.toLowerCase() + '?gid=' + gameId)
+    }
+
+    public getPreviewDetails(reportItem: GameReport, container: T): string {
+        return ""
+    }
+
+    protected getPreviewOptions(container: T): number | "?" {
+        return "?"
+    }
+
+    protected respondCompleted(reportItem: GameReport, container: T): string {
+        if(!reportItem.success && reportItem.itemsCompleted) {
+            try {
+                const completed = reportItem.itemsCompleted
+                const count = Object.values(completed).filter(v => v).length
+
+                if(count > 0) {
+                    const options = this.getPreviewOptions(container)
+                    return count + "/" + options
+                }
+            } catch(e: any) {
+                console.error(e)
+                return ""
+            }
+        }
+
+        return ""
     }
 
     public getPreloadUrls(container: T): string[] {

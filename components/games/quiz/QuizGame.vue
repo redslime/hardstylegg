@@ -2,8 +2,7 @@
 import {GameState} from "~/types/models";
 import {shuffleArray} from "~/utils/utils";
 import type {QuizAnswer, QuizContainer} from "~/types/gameModels";
-import {countOption} from "~/utils/game";
-import LightBulbIcon from "~/components/icons/LightBulbIcon.vue";
+import {countItem, countOption} from "~/utils/game";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.QuizDef
@@ -27,6 +26,7 @@ const click = (answer: QuizAnswer) => {
         if(!selected.value.includes(answer)) {
           selected.value.push(answer)
           countOption(answer.id)
+          countItem(answer.id, true)
         }
 
         if(correctAnswers === selected.value.length) {
@@ -34,6 +34,7 @@ const click = (answer: QuizAnswer) => {
         }
       } else {
         countOption(answer.id)
+        countItem(answer.id, true)
         emit("onFinish", GameState.SUCCEEDED)
       }
     } else {
