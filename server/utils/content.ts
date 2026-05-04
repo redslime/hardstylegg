@@ -1,4 +1,4 @@
-import {FlatAlbum, FlatArtist, FlatTrack, RichArtist} from "~/types/content";
+import {FlatAlbum, FlatArtist, FlatTrack, RichArtist, RichTrack} from "~/types/content";
 import prisma from "~/lib/prisma";
 
 export async function getArtist(artistId: string): Promise<FlatArtist> {
@@ -98,4 +98,37 @@ export async function getFlatTracks(trackIds: string[]): Promise<FlatTrack[]> {
             image: rec.cover_art
         }
     }).map(FlatTrack.fromJson)
+}
+
+export async function getRichTracks(trackIds: string[]): Promise<RichTrack[]> {
+    const recs = await prisma.track.findMany({
+        select: {
+            sid: true,
+            title: true,
+            date: true,
+            cover_art: true,
+            hidden: true,
+            track_artist: {
+                select: {
+                    artist: true
+                }
+            }
+        },
+        where: {
+            sid: {
+                in: trackIds
+            }
+        }
+    })
+
+    return recs.map(rec => {
+        return <RichTrack>{
+            sid: rec.sid,
+            title: rec.title,
+            date: rec.date,
+            artists: rec.track_artist.map(a => a.artist),
+            image: rec.cover_art,
+            hidden: rec.hidden
+        }
+    })
 }

@@ -127,3 +127,7 @@ export interface NavigatorContainer extends EditorContainer {
     to: RichArtist
     steps: number
 }
+
+export interface PuzzleContainer extends EditorContainer {
+    tracks: RichTrack[]
+}

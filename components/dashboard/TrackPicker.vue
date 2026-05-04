@@ -4,11 +4,13 @@ import {getDashboardAlbums, getDashboardTracks} from "~/utils/dashboard";
 import TrackAlbumGrid from "~/components/dashboard/TrackAlbumGrid.vue";
 import {RichAlbum, RichTrack} from "~/types/content";
 
-const { albums, title, disabled } = defineProps({
+const { albums, title, disabled, style, button } = defineProps({
   albums: { type: Boolean, default: false },
   title: { type: String, default: "Select" },
   disabled: { type: Boolean, default: false },
-  existing: { type: Array as PropType<string[]>, default: [] }
+  existing: { type: Array as PropType<string[]>, default: [] },
+  style: { type: String, default: "" },
+  button: { type: Boolean, default: true },
 })
 const emit = defineEmits<{
   selected: [track: RichTrack | RichAlbum]
@@ -26,13 +28,32 @@ function select(track: RichTrack) {
 
 <template>
   <template v-if="pending">
-    <button class="btn btn-soft btn-primary" disabled><span class="loading loading-dots loading-md"></span> Loading {{ mode }} database</button>
+    <template v-if="button">
+      <button class="btn btn-soft btn-primary" :class="[style]" disabled><span class="loading loading-dots loading-md"></span> Loading {{ mode }} database</button>
+    </template>
+    <template v-else>
+      <span class="loading loading-dots loading-md"></span> Loading {{ mode }} database
+    </template>
   </template>
   <template v-else-if="error">
-    <button class="btn btn-soft btn-error" disabled>Failed to load {{ mode }} database</button>
+    <template v-if="button">
+      <button class="btn btn-soft btn-error" :class="[style]" disabled>Failed to load {{ mode }} database</button>
+    </template>
+    <template v-else>
+      Failed to load {{ mode }} database
+    </template>
   </template>
   <template v-else-if="allOptions">
-    <button class="btn btn-soft btn-primary" :disabled="disabled" @click="modal?.showModal()">{{ title }} {{ mode }}</button>
+    <template v-if="button">
+      <button class="btn btn-soft btn-primary" :class="[style]" :disabled="disabled" @click="modal?.showModal()">{{ title }} {{ mode }}</button>
+    </template>
+    <template v-else>
+      <div @click="modal?.showModal()" :class="[style]">
+        <slot>
+          {{ title }} {{ mode }}
+        </slot>
+      </div>
+    </template>
 
     <dialog id="trackPickerModal" ref="modal" class="modal">
       <div class="modal-box max-w-4/5 bg-base-300">

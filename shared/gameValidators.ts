@@ -8,6 +8,7 @@ import type {
     NameXContainer,
     NavigatorContainer,
     OrderContainer,
+    PuzzleContainer,
     QuizContainer,
     TimelineContainer,
     TimetableContainer,
@@ -338,6 +339,23 @@ export function validateNavigator(navigator: NavigatorContainer): string[] {
     }
     if(navigator.steps > 5) {
         errors.push("Max step count must be at most 5")
+    }
+
+    return errors
+}
+
+export function validatePuzzle(puzzle: PuzzleContainer): string[] {
+    const errors: string[] = []
+
+    if(!puzzle.tracks) {
+        errors.push("Tracks are required")
+    } else {
+        if(puzzle.tracks.length < 2) {
+            errors.push("At least 2 tracks required")
+        }
+        if(puzzle.tracks.length < new Set(puzzle.tracks).size) {
+            errors.push("Tracks must be unique!")
+        }
     }
 
     return errors

@@ -50,6 +50,7 @@ export function registerGames() {
         new ServerZoomerGame(),
         new ServerLostInTranslationGame(),
         new ServerWordleGame(),
-        new ServerNavigatorGame()
+        new ServerNavigatorGame(),
+        new ServerPuzzleGame()
     )
 }

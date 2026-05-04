@@ -10,6 +10,7 @@ export default defineEventHandler(async (event) => {
     let editAnyway = false
 
     if(schedule.typeIds.length !== schedule.gameIds.length) {
+        console.log(schedule)
         return createError({
             statusCode: 400,
             statusMessage: "Type and game ids must be the same length"

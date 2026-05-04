@@ -9,6 +9,7 @@ import {
     validateNameX,
     validateNavigator,
     validateOrder,
+    validatePuzzle,
     validateQuiz,
     validateTimeline,
     validateTimetable,
@@ -86,6 +87,11 @@ export const GAME_METAS = {
         id: 14,
         name: "Navigator",
         validator: validateNavigator
+    },
+    Puzzle: {
+        id: 15,
+        name: "Puzzle",
+        validator: validatePuzzle
     }
  } satisfies Record<string, GameMeta>
 export const YEAR_FILTER_GAMES = [GAME_METAS.Artwork.id, GAME_METAS.CompleteAlbum.id, GAME_METAS.CompleteLyrics.id, GAME_METAS.Heardle.id]
