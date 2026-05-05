@@ -159,11 +159,13 @@ function finish() {
   }
 
   // CookieLastReportMemory
-  lastReportCookie.value = getReportCookieMemory()
+  if(props.gameEnv === GameEnvironment.DAILY) {
+    lastReportCookie.value = getReportCookieMemory()
+  }
 }
 
 function checkHelpModal() {
-  if(currentGameId.value <= 2 && currentTypeId.value > 13) {
+  if(props.gameEnv === GameEnvironment.DAILY && currentGameId.value <= 2 && currentTypeId.value > 13) {
     // first/second game of new gamemode, show help modal
     helpModal.value?.showModal()
   }
