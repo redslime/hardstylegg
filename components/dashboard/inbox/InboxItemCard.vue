@@ -17,7 +17,7 @@ const { item, artists, day, selectDay } = defineProps({
 const emit = defineEmits<{
   submit: [item: InboxItem],
   discard: [item: InboxItem],
-  newArtist: [artist: RichArtist]
+  newArtists: [artists: RichArtist[]]
 }>()
 
 const isAlbum = computed<boolean>(() => "tracks" in item)
@@ -82,6 +82,7 @@ function clicked(event: PointerEvent) {
 }
 
 async function importArtists() {
+  const imported: RichArtist[] = []
   importingArtists.value = true
 
   for(const missing of artistsMissing.value) {
@@ -90,13 +91,15 @@ async function importArtists() {
         method: "POST",
         body: missing
       })
-      emit("newArtist", fetched)
+      imported.push(fetched)
     } catch (e: any) {
       console.error(e)
+      return;
     }
   }
 
   importingArtists.value = false
+  emit("newArtists", imported)
 }
 
 function toggleHidden() {

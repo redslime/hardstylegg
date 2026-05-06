@@ -57,8 +57,8 @@ function discard(item: InboxItem) {
   })
 }
 
-async function newArtist(artist: RichArtist) {
-  updateDashboardArtist(artist)
+async function newArtists(artists: RichArtist[]) {
+  artists.forEach(a => updateDashboardArtist(a))
   await refresh()
   renderKey.value++
 }
@@ -124,7 +124,7 @@ async function importItems() {
 
       <div class="flex flex-wrap gap-4" v-if="artists">
         <InboxItemCard v-for="item in sort(items)" :item="item" :artists="artists" :day="day" :selectDay="selectDay" :key="item.sid"
-                       @submit="submit" @discard="discard" @newArtist="newArtist" />
+                       @submit="submit" @discard="discard" @newArtists="newArtists" />
       </div>
     </template>
   </div>
