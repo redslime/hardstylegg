@@ -189,7 +189,7 @@ watch(() => selectDay, (newDay) => {
             </div>
           </div>
           <div class="text-xs opacity-70">
-            {{ item.year }}
+            {{ new Date(item.date).getFullYear() }}
           </div>
           <div class="badge badge-neutral badge-xs tooltip" v-if="item.hidden"
                data-tip="Hidden tracks don't show up in user-facing input suggestions">
