@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import CalendarDaysIcon from "~/components/icons/CalendarDaysIcon.vue";
-import {GAMES_PER_DAY, getDashboardData, getFriendlyName, updateScheduleDay} from "~/utils/dashboard";
+import {
+  GAMES_PER_DAY,
+  getDashboardData,
+  getFriendlyName,
+  getLastPlayedDelta,
+  updateScheduleDay
+} from "~/utils/dashboard";
 import {GameState, type PackedDayData, type ScheduleDay, type ScheduleEntry} from "~/types/models";
 import NoSymbolIcon from "~/components/icons/NoSymbolIcon.vue";
 import ArrowPathIcon from "~/components/icons/ArrowPathIcon.vue";
@@ -101,6 +107,24 @@ function getHrefTo(newId: number) {
   }
 }
 
+function getLastPlayed(typeId: number): string | undefined {
+  const delta = getLastPlayedDelta(typeId)
+
+  if(delta !== undefined) {
+    if(delta === -1) {
+      return "Next played tomorrow"
+    } else if(delta < 0) {
+      return `Next played in ${delta} days`
+    } else if(delta === 0) {
+      return "Last played today"
+    } else if(delta === 1) {
+      return "Last played yesterday"
+    } else {
+      return `Last played ${delta} days ago`
+    }
+  }
+}
+
 watchOnce(packedGameData, (data) => {
   if(data) {
     // seems to be well-defined already, just fill
@@ -194,8 +218,18 @@ watch(() => route.params.dayId, async () => {
                 :class="{'dropdown-top': index >= 2}">
               <li v-for="[_, comp] of Object.entries($gameRegistry.getGames())" :key="comp.id">
                 <a @click="openSelect(comp.id, index)">
-                  <component :is="comp.icon" :state="GameState.UPCOMING" />
-                  {{ comp.getSpacedName() }}
+                  <div class="flex items-center gap-3">
+                    <component :is="comp.icon" :state="GameState.UPCOMING" class="size-7" />
+
+                    <div class="flex flex-col">
+                      <div class="font-bold">
+                        {{ comp.getSpacedName() }}
+                      </div>
+                      <span class="text-xs opacity-70 -mt-1" v-if="getLastPlayed(comp.id) !== null">
+                        {{ getLastPlayed(comp.id) }}
+                      </span>
+                    </div>
+                  </div>
                 </a>
               </li>
             </ul>

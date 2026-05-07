@@ -131,3 +131,11 @@ export function deleteTrack(track: RichTrack) {
 export function deleteAlbum(album: RichAlbum) {
     albums?.splice(albums.indexOf(album), 1)
 }
+
+export function getLastPlayedDelta(typeId: number): number | undefined {
+    const lastDay = dashboardData?.schedule?.days?.findLast(d => d.typeIds.includes(typeId))
+
+    if(lastDay && dashboardData?.schedule?.todayId) {
+        return dashboardData.schedule.todayId - lastDay.day
+    }
+}
