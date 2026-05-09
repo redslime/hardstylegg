@@ -2,7 +2,7 @@
 import type {ScheduleDay} from "~/types/models";
 import {getScheduleForGame} from "~/utils/dashboard";
 
-const emit = defineEmits(['deleted'])
+const emit = defineEmits<{ deleted: [id: number] }>()
 const { user } = useUserSession()
 const confirmed = ref<boolean>(false)
 const deletingModal = ref<HTMLDialogElement | undefined>()
@@ -38,7 +38,7 @@ async function del() {
     })
 
     if(data) {
-      emit('deleted', editing?.id)
+      emit('deleted', editing.id!!)
       deletingResponse.value = true
       deletingModal.value?.close()
     } else {

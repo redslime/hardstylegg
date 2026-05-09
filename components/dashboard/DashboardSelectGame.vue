@@ -6,7 +6,9 @@ import DashboardStateFilterSelector from "~/components/dashboard/DashboardStateF
 
 const { user } = useUserSession()
 const { $gameRegistry } = useNuxtApp();
-const emit = defineEmits(['select'])
+const emit = defineEmits<{
+  select: [obj: { data: AnyGameContainer, typeId: number }]
+}>()
 const { typeId } = defineProps({
   typeId: { type: Number, required: true }
 })
@@ -15,7 +17,7 @@ const { data, pending, error, clear } = await useAsyncData<AnyGameContainers>(()
 }, { lazy: true })
 
 const editorFilter = ref<Editor | undefined>(undefined)
-const filteredData = computed(() => {
+const filteredData = computed<AnyGameContainer[]>(() => {
   const f1: (instance: AnyGameContainer) => boolean = i => {
     const schedule = getScheduleForGame(typeId, i.id)
     return schedule === undefined // = unused state
@@ -32,7 +34,7 @@ const filteredData = computed(() => {
   return data.value?.filter(f1).filter(f2).filter(f3) ?? []
 })
 
-function select(instance: any) {
+function select(instance: AnyGameContainer) {
   emit('select', { data: instance, typeId: typeId})
 }
 
@@ -54,8 +56,9 @@ onUnmounted(() => {
       <div class="relative group w-fit" v-for="instance in filteredData" :key="instance.id">
         <DashboardGamePreview :typeId="typeId!!" :instance="instance" />
 
-        <div class="absolute z-5 inset-0 rounded-lg border-1 border-primary flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer" @click="select(instance)">
-
+        <div class="absolute z-5 inset-0 rounded-lg border-1 border-primary flex items-center justify-center gap-3
+            opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer"
+            @click="select(instance)">
         </div>
       </div>
     </div>

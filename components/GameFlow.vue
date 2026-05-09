@@ -49,7 +49,7 @@ const props = defineProps({
 const config = useRuntimeConfig()
 const testCookies = Boolean(config.public.testCookies)
 const isApp = inject<boolean>("isApp", false) as unknown as Ref<boolean>
-const emit = defineEmits(['finish'])
+const emit = defineEmits<{ finish: [] }>()
 
 const dayId = ref<number>(props.gameData.dayId)
 const gameData = reactive<GameData[]>(props.gameData.data)

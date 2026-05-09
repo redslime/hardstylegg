@@ -13,7 +13,7 @@ import ZoomerTypeBadge from "~/components/games/zoomer/ZoomerTypeBadge.vue";
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.ZoomerDef
 
-const emit = defineEmits(['onFinish'])
+const emit = defineEmits<{ onFinish: [state: GameState] }>()
 const props = defineProps({
   state: { type: Number as PropType<GameState>, required: true },
   position: { type: Number as PropType<number>, required: true },

@@ -15,6 +15,7 @@ import {watchOnce} from "@vueuse/shared";
 import ArrowTopRightOpenIcon from "~/components/icons/ArrowTopRightOpenIcon.vue";
 import ChevronLeftIcon from "~/components/icons/ChevronLeftIcon.vue";
 import ChevronRightArrow from "~/components/icons/ChevronRightArrow.vue";
+import type {AnyGameContainer} from "~/types/gameModels";
 
 definePageMeta({
   layout: 'dashboard',
@@ -54,10 +55,12 @@ async function openSelect(typeId: number, index: number) {
 }
 
 function jumpTo(game: ScheduleEntry) {
-  navigateTo({ path: '/admin/game/' + game.gameDef?.getDashedName(), query: { id: game.gameData.id }})
+  if(game.gameData) {
+    navigateTo({ path: '/admin/game/' + game.gameDef?.getDashedName(), query: { id: game.gameData.id }})
+  }
 }
 
-function selected(typeId: number, ins: any) {
+function selected(typeId: number, ins: AnyGameContainer) {
   if(selectingIndex.value !== undefined && games.value) {
     games.value[selectingIndex.value]!!.typeId = typeId
     games.value[selectingIndex.value]!!.gameData = ins
@@ -183,7 +186,7 @@ watch(() => route.params.dayId, async () => {
         </div>
 
         <div class="relative group w-fit" v-if="game.typeId">
-          <DashboardGamePreview :typeId="game.typeId!!" :instance="game.gameData" />
+          <DashboardGamePreview :typeId="game.typeId!!" :instance="game.gameData" v-if="game.gameData" />
 
           <div v-if="editable" class="absolute z-10 inset-0 backdrop-blur-sm rounded-lg bg-black/50 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <button class="btn btn-secondary btn-outline" @click="clearSlot(index)">

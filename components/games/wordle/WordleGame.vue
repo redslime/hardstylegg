@@ -12,7 +12,7 @@ import {countAttempt, reportResult} from "~/utils/game";
 // Wordle core game code see https://github.com/yyx990803/vue-wordle, adjusted a lot
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.WordleDef
-const emit = defineEmits(['onFinish'])
+const emit = defineEmits<{ onFinish: [state: GameState] }>()
 const props = defineProps({
   state: { type: Number as PropType<GameState>, required: true },
   position: { type: Number as PropType<number>, required: true },

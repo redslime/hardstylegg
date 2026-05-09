@@ -5,7 +5,7 @@ import {getDayFriendlyName} from "~/utils/archive";
 const { container } = defineProps({
   container: { type: Object as PropType<GameContainer>, required: true }
 })
-const emit = defineEmits(["click"])
+const emit = defineEmits<{ click: [] }>()
 const friendly = await getDayFriendlyName(container.dayId, "LLLL d")
 </script>
 

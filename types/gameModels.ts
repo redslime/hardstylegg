@@ -1,7 +1,9 @@
 import type {ZoomerImageData, ZoomerType} from "~/types/zoomerModels";
 import {FlatAlbum, FlatArtist, FlatTrack, RichArtist, RichTrack} from "~/types/content";
 
-export type AnyGameContainer = ArtworkContainer | CompleteAlbumContainer | CompleteLyricsContainer | HeardleContainer | NameXContainer | OrderContainer | QuizContainer | TimelineContainer | TimetableContainer | MapContainer | ZoomerContainer
+export type AnyGameContainer = ArtworkContainer | CompleteAlbumContainer | CompleteLyricsContainer | HeardleContainer
+    | NameXContainer | OrderContainer | QuizContainer | TimelineContainer | TimetableContainer | MapContainer
+    | ZoomerContainer | LostInTranslationContainer | WordleContainer | NavigatorContainer | PuzzleContainer
 export type AnyGameContainers = AnyGameContainer[]
 
 export interface ArtworkContainer extends EditorContainer {

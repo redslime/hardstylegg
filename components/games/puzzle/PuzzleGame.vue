@@ -10,7 +10,7 @@ import type {PuzzleItem} from "~/utils/game/impl/ClientPuzzleGame";
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.PuzzleDef
 const isMobile = inject<boolean>('isMobile')
-const emit = defineEmits(['onFinish'])
+const emit = defineEmits<{ onFinish: [state: GameState] }>()
 const props = defineProps({
   state: { type: Number as PropType<GameState>, required: true },
   position: { type: Number as PropType<number>, required: true },

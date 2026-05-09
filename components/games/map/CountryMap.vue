@@ -1,6 +1,6 @@
 <script setup lang="ts">
 const { $leaflet: L } = useNuxtApp()
-const emit = defineEmits(['click'])
+const emit = defineEmits<{ click: [countryCode: string] }>()
 const highlighted = defineModel<HighlightItem[]>('highlighted', { default: [] })
 const { interact } = defineProps({
   interact: { type: Boolean, default: true }

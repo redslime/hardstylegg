@@ -1,10 +1,9 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import {ref} from 'vue'
 import ArrowUpTrayIcon from "~/components/icons/ArrowUpTrayIcon.vue";
 import {processImageToWebP} from "~/utils/image";
 
 const img64 = defineModel<string | undefined>('img64', { required: true })
-const emit = defineEmits(['selected'])
 const isDragging = ref(false)
 
 async function handleFileChange(event: Event) {
@@ -15,7 +14,6 @@ async function handleFileChange(event: Event) {
   } catch (err: any) {
     alert(err.message)
   }
-  emit('selected')
 }
 
 async function handleDrop(event: DragEvent) {

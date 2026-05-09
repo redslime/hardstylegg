@@ -4,7 +4,7 @@ import ArrowUpTrayIcon from "~/components/icons/ArrowUpTrayIcon.vue";
 
 const selectedFile = defineModel<File | null | undefined>('selectedFile', { required: true })
 const previewUrl = defineModel<string | null | undefined>('previewUrl', { required: true })
-const emit = defineEmits(['selected'])
+const emit = defineEmits<{ selected: [] }>()
 const isDragging = ref(false)
 
 function handleFileChange(event: Event) {

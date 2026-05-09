@@ -11,7 +11,7 @@ const minYear = 2000
 const maxYear = 2025
 
 const isMobile = inject<boolean>('isMobile')
-const emit = defineEmits(['onFinish'])
+const emit = defineEmits<{ onFinish: [state: GameState] }>()
 const props = defineProps({
   state: { type: Number as PropType<GameState>, required: true },
   position: { type: Number as PropType<number>, required: true },

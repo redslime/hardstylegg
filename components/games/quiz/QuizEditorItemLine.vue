@@ -5,7 +5,7 @@ import LightBulbIcon from "~/components/icons/LightBulbIcon.vue";
 const item = defineModel<QuizAnswer>('item', { required: true })
 const hasContext = computed<boolean>(() => (item.value.context?.trim().length ?? 0) > 0)
 const forceContext = ref<boolean>(false)
-const emit = defineEmits(['delete'])
+const emit = defineEmits<{ delete: [] }>()
 
 function del() {
   emit("delete")

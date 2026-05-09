@@ -6,7 +6,7 @@ import {countItem, countOption} from "~/utils/game";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.QuizDef
-const emit = defineEmits(['onFinish'])
+const emit = defineEmits<{ onFinish: [state: GameState] }>()
 const props = defineProps({
   state: { type: Number as PropType<GameState>, required: true },
   position: { type: Number as PropType<number>, required: true },

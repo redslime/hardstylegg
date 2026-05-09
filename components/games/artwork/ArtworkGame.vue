@@ -8,7 +8,7 @@ import {BaseTrack, FlatTrack} from "~/types/content";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.ArtworkDef
-const emit = defineEmits(['onFinish'])
+const emit = defineEmits<{ onFinish: [state: GameState] }>()
 const details = inject<boolean>('details')
 const props = defineProps({
   state: { type: Number as PropType<GameState>, required: true },

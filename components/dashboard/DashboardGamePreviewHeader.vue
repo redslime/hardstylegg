@@ -4,7 +4,7 @@ import type {ScheduleDay} from "~/types/models";
 import type {ClientGameDef} from "~/utils/game/ClientGameDef";
 import LightBulbIcon from "~/components/icons/LightBulbIcon.vue";
 
-const emit = defineEmits(['clicked'])
+const emit = defineEmits<{ clicked: [] }>()
 const { gameDef, container, pointer } = defineProps({
   gameDef: { type: Object as PropType<ClientGameDef<any>>, required: true },
   container: { type: Object as PropType<{ id?: number, created_by?: number, context: string | null }>, required: true },

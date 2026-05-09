@@ -23,7 +23,10 @@ const { gameDef } = defineProps({
   gameDef: { type: Object as PropType<ClientGameDef<T>>, required: true },
 })
 
-const emit = defineEmits(['saved', 'cancelled'])
+const emit = defineEmits<{
+  saved: [],
+  cancelled: []
+}>()
 
 const { user } = useUserSession()
 const dashboardData = await getDashboardData()

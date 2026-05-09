@@ -1,5 +1,6 @@
 import type {DateTime} from "luxon";
 import type {ClientGameDef} from "~/utils/game/ClientGameDef";
+import type {AnyGameContainer} from "~/types/gameModels";
 
 export interface PackedDayData {
     dayId: number
@@ -65,8 +66,8 @@ export interface ScheduleDay {
 
 export interface ScheduleEntry {
     typeId: number | undefined
-    gameDef: ClientGameDef<any> | undefined
-    gameData: any | undefined
+    gameDef: ClientGameDef<AnyGameContainer> | undefined
+    gameData: AnyGameContainer | undefined
 }
 
 export interface DashboardData {
