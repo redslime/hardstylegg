@@ -20,6 +20,8 @@ const localError = ref(false)
         <div v-if="!spotifyLoaded" class="skeleton w-full h-full rounded-xl absolute inset-0"></div>
         <img :src="instance.track.getImageUrl()"
              :alt="instance.track.title"
+             loading="lazy"
+             decoding="async"
              @load="spotifyLoaded = true"
              :class="['w-full h-auto rounded-xl shrink shadow-md transition-opacity duration-300', spotifyLoaded ? 'opacity-100' : 'opacity-0']"/>
       </div>
@@ -34,6 +36,8 @@ const localError = ref(false)
         <img v-if="instance.imgName"
              :src="`${getLocalArtwork(instance.imgName)}`" 
              alt="Blank artwork"
+             loading="lazy"
+             decoding="async"
              @load="localLoaded = true"
              @error="localError = true"
              :class="['w-full h-auto rounded-xl shrink shadow-md transition-opacity duration-300', localLoaded ? 'opacity-100' : 'opacity-0']"/>

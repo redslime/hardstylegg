@@ -15,7 +15,7 @@ const { instance, pointer } = defineProps({
   <DashboardGamePreviewHeader :gameDef="gameDef" :pointer="pointer" :container="instance">
     <ZoomerTypeBadge :type="instance.goal" :style="'badge-info badge-outline'" />
     <div class="relative">
-      <img :src="gameDef.getImgUrl(instance)" alt="game photo" />
+      <img :src="gameDef.getImgUrl(instance)" alt="game photo" loading="lazy" decoding="async" />
 
       <div class="absolute inset-x-0 bottom-0" v-if="instance && instance.data.author">
         <p class="text-left text-gray-300 bg-black/70 p-1">

@@ -12,7 +12,7 @@ export default defineEventHandler((event) => {
 
     const type = mime.getType(absolutePath) || 'application/octet-stream'
     setHeader(event, 'Content-Type', type)
-    setHeader(event, 'Cache-Control', 'public, max-age=2419200, immutable')
+    setHeader(event, 'Cache-Control', 'public, max-age=31536000, immutable')
 
     return sendStream(event, createReadStream(absolutePath))
 })
