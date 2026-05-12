@@ -6,7 +6,7 @@ import WordleDynamicIcon from "~/components/games/wordle/WordleDynamicIcon.vue";
 const { $gameRegistry } = useNuxtApp();
 const props = defineProps({
   games: { type: Array as PropType<GameData[]> },
-  gameIds: { type: Array as PropType<number[]> },
+  gameIds: { type: Array as PropType<{ typeId: number, gameId: number }[]> },
   getState: { type: Function as PropType<(index: number) => GameState> },
   outlineIndex: { type: Number, default: -1 },
   click: { type: Function as PropType<(index: number) => void> },
@@ -63,15 +63,26 @@ function getWordleBoard(game: GameData, gameIndex: number): string {
       <WordleDynamicIcon class="tooltip rounded-md" :class="{'cursor-pointer': props.click, 'outline-2 outline-primary': props.outlineIndex === index}"
                          :board="getWordleBoard(game, index)" :data-tip="getPreviewTitle(game)" @click="props.click?.(index)" v-else />
 
-      <span class="text-sm font-semibold" v-if="getReport(game)">
-        {{ $gameRegistry.findGameByName(game.name)!!.getPreviewDetails(getReport(game)!!, game.props.container) }}
-      </span>
+      <slot name="gameData" :data="game">
+        <span class="text-sm font-semibold" v-if="getReport(game)">
+          {{ $gameRegistry.findGameByName(game.name)!!.getPreviewDetails(getReport(game)!!, game.props.container) }}
+        </span>
+      </slot>
     </div>
   </template>
-  <div v-else-if="props.gameIds" v-for="typeId in props.gameIds" :key="typeId" class="p-3 rounded-md tooltip bg-base-100"
-       :class="[props.style]" :data-tip="getGameName(typeId)">
-    <component :is="$gameRegistry.findGameById(typeId)!!.icon" :state="GameState.UPCOMING" :size="props.iconSize" />
-  </div>
+
+  <template v-for="id in props.gameIds" :key="`${id.typeId}-${id.gameId}`" v-else-if="props.gameIds">
+    <div class="flex flex-col items-center justify-start">
+      <div class="p-3 rounded-md tooltip bg-base-100"
+           :class="[props.style]" :data-tip="getGameName(id.typeId)">
+        <component :is="$gameRegistry.findGameById(id.typeId)!!.icon" :state="GameState.UPCOMING" :size="props.iconSize" />
+      </div>
+
+      <slot name="ids" :typeId="id.typeId" :gameId="id.gameId">
+
+      </slot>
+    </div>
+  </template>
 </template>
 
 <style scoped>

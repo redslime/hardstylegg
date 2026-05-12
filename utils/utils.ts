@@ -233,6 +233,10 @@ export function zip<K, V>(array1: K[], array2: V[]): [K, V][] {
     return result
 }
 
+export function zipIds(typeIds: number[], gameIds: number[]): { typeId: number, gameId: number}[] {
+    return zip(typeIds, gameIds).map(t => ({ typeId: t[0], gameId: t[1] }))
+}
+
 export function distinct<T>(array: T[]): T[] {
     return [...new Set(array)]
 }

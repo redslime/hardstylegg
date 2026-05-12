@@ -1,4 +1,12 @@
-import type {DashboardData, DashboardGroup, DashboardItem, Editor, Schedule, ScheduleDay} from "~/types/models";
+import type {
+    DashboardData,
+    DashboardGroup,
+    DashboardItem,
+    DashboardReportData,
+    Editor,
+    Schedule,
+    ScheduleDay
+} from "~/types/models";
 import type {User} from "#auth-utils";
 import prisma from "~/lib/prisma";
 import {getBaseDate, getDayIdToday, getFriendlyName, getTimeUntilMidnight} from "~/server/utils/schedule";
@@ -128,16 +136,59 @@ async function getSchedule(): Promise<Schedule> {
     }
 }
 
-async function getReports(): Promise<{ completed: boolean, successes: number }[]> {
-    return await prisma.report.findMany({
+async function getReports(): Promise<DashboardReportData> {
+    const data = await prisma.report.findMany({
         where: {
             dayId: getDayIdToday()
         },
         select: {
             completed: true,
-            successes: true
+            successes: true,
+            report_item: {
+                select: {
+                    gameId: true,
+                    typeId: true,
+                    success: true
+                }
+            }
         }
     })
+
+    const timesPlayed = data.length
+    const completionRate = Math.round((data.filter(r => r.completed).length / timesPlayed) * 100)
+    let avgScore = 0
+
+    if(!(timesPlayed === 0 || data.filter(r => r.completed).length === 0)) {
+        const completed = data.filter(r => r.completed)
+        const sum = completed.reduce((acc, item) => acc + item.successes, 0)
+        const avg = sum / completed.length
+        avgScore = Math.round(avg * 100) / 100
+    }
+
+    const flat = data.flatMap(r => r.report_item)
+    const games = Array.from(
+        flat.reduce((map, { typeId, gameId, success }) => {
+            const key = `${typeId}-${gameId}`;
+            const entry = map.get(key) ?? { typeId, gameId, total: 0, successes: 0 };
+
+            entry.total++;
+            if (success) entry.successes++;
+
+            map.set(key, entry);
+            return map;
+        }, new Map<string, { typeId: number, gameId: number, total: number, successes: number }>()).values()
+    ).map(({ typeId, gameId, successes, total }) => ({
+        typeId,
+        gameId,
+        percent: Math.round((successes / total) * 100)
+    }));
+
+    return <DashboardReportData>{
+        timesPlayed,
+        completionRate,
+        avgScore,
+        games
+    }
 }
 
 export default defineEventHandler(async (event) => {

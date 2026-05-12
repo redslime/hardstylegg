@@ -74,7 +74,14 @@ export interface DashboardData {
     groups: DashboardGroup[]
     editors: Editor[]
     schedule: Schedule
-    reports: { completed: boolean, successes: number }[]
+    reports: DashboardReportData
+}
+
+export interface DashboardReportData {
+    timesPlayed: number
+    completionRate: number
+    avgScore: number
+    games: { typeId: number, gameId: number, percent: number }[]
 }
 
 export interface DashboardGroup {

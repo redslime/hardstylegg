@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {type Schedule, type ScheduleDay} from "~/types/models";
 import {GAMES_PER_DAY} from "~/utils/dashboard";
+import {zipIds} from "~/utils/utils";
 
 const { day, schedule } = defineProps({
   day: { type: Object as PropType<ScheduleDay>, required: true },
@@ -25,7 +26,7 @@ const isUpcoming = computed(() => day.day > schedule.todayId);
     </div>
 
     <div class="flex gap-2">
-      <GameIconRow :gameIds="day.typeIds" :style="'bg-black/50'" />
+      <GameIconRow :gameIds="zipIds(day.typeIds, day.gameIds)" :style="'bg-black/50'" />
     </div>
     <div class="flex flex-row gap-3" v-if="isUpcoming || (isToday && !isReady)" >
       <button class="btn btn-primary btn-soft" @click="navigateTo('/admin/schedule/' + day.day)">

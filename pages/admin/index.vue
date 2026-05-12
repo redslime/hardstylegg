@@ -3,6 +3,7 @@
 import {getDashboardData, getFriendlyName} from "~/utils/dashboard";
 import PlayerStatsChart from "~/components/dashboard/PlayerStatsChart.vue";
 import ScoreStatsChart from "~/components/dashboard/ScoreStatsChart.vue";
+import {zipIds} from "~/utils/utils";
 
 definePageMeta({
   layout: 'dashboard',
@@ -14,29 +15,26 @@ const dashboard = await getDashboardData()
 const schedule = dashboard.schedule
 const todayData = schedule.days.find(d => d.day === schedule.todayId)
 const friendly = await getFriendlyName(schedule.todayId, "LLLL d")
-const timesPlayed = dashboard.reports.length
-const completionRate = Math.round((dashboard.reports.filter(r => r.completed).length / timesPlayed) * 100)
+const timesPlayed = computed<number>(() => dashboard.reports.timesPlayed)
+const completionRate = computed<number>(() => dashboard.reports.completionRate)
+const averageScore = computed<number>(() => dashboard.reports.avgScore)
 const gameCount = todayData?.gameIds.length ?? 0
 const tomorrowSchedule = schedule.days.find(d => d.day === schedule.todayId + 1)
 const tomorrowReady = tomorrowSchedule && tomorrowSchedule.gameIds.length > 0
 const daysAhead = schedule.days.filter(d => d.day > schedule.todayId).filter(d => d.gameIds.length > 0).length
-const averageScore = computed(() => {
-  if (gameCount === 0 || dashboard.reports.length === 0 || dashboard.reports.filter(r => r.completed).length === 0) {
-    return 0
-  }
 
-  const completed = dashboard.reports.filter(r => r.completed)
-  const sum = completed.reduce((acc, item) => acc + item.successes, 0)
-  const avg = sum / completed.length
-  return Math.round(avg * 100) / 100
-})
-
-function getTypeIds(day: number) {
+function getIconIds(day: number): { typeId: number, gameId: number }[] {
   const daySchedule = schedule.days.find(d => d.day === day)
   if (daySchedule) {
-    return daySchedule.typeIds
+    return zipIds(daySchedule.typeIds, daySchedule.gameIds)
   }
   return []
+}
+
+function getGamePerformance(typeId: number, gameId: number): number | undefined {
+  if(todayData?.gameIds && todayData?.typeIds) {
+    return dashboard.reports.games.find(i => i.typeId === typeId && i.gameId === gameId)?.percent
+  }
 }
 </script>
 
@@ -53,7 +51,13 @@ function getTypeIds(day: number) {
           <p class="uppercase font-semibold font-sm">Games</p>
 
           <div class="flex gap-2">
-            <GameIconRow :gameIds="getTypeIds(schedule.todayId)" />
+            <GameIconRow :gameIds="getIconIds(schedule.todayId)">
+              <template #ids="{ typeId, gameId }">
+                <p class="font-semibold text-sm" v-if="getGamePerformance(typeId, gameId)">
+                  {{ getGamePerformance(typeId, gameId) ?? 0 }}%
+                </p>
+              </template>
+            </GameIconRow>
           </div>
         </div>
 
@@ -97,7 +101,7 @@ function getTypeIds(day: number) {
           </div>
 
           <div class="flex gap-2" v-if="tomorrowSchedule">
-            <GameIconRow :gameIds="tomorrowSchedule.typeIds" :iconSize="4" />
+            <GameIconRow :gameIds="getIconIds(tomorrowSchedule.day)" :iconSize="4" />
           </div>
         </div>
 
