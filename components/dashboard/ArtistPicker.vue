@@ -4,12 +4,13 @@ import {getDashboardArtists} from "~/utils/dashboard";
 import {RichArtist} from "~/types/content";
 import ArtistGrid from "~/components/dashboard/ArtistGrid.vue";
 
-const { title, disabled, style, button } = defineProps({
+const { title, disabled, style, button, filter } = defineProps({
   title: { type: String, default: "Select" },
   disabled: { type: Boolean, default: false },
   existing: { type: Array as PropType<string[]>, default: [] },
   style: { type: String, default: "" },
   button: { type: Boolean, default: true },
+  filter: { type: Function as PropType<(artist: RichArtist) => boolean>, default: () => true }
 })
 const emit = defineEmits<{
   selected: [artist: RichArtist]
@@ -59,7 +60,7 @@ function select(track: RichArtist) {
 
     <dialog id="artistPickerModal" ref="modal" class="modal">
       <div class="modal-box absolute max-w-4/5 bg-base-300">
-        <ArtistGrid :items="allOptions" :title="title" :existing="existing" @selected="select" />
+        <ArtistGrid :items="allOptions.filter(filter)" :title="title" :existing="existing" @selected="select" />
       </div>
     </dialog>
   </template>

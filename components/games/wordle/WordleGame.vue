@@ -8,6 +8,7 @@ import {getArtists} from "~/utils/contentCache";
 import WordleKeyboard from "~/components/games/wordle/WordleKeyboard.vue";
 import {LetterState} from "~/utils/game/impl/ClientWordleGame";
 import {countAttempt, reportResult} from "~/utils/game";
+import WordleString from "~/components/games/wordle/WordleString.vue";
 
 // Wordle core game code see https://github.com/yyx990803/vue-wordle, adjusted a lot
 const { $gameRegistry } = useNuxtApp();
@@ -242,11 +243,7 @@ watch(gameFinished, () => reportBoard(state.value === GameState.SUCCEEDED))
 
   <template v-if="state === GameState.FAILED">
     <h3 class="text-lg font-bold text-center">Solution:</h3>
-    <div class="flex gap-1">
-      <div v-for="letter in props.container.artist.name.split('')" class="w-8 h-8 text-xl bg-[#6aaa64] rounded-sm text-center text-white uppercase font-bold">
-        {{ letter }}
-      </div>
-    </div>
+    <WordleString :guess="props.container.artist.name" :solution="props.container.artist.name" />
   </template>
 
   <WordleKeyboard @key="onKey" :letterStates="letterStates" :ready="!pending" v-if="!gameFinished" />
