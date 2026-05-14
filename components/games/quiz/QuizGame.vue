@@ -26,7 +26,6 @@ const click = (answer: QuizAnswer) => {
         if(!selected.value.includes(answer)) {
           selected.value.push(answer)
           countOption(answer.id)
-          countItem(answer.id, true)
         }
 
         if(correctAnswers === selected.value.length) {
@@ -34,7 +33,6 @@ const click = (answer: QuizAnswer) => {
         }
       } else {
         countOption(answer.id)
-        countItem(answer.id, true)
         emit("onFinish", GameState.SUCCEEDED)
       }
     } else {

@@ -107,18 +107,6 @@ export class ServerQuizGame extends ServerGameDef<QuizContainer> {
         return '<path stroke="currentColor" fill="none" stroke-width="1.5" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />'
     }
 
-    override async getPreviewDetails(reportItem: ReportItem): Promise<string> {
-        return this.respondCompleted(reportItem)
-    }
-
-    protected override async getPreviewOptions(gameId: number): Promise<number | "?"> {
-        return prisma.game_quiz_item.count({
-            where: {
-                parent_id: gameId
-            }
-        })
-    }
-
     async mapAll(instances: game_quizModel[]): Promise<QuizContainer[]> {
         const items = await prisma.game_quiz_item.findMany()
 

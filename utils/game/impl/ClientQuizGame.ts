@@ -29,14 +29,6 @@ export class ClientQuizGame extends ClientGameDef<QuizContainer> {
             "Can't figure it out? Use the skip button!";
     }
 
-    override getPreviewDetails(reportItem: GameReport, container: QuizContainer): string {
-        return this.respondCompleted(reportItem, container)
-    }
-
-    protected override getPreviewOptions(container: QuizContainer): number | "?" {
-        return container.items.length
-    }
-
     override remap(data: any): QuizContainer {
         return data
     }
