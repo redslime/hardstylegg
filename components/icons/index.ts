@@ -6,7 +6,8 @@ const vueModules = import.meta.glob('./*.vue', {
 
 const webpModules = import.meta.glob('/public/icon/*.webp', {
     eager: true,
-    as: 'url'
+    query: '?url',
+    import: 'default'
 })
 
 export type IconRegistry = Record<string, Component>

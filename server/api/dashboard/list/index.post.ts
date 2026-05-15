@@ -7,13 +7,6 @@ export default defineEventHandler(async (event): Promise<List> => {
     const list = await readBody<List>(event)
     const {user} = await requireUserSession(event)
 
-    if (!user.admin) {
-        throw createError({
-            statusCode: 403,
-            statusMessage: "Forbidden"
-        })
-    }
-
     console.log("user", user.name, "updating list:", list)
 
     const fetched = await prisma.list.upsert({

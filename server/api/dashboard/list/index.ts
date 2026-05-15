@@ -5,13 +5,6 @@ import {getFlatAlbums, getFlatTracks, getRichArtists} from "~/server/utils/conte
 export default defineEventHandler(async (event): Promise<List[]> => {
     const {user} = await requireUserSession(event)
 
-    if (!user.admin) {
-        throw createError({
-            statusCode: 403,
-            statusMessage: "Forbidden"
-        })
-    }
-
     const fetched = await prisma.list.findMany({
         include: {
             list_item: {
