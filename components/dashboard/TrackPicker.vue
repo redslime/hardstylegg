@@ -4,13 +4,14 @@ import {getDashboardAlbums, getDashboardTracks} from "~/utils/dashboard";
 import TrackAlbumGrid from "~/components/dashboard/TrackAlbumGrid.vue";
 import {RichAlbum, RichTrack} from "~/types/content";
 
-const { albums, title, disabled, style, button } = defineProps({
+const { albums, title, disabled, style, button, filter } = defineProps({
   albums: { type: Boolean, default: false },
   title: { type: String, default: "Select" },
   disabled: { type: Boolean, default: false },
   existing: { type: Array as PropType<string[]>, default: [] },
   style: { type: String, default: "" },
   button: { type: Boolean, default: true },
+  filter: { type: Function as PropType<(item: RichTrack | RichAlbum) => boolean>, default: () => true }
 })
 const emit = defineEmits<{
   selected: [track: RichTrack | RichAlbum]
@@ -57,7 +58,7 @@ function select(track: RichTrack) {
 
     <dialog id="trackPickerModal" ref="modal" class="modal">
       <div class="modal-box max-w-4/5 bg-base-300">
-        <TrackAlbumGrid :items="allOptions" :albums="albums" :title="title" :existing="existing" @selected="select" />
+        <TrackAlbumGrid :items="allOptions.filter(filter)" :albums="albums" :title="title" :existing="existing" @selected="select" />
       </div>
     </dialog>
   </template>

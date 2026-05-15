@@ -1,4 +1,5 @@
 import {formatDate} from "compatx";
+import type {List} from "~/types/models";
 
 export abstract class BaseTrack {
     protected constructor(
@@ -287,4 +288,35 @@ export class RichArtist extends FlatArtist {
     public getImageUrl(): string {
         return `https://i.scdn.co/image/${this.image}`
     }
+}
+
+export function getContentId(item: RichTrack | RichAlbum | RichArtist | BaseTrack): string {
+    if('id' in item) {
+        return item.id
+    } else if('sid' in item) {
+        return item.sid
+    }
+
+    return "<invalid>"
+}
+
+export function remapList(list: List): List {
+    if(list.type === 'artist') {
+        list.items = list.items.map(i => {
+            i.item = RichArtist.fromJson(i.item)
+            return i
+        })
+    } else if(list.type === 'album') {
+        list.items = list.items.map(i => {
+            i.item = FlatAlbum.fromJson(i.item)
+            return i
+        })
+    } else if(list.type === 'track') {
+        list.items = list.items.map(i => {
+            i.item = FlatTrack.fromJson(i.item)
+            return i
+        })
+    }
+
+    return list
 }

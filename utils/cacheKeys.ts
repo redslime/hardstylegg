@@ -18,7 +18,8 @@ async function loadKeys(): Promise<KeyCache> {
         keys = {
             tracks: Date.now().toString(),
             albums: Date.now().toString(),
-            artists: Date.now().toString()
+            artists: Date.now().toString(),
+            lists: Date.now().toString(),
         }
     }
 

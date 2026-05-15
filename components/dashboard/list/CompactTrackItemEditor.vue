@@ -1,0 +1,55 @@
+<script setup lang="ts">
+import {FlatAlbum, type FlatTrack} from "~/types/content";
+import LightBulbIcon from "~/components/icons/LightBulbIcon.vue";
+
+const item = defineModel<FlatTrack | FlatAlbum>('item', { required: true })
+const context = defineModel<string | undefined>('context', { required: true })
+const emit = defineEmits<{ remove: [] }>()
+
+const force = ref<boolean>(false)
+const editing = ref<boolean>(false)
+
+watch(context, val => {
+  if(val && val === '') {
+    context.value = undefined
+  }
+})
+</script>
+
+<template>
+  <div class="rounded-lg shadow p-2 border border-neutral/50 transition-colors flex items-center">
+    <div class="flex flex-col gap-3">
+      <div class="flex justify-start items-center gap-2">
+        <img class="h-20 w-20 rounded-md" :src="item.getImageUrl()" :alt="item.getDisplayName()" />
+        <div class="flex flex-col">
+          <div class="text-sm font-semibold">{{ item.title }}</div>
+          <div class="text-sm opacity-70">
+            {{ item.getArtistsString() }}
+          </div>
+
+          <div class="bg-base-300 rounded-md border border-info w-fit indicator pl-3.5 pr-1 whitespace-pre-line ml-2 mt-2 cursor-pointer"
+               @click="editing = true" v-if="context || force">
+            <span class="indicator-item indicator-middle indicator-start badge badge-info rounded-full px-0">
+              <LightBulbIcon :size="'size-4'" />
+            </span>
+            <p class="text-sm" v-if="context && !editing">
+              {{ context }}
+            </p>
+
+            <input class="input input-sm border-0" type="text" v-model="context" placeholder="Context" v-if="editing"
+                   @keydown.enter="editing = false; force = false" @blur="editing = false; force = false" maxlength="1024" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="absolute -top-2 -right-2 flex gap-1">
+    <div class="badge badge-info cursor-pointer px-1 tooltip" :class="{'badge-outline': !context}" @click="force = true; editing = true" data-tip="Add context"><LightBulbIcon /></div>
+    <div class="badge badge-error cursor-pointer tooltip" data-tip="Remove item" @click="emit('remove')">X</div>
+  </div>
+</template>
+
+<style scoped>
+
+</style>

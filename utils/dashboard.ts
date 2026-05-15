@@ -1,7 +1,7 @@
-import type {DashboardData, ScheduleDay} from "~/types/models";
+import type {DashboardData, List, ScheduleDay} from "~/types/models";
 import {DateTime} from "luxon";
 import {getCacheParam} from "~/utils/cacheKeys";
-import {RichAlbum, RichArtist, RichTrack} from "~/types/content";
+import {remapList, RichAlbum, RichArtist, RichTrack} from "~/types/content";
 
 export const GAMES_PER_DAY = 5
 
@@ -9,6 +9,7 @@ let dashboardData: DashboardData | null = null;
 let tracks: RichTrack[] | null = null;
 let albums: RichAlbum[] | null = null;
 let artists: RichArtist[] | null = null;
+let lists: List[] | null = null;
 
 export async function getDashboardData(): Promise<DashboardData> {
     if(dashboardData !== null) return dashboardData
@@ -76,6 +77,22 @@ export function updateDashboardArtist(artist: RichArtist) {
     if(albums !== null) {
         albums.filter(a => a.artists.map(a => a.id).includes(artist.id))
             .forEach(a => a.artists.filter(a => a.id === artist.id).forEach(m => m.name = artist.name))
+    }
+}
+
+export async function getDashboardLists(): Promise<List[]> {
+    if(lists !== null) return lists
+    const v = await getCacheParam("lists")
+    lists = (await $fetch<List[]>('/api/dashboard/list' + v)).map(remapList)
+    return lists
+}
+
+export function updateDashboardList(list: List) {
+    if(lists !== null) {
+        const index = lists.findIndex(l => l.id === list.id)
+        if(index !== -1) lists.splice(index, 1)
+        lists.push(list)
+        lists.sort((a, b) => a.id - b.id)
     }
 }
 

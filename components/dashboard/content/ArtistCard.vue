@@ -16,8 +16,7 @@ function navigate() {
 </script>
 
 <template>
-  <div class="bg-base-300 rounded-lg shadow p-2 flex flex-col justify-start
-            border border-neutral/50"
+  <div class="bg-base-300 rounded-lg shadow p-2 flex flex-col justify-start border border-neutral/50"
        :class="{'transition-colors hover:border-primary cursor-pointer': clickable}"
        @click="navigate()"
       v-if="artist">

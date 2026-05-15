@@ -15,20 +15,24 @@ async function loadKeys(): Promise<KeyCache> {
     const track = await getChecksum("track")
     const album = await getChecksum("album")
     const artist = await getChecksum("artist")
+    const lists = await getChecksum("list")
     const trackArtist = await getChecksum("track_artist")
     const albumArtist = await getChecksum("album_artist")
+    const listItems = await getChecksum("list_item")
 
     try {
         keys = {
             tracks: `${track}${trackArtist}${artist}`,
             albums: `${album}${albumArtist}${artist}`,
-            artists: artist
+            artists: artist,
+            lists: `${lists}${listItems}`
         }
     } catch (e: any) {
         keys = {
             tracks: Date.now().toString(),
             albums: Date.now().toString(),
-            artists: Date.now().toString()
+            artists: Date.now().toString(),
+            lists: Date.now().toString()
         }
     }
 

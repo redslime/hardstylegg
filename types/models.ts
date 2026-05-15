@@ -1,6 +1,7 @@
 import type {DateTime} from "luxon";
 import type {ClientGameDef} from "~/utils/game/ClientGameDef";
 import type {AnyGameContainer} from "~/types/gameModels";
+import {FlatAlbum, FlatTrack, type RichArtist} from "~/types/content";
 
 export interface PackedDayData {
     dayId: number
@@ -144,6 +145,7 @@ export interface KeyCache {
     tracks: string
     albums: string
     artists: string
+    lists: string
 }
 
 export interface ReportItem {
@@ -230,4 +232,22 @@ export interface InboxTrack {
 export interface InboxArtist {
     id: string
     name: string
+}
+
+export type ListType = 'artist' | 'track' | 'album'
+
+export interface List {
+    id: number
+    createdBy: number
+    type: ListType
+    name: string
+    description: string | undefined
+    icon: string | undefined
+    items: ListItem[]
+}
+
+export interface ListItem {
+    item: RichArtist | FlatTrack | FlatAlbum
+    index: number
+    context: string | undefined
 }

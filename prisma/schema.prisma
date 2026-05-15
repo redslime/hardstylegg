@@ -216,6 +216,7 @@ model user {
   game_timetable           game_timetable[]
   game_wordle              game_wordle[]
   game_zoomer              game_zoomer[]
+  list                     list[]
 }
 
 model day_schedule {
@@ -397,4 +398,27 @@ model game_puzzle {
   user       user    @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "game_puzzle_user_id_fk")
 
   @@index([created_by], map: "game_puzzle_user_id_fk")
+}
+
+model list {
+  id          Int         @id @default(autoincrement())
+  created_by  Int
+  type        String      @db.VarChar(32)
+  name        String      @db.VarChar(512)
+  description String?     @db.VarChar(2048)
+  icon        String?     @db.VarChar(128)
+  user        user        @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "list_user_id_fk")
+  list_item   list_item[]
+
+  @@index([created_by], map: "list_user_id_fk")
+}
+
+model list_item {
+  parent_id Int
+  item_id   String  @db.Char(22)
+  index     Int
+  context   String? @db.VarChar(1024)
+  list      list    @relation(fields: [parent_id], references: [id], onDelete: Cascade, map: "list_item_list_id_fk")
+
+  @@id([parent_id, item_id])
 }

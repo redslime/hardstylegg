@@ -53,6 +53,12 @@ function getStructure(user: User): DashboardGroup[] {
         ]
     })
 
+    overviewItems.push({
+        name: "Lists",
+        icon: "ListNumberedIcon",
+        url: "/admin/list"
+    })
+
     // admin items
     adminItems.push({
         name: "Schedule",
