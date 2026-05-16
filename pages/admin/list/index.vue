@@ -7,6 +7,7 @@ import {icons} from "~/components/icons";
 import SquaresIcon from "~/components/icons/SquaresIcon.vue";
 import ListBulletIcon from "~/components/icons/ListBulletIcon.vue";
 import {uiState} from "~/utils/store";
+import {distinct} from "~/utils/utils";
 
 definePageMeta({
   layout: 'dashboard',
@@ -23,7 +24,7 @@ const filteredLists = computed<List[]>(() => {
   }
 })
 
-const filterOptions = computed<string[]>(() => lists.value?.map(l => l.icon ?? 'ListNumberedIcon') ?? [])
+const filterOptions = computed<string[]>(() => distinct(lists.value?.map(l => l.icon ?? 'ListNumberedIcon') ?? []))
 const filter = ref<string>("all")
 
 function getCreatorName(list: List): string {
