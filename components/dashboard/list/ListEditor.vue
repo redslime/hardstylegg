@@ -10,9 +10,10 @@ import Draggable from "vuedraggable";
 import {icons} from "~/components/icons";
 import SquaresIcon from "~/components/icons/SquaresIcon.vue";
 import ListBulletIcon from "~/components/icons/ListBulletIcon.vue";
-import CompactTrackItemEditor from "~/components/dashboard/list/CompactTrackItemEditor.vue";
 import LightBulbIcon from "~/components/icons/LightBulbIcon.vue";
+import CompactTrackItemEditor from "~/components/dashboard/list/CompactTrackItemEditor.vue";
 import CompactArtistItemEditor from "~/components/dashboard/list/CompactArtistItemEditor.vue";
+import {uiState} from "~/utils/store";
 
 const list = defineModel<List>('list', { required: true })
 const ready = computed<boolean>(() => list.value !== undefined && list.value.name.length > 0 && list.value.items.length > 1)
@@ -20,7 +21,6 @@ const iconModal = ref<HTMLDialogElement | null>()
 const inputName = ref<boolean>(false)
 const editName = ref<boolean>(false)
 const saving = ref<boolean>(false)
-const compact = ref<boolean>(false)
 
 function isOnList(item: RichArtist | FlatTrack | FlatAlbum): boolean {
   if(list.value.type === 'artist') {
@@ -117,18 +117,18 @@ watch(list, () => {
     </div>
 
     <div class="absolute -top-4 right-2 bg-base-300 p-1 rounded-md flex gap-1 shadow-lg items-center">
-      <SquaresIcon class="cursor-pointer" :class="{'text-primary': !compact}" @click="compact = false" />
-      <ListBulletIcon class="cursor-pointer" :class="{'text-primary': compact}" @click="compact = true" />
+      <SquaresIcon class="cursor-pointer" :class="{'text-primary': !uiState.compact}" @click="uiState.compact = false" />
+      <ListBulletIcon class="cursor-pointer" :class="{'text-primary': uiState.compact}" @click="uiState.compact = true" />
     </div>
 
-    <div class="flex flex-wrap gap-2" :class="{'flex-col': compact}">
+    <div class="flex flex-wrap gap-2" :class="{'flex-col': uiState.compact}">
       <template v-if="list.type === 'artist'">
         <Draggable
             v-model="list.items"
             item-key="index"
             :animation="200"
             class="flex flex-wrap gap-2"
-            :class="{'flex-col': compact}"
+            :class="{'flex-col': uiState.compact}"
             :component-data="{
               name: 'flip-list',
               tag: 'div',
@@ -136,11 +136,11 @@ watch(list, () => {
         >
           <template #item="{ element, index }">
             <div class="relative cursor-grab">
-              <template v-if="!compact">
+              <template v-if="!uiState.compact">
                 <ArtistCard :artist="element.item as RichArtist" :clickable="false"/>
 
                 <div class="absolute -top-2 -right-2 flex gap-1">
-                  <div class="badge badge-info cursor-pointer px-1 tooltip" @click="compact = true"
+                  <div class="badge badge-info cursor-pointer px-1 tooltip" @click="uiState.compact = true"
                        data-tip="Item has context" v-if="element.context"><LightBulbIcon /></div>
                   <div class="badge badge-error cursor-pointer tooltip" data-tip="Remove item" @click="removeItem(element)">X</div>
                 </div>
@@ -155,7 +155,7 @@ watch(list, () => {
                           :existing="list.items.map(i => (i.item as FlatArtist).id)">
               <div class="bg-base-300 rounded-xl p-5 h-[168px] w-[148px] border border-neutral/50 flex flex-col justify-center
              items-center hover:border-success transition-colors cursor-pointer font-bold"
-                   :class="{'w-full': compact}">
+                   :class="{'w-full': uiState.compact}">
                 <PlusIcon class="text-success size-16" />
                 <p class="text-lg font-black">Add</p>
               </div>
@@ -170,7 +170,7 @@ watch(list, () => {
             item-key="index"
             :animation="200"
             class="flex flex-wrap gap-2"
-            :class="{'flex-col': compact}"
+            :class="{'flex-col': uiState.compact}"
             :component-data="{
               name: 'flip-list',
               tag: 'div',
@@ -178,7 +178,7 @@ watch(list, () => {
         >
           <template #item="{ element, index }">
             <div class="relative cursor-grab">
-              <div class="rounded-lg shadow p-2 flex flex-col justify-start border border-neutral/50 h-full bg-base-300" v-if="!compact">
+              <div class="rounded-lg shadow p-2 flex flex-col justify-start border border-neutral/50 h-full bg-base-300" v-if="!uiState.compact">
                 <div class="h-[130px] w-[130px]">
                   <img class="w-full overflow-hidden object-cover max-h-[200px] rounded-xl"
                        :src="element.item.getImageUrl()" :alt="element.item.getDisplayName()" />
@@ -193,7 +193,7 @@ watch(list, () => {
                 </div>
 
                 <div class="absolute -top-2 -right-2 flex gap-1">
-                  <div class="badge badge-info cursor-pointer px-1 tooltip" @click="compact = true"
+                  <div class="badge badge-info cursor-pointer px-1 tooltip" @click="uiState.compact = true"
                        data-tip="Item has context" v-if="element.context"><LightBulbIcon /></div>
                   <div class="badge badge-error cursor-pointer tooltip" data-tip="Remove item" @click="removeItem(element)">X</div>
                 </div>
@@ -209,7 +209,7 @@ watch(list, () => {
                          :existing="list.items.map(i => (i.item as FlatTrack).sid)">
               <div class="bg-base-300 rounded-xl p-5 h-full w-[148px] border border-neutral/50 flex flex-col justify-center
              items-center hover:border-success transition-colors cursor-pointer font-bold"
-                   :class="{'w-full': compact}">
+                   :class="{'w-full': uiState.compact}">
                 <PlusIcon class="text-success size-16" />
                 <p class="text-lg font-black">Add</p>
               </div>
