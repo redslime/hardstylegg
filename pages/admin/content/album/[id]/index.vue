@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import {useAsyncData} from "#app";
-import {getDashboardAlbums} from "~/utils/dashboard";
-import type {RichAlbum} from "~/types/content";
-import PencilIcon from "~/components/icons/PencilIcon.vue";
+import {getDashboardAlbums, getDashboardLists} from "~/utils/dashboard";
+import {FlatAlbum, type RichAlbum} from "~/types/content";
 import BaseTrackHeader from "~/components/dashboard/content/BaseTrackHeader.vue";
+import type {List} from "~/types/models";
 
 definePageMeta({
   layout: 'dashboard',
@@ -13,15 +13,17 @@ definePageMeta({
 const route = useRoute()
 const id = computed<string>(() => route.params.id as string)
 const { data: albums, pending } = await useAsyncData("album", () => getDashboardAlbums(), { lazy: true })
+const { data: lists } = await useAsyncData("lists", () => getDashboardLists(), { lazy: true })
 
 const album = computed<RichAlbum | undefined>(() => albums.value?.find(a => a.sid === id.value))
+const linkedLists = computed<List[]>(() => lists.value?.filter(l => l.type === 'album').filter(l => l.items.map(t => (t.item as FlatAlbum).sid).includes(id.value)) ?? [])
 </script>
 
 <template>
   <DashboardGameLoadingSpinner :pending="pending" />
 
   <div class="flex flex-col gap-2 bg-base-200 rounded-xl" v-if="album">
-    <BaseTrackHeader :item="album" />
+    <BaseTrackHeader :item="album" :linkedLists="linkedLists" />
 
     <div class="flex flex-col p-5 gap-3">
       <ul class="list bg-base-100 rounded-box shadow-md divide-y divide-base-300">

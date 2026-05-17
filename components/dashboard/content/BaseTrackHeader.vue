@@ -1,10 +1,13 @@
 <script setup lang="ts">
 import {RichAlbum, RichTrack} from "~/types/content";
 import PencilIcon from "~/components/icons/PencilIcon.vue";
+import type {List} from "~/types/models";
+import ListBadge from "~/components/dashboard/list/ListBadge.vue";
 
 const { user } = useUserSession()
-const { item } = defineProps({
-  item: { type: Object as PropType<RichAlbum | RichTrack>, required: true }
+const { item, linkedLists } = defineProps({
+  item: { type: Object as PropType<RichAlbum | RichTrack>, required: true },
+  linkedLists: { type: Array as PropType<List[]>, default: () => [] }
 })
 const isAlbum = computed<boolean>(() => item instanceof RichAlbum)
 const editUrl = computed<string>(() => isAlbum.value ? `/admin/content/album/${item.sid}/edit` : `/admin/content/track/${item.sid}/edit`)
@@ -47,6 +50,10 @@ const editUrl = computed<string>(() => isAlbum.value ? `/admin/content/album/${i
               </div>
             </div>
           </template>
+        </div>
+
+        <div class="flex flex-wrap gap-2 mt-4" v-if="linkedLists.length > 0">
+          <ListBadge v-for="list in linkedLists" :key="list.id" :list="list" />
         </div>
       </div>
     </div>

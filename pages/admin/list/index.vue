@@ -8,6 +8,7 @@ import SquaresIcon from "~/components/icons/SquaresIcon.vue";
 import ListBulletIcon from "~/components/icons/ListBulletIcon.vue";
 import {uiState} from "~/utils/store";
 import {distinct} from "~/utils/utils";
+import ListIcon from "~/components/dashboard/list/ListIcon.vue";
 
 definePageMeta({
   layout: 'dashboard',
@@ -109,7 +110,7 @@ function setFilter(input: string) {
              @click="navigateTo(`/admin/list/${list.id}`)">
           <div class="flex flex-col gap-2">
             <div class="flex items-center gap-2">
-              <component :is="icons[list.icon ?? 'ListNumberedIcon']" class="text-primary size-6 object-cover" />
+              <ListIcon :list="list" class="text-primary size-6" />
               <p class="text-xl font-bold">{{ list.name }}</p>
             </div>
 
@@ -150,7 +151,7 @@ function setFilter(input: string) {
           <tbody>
             <template v-for="list in filteredLists" :key="list.id">
               <tr class="hover:bg-base-200/80 cursor-pointer" @click="navigateTo(`/admin/list/${list.id}`)">
-                <th><component :is="icons[list.icon ?? 'ListNumberedIcon']" class="text-primary size-6 object-cover" /></th>
+                <th><ListIcon :list="list" class="text-primary size-6" /></th>
                 <td><b>{{ list.name }}</b><br>by {{ getCreatorName(list) }}</td>
                 <td>{{ list.items.length }} {{ list.type }}s</td>
                 <td class="max-w-xl">

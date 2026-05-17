@@ -4,10 +4,19 @@ import LightBulbIcon from "~/components/icons/LightBulbIcon.vue";
 
 const item = defineModel<FlatTrack | FlatAlbum>('item', { required: true })
 const context = defineModel<string | undefined>('context', { required: true })
+const { editing: listEditing } = defineProps({
+  editing: { type: Boolean, default: false }
+})
 const emit = defineEmits<{ remove: [] }>()
 
 const force = ref<boolean>(false)
 const editing = ref<boolean>(false)
+
+function tryEdit() {
+  if(listEditing) {
+    editing.value = true
+  }
+}
 
 watch(context, val => {
   if(val && val === '') {
@@ -27,8 +36,9 @@ watch(context, val => {
             {{ item.getArtistsString() }}
           </div>
 
-          <div class="bg-base-300 rounded-md border border-info w-fit indicator pl-3.5 pr-1 whitespace-pre-line ml-2 mt-2 cursor-pointer"
-               @click="editing = true" v-if="context || force">
+          <div class="bg-base-300 rounded-md border border-info w-fit indicator pl-3.5 pr-1 whitespace-pre-line ml-2 mt-2"
+               :class="{'cursor-pointer': listEditing}"
+               @click="tryEdit()" v-if="context || force">
             <span class="indicator-item indicator-middle indicator-start badge badge-info rounded-full px-0">
               <LightBulbIcon :size="'size-4'" />
             </span>
@@ -44,7 +54,7 @@ watch(context, val => {
     </div>
   </div>
 
-  <div class="absolute -top-2 -right-2 flex gap-1">
+  <div class="absolute -top-2 -right-2 flex gap-1" v-if="listEditing">
     <div class="badge badge-info cursor-pointer px-1 tooltip" :class="{'badge-outline': !context}" @click="force = true; editing = true" data-tip="Add context"><LightBulbIcon /></div>
     <div class="badge badge-error cursor-pointer tooltip" data-tip="Remove item" @click="emit('remove')">X</div>
   </div>

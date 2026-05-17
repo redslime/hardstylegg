@@ -1,9 +1,11 @@
 <script setup lang="ts">
 import {useAsyncData} from "#app";
-import {getDashboardAlbums, getDashboardArtists, getDashboardTracks} from "~/utils/dashboard";
+import {getDashboardAlbums, getDashboardArtists, getDashboardLists, getDashboardTracks} from "~/utils/dashboard";
 import {RichAlbum, type RichArtist, RichTrack} from "~/types/content";
 import BaseTrackView from "~/components/dashboard/content/BaseTrackView.vue";
 import PencilIcon from "~/components/icons/PencilIcon.vue";
+import type {List} from "~/types/models";
+import ListBadge from "~/components/dashboard/list/ListBadge.vue";
 
 definePageMeta({
   layout: 'dashboard',
@@ -16,8 +18,10 @@ const id = computed<string>(() => route.params.id as string)
 const { data: artists, pending, error } = await useAsyncData("artist", () => getDashboardArtists(), { lazy: true })
 const { data: albums, pending: ap } = await useAsyncData("album", () => getDashboardAlbums(), { lazy: true })
 const { data: tracks, pending: tp } = await useAsyncData("track", () => getDashboardTracks(), { lazy: true })
+const { data: lists } = await useAsyncData("lists", () => getDashboardLists(), { lazy: true })
 
 const artist = computed<RichArtist | undefined>(() => artists.value?.find(a => a.id === id.value))
+const linkedLists = computed<List[]>(() => lists.value?.filter(l => l.type === 'artist').filter(l => l.items.map(t => (t.item as RichArtist).id).includes(id.value)) ?? [])
 
 function getAlbums(): RichAlbum[] {
   if(artist.value && albums.value) {
@@ -59,8 +63,13 @@ function getTracks(): RichTrack[] {
           <div class="text-5xl font-extrabold">
             {{ artist?.name }}
           </div>
+
           <div class="opacity-80 text-lg font-light" v-if="artist?.listeners">
             {{ artist?.getListenersFriendly() }} monthly listeners
+          </div>
+
+          <div class="flex flex-wrap gap-2 mt-1" v-if="linkedLists.length > 0">
+            <ListBadge v-for="list in linkedLists" :key="list.id" :list="list" />
           </div>
         </div>
       </div>
