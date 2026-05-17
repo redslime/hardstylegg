@@ -8,6 +8,7 @@ import PuzzlePreview from "~/components/games/puzzle/PuzzlePreview.vue";
 import PuzzleEditor from "~/components/games/puzzle/PuzzleEditor.vue";
 import PuzzleSummary from "~/components/games/puzzle/PuzzleSummary.vue";
 import type {GameReport} from "~/types/models";
+import {shuffleArray} from "~/utils/utils";
 
 export class ClientPuzzleGame extends ClientGameDef<PuzzleContainer> {
 
@@ -81,7 +82,7 @@ export class ClientPuzzleGame extends ClientGameDef<PuzzleContainer> {
             })
         })
 
-        return items
+        return shuffleArray(items)
     }
 }
 
