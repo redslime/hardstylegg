@@ -29,7 +29,7 @@ watch(context, val => {
   <div class="rounded-lg shadow p-2 border border-neutral/50 transition-colors flex items-center">
     <div class="flex flex-col gap-3">
       <div class="flex justify-start items-center gap-2">
-        <img class="h-20 w-20 rounded-md" :src="item.getImageUrl()" :alt="item.getDisplayName()" />
+        <img class="size-16 rounded-full" :src="item.getImageUrl()" :alt="item.getDisplayName()" />
         <div class="flex flex-col">
           <div class="text-sm font-semibold">{{ item.getDisplayName() }}</div>
 

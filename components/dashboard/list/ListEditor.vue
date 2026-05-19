@@ -133,14 +133,14 @@ watch(list, () => {
     </fieldset>
   </div>
 
-  <div class="opacity-90" v-else>
+  <div class="opacity-90 whitespace-pre-line" v-else>
     {{ list.description }}
   </div>
 
-  <div class="bg-base-200 p-4 border border-white/10 shadow-md rounded-md mt-10 relative pt-10 max-w-7xl">
+  <div class="bg-base-200 p-4 border border-white/10 shadow-md rounded-md mt-10 relative pt-10 max-w-7xl w-fit">
     <div class="absolute -top-3 -left-2">
       <div class="badge badge-secondary">
-        <span class="font-semibold">List items</span> ({{ list.items.length }})
+        <span class="font-semibold capitalize">{{ list.type }}s</span> ({{ list.items.length }})
       </div>
     </div>
 
@@ -149,106 +149,104 @@ watch(list, () => {
       <ListBulletIcon class="cursor-pointer" :class="{'text-primary': compact}" @click="compact = true" />
     </div>
 
-    <div class="flex flex-wrap gap-2" :class="{'flex-col': compact}">
-      <template v-if="list.type === 'artist'">
-        <Draggable
-            v-model="list.items"
-            item-key="index"
-            :animation="200"
-            class="flex flex-wrap gap-2"
-            :class="{'flex-col': compact}"
-            :disabled="!editing"
-            :component-data="{
-              name: 'flip-list',
-              tag: 'div',
-             }"
-        >
-          <template #item="{ element, index }">
-            <div class="relative" :class="{'cursor-grab': editing}">
-              <template v-if="!compact">
-                <ArtistCard :artist="element.item as RichArtist" :clickable="false"/>
+    <template v-if="list.type === 'artist'">
+      <Draggable
+          v-model="list.items"
+          item-key="index"
+          :animation="200"
+          class="flex flex-wrap gap-2"
+          :class="{'flex-col': compact}"
+          :disabled="!editing"
+          :component-data="{
+            name: 'flip-list',
+            tag: 'div',
+           }"
+      >
+        <template #item="{ element, index }">
+          <div class="relative" :class="{'cursor-grab': editing}">
+            <template v-if="!compact">
+              <ArtistCard :artist="element.item as RichArtist" :clickable="false"/>
 
-                <div class="absolute -top-2 -right-2 flex gap-1">
-                  <div class="badge badge-info cursor-pointer px-1 tooltip" @click="compact = true"
-                       data-tip="Item has context" v-if="element.context"><LightBulbIcon /></div>
-                  <div class="badge badge-error cursor-pointer tooltip" data-tip="Remove item" @click="removeItem(element)" v-if="editing">X</div>
-                </div>
-              </template>
+              <div class="absolute -top-2 -right-2 flex gap-1">
+                <div class="badge badge-info cursor-pointer px-1 tooltip" @click="compact = true"
+                     :data-tip="element.context" v-if="element.context"><LightBulbIcon /></div>
+                <div class="badge badge-error cursor-pointer tooltip" data-tip="Remove item" @click="removeItem(element)" v-if="editing">X</div>
+              </div>
+            </template>
 
-              <CompactArtistItemEditor v-model:item="element.item" v-model:context="element.context" :editing="editing" v-else />
+            <CompactArtistItemEditor v-model:item="element.item" v-model:context="element.context" :editing="editing" v-else />
+          </div>
+        </template>
+
+        <template #footer v-if="editing">
+          <ArtistPicker :title="'Add'" @selected="addItem" :button="false"
+                        :existing="list.items.map(i => (i.item as FlatArtist).id)">
+            <div class="bg-base-300 rounded-xl p-5 h-[168px] w-[148px] border border-neutral/50 flex flex-col justify-center
+           items-center hover:border-success transition-colors cursor-pointer font-bold"
+                 :class="{'w-full': compact}">
+              <PlusIcon class="text-success size-16" />
+              <p class="text-lg font-black">Add</p>
             </div>
-          </template>
+          </ArtistPicker>
+        </template>
+      </Draggable>
+    </template>
 
-          <template #footer v-if="editing">
-            <ArtistPicker :title="'Add'" @selected="addItem" :button="false"
-                          :existing="list.items.map(i => (i.item as FlatArtist).id)">
-              <div class="bg-base-300 rounded-xl p-5 h-[168px] w-[148px] border border-neutral/50 flex flex-col justify-center
-             items-center hover:border-success transition-colors cursor-pointer font-bold"
-                   :class="{'w-full': compact}">
-                <PlusIcon class="text-success size-16" />
-                <p class="text-lg font-black">Add</p>
+    <template v-if="list.type === 'track' || list.type === 'album'">
+      <Draggable
+          v-model="list.items"
+          item-key="index"
+          :animation="200"
+          class="flex flex-wrap gap-2"
+          :class="{'flex-col': compact}"
+          :disabled="!editing"
+          :component-data="{
+            name: 'flip-list',
+            tag: 'div',
+           }"
+      >
+        <template #item="{ element, index }">
+          <div class="relative" :class="{'cursor-grab': editing}">
+            <div class="rounded-lg shadow p-2 flex flex-col justify-start border border-neutral/50 h-full bg-base-300" v-if="!compact">
+              <div class="h-[130px] w-[130px]">
+                <img class="w-full overflow-hidden object-cover max-h-[200px] rounded-xl"
+                     :src="element.item.getImageUrl()" :alt="element.item.getDisplayName()" />
               </div>
-            </ArtistPicker>
-          </template>
-        </Draggable>
-      </template>
-
-      <template v-if="list.type === 'track' || list.type === 'album'">
-        <Draggable
-            v-model="list.items"
-            item-key="index"
-            :animation="200"
-            class="flex flex-wrap gap-2"
-            :class="{'flex-col': compact}"
-            :disabled="!editing"
-            :component-data="{
-              name: 'flip-list',
-              tag: 'div',
-             }"
-        >
-          <template #item="{ element, index }">
-            <div class="relative" :class="{'cursor-grab': editing}">
-              <div class="rounded-lg shadow p-2 flex flex-col justify-start border border-neutral/50 h-full bg-base-300" v-if="!compact">
-                <div class="h-[130px] w-[130px]">
-                  <img class="w-full overflow-hidden object-cover max-h-[200px] rounded-xl"
-                       :src="element.item.getImageUrl()" :alt="element.item.getDisplayName()" />
+              <div class="max-w-[130px]">
+                <div class="text-sm font-semibold">
+                  {{ (element.item as FlatTrack).title }}
                 </div>
-                <div class="max-w-[130px]">
-                  <div class="text-sm font-semibold">
-                    {{ (element.item as FlatTrack).title }}
-                  </div>
-                  <div class="text-sm opacity-70">
-                    {{ (element.item as FlatTrack).getArtistsString() }}
-                  </div>
-                </div>
-
-                <div class="absolute -top-2 -right-2 flex gap-1">
-                  <div class="badge badge-info cursor-pointer px-1 tooltip" @click="compact = true"
-                       data-tip="Item has context" v-if="element.context"><LightBulbIcon /></div>
-                  <div class="badge badge-error cursor-pointer tooltip" data-tip="Remove item" @click="removeItem(element)" v-if="editing">X</div>
+                <div class="text-sm opacity-70">
+                  {{ (element.item as FlatTrack).getArtistsString() }}
                 </div>
               </div>
 
-              <CompactTrackItemEditor v-model:item="element.item" v-model:context="element.context"
-                      :editing="editing" @remove="removeItem(element)" v-else />
+              <div class="absolute -top-2 -right-2 flex gap-1">
+                <div class="badge badge-info cursor-pointer px-1 tooltip" @click="compact = true"
+                     :data-tip="element.context" v-if="element.context"><LightBulbIcon /></div>
+                <div class="badge badge-error cursor-pointer tooltip" data-tip="Remove item" @click="removeItem(element)" v-if="editing">X</div>
+              </div>
             </div>
-          </template>
 
-          <template #footer v-if="editing">
-            <TrackPicker :title="'Add'" @selected="t => addItem(t.toFlatTrack())" :button="false"
-                         :albums="list.type === 'album'" :filter="t => !t.hidden"
-                         :existing="list.items.map(i => (i.item as FlatTrack).sid)">
-              <div class="bg-base-300 rounded-xl p-5 h-full w-[148px] border border-neutral/50 flex flex-col justify-center
-             items-center hover:border-success transition-colors cursor-pointer font-bold"
-                   :class="{'w-full': compact}">
-                <PlusIcon class="text-success size-16" />
-                <p class="text-lg font-black">Add</p>
-              </div>
-            </TrackPicker>
-          </template>
-        </Draggable>
-      </template>
-    </div>
+            <CompactTrackItemEditor v-model:item="element.item" v-model:context="element.context"
+                    :editing="editing" @remove="removeItem(element)" v-else />
+          </div>
+        </template>
+
+        <template #footer v-if="editing">
+          <TrackPicker :title="'Add'" @selected="t => addItem(t.toFlatTrack())" :button="false"
+                       :albums="list.type === 'album'" :filter="t => !t.hidden"
+                       :existing="list.items.map(i => (i.item as FlatTrack).sid)">
+            <div class="bg-base-300 rounded-xl p-5 h-full w-[148px] border border-neutral/50 flex flex-col justify-center
+           items-center hover:border-success transition-colors cursor-pointer font-bold"
+                 :class="{'w-full': compact}">
+              <PlusIcon class="text-success size-16" />
+              <p class="text-lg font-black">Add</p>
+            </div>
+          </TrackPicker>
+        </template>
+      </Draggable>
+    </template>
   </div>
 
   <div class="flex gap-2 mt-6">
