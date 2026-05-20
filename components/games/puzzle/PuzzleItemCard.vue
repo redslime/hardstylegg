@@ -164,7 +164,7 @@ function checkFormed() {
   }
 
   const matchedTrack = props.tracks.find(track => {
-    if (track.sid !== titleSlot.value?.trackSid) {
+    if (track.getDisplayName(true) !== titleSlot.value?.val) {
       return false
     }
 

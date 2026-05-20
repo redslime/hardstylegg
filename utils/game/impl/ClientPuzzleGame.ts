@@ -65,7 +65,6 @@ export class ClientPuzzleGame extends ClientGameDef<PuzzleContainer> {
             const titleItem: PuzzleItem = {
                 id: count++,
                 type: 'title',
-                trackSid: track.sid,
                 val: track.getDisplayName(true),
             }
 
@@ -74,7 +73,6 @@ export class ClientPuzzleGame extends ClientGameDef<PuzzleContainer> {
                 const artistItem: PuzzleItem = {
                     id: count++,
                     type: 'artist',
-                    trackSid: track.sid,
                     val: artist,
                 }
 
@@ -89,6 +87,5 @@ export class ClientPuzzleGame extends ClientGameDef<PuzzleContainer> {
 export interface PuzzleItem {
     id: number
     type: 'title' | 'artist'
-    trackSid: string
     val: string | RichArtist
 }
