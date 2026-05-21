@@ -235,8 +235,7 @@ watch(list, () => {
 
         <template #footer v-if="editing">
           <TrackPicker :title="'Add'" @selected="t => addItem(t.toFlatTrack())" :button="false"
-                       :albums="list.type === 'album'" :filter="t => !t.hidden"
-                       :existing="list.items.map(i => (i.item as FlatTrack).sid)">
+                       :albums="list.type === 'album'" :existing="list.items.map(i => (i.item as FlatTrack).sid)">
             <div class="bg-base-300 rounded-xl p-5 h-full w-[148px] border border-neutral/50 flex flex-col justify-center
            items-center hover:border-success transition-colors cursor-pointer font-bold"
                  :class="{'w-full': compact}">

@@ -11,7 +11,7 @@ const { albums, title, disabled, style, button, filter } = defineProps({
   existing: { type: Array as PropType<string[]>, default: [] },
   style: { type: String, default: "" },
   button: { type: Boolean, default: true },
-  filter: { type: Function as PropType<(item: RichTrack | RichAlbum) => boolean>, default: () => true }
+  filter: { type: Function as PropType<(item: RichTrack | RichAlbum) => boolean>, default: (item: RichTrack | RichAlbum) => !item.hidden }
 })
 const emit = defineEmits<{
   selected: [track: RichTrack | RichAlbum]
@@ -24,7 +24,6 @@ function select(track: RichTrack) {
   modal.value?.close()
   emit("selected", track)
 }
-
 </script>
 
 <template>
