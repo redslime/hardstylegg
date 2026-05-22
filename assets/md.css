@@ -1,0 +1,83 @@
+.md-editor {
+    --md-color: var(--color-base-content);
+    --md-bk-color: transparent;
+    --md-bk-color-outstand: var(--color-base-200);
+    --md-bk-hover-color: var(--color-base-300);
+    --md-border-color: var(--color-neutral);
+    --md-scrollbar-bg-color: var(--color-neutral);
+}
+
+:deep(.cm-editor) {
+    color: var(--color-base-content) !important;
+}
+
+:deep(.cm-content) {
+    color: var(--color-base-content) !important;
+}
+
+:deep(.cm-line) {
+    color: var(--color-base-content) !important;
+}
+
+.md-editor-custom :deep(.md-editor-preview ul) {
+    list-style-type: disc !important;
+    padding-left: 1.5rem !important;
+    margin-top: 1rem !important;
+    margin-bottom: 1rem !important;
+}
+
+.md-editor-custom :deep(.md-editor-preview ol) {
+    list-style-type: decimal !important;
+    padding-left: 1.5rem !important;
+    margin-top: 1rem !important;
+    margin-bottom: 1rem !important;
+}
+
+.md-editor-custom :deep(.md-editor-preview li) {
+    display: list-item !important;
+    margin-bottom: 0.25rem !important;
+}
+
+.md-editor-custom :deep(.md-editor-preview p) {
+    margin-bottom: 1rem !important;
+}
+
+.md-editor-custom :deep(.md-editor-preview p:last-child) {
+    margin-bottom: 0 !important;
+}
+
+.md-preview-custom :deep(ul) {
+    list-style-type: disc !important;
+    padding-left: 1.5rem !important;
+    margin-top: 1rem !important;
+    margin-bottom: 1rem !important;
+}
+
+.md-preview-custom :deep(ol) {
+    list-style-type: decimal !important;
+    padding-left: 1.5rem !important;
+    margin-top: 1rem !important;
+    margin-bottom: 1rem !important;
+}
+
+.md-preview-custom :deep(li) {
+    display: list-item !important;
+    margin-bottom: 0.25rem !important;
+}
+
+.md-preview-custom :deep(p) {
+    margin-bottom: 1rem !important;
+}
+
+.md-preview-custom :deep(p:last-child) {
+    margin-bottom: 0 !important;
+}
+
+.md-preview-custom :deep(h1), .md-preview-custom :deep(h2), .md-preview-custom :deep(h3), .md-preview-custom :deep(h4), .md-preview-custom :deep(h5), .md-preview-custom :deep(h6),
+.md-editor-custom :deep(h1), .md-editor-custom :deep(h2), .md-editor-custom :deep(h3), .md-editor-custom :deep(h4), .md-editor-custom :deep(h5), .md-editor-custom :deep(h6) {
+    margin: .2em 0 .8em;
+}
+
+.md-editor-custom :deep(img), .md-preview-custom :deep(img) {
+    max-width: 400px;
+}

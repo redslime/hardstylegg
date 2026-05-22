@@ -1,12 +1,16 @@
 <script setup lang="ts">
 import LightBulbIcon from "~/components/icons/LightBulbIcon.vue";
+import ContextMdEditor from "~/components/dashboard/ContextMdEditor.vue";
 
 const input = defineModel<string | undefined | null>('input', { required: true })
+const markdown = ref<string>(input.value ?? '')
 const hasInput = computed(() => (input.value?.trim().length ?? 0) > 0)
 const opened = ref<boolean>(hasInput.value)
 const { hasItems } = defineProps({
   hasItems: { type: Boolean, default: false }
 })
+
+watch(markdown, () => input.value = markdown.value)
 </script>
 
 <template>
@@ -21,7 +25,7 @@ const { hasItems } = defineProps({
         <div v-if="hasItems">
           This context field is intended for the entire question. You can add contexts for individual items above.
         </div>
-        <textarea class="textarea w-full" rows="4" wrap="soft" maxlength="1000" v-model="input"></textarea>
+        <ContextMdEditor v-model:markdown="markdown" />
         <div class="label">The context is shown after the game has been played.</div>
       </fieldset>
     </div>

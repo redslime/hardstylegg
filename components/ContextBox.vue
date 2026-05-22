@@ -3,6 +3,8 @@ import LightBulbIcon from "~/components/icons/LightBulbIcon.vue";
 import type {AnyGameContainer} from "~/types/gameModels";
 import {ref} from 'vue'
 import {useIntersectionObserver} from "@vueuse/core";
+import {MdPreview} from "md-editor-v3";
+import 'md-editor-v3/lib/style.css';
 
 const isMobile = inject<boolean>('isMobile')
 const { container } = defineProps({
@@ -22,9 +24,9 @@ onUnmounted(() => stop())
 </script>
 
 <template>
-  <div ref="box" class="bg-base-300 rounded-md p-5 border border-info mt-10 w-fit indicator whitespace-pre-line" v-if="container.context">
+  <div ref="box" class="bg-base-300 rounded-md p-5 border border-info mt-10 w-fit indicator" v-if="container.context">
     <span class="indicator-item indicator-start badge badge-info rounded-full px-0"><LightBulbIcon /></span>
-    {{ container.context }}
+    <MdPreview v-model="container.context" theme="dark" class="md-preview-custom" />
   </div>
 
   <div
@@ -38,5 +40,5 @@ onUnmounted(() => stop())
 </template>
 
 <style scoped>
-
+@import "~/assets/md.css";
 </style>
