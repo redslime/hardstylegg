@@ -66,7 +66,13 @@
 }
 
 .md-preview-custom :deep(p) {
+    word-break: break-word;
+    margin-top: 0;
     margin-bottom: 1rem !important;
+}
+
+.md-editor-custom :deep(p) {
+    word-break: break-word;
 }
 
 .md-preview-custom :deep(p:last-child) {

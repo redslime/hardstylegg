@@ -14,7 +14,7 @@ watch(markdown, () => input.value = markdown.value)
 </script>
 
 <template>
-  <div class="collapse collapse-arrow bg-base-100 border-base-300 border w-5/7 my-5">
+  <div class="collapse collapse-arrow bg-base-100 border-base-300 border my-5">
     <input type="checkbox" v-model="opened" />
     <div class="collapse-title font-semibold after:start-5 after:end-auto pe-4 ps-12 flex gap-1">
       <LightBulbIcon :class="{'text-info': hasInput, 'text-gray-500': !hasInput}" />
