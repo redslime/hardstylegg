@@ -7,6 +7,12 @@
     --md-scrollbar-bg-color: var(--color-neutral);
 }
 
+.md-editor-custom :deep(.default-theme),
+.md-preview-custom :deep(.default-theme) {
+    --md-theme-quote-bg-color: var(--color-base-100);
+    --md-theme-quote-border: 5px solid var(--color-secondary);
+}
+
 :deep(.cm-editor) {
     color: var(--color-base-content) !important;
 }
@@ -65,17 +71,13 @@
     margin-bottom: 0.25rem !important;
 }
 
-.md-preview-custom :deep(p) {
+.md-preview-custom :deep(p), .md-editor-custom :deep(p) {
     word-break: break-word;
     margin-top: 0;
     margin-bottom: 1rem !important;
 }
 
-.md-editor-custom :deep(p) {
-    word-break: break-word;
-}
-
-.md-preview-custom :deep(p:last-child) {
+.md-preview-custom :deep(p:last-child), .md-editor-custom :deep(p:last-child) {
     margin-bottom: 0 !important;
 }
 
@@ -86,4 +88,9 @@
 
 .md-editor-custom :deep(img), .md-preview-custom :deep(img) {
     max-width: 400px;
+}
+
+.md-preview-custom :deep(ul), .md-editor-custom :deep(ul), .md-preview-custom :deep(li:first-child), .md-editor-custom :deep(li:first-child),
+.md-preview-custom :deep(ol), .md-editor-custom :deep(ol) {
+    margin: 0 !important;
 }
