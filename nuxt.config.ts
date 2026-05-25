@@ -8,6 +8,11 @@ export default defineNuxtConfig({
     devtools: { enabled: true },
 
     routeRules: {
+        '/benelux.geojson': {
+            headers: {
+                'Cache-Control': 'public, max-age=31536000, immutable'
+            }
+        },
         '/share': { ssr: true },
         '/': { ssr: false },
         '/play/**': { ssr: false },
@@ -96,7 +101,7 @@ export default defineNuxtConfig({
         },
         workbox: {
             navigateFallback: '/',
-            globPatterns: ['**/*.{js,css,html,png,svg,ico}']
+            globPatterns: ['**/*.{js,css,html,png,svg,ico,geojson}']
         },
         devOptions: {
             enabled: true,

@@ -1,26 +1,33 @@
 <script setup lang="ts">
-import {type GameReportFlat, GameState} from "~/types/models";
+import {type GameReportFlat} from "~/types/models";
 import type {MapContainer} from "~/types/gameModels";
-import CountryMap, {type HighlightItem} from "~/components/games/map/CountryMap.vue";
+import CountryMap from "~/components/games/map/CountryMap.vue";
+import BeneluxMap from "~/components/games/map/BeneluxMap.vue";
+import {type CountryHighlightMapItem, EventHighlightMapItem} from "~/utils/game/impl/ClientMapGame";
 
-const { $countries } = useNuxtApp();
+const { $gameRegistry } = useNuxtApp();
+const gameDef = $gameRegistry.MapDef
 const { container, reports } = defineProps({
   container: { type: Object as PropType<MapContainer>, required: true },
   reports: { type: Array as PropType<GameReportFlat[]>, required: true }
 })
-const goalName = computed(() => $countries.getName(container.goal, "en"))
-const goal = computed(() => <HighlightItem[]>[{
-  iso2: container.goal,
-  color: "#2ED4BF",
-}])
+const goalName = computed(() => gameDef.getGoalName(container))
 </script>
 
 <template>
-  <CountryMap v-model:highlighted="goal" :interact="false">
+  <CountryMap :init="gameDef.getHighlightMapItem(container) as CountryHighlightMapItem"
+              :interact="false" v-if="container.type === 'countries'">
     <div class="absolute bottom-2 flex justify-center w-full z-500">
-      <div class="badge md:badge-lg badge-success">Correct: {{ goalName }}</div>
+      <div class="badge md:badge-lg badge-info" v-if="goalName">Selected: {{ goalName }}</div>
     </div>
   </CountryMap>
+
+  <BeneluxMap :init="gameDef.getHighlightMapItem(container) as EventHighlightMapItem"
+              :interact="false"  v-if="container.type === 'events'">
+    <div class="absolute bottom-2 flex justify-center w-full z-500">
+      <div class="badge md:badge-lg badge-info" v-if="goalName">Selected: {{ goalName }}</div>
+    </div>
+  </BeneluxMap>
 </template>
 
 <style scoped>

@@ -256,6 +256,7 @@ model game_map {
   title      String  @db.VarChar(128)
   goal       String  @db.Char(2)
   context    String? @db.VarChar(1024)
+  type       String  @default("countries") @db.VarChar(16)
   user       user    @relation(fields: [created_by], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "game_map_user_id_fk")
 
   @@index([created_by], map: "game_map_user_id_fk")

@@ -1,12 +1,15 @@
 <script setup lang="ts">
+import {CountryHighlightMapItem, type HighlightMapItem} from "~/utils/game/impl/ClientMapGame";
+import type {MapContainer} from "~/types/gameModels";
+
 const { $leaflet: L } = useNuxtApp()
-const emit = defineEmits<{ click: [countryCode: string] }>()
-const highlighted = defineModel<HighlightItem[]>('highlighted', { default: [] })
-const { interact } = defineProps({
+const emit = defineEmits<{ click: [item: HighlightMapItem] }>()
+const { init, interact } = defineProps({
+  init: { type: Object as PropType<CountryHighlightMapItem> },
   interact: { type: Boolean, default: true }
 })
 
-export type HighlightItem = { iso2: string, color: string }
+const highlighted = ref<CountryHighlightMapItem | undefined>(init)
 const mapContainer = ref<HTMLElement | null>(null)
 const geoLayer = ref<L.GeoJSON | null>(null)
 let map: any
@@ -24,35 +27,45 @@ const highlightStyle = {
   fillOpacity: 0.4
 }
 
+const solve = (container: MapContainer) => {
+  // mark current highlighted country as false, if selected
+  if(highlighted.value) {
+    const item = highlighted.value
+    item.color = "#FB7085"
+    highlightCountry(item)
+  }
+
+  // mark goal as correct
+  if(container.goal) {
+    highlightCountry(new CountryHighlightMapItem(container.goal, "#2ED4BF"))
+  }
+}
+
 function resetHover(e: any) {
   if(interact) {
-    const iso2 = e.target.feature.properties.iso_a2
-
-    if(highlighted.value.find(item => item.iso2 === iso2) === undefined) {
-      geoLayer.value!!.resetStyle(e.target)
-    }
+    refreshLayers()
   }
 }
 
 function focusHover(e: any) {
   if(interact) {
-    const iso2 = e.target.feature.properties.iso_a2
-
-    if(highlighted.value.find(item => item.iso2 === iso2) === undefined) {
-      const layer = e.target
-      layer.setStyle(highlightStyle)
-    }
+    refreshLayers()
+    const layer = e.target
+    layer.setStyle(highlightStyle)
   }
 }
 
 function onCountryClick(e: any) {
   if(interact) {
     const iso2 = e.target.feature.properties.iso_a2
-    emit("click", iso2)
+    const item = new CountryHighlightMapItem(iso2, "#3ABDF8")
+    highlighted.value = item
+    emit("click", item)
+    refreshLayers()
   }
 }
 
-function highlightCountry(item: HighlightItem) {
+function highlightCountry(item: CountryHighlightMapItem) {
   geoLayer.value?.eachLayer((layer: any) => {
     if (layer.feature?.properties?.iso_a2 === item.iso2) {
       layer.setStyle({
@@ -65,6 +78,17 @@ function highlightCountry(item: HighlightItem) {
   });
 }
 
+function refreshLayers() {
+  geoLayer.value?.eachLayer((layer: any) => {
+    geoLayer.value!!.resetStyle(layer)
+  })
+
+  if(highlighted.value) {
+    highlightCountry(highlighted.value)
+  }
+}
+
+defineExpose({ solve })
 onMounted(async () => {
   map = L.map(mapContainer.value!, {
     zoomControl: false,
@@ -86,14 +110,10 @@ onMounted(async () => {
     }
   }).addTo(map)
 
-  highlighted.value.forEach(item => highlightCountry(item))
-})
-
-watch(highlighted, (value) => {
-  geoLayer.value?.eachLayer((layer: any) => {
-    geoLayer.value!!.resetStyle(layer)
-  })
-  value.forEach(item => highlightCountry(item))
+  if(init) {
+    highlightCountry(init)
+    emit("click", init)
+  }
 })
 
 watch(() => interact, (value) => {

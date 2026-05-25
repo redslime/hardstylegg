@@ -102,9 +102,11 @@ export interface TimetableItem {
     context: string | null
 }
 
+export type MapType = 'countries' | 'events'
 export interface MapContainer extends EditorContainer {
     title: string
     goal: string
+    type: MapType
 }
 
 export interface ZoomerContainer extends EditorContainer {
