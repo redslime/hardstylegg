@@ -198,7 +198,7 @@ watch(() => interact, (value) => {
 </script>
 
 <template>
-  <div class="flex justify-center items-center w-full min-h-10" v-if="loading">
+  <div class="flex gap-3 skeleton justify-center items-center w-full h-[540px]" v-if="loading">
     <div class="loading loading-spinner loading-xl"></div>
     Loading map...
   </div>
@@ -214,18 +214,22 @@ watch(() => interact, (value) => {
 .pin {
   color: var(--color-info);
   filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
+  z-index: 1 !important;
 }
 .pin-highlighted {
   color: var(--color-warning);
   filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
+  z-index: 2 !important;
 }
 .pin-success {
   color: var(--color-success);
   filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
+  z-index: 3 !important;
 }
 .pin-fail {
   color: var(--color-error);
   filter: drop-shadow(0 2px 2px rgba(0,0,0,0.3));
+  z-index: 2 !important;
 }
 .pin-svg-wrapper svg {
   width: 24px;

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {CountryHighlightMapItem, type HighlightMapItem} from "~/utils/game/impl/ClientMapGame";
 import type {MapContainer} from "~/types/gameModels";
+import {nextTick} from "vue";
 
 const { $leaflet: L } = useNuxtApp()
 const emit = defineEmits<{ click: [item: HighlightMapItem] }>()
@@ -12,6 +13,7 @@ const { init, interact } = defineProps({
 const highlighted = ref<CountryHighlightMapItem | undefined>(init)
 const mapContainer = ref<HTMLElement | null>(null)
 const geoLayer = ref<L.GeoJSON | null>(null)
+const loading = ref<boolean>(true)
 let map: any
 
 const defaultStyle = {
@@ -90,6 +92,7 @@ function refreshLayers() {
 
 defineExpose({ solve })
 onMounted(async () => {
+  loading.value = true
   map = L.map(mapContainer.value!, {
     zoomControl: false,
     attributionControl: false,
@@ -114,6 +117,11 @@ onMounted(async () => {
     highlightCountry(init)
     emit("click", init)
   }
+
+  loading.value = false
+  await nextTick(() => {
+    map.invalidateSize()
+  })
 })
 
 watch(() => interact, (value) => {
@@ -138,7 +146,11 @@ watch(() => interact, (value) => {
 </script>
 
 <template>
-  <div ref="mapContainer" class="relative" style="height: 540px; width: 100%;">
+  <div class="flex gap-3 skeleton justify-center items-center w-full h-[540px]" v-if="loading">
+    <div class="loading loading-spinner loading-xl"></div>
+    Loading map...
+  </div>
+  <div ref="mapContainer" class="relative" style="height: 540px; width: 100%;" v-show="!loading">
     <slot></slot>
   </div>
 </template>
