@@ -132,7 +132,6 @@ useOnce(() => {
     <div class="hero-content flex flex-col text-center">
       <div class="flex flex-col gap-2">
         <div class="flex gap-2 justify-center">
-          <span class="badge md:badge-lg badge-soft badge-accent font-bold self-center">NEW</span>
           <h1 class="text-2xl md:text-4xl font-bold">Infinity mode</h1>
         </div>
 
