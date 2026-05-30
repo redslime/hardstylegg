@@ -4,7 +4,6 @@ import type {RichArtist} from "~/types/content";
 import {updateDashboardArtist} from "~/utils/dashboard";
 
 definePageMeta({
-  layout: 'dashboard',
   middleware: ['authenticated-admin'],
 })
 

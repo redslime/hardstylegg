@@ -9,7 +9,6 @@ import {pickRandomItems} from "~/utils/utils";
 import ArrowTopRightOpenIcon from "~/components/icons/ArrowTopRightOpenIcon.vue";
 
 definePageMeta({
-  layout: 'dashboard',
   middleware: ['authenticated'],
 })
 

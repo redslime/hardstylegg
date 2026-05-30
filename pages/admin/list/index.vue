@@ -11,7 +11,6 @@ import {distinct} from "~/utils/utils";
 import ListIcon from "~/components/dashboard/list/ListIcon.vue";
 
 definePageMeta({
-  layout: 'dashboard',
   middleware: ['authenticated'],
 })
 

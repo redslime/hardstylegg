@@ -6,7 +6,6 @@ import ScoreStatsChart from "~/components/dashboard/ScoreStatsChart.vue";
 import {zipIds} from "~/utils/utils";
 
 definePageMeta({
-  layout: 'dashboard',
   middleware: ['authenticated'],
 })
 

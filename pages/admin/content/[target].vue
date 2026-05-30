@@ -9,7 +9,6 @@ import {useSearchableList} from "~/composables/useSearchableList";
 import {getDashboardAlbums, getDashboardArtists, getDashboardTracks} from "~/utils/dashboard";
 
 definePageMeta({
-  layout: "dashboard",
   middleware: ["authenticated"],
 })
 

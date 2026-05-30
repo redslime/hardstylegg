@@ -18,7 +18,6 @@ import ChevronRightArrow from "~/components/icons/ChevronRightArrow.vue";
 import type {AnyGameContainer} from "~/types/gameModels";
 
 definePageMeta({
-  layout: 'dashboard',
   middleware: ['authenticated-admin'],
 })
 

@@ -4,7 +4,6 @@ import {RichTrack} from "~/types/content";
 import {updateDashboardTrack} from "~/utils/dashboard";
 
 definePageMeta({
-  layout: 'dashboard',
   middleware: ['authenticated-admin'],
 })
 

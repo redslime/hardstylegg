@@ -6,7 +6,6 @@ import TrackEditor from "~/components/dashboard/content/TrackEditor.vue";
 import {ref} from "vue";
 
 definePageMeta({
-  layout: 'dashboard',
   middleware: ['authenticated-admin'],
 })
 

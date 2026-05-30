@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import DiscordLoginButton from "~/components/DiscordLoginButton.vue";
 
+definePageMeta({
+  layout: 'hero',
+})
+
 const query = useRoute().query
 const { loggedIn } = useUserSession()
 const isInitial = await $fetch<boolean>("/api/dashboard/loginToken")

@@ -8,7 +8,6 @@ import type {List} from "~/types/models";
 import ListBadge from "~/components/dashboard/list/ListBadge.vue";
 
 definePageMeta({
-  layout: 'dashboard',
   middleware: ['authenticated'],
 })
 

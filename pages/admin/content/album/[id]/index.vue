@@ -6,7 +6,6 @@ import BaseTrackHeader from "~/components/dashboard/content/BaseTrackHeader.vue"
 import type {List} from "~/types/models";
 
 definePageMeta({
-  layout: 'dashboard',
   middleware: ['authenticated'],
 })
 

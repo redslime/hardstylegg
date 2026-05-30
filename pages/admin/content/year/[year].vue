@@ -7,7 +7,6 @@ import ChevronRightArrow from "~/components/icons/ChevronRightArrow.vue";
 import ChevronLeftIcon from "~/components/icons/ChevronLeftIcon.vue";
 
 definePageMeta({
-  layout: 'dashboard',
   middleware: ['authenticated'],
 })
 

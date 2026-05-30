@@ -4,7 +4,6 @@ import {getDashboardData} from "~/utils/dashboard";
 import type {Editor} from "~/types/models";
 
 definePageMeta({
-  layout: 'dashboard',
   middleware: ['authenticated'],
 })
 

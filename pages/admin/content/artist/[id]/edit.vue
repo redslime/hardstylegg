@@ -6,7 +6,6 @@ import {useAsyncData} from "#app";
 import ArtistEditor from "~/components/dashboard/content/ArtistEditor.vue";
 
 definePageMeta({
-  layout: 'dashboard',
   middleware: ['authenticated-admin'],
 })
 

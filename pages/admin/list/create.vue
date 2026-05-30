@@ -4,7 +4,6 @@ import type {List, ListType} from "~/types/models";
 import ListEditor from "~/components/dashboard/list/ListEditor.vue";
 
 definePageMeta({
-  layout: 'dashboard',
   middleware: ['authenticated'],
 })
 

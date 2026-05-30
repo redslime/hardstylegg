@@ -8,7 +8,6 @@ import {deepCopy} from "~/utils/utils";
 import {remapList} from "~/types/content";
 
 definePageMeta({
-  layout: 'dashboard',
   middleware: ['authenticated'],
 })
 

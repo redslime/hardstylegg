@@ -5,7 +5,6 @@ import {type ScheduleDay} from "~/types/models";
 import DashboardScheduleDaySummary from "~/components/dashboard/DashboardScheduleDaySummary.vue";
 
 definePageMeta({
-  layout: 'dashboard',
   middleware: ['authenticated-admin'],
 })
 

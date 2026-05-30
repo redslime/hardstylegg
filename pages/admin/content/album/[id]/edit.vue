@@ -6,7 +6,6 @@ import {ref} from "vue";
 import AlbumEditor from "~/components/dashboard/content/AlbumEditor.vue";
 
 definePageMeta({
-  layout: 'dashboard',
   middleware: ['authenticated-admin'],
 })
 
