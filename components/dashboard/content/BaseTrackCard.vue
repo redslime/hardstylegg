@@ -100,7 +100,7 @@ async function save() {
     <div class="h-[130px] w-[130px]">
       <div v-if="!imgLoaded && item.image" class="skeleton w-full h-full rounded-xl inset-0"></div>
       <img class="w-full overflow-hidden object-cover max-h-[200px] rounded-xl"
-           @load="imgLoaded = true" :src="item.getImageUrl()" v-if="item.image" alt="" />
+           @load="imgLoaded = true" loading="lazy" decoding="async" :src="item.getImageUrl()" v-if="item.image" alt="" />
       <div v-if="!item.image" class="w-full min-h-[130px] rounded-xl bg-base-300 flex items-center justify-center border-2 border-dashed border-base-content/20">
         <span class="text-xs opacity-50 text-center px-1">No image</span>
       </div>
