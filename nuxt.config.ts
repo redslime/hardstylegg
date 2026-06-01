@@ -13,6 +13,11 @@ export default defineNuxtConfig({
                 'Cache-Control': 'public, max-age=31536000, immutable'
             }
         },
+        '/fonts/Anton-Regular.ttf': {
+            headers: {
+                'Cache-Control': 'public, max-age=31536000, immutable'
+            }
+        },
         '/share': { ssr: true },
         '/': { ssr: false },
         '/play/**': { ssr: false },
