@@ -13,7 +13,7 @@ const { gameDef, container, pointer } = defineProps({
 
 const dashboardData = await getDashboardData()
 const scheduleData = computed<ScheduleDay | undefined>(() => getScheduleForGame(gameDef.id, container.id))
-const title = gameDef.getDashboardHeaderTitle(container)
+const title = computed(() => gameDef.getDashboardHeaderTitle(container))
 const todayId = computed(() => dashboardData.schedule.todayId)
 const upcoming = computed(() => todayId.value && scheduleData.value && todayId.value <= scheduleData.value.day)
 const past = computed(() => todayId.value && scheduleData.value && todayId.value > scheduleData.value.day)
