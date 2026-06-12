@@ -43,6 +43,7 @@ function clearSlot(index: number) {
   if(games.value && games.value[index]) {
     games.value[index].typeId = undefined
     games.value[index].gameData = undefined
+    games.value[index].gameDef = undefined
   }
 }
 
@@ -63,6 +64,7 @@ function selected(typeId: number, ins: AnyGameContainer) {
   if(selectingIndex.value !== undefined && games.value) {
     games.value[selectingIndex.value]!!.typeId = typeId
     games.value[selectingIndex.value]!!.gameData = ins
+    games.value[selectingIndex.value]!!.gameDef = $gameRegistry.findGameById(typeId)
     selectorModal.value?.close()
     selectingIndex.value = undefined
     selectType.value = undefined
