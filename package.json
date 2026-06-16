@@ -35,7 +35,7 @@
     "lodash.debounce": "^4.0.8",
     "luxon": "^3.7.2",
     "md-editor-v3": "^6.5.0",
-    "nuxt": "^4.4.6",
+    "nuxt": "^4.4.7",
     "nuxt-auth-utils": "^0.5.29",
     "prisma": "6.19.3",
     "satori": "^0.26.0",
