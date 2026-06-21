@@ -93,33 +93,51 @@ export async function getInfinityPreview(): Promise<InfinityPreviewContainer> {
 }
 
 async function fetchTrackYearCounts(trackIds: string[]): Promise<{ year: number, count: number }[]> {
-    return (await prisma.track.groupBy({
-        by: ['date'],
+    const tracks = await prisma.track.findMany({
         where: {
             sid: {
-                in: trackIds
-            }
+                in: trackIds,
+            },
         },
-        _count: { _all: true }
-    })).map(r => ({
-        year: new Date(r.date).getFullYear() ?? 0,
-        count: r._count._all,
-    }))
+        select: {
+            date: true,
+        },
+    });
+
+    return Object.values(
+        tracks.reduce((acc, { date }) => {
+            const year = date.getFullYear();
+
+            acc[year] ??= { year, count: 0 };
+            acc[year].count++;
+
+            return acc;
+        }, {} as Record<number, { year: number; count: number }>)
+    );
 }
 
 async function fetchAlbumYearCounts(trackIds: string[]): Promise<{ year: number, count: number }[]> {
-    return (await prisma.album.groupBy({
-        by: ['date'],
+    const tracks = await prisma.album.findMany({
         where: {
             sid: {
-                in: trackIds
-            }
+                in: trackIds,
+            },
         },
-        _count: { _all: true }
-    })).map(r => ({
-        year: new Date(r.date).getFullYear() ?? 0,
-        count: r._count._all,
-    }))
+        select: {
+            date: true,
+        },
+    });
+
+    return Object.values(
+        tracks.reduce((acc, { date }) => {
+            const year = date.getFullYear();
+
+            acc[year] ??= { year, count: 0 };
+            acc[year].count++;
+
+            return acc;
+        }, {} as Record<number, { year: number; count: number }>)
+    );
 }
 
 export default defineEventHandler(async (event) => {

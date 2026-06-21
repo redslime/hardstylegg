@@ -43,14 +43,20 @@ export class FlatTrack extends BaseTrack {
         sid: string,
         title: string,
         public artists: string,
+        public year: number,
         image: string
-    ) { super(sid, title, image) }
+    ) {
+        super(sid, title, image)
+        this.artists = artists
+        this.year = year
+    }
 
     static fromJson(data: any): FlatTrack {
         return new FlatTrack(
             data.sid,
             data.title,
             data.artists,
+            data.year,
             data.image ?? data.cover_art
         )
     }
@@ -60,6 +66,7 @@ export class FlatTrack extends BaseTrack {
             sid: data.sid,
             title: data.title,
             artists: data.artists,
+            year: data.year,
             image: data.image ?? data.cover_art
         }
     }
@@ -129,6 +136,7 @@ export class RichTrack extends BaseTrack {
             this.sid,
             this.title,
             this.getArtistsString(),
+            this.year,
             this.image
         )
     }
@@ -139,9 +147,10 @@ export class FlatAlbum extends FlatTrack {
         sid: string,
         title: string,
         artists: string,
+        year: number,
         image: string
     ) {
-        super(sid, title, artists, image);
+        super(sid, title, artists, year, image);
     }
 
     static override fromJson(data: any) {
@@ -149,6 +158,7 @@ export class FlatAlbum extends FlatTrack {
             data.sid,
             data.title,
             data.artists,
+            data.year,
             data.image
         )
     }
@@ -158,6 +168,7 @@ export class FlatAlbum extends FlatTrack {
             sid: data.sid,
             title: data.title,
             artists: data.artists,
+            year: data.year,
             image: data.image
         }
     }
@@ -213,6 +224,7 @@ export class RichAlbum extends RichTrack {
             this.sid,
             this.title,
             this.getArtistsString(),
+            this.year,
             this.image
         )
     }

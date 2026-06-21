@@ -43,6 +43,7 @@ export async function getFlatAlbums(albumIds: string[]): Promise<FlatAlbum[]> {
         select: {
             sid: true,
             title: true,
+            date: true,
             cover_art: true,
             album_artist: {
                 select: {
@@ -62,6 +63,7 @@ export async function getFlatAlbums(albumIds: string[]): Promise<FlatAlbum[]> {
             sid: rec.sid,
             title: rec.title,
             artists: rec.album_artist.map(a => a.artist.name).join(" & "),
+            year: rec.date.getFullYear(),
             image: rec.cover_art
         }
     })
@@ -76,6 +78,7 @@ export async function getFlatTracks(trackIds: string[]): Promise<FlatTrack[]> {
         select: {
             sid: true,
             title: true,
+            date: true,
             cover_art: true,
             track_artist: {
                 select: {
@@ -95,6 +98,7 @@ export async function getFlatTracks(trackIds: string[]): Promise<FlatTrack[]> {
             sid: rec.sid,
             title: rec.title,
             artists: rec.track_artist.map(a => a.artist.name).join(" & "),
+            year: rec.date.getFullYear(),
             image: rec.cover_art
         }
     }).map(FlatTrack.fromJson)
