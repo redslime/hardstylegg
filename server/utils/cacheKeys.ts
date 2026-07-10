@@ -1,5 +1,6 @@
 import type {KeyCache} from "~/types/models";
 import prisma from "~/lib/prisma";
+import {resetGraphCache} from "#server/api/content/graph";
 
 let keys: KeyCache | null = null
 
@@ -9,6 +10,7 @@ export async function getCacheKeys(): Promise<KeyCache> {
 
 export function invalidateCacheKeys() {
     keys = null
+    resetGraphCache()
 }
 
 async function loadKeys(): Promise<KeyCache> {
