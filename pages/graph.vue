@@ -1,17 +1,24 @@
 <script setup lang="ts">
 import ForceGraph3D, {type ForceGraph3DInstance, type LinkObject, type NodeObject} from "3d-force-graph";
 import * as THREE from "three";
-import SearchIcon from "~/components/icons/SearchIcon.vue";
 import EyeSlashIcon from "~/components/icons/EyeSlashIcon.vue";
 import EyeIcon from "~/components/icons/EyeIcon.vue";
 import Xmark from "~/components/icons/Xmark.vue";
 import {RichTrack} from "~/types/content";
 import ViewfinderCircleIcon from "~/components/icons/ViewfinderCircleIcon.vue";
+import GraphNodeInput from "~/components/graph/GraphNodeInput.vue";
 import SpotifyIcon from "~/components/icons/SpotifyIcon.vue";
+import {plural} from "~/utils/utils";
+import SearchIcon from "~/components/icons/SearchIcon.vue";
 
 definePageMeta({
   layout: "plain",
 });
+useHead({
+  meta: [
+    { name: "darkreader-lock", content: "" } // disable darkreader for this page
+  ]
+})
 
 export type ArtistGraphNode = {
   id: string;
@@ -32,28 +39,30 @@ type ArtistGraphData = {
   links: ArtistGraphLink[];
 };
 
+const graphLevels = [1, 2, 3, 4, 6]
 const graphEl = ref<HTMLDivElement | null>(null);
+const graph = ref<ForceGraph3DInstance | null>(null);
+const nodes = computed<ArtistGraphNode[]>(() => graph.value?.graphData().nodes.map(n => n as ArtistGraphNode) ?? []);
+const links = computed<ArtistGraphLink[]>(() => graph.value?.graphData().links.map(l => l as ArtistGraphLink) ?? []);
 const textureCache = new Map<string, THREE.Texture>();
-const input = ref<string>("")
 const minWeight = ref<number>(3)
 const currentNode = ref<ArtistGraphNode | undefined>(undefined)
 const collabNode = ref<ArtistGraphNode | undefined>(undefined)
 const currentLinks = computed<{ artist: ArtistGraphNode, weight: number }[]>(() => {
   if(currentNode.value && graph) {
-    return graph.graphData().links.filter(l => (l.target as ArtistGraphNode).id == currentNode.value!!.id || (l.source as ArtistGraphNode).id == currentNode.value!!.id)
+    return links.value.filter(l => l.target.id == currentNode.value!!.id || l.source.id == currentNode.value!!.id)
         .map(link => extractTargetArtist(link))
   } else return []
 })
 const showLinks = ref<boolean>(true)
 const graphCacheKey = computed(() => `graph-${minWeight.value}`)
-const { data: graphData } = await useAsyncData<ArtistGraphData>(graphCacheKey, () => $fetch<ArtistGraphData>("/api/content/graph", {
+const { data: graphData, pending } = await useAsyncData<ArtistGraphData>(graphCacheKey, () => $fetch<ArtistGraphData>("/api/content/graph", {
   query: {
     minWeight: minWeight.value,
   },
-}));
+}), { lazy: true });
 const collabKey = computed(() => `collab-${currentNode.value?.id}:${collabNode.value?.id}`)
 const { data: collabTracks } = await useAsyncData<RichTrack[]>(collabKey, () => $fetch<RichTrack[]>(`/api/content/collabs/${currentNode.value?.id}/${collabNode.value?.id}`).then(tracks => tracks.map(RichTrack.fromJson)))
-let graph: ForceGraph3DInstance | null = null
 
 const getCircularTexture = async (url: string) => {
   const cachedTexture = textureCache.get(url);
@@ -128,10 +137,10 @@ function zoomOnNode(n: NodeObject | undefined, jump: boolean = false) {
       showLinks.value = false
       currentNode.value = n as ArtistGraphNode
 
-      graph?.linkColor(link => {
+      graph.value?.linkColor(link => {
         return (n && (link.source === n || link.target === n)) ? "#00cfff" : "#ffffff";
       });
-      graph?.linkVisibility(link => {
+      graph.value?.linkVisibility(link => {
         return (n && (link.source === n || link.target === n)) ?? false
       })
     }
@@ -144,7 +153,7 @@ function zoomOnNode(n: NodeObject | undefined, jump: boolean = false) {
           ? { x: n.x * distRatio, y: n.y * distRatio, z: n.z * distRatio }
           : { x: 0, y: 0, z: distance }; // special case if node is in (0,0,0)
 
-      graph?.cameraPosition(
+      graph.value?.cameraPosition(
           newPos, // new position
           { x: n.x, y: n.y, z: n.z }, // lookAt ({ x, y, z })
           1000  // ms transition duration
@@ -154,15 +163,15 @@ function zoomOnNode(n: NodeObject | undefined, jump: boolean = false) {
 }
 
 function findNode(name: string): NodeObject | undefined {
-  return graph?.graphData().nodes.find(n => {
+  return nodes.value.find(n => {
     const node = n as ArtistGraphNode
     return node.name.toLowerCase() === name.toLowerCase();
   })
 }
 
-function search() {
-  zoomOnNode(findNode(input.value))
-  input.value = ""
+function search(node: ArtistGraphNode, inputFeedback: (success: boolean) => boolean) {
+  zoomOnNode(node)
+  inputFeedback(true)
 }
 
 function extractTargetArtist(link: LinkObject): { artist: ArtistGraphNode; weight: number } {
@@ -178,7 +187,7 @@ function extractTargetArtist(link: LinkObject): { artist: ArtistGraphNode; weigh
 
 function refreshLinks() {
   const n = currentNode.value
-  graph?.linkVisibility(link => {
+  graph.value?.linkVisibility(link => {
     const sourceId = (link.source as ArtistGraphNode).id
     const targetId = (link.target as ArtistGraphNode).id
 
@@ -189,7 +198,7 @@ function refreshLinks() {
       return showLinks.value
     }
   })
-  graph?.linkColor(link => {
+  graph.value?.linkColor(link => {
     if(n) {
       const sourceId = (link.source as ArtistGraphNode).id
       const targetId = (link.target as ArtistGraphNode).id
@@ -205,7 +214,7 @@ function mountGraph(data: ArtistGraphData) {
     return;
   }
 
-  graph = new ForceGraph3D(graphEl.value)
+  graph.value = new ForceGraph3D(graphEl.value, { controlType: 'orbit' })
       .graphData(data)
       .backgroundColor("#050505")
       .nodeLabel((node) => {
@@ -277,7 +286,8 @@ function mountGraph(data: ArtistGraphData) {
         zoomOnNode(node)
       })
 
-  graph.d3Force("charge")?.strength(-180);
+  graph.value?.d3Force("charge")?.strength(-180);
+  graph.value?.enableNodeDrag(false)
 }
 
 watch(showLinks, () => refreshLinks())
@@ -294,7 +304,7 @@ onMounted(() => mountGraph(graphData.value!!))
 </script>
 
 <template>
-  <div class="relative h-screen">
+  <div class="relative h-screen" id="wrapper">
     <div class="absolute w-full z-20 border-b border-white/5">
       <div class="flex justify-center items-center backdrop-blur-2xl p-4 relative min-h-16">
         <div class="flex gap-2 items-center absolute left-4">
@@ -305,10 +315,13 @@ onMounted(() => mountGraph(graphData.value!!))
           <img class="size-12 rounded-full" :src="currentNode.imageUrl" v-if="currentNode.imageUrl" :alt="currentNode.name" />
           <h1 class="font-black text-3xl" v-if="currentNode">{{ currentNode.name }}</h1>
         </div>
-        <label class="input bg-transparent absolute right-4">
-          <SearchIcon />
-          <input type="text" class="input" placeholder="Artist name..." v-model="input" @keydown.enter="search()" />
-        </label>
+        <GraphNodeInput class="absolute right-4" :nodes="nodes"
+              @onSelected="search" v-slot="{ inputBindings, inputEvents }">
+          <label class="input bg-transparent">
+            <SearchIcon />
+            <input type="text" class="bg-transparent" v-bind="inputBindings" v-on="inputEvents" />
+          </label>
+        </GraphNodeInput>
       </div>
     </div>
 
@@ -360,22 +373,11 @@ onMounted(() => mountGraph(graphData.value!!))
 
       <p class="text-center text-sm opacity-85 tracking-tigther mb-1">Graph granularity</p>
       <div class="flex gap-2 justify-center mb-2">
-        <div class="flex flex-col items-center tooltip" data-tip="At least one collab">
-          <input type="radio" name="radio-2" class="radio radio-xs"  @click="minWeight = 1; currentNode = undefined" />
-          <p class="text-xs opacity-50">max</p>
-        </div>
-        <div class="flex flex-col items-center tooltip" data-tip="3 or more collabs">
-          <input type="radio" name="radio-2" class="radio radio-xs" :checked="true" @click="minWeight = 3; currentNode = undefined" />
-        </div>
-        <div class="flex flex-col items-center tooltip" data-tip="6 or more collabs">
-          <input type="radio" name="radio-2" class="radio radio-xs" @click="minWeight = 6; currentNode = undefined" />
-        </div>
-        <div class="flex flex-col items-center tooltip" data-tip="10 or more collabs">
-          <input type="radio" name="radio-2" class="radio radio-xs" @click="minWeight = 10; currentNode = undefined" />
-        </div>
-        <div class="flex flex-col items-center tooltip" data-tip="16 or more collabs">
-          <input type="radio" name="radio-2" class="radio radio-xs" @click="minWeight = 16; currentNode = undefined" />
-          <p class="text-xs opacity-50">min</p>
+        <div class="flex flex-col items-center tooltip" :data-tip="`≥${level} ${plural('collab', level)}`" v-for="(level, index) in graphLevels" :key="level">
+          <input type="radio" name="graph-level" class="radio radio-xs"
+                 @click="minWeight = level; currentNode = undefined" :checked="level === 3" />
+          <p class="text-xs opacity-50" v-if="index === 0">max</p>
+          <p class="text-xs opacity-50" v-else-if="index === graphLevels.length-1">min</p>
         </div>
       </div>
     </div>
@@ -411,11 +413,20 @@ onMounted(() => mountGraph(graphData.value!!))
         </div>
       </div>
     </div>
-    <div ref="graphEl" class="graph absolute"></div>
+
+    <div class="w-screen h-screen flex justify-center items-center" v-if="pending">
+      <span class="loading loading-ring loading-xl"></span>
+      Loading...
+    </div>
+    <div ref="graphEl" class="graph absolute" v-show="!pending"></div>
   </div>
 </template>
 
 <style scoped>
+#wrapper {
+  --root-bg: #050505;
+  background: var(--root-bg);
+}
 .graph {
   width: 100vw;
   height: 100vh;

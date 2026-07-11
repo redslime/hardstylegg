@@ -76,13 +76,14 @@ const {
     emit("onSelected", node, inputFeedback)
   },
   defaultPlaceholder: "Artist...",
-  fetchProgress: 1,
-  minQueryLength: 3
+  fetchProgress: 100,
+  minQueryLength: 3,
+  allowEmpty: true
 })
 </script>
 
 <template>
-  <div class="relative">
+  <div>
       <div class="relative">
         <slot
             :inputBindings="inputBindings"
@@ -105,6 +106,10 @@ const {
              @click="select(item.item as ArtistGraphNode)"
              v-html="item.highlighted"
         >
+        </div>
+
+        <div class="text-xs opacity-70 tracking-tighter pl-3">
+          Can't find someone? Try increasing granularity (bottom left)
         </div>
       </div>
   </div>

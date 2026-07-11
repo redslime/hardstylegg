@@ -18,6 +18,7 @@ interface UseSelectableSearchInputOptions<T> {
     minQueryLength?: MaybeRefOrGetter<number>
     xl?: MaybeRefOrGetter<boolean | undefined>
     textMode?: MaybeRefOrGetter<boolean | undefined>
+    allowEmpty?: MaybeRefOrGetter<boolean | undefined>
 }
 
 export function useSelectableSearchInput<T>(options: UseSelectableSearchInputOptions<T>) {
@@ -33,7 +34,8 @@ export function useSelectableSearchInput<T>(options: UseSelectableSearchInputOpt
         fetchProgress,
         minQueryLength = 3,
         xl = false,
-        textMode = false
+        textMode = false,
+        allowEmpty = false
     } = options
 
     const hoverIndex = ref(-1)
@@ -45,7 +47,7 @@ export function useSelectableSearchInput<T>(options: UseSelectableSearchInputOpt
         if (toValue(textMode)) return false
 
         return query.value.trim().length >= toValue(minQueryLength)
-            && toValue(filtered).length > 0
+            && (toValue(filtered).length > 0 || toValue(allowEmpty))
     })
 
     const placeholder = computed(() => {
