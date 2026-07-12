@@ -146,6 +146,7 @@ export interface KeyCache {
     albums: string
     artists: string
     lists: string
+    graph: string
 }
 
 export interface ReportItem {

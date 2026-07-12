@@ -27,14 +27,16 @@ async function loadKeys(): Promise<KeyCache> {
             tracks: `${track}${trackArtist}${artist}`,
             albums: `${album}${albumArtist}${artist}`,
             artists: artist,
-            lists: `${lists}${listItems}`
+            lists: `${lists}${listItems}`,
+            graph: trackArtist
         }
     } catch (e: any) {
         keys = {
             tracks: Date.now().toString(),
             albums: Date.now().toString(),
             artists: Date.now().toString(),
-            lists: Date.now().toString()
+            lists: Date.now().toString(),
+            graph: Date.now().toString()
         }
     }
 

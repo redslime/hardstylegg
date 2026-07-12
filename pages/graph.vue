@@ -10,6 +10,7 @@ import GraphNodeInput from "~/components/graph/GraphNodeInput.vue";
 import SpotifyIcon from "~/components/icons/SpotifyIcon.vue";
 import {plural} from "~/utils/utils";
 import SearchIcon from "~/components/icons/SearchIcon.vue";
+import {getInjectedCacheKey} from "~/utils/cacheKeys";
 
 definePageMeta({
   layout: "plain",
@@ -58,6 +59,7 @@ const showLinks = ref<boolean>(true)
 const graphCacheKey = computed(() => `graph-${minWeight.value}`)
 const { data: graphData, pending } = await useAsyncData<ArtistGraphData>(graphCacheKey, () => $fetch<ArtistGraphData>("/api/content/graph", {
   query: {
+    v: getInjectedCacheKey("graph"),
     minWeight: minWeight.value,
   },
 }), { lazy: true });
