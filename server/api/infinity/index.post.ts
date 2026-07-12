@@ -107,8 +107,12 @@ function groupContainersByYear(containers: (ArtworkContainer | CompleteAlbumCont
 
 async function getCachedIds(typeId: number, start: number, end: number): Promise<number[]> {
     const cacheData = await getCache()
-    const typeData = cacheData.find(i => i.id === typeId)!!
+    const typeData = cacheData.find(i => i.id === typeId)
     const resultIds: number[] = []
+
+    if(!typeData || !typeData.data) {
+        return []
+    }
 
     if(YEAR_FILTER_GAMES.includes(typeId)) {
         (typeData.data as YearGroupedEntry[]).forEach(e => {
