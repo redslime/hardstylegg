@@ -1,6 +1,6 @@
 import type {KeyCache} from "~/types/models";
 import prisma from "~/lib/prisma";
-import {resetGraphCache} from "#server/api/content/graph";
+import {resetGraphCache} from "~/server/utils/graphCache";
 
 let keys: KeyCache | null = null
 
