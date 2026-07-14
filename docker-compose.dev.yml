@@ -5,7 +5,7 @@ services:
     restart: unless-stopped
 
   app:
-    image: node:20-alpine
+    image: node:24-alpine
     container_name: hardstylegg-app-dev
     working_dir: /app
     command: sh -c "npm install && npx prisma generate && npx prisma migrate dev && npm run dev"

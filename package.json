@@ -13,6 +13,9 @@
     "migrate-prisma": "npx prisma migrate dev",
     "studio": "npx prisma studio"
   },
+  "engines": {
+    "node": ">=24.0.0 <25.0.0"
+  },
   "dependencies": {
     "@cyhnkckali/vue3-color-picker": "^2.1.5",
     "@ffmpeg/core": "^0.12.10",
