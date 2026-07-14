@@ -68,7 +68,7 @@
     "eslint-plugin-vue": "^10.9.2",
     "postcss": "^8.5.6",
     "tailwindcss": "^4.3.2",
-    "tsx": "^4.20.6",
+    "tsx": "^4.23.1",
     "typescript": "^5.9.3"
   }
 }
