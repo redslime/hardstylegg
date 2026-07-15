@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import DashboardMenu from "~/components/dashboard/DashboardMenu.vue";
-import {getAvatarUrl} from "~/server/utils/utils";
+import {getAvatarUrl} from "~/utils/utils";
 import {getDashboardData} from "~/utils/dashboard";
 
 const { user, clear: clearSession } = useUserSession()

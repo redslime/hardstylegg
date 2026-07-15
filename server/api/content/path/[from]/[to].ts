@@ -1,9 +1,6 @@
 import {RichArtist} from "~/types/content";
 import prisma from "~/lib/prisma";
-
-export interface NavigatorPath {
-    nodes: RichArtist[]
-}
+import type {NavigatorPath} from "~/types/models";
 
 interface ArtistEdge {
     from_id: string

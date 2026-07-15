@@ -252,3 +252,7 @@ export interface ListItem {
     index: number
     context: string | undefined
 }
+
+export interface NavigatorPath {
+    nodes: RichArtist[]
+}

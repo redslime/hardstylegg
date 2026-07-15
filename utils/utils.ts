@@ -1,3 +1,5 @@
+import type {User} from "#auth-utils";
+
 export const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms))
 
 export function copyToClipboard(text: string) {
@@ -265,4 +267,8 @@ export function isValidDate(value: string): boolean {
 
 export function plural(str: string, count: number): string {
     return count === 1 ? str : `${str}s`
+}
+
+export function getAvatarUrl(user: User): string {
+    return `https://cdn.discordapp.com/avatars/${user.discordId}/${user.avatar}.png?size=64`
 }

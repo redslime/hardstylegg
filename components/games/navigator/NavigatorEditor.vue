@@ -6,9 +6,9 @@ import ArtistCard from "~/components/dashboard/content/ArtistCard.vue";
 import ArrowRightIcon from "~/components/icons/ArrowRightIcon.vue";
 import ArtistPicker from "~/components/dashboard/ArtistPicker.vue";
 import {watchOnce} from "@vueuse/shared";
-import type {NavigatorPath} from "~/server/api/content/path/[from]/[to]";
 import CpuChipIcon from "~/components/icons/CpuChipIcon.vue";
 import {RichArtist} from "~/types/content";
+import type {NavigatorPath} from "~/types/models";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.NavigatorDef
