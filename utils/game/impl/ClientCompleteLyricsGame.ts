@@ -8,6 +8,8 @@ import CompleteLyricsEditor from "~/components/games/complete-lyrics/CompleteLyr
 import CompleteLyricsSummary from "~/components/games/complete-lyrics/CompleteLyricsSummary.vue";
 import {FlatTrack} from "~/types/content";
 
+export interface LinePart { isInput: boolean; text: string; suffix: string | null }
+
 export class ClientCompleteLyricsGame extends ClientGameDef<CompleteLyricsContainer> {
 
     constructor() {
@@ -40,5 +42,26 @@ export class ClientCompleteLyricsGame extends ClientGameDef<CompleteLyricsContai
         }
 
         return data
+    }
+
+    getLines(instance: CompleteLyricsContainer) {
+        return instance.text.split('\n').map(lineText => {
+            const regex = /\[\[(.+?)\]\]/g
+            const parts: LinePart[] = []
+
+            lineText.split(' ').forEach(word => {
+                if (regex.test(word)) {
+                    if(word.endsWith(",") || word.endsWith(".") || word.endsWith("?") || word.endsWith("!")) {
+                        parts.push({ isInput: true, text: word.slice(0, -1).replace(regex, "$1"), suffix: word.substring(word.length - 1) })
+                    } else {
+                        parts.push({ isInput: true, text: word.replace(regex, "$1"), suffix: null })
+                    }
+                } else {
+                    parts.push({ isInput: false, text: word, suffix: null })
+                }
+            })
+
+            return {parts}
+        })
     }
 }

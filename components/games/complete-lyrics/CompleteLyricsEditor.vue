@@ -16,31 +16,12 @@ const editing = ref<CompleteLyricsContainer | undefined>()
 const input = ref<string | undefined>()
 const forceInput = ref<boolean>(false)
 
-interface LinePart { isInput: boolean; text: string }
-
 const editingLines = computed(() => {
   const text = editing.value?.text // needed to trigger recalculation
-  return getLines(editing.value!!)
+  return gameDef.getLines(editing.value!!)
 })
 
 watchOnce(data, () => instances.value = data.value)
-
-function getLines(instance: CompleteLyricsContainer) {
-  return instance.text.split('\n').map(lineText => {
-    const regex = /\[\[(.+?)\]\]/g
-    const parts: LinePart[] = []
-
-    lineText.split(' ').forEach(word => {
-      if (regex.test(word)) {
-        parts.push({ isInput: true, text: word.replace(regex, '$1') })
-      } else {
-        parts.push({ isInput: false, text: word })
-      }
-    })
-
-    return {parts}
-  })
-}
 
 function toggle(word: string, lineIndex: number) {
   const text = editing.value!!.text
@@ -52,7 +33,18 @@ function toggle(word: string, lineIndex: number) {
   // wrap the selected word in [[ ]] or unpack
   if (wordIndexInLine !== -1) {
     const wordToReplace = words[wordIndexInLine]!!
-    words[wordIndexInLine] = wordToReplace.startsWith('[[') ? wordToReplace.slice(2, -2) : `[[${wordToReplace}]]`
+
+    if(wordToReplace.startsWith('[[')) {
+      // unwrap
+      words[wordIndexInLine] = wordToReplace.replace("[[", "").replace("]]", "")
+    } else {
+      // wrap in [[ ]]
+      if(wordToReplace.endsWith(",") || wordToReplace.endsWith(".") || wordToReplace.endsWith("?") || wordToReplace.endsWith("!")) {
+        words[wordIndexInLine] = `[[${wordToReplace.substring(0, wordToReplace.length - 1)}]]${wordToReplace.substring(wordToReplace.length - 1)}`
+      } else {
+        words[wordIndexInLine] = `[[${wordToReplace}]]`
+      }
+    }
   }
 
   lines[lineIndex] = words.join(' ')
@@ -111,8 +103,11 @@ function reset() {
 
                 <template v-else>
                   <span class="badge badge-outline badge-info badge-sm cursor-pointer hover:badge-primary"
-                        @click="toggle('[[' + part.text + ']]', lineIndex)">
+                        @click="toggle('[[' + part.text + ']]' + (part.suffix ? part.suffix : ''), lineIndex)">
                     {{ part.text }}
+                  </span>
+                  <span class="-ml-1" v-if="part.suffix">
+                    {{ part.suffix }}
                   </span>
                 </template>
               </template>

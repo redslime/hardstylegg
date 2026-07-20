@@ -2,34 +2,17 @@
 import type {CompleteLyricsContainer} from "~/types/gameModels";
 import type {GameReportFlat} from "~/types/models";
 
+const { $gameRegistry } = useNuxtApp();
+const gameDef = $gameRegistry.CompleteLyricsDef
 const { container, reports } = defineProps({
   container: { type: Object as PropType<CompleteLyricsContainer>, required: true },
   reports: { type: Array as PropType<GameReportFlat[]>, required: true }
 })
-
-interface LinePart { isInput: boolean; text: string }
-
-function getLines(instance: CompleteLyricsContainer) {
-  return instance.text.split('\n').map(lineText => {
-    const regex = /\[\[(.+?)\]\]/g
-    const parts: LinePart[] = []
-
-    lineText.split(' ').forEach(word => {
-      if (regex.test(word)) {
-        parts.push({ isInput: true, text: word.replace(regex, '$1') })
-      } else {
-        parts.push({ isInput: false, text: word })
-      }
-    })
-
-    return {parts}
-  })
-}
 </script>
 
 <template>
   <div class="whitespace-pre-wrap">
-    <template v-for="(line, lineIndex) in getLines(container)" :key="lineIndex">
+    <template v-for="(line, lineIndex) in gameDef.getLines(container)" :key="lineIndex">
       <p class="flex items-center gap-1">
         <template v-for="(part, i) in line.parts" :key="i">
           <template v-if="!part.isInput">
@@ -39,9 +22,12 @@ function getLines(instance: CompleteLyricsContainer) {
           </template>
 
           <template v-else>
-                  <span class="badge badge-outline badge-info badge-sm">
-                    {{ part.text }}
-                  </span>
+            <span class="badge badge-outline badge-info badge-sm">
+              {{ part.text }}
+            </span>
+            <span class="-ml-1" v-if="part.suffix">
+              {{ part.suffix }}
+            </span>
           </template>
         </template>
       </p>
