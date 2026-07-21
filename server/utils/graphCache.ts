@@ -4,7 +4,6 @@ type GraphNode = {
     id: string;
     name: string;
     image: string | null;
-    imageUrl: string | null;
     val: number;
 };
 
@@ -80,9 +79,6 @@ async function buildGraphCache(): Promise<GraphCache> {
             id: artist.id,
             name: artist.name,
             image: artist.image,
-            imageUrl: artist.image
-                ? `https://i.scdn.co/image/${artist.image}`
-                : null,
             val: releaseCountsByArtistId.get(artist.id) ?? 0,
         });
     }

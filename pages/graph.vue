@@ -25,7 +25,6 @@ export type ArtistGraphNode = {
   id: string;
   name: string;
   image: string | null;
-  imageUrl: string | null;
   val: number;
 };
 
@@ -66,7 +65,8 @@ const { data: graphData, pending } = await useAsyncData<ArtistGraphData>(graphCa
 const collabKey = computed(() => `collab-${currentNode.value?.id}:${collabNode.value?.id}`)
 const { data: collabTracks } = await useAsyncData<RichTrack[]>(collabKey, () => $fetch<RichTrack[]>(`/api/content/collabs/${currentNode.value?.id}/${collabNode.value?.id}`).then(tracks => tracks.map(RichTrack.fromJson)))
 
-const getCircularTexture = async (url: string) => {
+const getCircularTexture = async (id: string) => {
+  const url = `https://i.scdn.co/image/${id}`;
   const cachedTexture = textureCache.get(url);
 
   if (cachedTexture) {
@@ -126,6 +126,9 @@ const getCircularTexture = async (url: string) => {
 
   const texture = new THREE.CanvasTexture(canvas);
   texture.colorSpace = THREE.SRGBColorSpace;
+  texture.generateMipmaps = false;
+  texture.minFilter = THREE.LinearFilter;
+  texture.magFilter = THREE.LinearFilter;
   texture.needsUpdate = true;
 
   textureCache.set(url, texture);
@@ -211,6 +214,10 @@ function refreshLinks() {
   });
 }
 
+function getNodeImageUrl(node: ArtistGraphNode): string | undefined {
+  return node.image ? `https://i.scdn.co/image/${node.image}` : undefined
+}
+
 function mountGraph(data: ArtistGraphData) {
   if (!graphEl.value) {
     return;
@@ -240,7 +247,7 @@ function mountGraph(data: ArtistGraphData) {
         const artist = node as ArtistGraphNode;
         const size = Math.max(10, Math.min(artist.val * 1.5, 32));
 
-        if (!artist.imageUrl) {
+        if (!artist.image) {
           const geometry = new THREE.SphereGeometry(6);
           const material = new THREE.MeshBasicMaterial({
             color: "#ffffff",
@@ -273,7 +280,7 @@ function mountGraph(data: ArtistGraphData) {
         const sprite = new THREE.Sprite(material);
         sprite.scale.set(size, size, 1);
 
-        getCircularTexture(artist.imageUrl).then((texture) => {
+        getCircularTexture(artist.image).then((texture) => {
           material.map = texture;
           material.transparent = true;
           material.alphaTest = 0.01;
@@ -314,7 +321,7 @@ onMounted(() => mountGraph(graphData.value!!))
           <p class="italic text-accent" id="brand">hardstyle.gg</p>
         </div>
         <div class="flex gap-2 items-center -my-10" v-if="currentNode">
-          <img class="size-12 rounded-full" :src="currentNode.imageUrl" v-if="currentNode.imageUrl" :alt="currentNode.name" />
+          <img class="size-12 rounded-full" :src="getNodeImageUrl(currentNode)" v-if="currentNode.image" :alt="currentNode.name" />
           <h1 class="font-black text-3xl" v-if="currentNode">{{ currentNode.name }}</h1>
         </div>
         <GraphNodeInput class="absolute right-4" :nodes="nodes"
@@ -333,14 +340,14 @@ onMounted(() => mountGraph(graphData.value!!))
           <Xmark class="opacity-60 cursor-pointer scale-70" @click="currentNode = undefined" />
         </div>
         <div class="flex gap-2 self-start items-center">
-          <img class="size-10 rounded-full" :src="currentNode.imageUrl" v-if="currentNode.imageUrl" :alt="currentNode.name" />
+          <img class="size-10 rounded-full" :src="getNodeImageUrl(currentNode)" v-if="currentNode.image" :alt="currentNode.name" />
           <h1 class="font-bold text-2xl">{{ currentNode.name }}</h1>
         </div>
         <p class="divider my-1"></p>
         <p class="uppercase font-semibold tracking-tighter opacity-50 text-xs mb-0.5">Most frequent collaborators</p>
         <div class="max-h-60 overflow-y-auto">
           <div class="flex gap-1 items-center self-start" v-for="(link, index) in currentLinks" :key="index">
-            <img class="size-6 rounded-full" :src="link.artist.imageUrl" v-if="link.artist.imageUrl" :alt="currentNode.name" />
+            <img class="size-6 rounded-full" :src="getNodeImageUrl(link.artist)" v-if="link.artist.image" :alt="link.artist.name" />
             <a class="font-medium hover:underline cursor-pointer"
                @click="collabNode=link.artist"
                @click.ctrl="zoomOnNode(link.artist)">
