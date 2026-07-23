@@ -2,6 +2,7 @@
 import {RichArtist} from "~/types/content";
 import ArtistEditorMapper from "~/components/dashboard/content/ArtistEditorMapper.vue";
 import ArtistEditorSplitter from "~/components/dashboard/content/ArtistEditorSplitter.vue";
+import ArtistEditorImageRefresher from "~/components/dashboard/content/ArtistEditorImageRefresher.vue";
 
 const { artist } = defineProps({
   artist: { type: Object as PropType<RichArtist>, required: true }
@@ -64,6 +65,7 @@ function save() {
   </div>
 
   <div class="mt-5 flex gap-3">
+    <ArtistEditorImageRefresher :artist="artist" @updatedImage="(image) => artist.image = image" />
     <ArtistEditorMapper :artist="artist" />
     <ArtistEditorSplitter :artist="artist" />
   </div>

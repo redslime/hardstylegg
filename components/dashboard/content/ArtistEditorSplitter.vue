@@ -6,7 +6,7 @@ import ArtistPicker from "~/components/dashboard/ArtistPicker.vue";
 import PlusIcon from "~/components/icons/PlusIcon.vue";
 
 const props = defineProps({
-  artist: { type: RichArtist, required: true }
+  artist: { type: Object as PropType<RichArtist>, required: true }
 })
 const emit = defineEmits<{
   mappedTo: [artist: RichArtist]
