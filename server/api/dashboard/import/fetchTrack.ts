@@ -3,6 +3,7 @@ import {getSpotifyApi} from "~/server/utils/spotify";
 import {type RichTrack} from "~/types/content";
 import prisma from "~/lib/prisma";
 import {invalidateCacheKeys} from "~/server/utils/cacheKeys";
+import {getOrFetchArtistImages} from "#server/utils/content";
 
 export default defineEventHandler(async (event) => {
     try {
@@ -19,7 +20,10 @@ export default defineEventHandler(async (event) => {
         }
 
         const track = await getSpotifyApi().tracks.get(trackId as string)
-        const rec =await prisma.track.upsert({
+        const artistIds = track.artists.map(a => a.id)
+        const artistImages = await getOrFetchArtistImages(artistIds)
+
+        const rec = await prisma.track.upsert({
             where: {
                 sid: track.id,
             },
@@ -38,7 +42,8 @@ export default defineEventHandler(async (event) => {
                                 },
                                 create: {
                                     id: artist.id,
-                                    name: artist.name
+                                    name: artist.name,
+                                    image: artistImages[artist.id]
                                 }
                             }
                         },
@@ -61,7 +66,8 @@ export default defineEventHandler(async (event) => {
                                 },
                                 create: {
                                     id: artist.id,
-                                    name: artist.name
+                                    name: artist.name,
+                                    image: artistImages[artist.id]
                                 }
                             }
                         },

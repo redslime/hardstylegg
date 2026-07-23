@@ -1,5 +1,6 @@
 import {FlatAlbum, FlatArtist, FlatTrack, RichArtist, RichTrack} from "~/types/content";
 import prisma from "~/lib/prisma";
+import {getSpotifyApi} from "#server/utils/spotify";
 
 export async function getArtist(artistId: string): Promise<FlatArtist> {
     return await getArtists([artistId]).then(a => a[0]!!)
@@ -32,6 +33,28 @@ export async function getRichArtists(artistIds: string[]): Promise<RichArtist[]>
             }
         }
     }).then(a => a.map(RichArtist.fromJson))
+}
+
+export async function getOrFetchArtistImages(artistIds: string[]): Promise<Record<string, string | null>> {
+    const locals = await getRichArtists(artistIds)
+    const missing = artistIds.filter(id => !locals.some(a => a.id === id) || !locals.find(a => a.id === id)?.image)
+
+    if(missing.length === 0) {
+        return locals.reduce((acc, item) => {
+            acc[item.id] = item.image!!
+            return acc
+        }, {} as Record<string, string>)
+    } else {
+        const records = {} as Record<string, string | null>
+        locals.forEach(a => records[a.id] = a.image ?? null)
+
+        for(const id of missing) {
+            const fetched = await getSpotifyApi().artists.get(id)
+            records[fetched.id] = fetched.images[0]?.url?.replace("https://i.scdn.co/image/", "") ?? null
+        }
+
+        return records
+    }
 }
 
 export async function getAlbum(albumId: string): Promise<FlatAlbum> {
