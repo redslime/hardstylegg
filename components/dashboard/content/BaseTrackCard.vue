@@ -12,6 +12,7 @@ const { user } = useUserSession()
 const { item } = defineProps({
   item: { type: Object as PropType<RichAlbum | RichTrack>, required: true }
 })
+const emit = defineEmits<{ updated: [item: RichAlbum | RichTrack] }>()
 const isAlbum = computed<boolean>(() => item instanceof RichAlbum)
 const imgLoaded = ref<boolean>(false)
 const showMenu = ref<boolean>(false)
@@ -30,18 +31,7 @@ async function toggleHidden() {
   if(item) {
     item.hidden = !item.hidden
     showMenu.value = false
-
-    if(isAlbum.value) {
-      await $fetch<RichAlbum>("/api/dashboard/edit/album", {
-        method: "POST",
-        body: RichAlbum.mapJson(item)
-      }).then(RichAlbum.fromJson).then(updateDashboardAlbum)
-    } else {
-      await $fetch<RichTrack>("/api/dashboard/edit/track", {
-        method: "POST",
-        body: RichTrack.mapJson(item)
-      }).then(RichTrack.fromJson).then(updateDashboardTrack)
-    }
+    await editItem()
   }
 }
 
@@ -79,14 +69,31 @@ async function save() {
   savingTitle.value = true
 
   try {
-    await $fetch<RichTrack>("/api/dashboard/edit/track", {
-      method: "POST",
-      body: RichTrack.mapJson(item)
-    }).then(RichTrack.fromJson).then(updateDashboardTrack)
+    await editItem()
     savingTitle.value = false
   } catch (e: any) {
     savingTitle.value = false
     savingError.value = true
+  }
+}
+
+async function editItem() {
+  if(isAlbum.value) {
+    await $fetch<RichAlbum>("/api/dashboard/edit/album", {
+      method: "POST",
+      body: RichAlbum.mapJson(item)
+    }).then(RichAlbum.fromJson).then(a => {
+      updateDashboardAlbum(a)
+      emit('updated', a)
+    })
+  } else {
+    await $fetch<RichTrack>("/api/dashboard/edit/track", {
+      method: "POST",
+      body: RichTrack.mapJson(item)
+    }).then(RichTrack.fromJson).then(t => {
+      updateDashboardTrack(t)
+      emit('updated', t)
+    })
   }
 }
 </script>

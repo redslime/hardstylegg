@@ -1,8 +1,12 @@
 <script setup lang="ts">
-import {RichArtist} from "~/types/content";
+import {RichArtist, RichTrack} from "~/types/content";
 import ArtistEditorMapper from "~/components/dashboard/content/ArtistEditorMapper.vue";
 import ArtistEditorSplitter from "~/components/dashboard/content/ArtistEditorSplitter.vue";
 import ArtistEditorImageRefresher from "~/components/dashboard/content/ArtistEditorImageRefresher.vue";
+import DocumentDuplicateIcon from "~/components/icons/DocumentDuplicateIcon.vue";
+import DuplicateTrackFinder from "~/components/dashboard/content/DuplicateTrackFinder.vue";
+import {useAsyncData} from "#app";
+import {getDashboardTracks} from "~/utils/dashboard";
 
 const { artist } = defineProps({
   artist: { type: Object as PropType<RichArtist>, required: true }
@@ -10,6 +14,8 @@ const { artist } = defineProps({
 const emit = defineEmits<{
   edited: [track: RichArtist]
 }>()
+const { data: tracks } = await useAsyncData("track", () => getDashboardTracks(), { lazy: true })
+const findDuplicates = ref<boolean>(false)
 const errors = computed<string[]>(() => {
   const errors: string[] = []
 
@@ -31,6 +37,15 @@ function save() {
   emit("edited", artist)
 }
 
+function getTracks(): RichTrack[] {
+  if(tracks.value) {
+    return tracks.value
+        .filter(a => a.artists.find(a => a.id === artist.id))
+        .sort((a, b) => (b.date.getTime() - a.date.getTime()) || String(a.image).localeCompare(String(b.image)))
+  }
+
+  return []
+}
 </script>
 
 <template>
@@ -65,10 +80,16 @@ function save() {
   </div>
 
   <div class="mt-5 flex gap-3">
+    <button class="btn btn-soft btn-primary" :disabled="findDuplicates" @click="findDuplicates = true" >
+      <DocumentDuplicateIcon class="size-4" />
+      Find duplicates
+    </button>
     <ArtistEditorImageRefresher :artist="artist" @updatedImage="(image) => artist.image = image" />
     <ArtistEditorMapper :artist="artist" />
     <ArtistEditorSplitter :artist="artist" />
   </div>
+
+  <DuplicateTrackFinder class="mt-6" :tracks="getTracks()" v-if="findDuplicates" />
 </template>
 
 <style scoped>
