@@ -87,7 +87,7 @@ watch(isReady, (ready) => {
     } as RegionParams)
 
     regionsPlugin.value.on('region-updated', event => {
-      duration.value = Math.round(event.end)
+      duration.value = Math.max(1, Math.round(event.end))
       regionsPlugin.value?.getRegions().filter(r => r.start === 0).forEach(r => r.setOptions({ end: duration.value }))
     })
   }
