@@ -41,32 +41,30 @@ function handleDragLeave() {
 </script>
 
 <template>
-  <div class="w-full">
-    <div>
-      <label
-          for="file-input"
-          class="flex flex-col items-center justify-center h-40 rounded-lg cursor-pointer transition"
-          :class="{
-          'border-base-content/20': !isDragging,
-          'border-primary bg-primary/10': isDragging
-        }"
-          @dragover.prevent="handleDragOver"
-          @dragleave.prevent="handleDragLeave"
-          @drop="handleDrop"
-      >
-        <ArrowUpTrayIcon v-if="!previewUrl" class="size-8" />
-        <div v-if="!previewUrl" class="text-base-content/80 text-center">
-          <p class="font-medium">Upload track</p>
-          <p class="text-sm text-base-content/50">Click or drop .mp3 file</p>
-        </div>
-      </label>
-      <input
-          id="file-input"
-          type="file"
-          accept=".mp3"
-          class="hidden"
-          @change="handleFileChange"
-      />
-    </div>
+  <div class="w-full h-full">
+    <label
+        for="file-input"
+        class="flex flex-col items-center justify-center h-full rounded-lg cursor-pointer transition"
+        :class="{
+        'border-base-content/20': !isDragging,
+        'border-primary bg-primary/10': isDragging
+      }"
+        @dragover.prevent="handleDragOver"
+        @dragleave.prevent="handleDragLeave"
+        @drop="handleDrop"
+    >
+      <ArrowUpTrayIcon v-if="!previewUrl" class="size-8" />
+      <div v-if="!previewUrl" class="text-base-content/80 text-center">
+        <p class="font-medium">Upload track</p>
+        <p class="text-sm text-base-content/50">Click or drop .mp3 file</p>
+      </div>
+    </label>
+    <input
+        id="file-input"
+        type="file"
+        accept=".mp3"
+        class="hidden"
+        @change="handleFileChange"
+    />
   </div>
 </template>
