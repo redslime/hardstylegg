@@ -30,7 +30,7 @@ export function mdYoutubePlugin(md: MarkdownIt) {
         <iframe
           src="https://www.youtube-nocookie.com/embed/${safeId}"
           title="YouTube video"
-          frameborder="0"
+          class="border-none"
           allowfullscreen
         ></iframe>
       </div>
