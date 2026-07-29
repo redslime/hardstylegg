@@ -119,6 +119,7 @@ async function save() {
 
           savingResponse.value = true
           editing.value = undefined
+          editingForced.value = false
           savingModal.value?.close()
           emit('saved')
         } else {
