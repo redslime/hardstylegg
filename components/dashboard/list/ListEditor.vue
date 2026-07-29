@@ -17,6 +17,7 @@ import PencilIcon from "~/components/icons/PencilIcon.vue";
 import ListIcon from "~/components/dashboard/list/ListIcon.vue";
 import ListBadge from "~/components/dashboard/list/ListBadge.vue";
 
+const router = useRouter()
 const list = defineModel<List>('list', { required: true })
 const ready = computed<boolean>(() => list.value !== undefined && list.value.name.length > 0 && list.value.items.length > 1)
 const iconModal = ref<HTMLDialogElement | null>()
@@ -64,7 +65,7 @@ function saveName() {
 }
 
 function back() {
-  window.history.back()
+  router.back()
 }
 
 function tryEditName() {

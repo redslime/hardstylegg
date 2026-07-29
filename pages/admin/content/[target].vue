@@ -15,7 +15,7 @@ definePageMeta({
 type SearchTarget = "albums" | "artists" | "tracks"
 
 const route = useRoute()
-
+const queryParam = computed<string | undefined>(() => route.query.q as string | undefined)
 const target = computed<SearchTarget>(() => {
   const value = route.params.target
 
@@ -36,7 +36,7 @@ const pageConfig = computed(() => {
         key: "album",
         title: "Album database",
         fuseKeys: ["title", "artists.name"],
-        minQueryLength: 5,
+        minQueryLength: 4,
         getSearchText: (item: any) => item.getDisplayName(),
         load: () => getDashboardAlbums()
       }
@@ -71,6 +71,7 @@ const { data: items, pending, error } = await useAsyncData(
 )
 
 const {
+  debouncedQuery,
   query,
   results: filtered,
   resultsLength: filteredLength,
@@ -81,6 +82,24 @@ const {
   maxFuseResults: 10,
   fuseKeys: pageConfig.value.fuseKeys,
   getSearchText: pageConfig.value.getSearchText
+})
+
+onMounted(() => {
+  if(queryParam.value) {
+    query.value = queryParam.value
+  }
+})
+watch(queryParam, (newQuery) => {
+  if(newQuery) {
+    query.value = newQuery
+  }
+})
+watch(debouncedQuery, (newQuery) => {
+  if (newQuery.length >= minQueryLength) {
+    navigateTo({ query: { q: debouncedQuery.value } })
+  } else {
+    navigateTo({ query: { q: undefined } })
+  }
 })
 </script>
 

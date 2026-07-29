@@ -28,6 +28,8 @@ const emit = defineEmits<{
   cancelled: []
 }>()
 
+const router = useRouter()
+const idParam = computed<string | undefined>(() => useRoute().query.id as string | undefined)
 const { user } = useUserSession()
 const dashboardData = await getDashboardData()
 const todayId = computed(() => dashboardData.schedule.todayId)
@@ -92,7 +94,7 @@ provide("currentIndex", 1)
 function cancel() {
   editing.value = undefined
   editingForced.value = false
-  window.history.back()
+  router.back()
   emit('cancelled')
 }
 
@@ -141,7 +143,7 @@ function onDelete(gameId: number) {
 
 function tryEdit(instance: T) {
   editing.value = gameDef.remap(deepCopy(instance))
-  window.history.pushState({}, "", `?id=${instance.id}`)
+  navigateTo({ query: { id: instance.id } })
   window.scrollTo({ top: 0 })
 }
 
@@ -169,6 +171,17 @@ watch(editing, async () => {
 
 watch(sortMode, () => {
   instances.value = instances.value?.sort(instanceSorter.value)
+})
+
+watch(idParam, newId => {
+  if(!newId) {
+    editing.value = undefined
+    editingForced.value = false
+    emit('cancelled')
+  } else {
+    const intId = parseInt(newId)
+    editing.value = filteredInstances.value?.find(i => i.id === intId)
+  }
 })
 
 onMounted(() => {
