@@ -2,7 +2,7 @@
 import {useAsyncData} from "#app";
 import {getDashboardAlbums, getDashboardArtists, getDashboardTracks} from "~/utils/dashboard";
 import CircleStackIcon from "~/components/icons/CircleStackIcon.vue";
-import {RichAlbum, type RichArtist, RichTrack} from "~/types/content";
+import {RichAlbum, RichArtist, RichTrack} from "~/types/content";
 import BaseTrackView from "~/components/dashboard/content/BaseTrackView.vue";
 import ArtistCard from "~/components/dashboard/content/ArtistCard.vue";
 import {pickRandomItems} from "~/utils/utils";
@@ -15,6 +15,26 @@ definePageMeta({
 const { data: artists } = await useAsyncData("artist", () => getDashboardArtists(), { lazy: true })
 const { data: albums } = await useAsyncData("album", () => getDashboardAlbums(), { lazy: true })
 const { data: tracks } = await useAsyncData("track", () => getDashboardTracks(), { lazy: true })
+
+const filterHardstyle = ref<boolean>(true)
+const filterTrackMinimum = 35
+const topVisible = ref<boolean>(false)
+const top = computed<RichArtist[]>(() => {
+  if(topVisible.value && artists.value && tracks.value) {
+    return artists.value
+        .filter(a => a.listeners != null)
+        .toSorted((a, b) => b.listeners!! - a.listeners!!)
+        .filter(a => {
+          if(filterHardstyle.value) {
+            const featuredOn = tracks.value?.filter(t => t.artists.map(a => a.id).includes(a.id)).length ?? 0
+            return featuredOn >= filterTrackMinimum
+          } else return true
+        })
+        .slice(0, 100)
+  } else {
+    return []
+  }
+})
 
 const albumSelection = computed<RichAlbum[] | undefined>(() => {
   if(albums.value) {
@@ -71,6 +91,34 @@ const artistSelection = computed<RichArtist[] | undefined>(() => {
             <div class="skeleton h-5 w-[130px]"></div>
           </div>
         </template>
+      </div>
+
+      <div class="collapse collapse-plus bg-base-300 border border-base-300 w-fit mt-6" v-if="top">
+        <input type="checkbox" v-model="topVisible" />
+        <div class="collapse-title font-semibold">Top 100 artists by monthly listeners</div>
+        <div class="collapse-content">
+          <label class="label text-sm">
+            <input type="checkbox" class="toggle" v-model="filterHardstyle" />
+            Only show Hardstyle artists
+          </label>
+
+          <p class="text-xs opacity-60 my-2" v-if="filterHardstyle">Must have at least 35 releases to show up here</p>
+
+          <div class="flex flex-col gap-1">
+            <div v-for="(artist, index) in top" :key="artist.id"
+                class="flex gap-2 items-center border border-white/10 hover:bg-base-100 cursor-pointer transition-colors rounded-sm p-1"
+                @click="navigateTo(`/admin/content/artist/${artist.id}`)">
+              <p class="w-4 font-mono opacity-60">{{index+1}}</p>
+
+              <img :src="artist.getImageUrl()" :alt="artist.name" class="size-11 rounded-full object-cover" />
+
+              <div class="flex flex-col gap-1">
+                <p class="font-semibold">{{ artist.getDisplayName() }}</p>
+                <p class="text-xs tracking-tight">{{ artist.getListenersFriendly() }} listeners</p>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
