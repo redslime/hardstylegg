@@ -32,7 +32,7 @@ jobs:
         run: mkdir -p .output/engines
 
       - name: Copy platform specific prisma client
-        run: cp generated/prisma/libquery_engine-debian-openssl-1.0.x.so.node .output/engines/
+        run: cp generated/prisma/libquery_engine-debian-openssl-3.0.x.so.node .output/engines/
         
       - name: Archive build
         run: zip -r output.zip .output
