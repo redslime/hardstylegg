@@ -11,9 +11,29 @@ import {decodeSelection} from "#shared/games";
 import {distinct} from "~/utils/utils";
 import type {QueryObject} from "ufo";
 
-const config = useRuntimeConfig()
-const interRegular = readFileSync(config.public.isDev ? join(process.cwd(), 'public', 'fonts', 'Regular.ttf') : join(process.cwd(), '.output', 'public', 'fonts', 'Regular.ttf'))
-const interBold = readFileSync(config.public.isDev ? join(process.cwd(), 'public', 'fonts', 'Bold.ttf') : join(process.cwd(), '.output', 'public', 'fonts', 'Bold.ttf'))
+let interRegular: Buffer | null = null
+let interBold: Buffer | null = null
+
+function getFonts(event: H3Event<EventHandlerRequest>) {
+    const config = useRuntimeConfig(event)
+
+    interRegular ??= readFileSync(
+        config.public.isDev
+            ? join(process.cwd(), 'public', 'fonts', 'Regular.ttf')
+            : join(process.cwd(), '.output', 'public', 'fonts', 'Regular.ttf')
+    )
+
+    interBold ??= readFileSync(
+        config.public.isDev
+            ? join(process.cwd(), 'public', 'fonts', 'Bold.ttf')
+            : join(process.cwd(), '.output', 'public', 'fonts', 'Bold.ttf')
+    )
+
+    return {
+        interRegular,
+        interBold
+    }
+}
 
 function hexToBits(hex: string, length: number): string {
     return parseInt(hex, 16).toString(2).padStart(length, "0");
@@ -41,6 +61,7 @@ function buildPlainIconRow(typeIds: number[]): string {
 
 async function buildSvg(markup: any, event: H3Event<EventHandlerRequest>, width: number = 550) {
     // Generate SVG with satori
+    const { interRegular, interBold } = getFonts(event)
     const svg = await satori(markup, {
         width,
         height: 140,

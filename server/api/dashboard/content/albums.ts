@@ -1,9 +1,9 @@
 import prisma from "~/lib/prisma";
 import type {RichAlbum, RichTrack} from "~/types/content";
 
-const isDev = useRuntimeConfig().public.isDev
-
 export default defineEventHandler(async (event): Promise<RichAlbum[]> => {
+    const isDev = useRuntimeConfig().public.isDev
+
     if(!isDev) {
         setHeader(event, 'Cache-Control', 'private, max-age=2592000') // 1 month
     } else {

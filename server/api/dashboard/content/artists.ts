@@ -1,9 +1,9 @@
 import prisma from "~/lib/prisma";
 import {RichArtist} from "~/types/content";
 
-const isDev = useRuntimeConfig().public.isDev
-
 export default defineEventHandler(async (event): Promise<RichArtist[]> => {
+    const isDev = useRuntimeConfig().public.isDev
+
     if(!isDev) {
         setHeader(event, 'Cache-Control', 'private, max-age=2592000') // 1 month
     } else {

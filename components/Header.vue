@@ -1,7 +1,12 @@
 <script setup lang="ts">
 import {getGameContainer, isGameActive} from "~/utils/game";
 
-const { data: gameData } = await useAsyncData(() => getGameContainer(), { lazy: true })
+const { showTheme } = defineProps({
+  showTheme: { type: Boolean, default: true }
+})
+const { data: gameData } = showTheme
+    ? await useAsyncData('header-container', () => getGameContainer(), { lazy: true })
+    : { data: ref(null) }
 const path = useRoute().path
 const target = computed(() => {
   if(path == "/play") {

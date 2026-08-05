@@ -3,7 +3,6 @@ import prisma from "~/lib/prisma";
 import {GAME_METAS} from "#shared/games";
 import {getDayIdToday} from "~/server/utils/schedule";
 
-const isDev = useRuntimeConfig().public.isDev
 let infinityPreviewCache: InfinityPreviewContainer | null = null
 
 export function resetInfinityPreviewCache() {
@@ -141,6 +140,8 @@ async function fetchAlbumYearCounts(trackIds: string[]): Promise<{ year: number,
 }
 
 export default defineEventHandler(async (event) => {
+    const isDev = useRuntimeConfig().public.isDev
+
     if(!isDev) {
         setHeader(event, 'Cache-Control', 'public, max-age=86400') // 24 hours
     }

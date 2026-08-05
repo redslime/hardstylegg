@@ -10,9 +10,9 @@ const { error } = defineProps({
 <template>
   <div class="flex justify-center min-h-screen mb-20 md:mb-0">
     <div class="base w-4xl bg-primary-content shadow-xl">
-      <Header />
+      <Header :showTheme="false" />
       <div class="flex base-content items-center flex-col my-4 lg:m-4 p-4 rounded-sm">
-        <h1 class="text-5xl font-bold mb-5">Error {{ error?.statusCode }}</h1>
+        <h1 class="text-5xl font-bold mb-5">Error {{ error?.status }}</h1>
         <p class="text-xl">{{ error?.message }}</p>
       </div>
     </div>
