@@ -1,7 +1,7 @@
 import {DateTime} from 'luxon';
 import prisma from "~/lib/prisma";
 import type {AvgScoresContainer, PackedDayData} from "~/types/models";
-import {resetCache} from "~/server/api/dashboard/stats/players";
+import {resetPlayerStatsCache} from "~/server/api/dashboard/stats/players";
 import {findGameById} from "~/server/utils/game/serverGameRegistry";
 import {resetArchiveCache} from "~/server/api/archive";
 import {resetInfinityPreviewCache} from "~/server/api/infinity";
@@ -180,7 +180,7 @@ async function onNewDay(newDayId: number) {
     packedCache = await getPackedDayDataForDay(newDayId)
     scoreCache = null
     resetInfinityPreviewCache()
-    resetCache()
+    resetPlayerStatsCache()
     resetArchiveCache()
 }
 

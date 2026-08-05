@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type {AvgScoresContainer} from "~/types/models";
+import type {ApexOptions} from "apexcharts";
 
 const { data, pending, error } = useFetch<AvgScoresContainer>("/api/scores")
 
-let options = reactive({})
+let options = reactive<ApexOptions>({})
 let series = reactive([{}])
 const valid = computed(() => data.value && data.value.dayIds.length > 0)
 
@@ -37,7 +38,7 @@ watch(data, (d) => {
       tickAmount: 5,
       forceNiceScale: true,
       labels: {
-        formatter: (val: number) => val
+        formatter: (val: number) => `${val}`
       }
     },
     markers: {

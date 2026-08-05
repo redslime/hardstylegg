@@ -128,10 +128,7 @@ function getGamePerformance(typeId: number, gameId: number): number | undefined 
     </div>
 
     <div class="flex flex-wrap gap-5">
-      <div class="bg-base-200 p-7 rounded-md">
-        <h1 class="text-2xl font-bold mb-5 text-center">Player stats</h1>
-        <PlayerStatsChart />
-      </div>
+      <PlayerStatsChart />
 
       <div class="bg-base-200 p-7 rounded-md">
         <h1 class="text-2xl font-bold mb-5 text-center">Average Score stats</h1>
