@@ -65,7 +65,7 @@ export default defineNuxtConfig({
         },
     },
 
-    modules: ['nuxt-auth-utils', '@vite-pwa/nuxt'],
+    modules: ['nuxt-auth-utils', '@vite-pwa/nuxt', '@pinia/nuxt'],
 
     runtimeConfig: {
         discordClientSecret: process.env.NUXT_DISCORD_CLIENT_SECRET,

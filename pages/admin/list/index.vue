@@ -6,14 +6,15 @@ import type {List} from "~/types/models";
 import {icons} from "~/components/icons";
 import SquaresIcon from "~/components/icons/SquaresIcon.vue";
 import ListBulletIcon from "~/components/icons/ListBulletIcon.vue";
-import {uiState} from "~/utils/store";
 import {distinct} from "~/utils/utils";
 import ListIcon from "~/components/dashboard/list/ListIcon.vue";
+import {useDashboardStore} from "~/stores/dashboard.ts";
 
 definePageMeta({
   middleware: ['authenticated'],
 })
 
+const store = useDashboardStore()
 const dashboardData = await getDashboardData()
 const { data: lists, pending } = await useAsyncData("lists", () => getDashboardLists(), { lazy: true })
 const filteredLists = computed<List[]>(() => {
@@ -67,11 +68,11 @@ function setFilter(input: string) {
       <legend class="fieldset-legend">View</legend>
 
       <div class="flex gap-2">
-        <button class="btn btn-primary" :class="{'btn-outline': uiState.compact}" @click="uiState.compact = false">
+        <button class="btn btn-primary" :class="{'btn-outline': store.compactList}" @click="store.compactList = false">
           <SquaresIcon class="size-4" />
           Full
         </button>
-        <button class="btn btn-primary" :class="{'btn-outline': !uiState.compact}" @click="uiState.compact = true">
+        <button class="btn btn-primary" :class="{'btn-outline': !store.compactList}" @click="store.compactList = true">
           <ListBulletIcon class="size-4" />
           List
         </button>
@@ -103,7 +104,7 @@ function setFilter(input: string) {
   </div>
 
   <div class="flex flex-col gap-4" v-else>
-    <template v-if="!uiState.compact">
+    <template v-if="!store.compactList">
       <template v-for="list in filteredLists" :key="list.id">
         <div class="bg-base-200/50 p-4 rounded-md border border-white/10 hover:border-primary transition-colors cursor-pointer w-fit max-w-3xl"
              @click="navigateTo(`/admin/list/${list.id}`)">
