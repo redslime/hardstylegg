@@ -65,7 +65,7 @@
     "@typescript-eslint/eslint-plugin": "^8.63.0",
     "@vue/typescript-plugin": "^3.2.8",
     "autoprefixer": "^10.4.21",
-    "concurrently": "^10.0.3",
+    "concurrently": "^10.0.4",
     "eslint": "^10.6.0",
     "eslint-plugin-vue": "^10.9.2",
     "postcss": "^8.5.6",
