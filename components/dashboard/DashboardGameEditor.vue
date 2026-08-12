@@ -30,12 +30,14 @@ const emit = defineEmits<{
 
 const router = useRouter()
 const idParam = computed<string | undefined>(() => useRoute().query.id as string | undefined)
+const newParam = computed<string | undefined>(() => useRoute().query.new as string | undefined)
 const { user } = useUserSession()
 const dashboardData = await getDashboardData()
 const todayId = computed(() => dashboardData.schedule.todayId)
 const typeName = computed(() => gameDef.getSpacedName())
 const savingModal = ref<HTMLDialogElement | undefined>()
 const savingResponse = ref<boolean | String[] | undefined>()
+const creating = ref<boolean>(false)
 const editingErrors = computed<string[]>(() => gameDef.validate(editing.value!!))
 const editingExample = computed<boolean>(() => editing.value?.id === 1)
 const editingSchedule = computed<ScheduleDay | undefined>(() => getScheduleForGame(gameDef.id, editing.value?.id))
@@ -91,9 +93,16 @@ provide("details", false)
 provide("summary", false)
 provide("currentIndex", 1)
 
+function createNew() {
+  router.push({ query: { new: "1" }})
+  editing.value = gameDef.remap(deepCopy({title: '', items: []}))
+  creating.value = true
+}
+
 function cancel() {
   editing.value = undefined
   editingForced.value = false
+  creating.value = false
   router.back()
   emit('cancelled')
 }
@@ -120,9 +129,11 @@ async function save() {
           instances.value = instances.value?.sort(instanceSorter.value)
 
           savingResponse.value = true
+          creating.value = false
           editing.value = undefined
           editingForced.value = false
           savingModal.value?.close()
+          router.back()
           emit('saved')
         } else {
           savingResponse.value = data
@@ -139,6 +150,8 @@ async function save() {
 function onDelete(gameId: number) {
   instances.value = instances.value?.filter(i => i.id !== gameId).sort(instanceSorter.value)
   editing.value = undefined
+  creating.value = false
+  router.back()
 }
 
 function tryEdit(instance: T) {
@@ -184,6 +197,14 @@ watch(idParam, newId => {
   }
 })
 
+watch(newParam, newId => {
+  if(!newId && creating.value) {
+    editing.value = undefined
+    editingForced.value = false
+    emit('cancelled')
+  }
+})
+
 onMounted(() => {
   const route = useRoute()
   const focusId: string | undefined = route.query.id as string
@@ -202,7 +223,7 @@ onMounted(() => {
     <div v-if="!editing">
       {{ typeName }} instances
       <div v-if="instances" class="badge badge-soft badge-primary badge-xl">{{ filteredInstances.length }}</div>
-      <button class="btn btn-success btn-soft btn-sm ml-2" @click="editing=gameDef.remap(deepCopy({title: '', items: []}))">
+      <button class="btn btn-success btn-soft btn-sm ml-2" @click="createNew()">
         Create new
       </button>
     </div>
