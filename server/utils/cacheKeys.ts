@@ -44,6 +44,7 @@ async function loadKeys(): Promise<KeyCache> {
 }
 
 async function getChecksum(table: string): Promise<string> {
-    const checksum = await prisma.$queryRawUnsafe<any[]>(`CHECKSUM TABLE ${table}`)
-    return `${checksum[0].f1}`
+    type ChecksumQuery = { Table: string, Checksum: string }
+    const checksum = await prisma.$queryRawUnsafe<ChecksumQuery[]>(`CHECKSUM TABLE ${table}`)
+    return `${checksum[0]?.Checksum}`
 }
