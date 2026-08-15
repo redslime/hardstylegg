@@ -63,7 +63,7 @@
     "@types/infobox-parser": "^3.3.4",
     "@types/leaflet": "^1.9.21",
     "@types/luxon": "^3.7.2",
-    "@types/node": "^25.9.1",
+    "@types/node": "^26.2.0",
     "@types/three": "^0.184.1",
     "@typescript-eslint/eslint-plugin": "^8.63.0",
     "@vue/typescript-plugin": "^3.2.8",
