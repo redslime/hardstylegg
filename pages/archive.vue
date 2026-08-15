@@ -84,7 +84,10 @@ onUnmounted(() => clear())
   </div>
 
   <template v-else-if="playing">
-    <h1 class="text-2xl font-bold mb-5">Challenge from {{ playing.dayFriendly }}</h1>
+    <div class="flex gap-2 mb-5 items-center">
+      <div class="badge badge-outline badge-secondary badge-sm geist-mono">Archive</div>
+      <p class="tracking-tight opacity-90">Challenge from {{ playing.dayFriendly }}</p>
+    </div>
     <GameFlow :gameEnv="GameEnvironment.ARCHIVE" :gameData="playing" @finish="endGame()" />
   </template>
 </template>

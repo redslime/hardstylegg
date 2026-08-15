@@ -4,7 +4,7 @@
   <div class="flex flex-col w-full md:mt-20">
     <div class="flex justify-center">
       <div class="base md:mx-10 bg-primary-content rounded-md shadow-2xl w-full max-w-4xl">
-        <h1 class="grow text-center text-accent italic font-normal text-5xl md:text-7xl py-2">
+        <h1 class="anton grow text-center text-accent italic font-normal text-5xl md:text-7xl py-2">
           <NuxtLink to="/">hardstyle.gg</NuxtLink>
         </h1>
 
@@ -17,7 +17,4 @@
 </template>
 
 <style scoped>
-h1 {
-  font-family: "Anton", sans-serif;
-}
 </style>

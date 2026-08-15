@@ -318,7 +318,7 @@ onMounted(() => mountGraph(graphData.value!!))
       <div class="flex justify-center items-center backdrop-blur-2xl p-4 relative min-h-16">
         <div class="flex gap-2 items-center absolute left-4">
           <img class="size-8" src="/img/icon512-transparent.png" alt="hardstyle.gg logo" />
-          <p class="italic text-accent" id="brand">hardstyle.gg</p>
+          <p class="anton italic text-accent">hardstyle.gg</p>
         </div>
         <div class="flex gap-2 items-center -my-10" v-if="currentNode">
           <img class="size-12 rounded-full" :src="getNodeImageUrl(currentNode)" v-if="currentNode.image" :alt="currentNode.name" />
@@ -440,8 +440,5 @@ onMounted(() => mountGraph(graphData.value!!))
   width: 100vw;
   height: 100vh;
   overflow: hidden;
-}
-#brand {
-  font-family: "Anton", sans-serif;
 }
 </style>

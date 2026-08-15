@@ -110,7 +110,7 @@ watch(playerStats, (d: PlayerStatsContainer | undefined) => {
 <template>
   <div class="bg-base-200 p-7 rounded-md">
     <div class="flex justify-between">
-      <h1 class="text-2xl font-bold mb-5 text-center">Player stats</h1>
+      <h2 class="text-2xl font-bold mb-5 text-center">Player stats</h2>
 
       <div class="join">
         <button v-for="range in PLAYER_STATS_RANGE_OPTIONS" :key="range"

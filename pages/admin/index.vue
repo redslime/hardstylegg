@@ -90,7 +90,7 @@ function getGamePerformance(typeId: number, gameId: number): number | undefined 
 
     <div class="flex flex-wrap gap-5">
       <div class="bg-base-200 p-7 rounded-md">
-        <h1 class="text-2xl font-bold mb-5 text-center">Tomorrow</h1>
+        <h2 class="text-2xl font-bold mb-5 text-center">Tomorrow</h2>
 
         <div class="flex flex-col gap-3 items-center">
           <div class="flex gap-2">
@@ -110,7 +110,7 @@ function getGamePerformance(typeId: number, gameId: number): number | undefined 
       </div>
 
       <div class="bg-base-200 p-7 rounded-md">
-        <h1 class="text-2xl font-bold mb-5 text-center">Schedule overview</h1>
+        <h2 class="text-2xl font-bold mb-5 text-center">Schedule overview</h2>
 
         <div class="flex gap-2">
           Days scheduled ahead: <div class="badge badge-soft badge-info">{{ daysAhead }}</div>
@@ -131,14 +131,14 @@ function getGamePerformance(typeId: number, gameId: number): number | undefined 
       <PlayerStatsChart />
 
       <div class="bg-base-200 p-7 rounded-md">
-        <h1 class="text-2xl font-bold mb-5 text-center">Average Score stats</h1>
+        <h2 class="text-2xl font-bold mb-5 text-center">Average Score stats</h2>
         <ScoreStatsChart />
       </div>
     </div>
 
     <div class="flex gap-5" v-if="!user.admin">
       <div class="bg-secondary/30 p-7 rounded-md">
-        <h1 class="text-2xl font-bold mb-5 text-center">Welcome, {{ user.name }}</h1>
+        <h2 class="text-2xl font-bold mb-5 text-center">Welcome, {{ user.name }}</h2>
 
         <p>This is the dashboard with some fun overview stats.</p>
         <p>On the left handside you can navigate to different game dashboards,</p>

@@ -59,9 +59,9 @@ function getTracks(): RichTrack[] {
       <div class="flex items-center gap-5">
         <img :src="artist.getImageUrl()" class="size-30 rounded-full object-cover" alt="Artist image" v-if="artist.image" />
         <div class="flex flex-col gap-2">
-          <div class="text-5xl font-extrabold">
+          <h1 class="text-5xl font-extrabold">
             {{ artist?.name }}
-          </div>
+          </h1>
 
           <div class="opacity-80 text-lg font-light" v-if="artist?.listeners">
             {{ artist?.getListenersFriendly() }} monthly listeners
