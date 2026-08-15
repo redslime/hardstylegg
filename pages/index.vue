@@ -26,6 +26,7 @@ const { data: gameData, pending } = await useAsyncData(() => getGameContainer(),
 const { data: avgScores } = await useAsyncData(() => $fetch<AvgScoresContainer>('/api/scores'), { lazy: true })
 const { data: infinityPreview } = await useAsyncData(() => getInfinityPreview(), { lazy: true })
 
+const isMobile = inject<boolean>('isMobile')
 const config = useRuntimeConfig()
 const cookie = useCookie<CookieDayMemory[]>("memory", {
   maxAge: 60 * 60 * 24 * 365,
@@ -148,6 +149,25 @@ useOnce(() => {
       </div>
 
       <button class="btn btn-accent btn-xl" @click="playInfinity">Play</button>
+    </div>
+  </div>
+
+  <div class="hero bg-transparent rounded-lg mt-7 border border-neutral group overflow-hidden cursor-pointer hover:border-white/30"
+       @click="navigateTo('/graph')" v-if="!isMobile">
+    <div class="z-3 w-full h-full" />
+    <img :src="'/img/graph_preview.png'" alt="Graph preview"
+         class="object-cover w-full h-96 opacity-40 group-hover:opacity-60 group-hover:scale-110 transition-all" />
+    <div class="hero-content flex flex-col text-center">
+      <div class="flex flex-col gap-2 backdrop-blur-md p-3 rounded-2xl border border-neutral/50">
+        <div class="flex gap-2 justify-center">
+          <h1 class="text-2xl md:text-4xl font-bold">
+            Artist graph
+            <span class="align-top text-xs text-error uppercase tracking-tighter font-medium">new</span>
+          </h1>
+        </div>
+
+        <p class="text-xl">Explore the world of madness</p>
+      </div>
     </div>
   </div>
 

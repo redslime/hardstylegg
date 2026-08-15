@@ -316,7 +316,7 @@ onMounted(() => mountGraph(graphData.value!!))
   <div class="relative h-screen" id="wrapper">
     <div class="absolute w-full z-20 border-b border-white/5">
       <div class="flex justify-center items-center backdrop-blur-2xl p-4 relative min-h-16">
-        <div class="flex gap-2 items-center absolute left-4">
+        <div class="flex gap-2 items-center absolute left-4 cursor-pointer" @click="navigateTo('/')">
           <img class="size-8" src="/img/icon512-transparent.png" alt="hardstyle.gg logo" />
           <p class="anton italic text-accent">hardstyle.gg</p>
         </div>
