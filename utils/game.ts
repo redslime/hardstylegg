@@ -1,5 +1,6 @@
 import {
-    type CookieDayMemory, type CookieLastReportMemory,
+    type CookieDayMemory,
+    type CookieLastReportMemory,
     type GameContainer,
     type GameData,
     GameEnvironment,
@@ -75,7 +76,8 @@ export function transform(data: PackedDayData): GameContainer {
 export function getPreviewTitle(data: GameData): string {
     const { $gameRegistry } = useNuxtApp();
     const gameDef = $gameRegistry.findGameByName(data.name)!!
-    return gameDef.getIconPreviewTitle(data.props.container)
+    const container = gameDef.remap(data.props.container)
+    return gameDef.getIconPreviewTitle(container)
 }
 
 export function getGameName(type_id: number): string {
