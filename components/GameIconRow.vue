@@ -4,15 +4,21 @@ import {type GameData, type GameReport, GameState} from "~/types/models";
 import WordleDynamicIcon from "~/components/games/wordle/WordleDynamicIcon.vue";
 
 const { $gameRegistry } = useNuxtApp();
-const props = defineProps({
-  games: { type: Array as PropType<GameData[]> },
-  gameIds: { type: Array as PropType<{ typeId: number, gameId: number }[]> },
-  getState: { type: Function as PropType<(index: number) => GameState> },
-  outlineIndex: { type: Number, default: -1 },
-  click: { type: Function as PropType<(index: number) => void> },
-  iconSize: { type: Number, default: 6 },
-  style: { type: String, default: "" },
-  reports: { type: Array as PropType<GameReport[] | undefined> }
+const props = withDefaults(defineProps<{
+  games?: GameData[],
+  gameIds?: { typeId: number, gameId: number }[],
+  getState?: (index: number) => GameState,
+  outlineIndex?: number,
+  click?: (index: number) => void,
+  iconSize?: number,
+  iconPad?: number,
+  style?: string,
+  reports?: GameReport[] | undefined
+}>(), {
+  outlineIndex: -1,
+  iconSize: 6,
+  iconPad: 3,
+  style: "",
 })
 const padding = computed<string>(() => `p-${props.iconPad}`)
 
