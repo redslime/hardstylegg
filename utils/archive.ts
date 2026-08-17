@@ -43,3 +43,11 @@ export async function getArchiveGame(dayId: number): Promise<GameContainer> {
     archiveGames.sort((a, b) => b.dayId - a.dayId)
     return transformed
 }
+
+function getCachedGame(dayId: number): GameContainer | undefined {
+    return archiveGames.find(g => g.dayId === dayId)
+}
+
+export function getNextArchiveGames(dayId: number): GameContainer[] {
+    return [getCachedGame(dayId-1), getCachedGame(dayId), getCachedGame(dayId+1)].filter(g => g !== undefined)
+}

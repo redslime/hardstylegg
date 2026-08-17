@@ -27,6 +27,7 @@ const { data: avgScores } = await useAsyncData(() => $fetch<AvgScoresContainer>(
 const { data: infinityPreview } = await useAsyncData(() => getInfinityPreview(), { lazy: true })
 
 const isMobile = inject<boolean>('isMobile')
+const { getGameScore } = useArchiveStore()
 const config = useRuntimeConfig()
 const cookie = useCookie<CookieDayMemory[]>("memory", {
   maxAge: 60 * 60 * 24 * 365,
@@ -198,7 +199,7 @@ useOnce(() => {
                 {{ gameDataPast.dayFriendly }}
               </h4>
               <div class="flex flex-wrap gap-2 justify-center">
-                <GameIconRow :games="gameDataPast.data" :getState="_ => GameState.UPCOMING" :iconSize="6" />
+                <GameIconRow :games="gameDataPast.data" :getState="i => getGameScore(gameDataPast.dayId, i)" :iconSize="6" />
               </div>
               <button class="btn btn-primary btn-md mt-2" @click="navigateArchive()">Play in archive</button>
             </div>

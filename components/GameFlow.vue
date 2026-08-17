@@ -31,6 +31,11 @@ import type {ClientGameDef} from "~/utils/game/ClientGameDef";
 import ContextBox from "~/components/ContextBox.vue";
 import InfinityHeader from "~/components/infinity/InfinityHeader.vue";
 import {copyInfinityResult, getInfinityShareCode} from "~/utils/infinity";
+import {getNextArchiveGames} from "~/utils/archive.ts";
+import ChevronLeftIcon from "~/components/icons/ChevronLeftIcon.vue";
+import ChevronRightArrow from "~/components/icons/ChevronRightArrow.vue";
+import ArchiveIcon from "./icons/ArchiveIcon.vue";
+import {useArchiveStore} from "~/stores/archive.ts";
 
 const { $gameRegistry } = useNuxtApp();
 const streak = useLocalStorage<CookieStreakMemory>("streak", { streak: 0, lastDayId: -1 })
@@ -47,6 +52,9 @@ const props = defineProps({
 })
 
 const config = useRuntimeConfig()
+const archiveStore = useArchiveStore()
+const { nextDayId } = storeToRefs(archiveStore)
+const { hasPlayed, reportScore, getGameScore } = archiveStore
 const testCookies = Boolean(config.public.testCookies)
 const isApp = inject<boolean>("isApp", false) as unknown as Ref<boolean>
 const emit = defineEmits<{ finish: [] }>()
@@ -140,6 +148,7 @@ function finish() {
 
   updateState(null, null)
   sendReport(testCookies)
+  reportScore(dayId.value, gameData.map(g => g.props.state))
 
   // CookieDayMemory
   if(props.cookie) {
@@ -168,6 +177,12 @@ function checkHelpModal() {
   if(props.gameEnv === GameEnvironment.DAILY && currentGameId.value <= 2 && currentTypeId.value > 13) {
     // first/second game of new gamemode, show help modal
     helpModal.value?.showModal()
+  }
+}
+
+function changeArchiveGame(id: number) {
+  if(dayId.value !== id) {
+    nextDayId.value = id
   }
 }
 
@@ -322,6 +337,39 @@ onMounted(() => {
         <ResultShareButton :action="copyResult" />
       </div>
     </template>
+  </div>
+
+  <div class="bg-base-100 w-full md:w-2/3 p-5 mt-6 rounded-md text-center" v-if="summary && gameEnv === GameEnvironment.ARCHIVE">
+    <div class="flex gap-2 items-center justify-center">
+      <ArchiveIcon class="text-primary" />
+      <h2 class="text-2xl font-semibold">More from the archive</h2>
+    </div>
+
+    <div class="flex flex-row gap-2 items-center justify-center mt-4">
+      <div class="border border-neutral rounded-md bg-base-200 p-2 indicator" v-for="archiveGame in getNextArchiveGames(dayId)" :key="archiveGame.dayId"
+        :class="{'bg-base-300': dayId === archiveGame.dayId, 'hover:border-primary cursor-pointer': dayId !== archiveGame.dayId}"
+        @click="changeArchiveGame(archiveGame.dayId)">
+        <div class="indicator-item indicator-center badge badge-neutral badge-xs" v-if="archiveGame.dayId === dayId">
+          just played
+        </div>
+        <div class="indicator-item indicator-center badge badge-neutral badge-xs" v-else-if="hasPlayed(archiveGame.dayId)">
+          played
+        </div>
+
+        <div class="flex flex-col gap-2 items-center">
+          <div class="flex items-center" :class="{'font-semibold': dayId !== archiveGame.dayId}">
+            <ChevronLeftIcon v-if="archiveGame.dayId < dayId" class="scale-75 text-primary" />
+            {{ archiveGame.dayFriendly }}
+            <ChevronRightArrow v-if="archiveGame.dayId > dayId" class="scale-75 text-primary" />
+          </div>
+
+          <div class="flex flex-row gap-1">
+            <GameIconRow :games="archiveGame.data" :iconSize="4" :iconPad="0.5"
+                 :getState="i => archiveGame.dayId === dayId ? gameData[i]!!.props.state : getGameScore(archiveGame.dayId, i)" />
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <div class="flex flex-col w-full md:w-2/3 my-5 pb-5 border-secondary/50 border-1 rounded-md" v-if="summary && details">

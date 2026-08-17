@@ -14,6 +14,8 @@ const props = defineProps({
   style: { type: String, default: "" },
   reports: { type: Array as PropType<GameReport[] | undefined> }
 })
+const padding = computed<string>(() => `p-${props.iconPad}`)
+
 const getState = props.getState ?? ((index: number) => {
   if(props.games) {
     return props.games[index]!!.props.state
@@ -46,10 +48,10 @@ function getWordleBoard(game: GameData, gameIndex: number): string {
 <template>
   <template v-if="props.games" v-for="(game, index) in props.games" :key="game.name">
     <div class="flex flex-col items-center justify-start">
-      <div class="p-3 rounded-md tooltip" :data-tip="getPreviewTitle(game)"
+      <div class="rounded-md tooltip" :data-tip="getPreviewTitle(game)"
            @click="props.click?.(index)"
            v-if="!showWordleIcon(game, index)"
-           :class="[props.style, {
+           :class="[props.style, padding, {
             'outline-2 outline-primary': props.outlineIndex === index,
             'bg-base-100': getState(index) === GameState.UPCOMING,
             'bg-primary text-primary-content': getState(index) === GameState.PLAYING,
@@ -73,8 +75,8 @@ function getWordleBoard(game: GameData, gameIndex: number): string {
 
   <template v-for="id in props.gameIds" :key="`${id.typeId}-${id.gameId}`" v-else-if="props.gameIds">
     <div class="flex flex-col items-center justify-start">
-      <div class="p-3 rounded-md tooltip bg-base-100"
-           :class="[props.style]" :data-tip="getGameName(id.typeId)">
+      <div class="rounded-md tooltip bg-base-100"
+           :class="[props.style, padding]" :data-tip="getGameName(id.typeId)">
         <component :is="$gameRegistry.findGameById(id.typeId)!!.icon" :state="GameState.UPCOMING" :size="props.iconSize" />
       </div>
 

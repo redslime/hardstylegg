@@ -1,18 +1,25 @@
 <script setup lang="ts">
-import {type GameContainer, GameEnvironment, GameState} from "~/types/models";
+import {type GameContainer, GameEnvironment} from "~/types/models";
 import {archiveGames, getArchiveGame, getDayFriendlyName, getYesterdayGame} from "~/utils/archive";
 import ArchiveGamePreview from "~/components/ArchiveGamePreview.vue";
 import {watchOnce} from "@vueuse/shared";
 import {deepCopyReactive} from "~/utils/utils";
+import {useArchiveStore} from "~/stores/archive.ts";
+import ArchiveIcon from "~/components/icons/ArchiveIcon.vue";
+import {nextTick} from "vue";
 
 const { data: yesterday, clear } = useAsyncData<GameContainer>(() => getYesterdayGame(), { lazy: true })
 const ydayFriendly = ref<string>("")
 const oldestId = computed(() => archiveGames.map(g => g.dayId).sort((a, b) => a - b)[0])
 const loading = ref<boolean>(false)
 const playing = ref<GameContainer | undefined>()
+const store = useArchiveStore()
+const { lastDayId, nextDayId } = storeToRefs(store)
+const { getGameScore } = store
 
 function play(dayId: number) {
   window.history.pushState({}, "", `/play/archive`)
+  lastDayId.value = dayId
   playing.value = deepCopyReactive(archiveGames.find(g => g.dayId === dayId)!!)
 }
 
@@ -42,6 +49,13 @@ window.addEventListener('popstate', () => {
 })
 
 watchOnce(yesterday, async (val) => ydayFriendly.value = await getDayFriendlyName(val?.dayId ?? 0, "LLLL d"))
+watch(nextDayId, async id => {
+  if(id) {
+    playing.value = undefined
+    await nextTick()
+    play(id)
+  }
+})
 onUnmounted(() => clear())
 </script>
 
@@ -49,7 +63,12 @@ onUnmounted(() => clear())
   <div class="hero bg-base-300 rounded-lg" v-if="!playing">
     <div class="hero-content flex flex-col text-center">
       <div class="max-w-lg items-center justify-center">
-        <h1 class="text-3xl md:text-4xl font-bold mb-5">Game archive</h1>
+        <div class="flex gap-2 items-center justify-center mb-5">
+          <ArchiveIcon class="size-10 text-primary" />
+          <h1 class="text-3xl md:text-4xl font-bold">
+            Game archive
+          </h1>
+        </div>
 
         <div class="border border-secondary w-fit py-3 px-3 sm:px-10 rounded-md bg-black/10 shadow-lg mb-10">
           <h2 class="text-2xl font-medium">Yesterday's challenge</h2>
@@ -58,7 +77,7 @@ onUnmounted(() => clear())
             <h4 class="text-md text-secondary font-medium" v-if="yesterday.theme">{{ yesterday.theme }}</h4>
 
             <div class="flex flex-wrap gap-2 justify-center mt-2">
-              <GameIconRow :games="yesterday.data" :getState="_ => GameState.UPCOMING" :iconSize="6" />
+              <GameIconRow :games="yesterday.data" :getState="i => getGameScore(yesterday!!.dayId, i)" :iconSize="6" />
             </div>
             <button class="btn btn-primary btn-md mt-2" @click="play(yesterday.dayId)">Play</button>
           </div>
