@@ -345,8 +345,8 @@ onMounted(() => {
       <h2 class="text-2xl font-semibold">More from the archive</h2>
     </div>
 
-    <div class="flex flex-row gap-2 items-center justify-center mt-4">
-      <div class="border border-neutral rounded-md bg-base-200 p-2 indicator" v-for="archiveGame in getNextArchiveGames(dayId)" :key="archiveGame.dayId"
+    <div class="flex flex-row gap-0.5 sm:gap-2 items-center justify-center mt-4">
+      <div class="border border-neutral rounded-md bg-base-200 py-2 px-0.5 sm:px-2 indicator" v-for="archiveGame in getNextArchiveGames(dayId)" :key="archiveGame.dayId"
         :class="{'bg-base-300': dayId === archiveGame.dayId, 'hover:border-primary cursor-pointer': dayId !== archiveGame.dayId}"
         @click="changeArchiveGame(archiveGame.dayId)">
         <div class="indicator-item indicator-center badge badge-neutral badge-xs" v-if="archiveGame.dayId === dayId">
