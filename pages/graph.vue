@@ -55,6 +55,7 @@ const currentLinks = computed<{ artist: ArtistGraphNode, weight: number }[]>(() 
   } else return []
 })
 const showLinks = ref<boolean>(true)
+const alwaysShowLinks = ref<boolean>(false)
 const graphCacheKey = computed(() => `graph-${minWeight.value}`)
 const { data: graphData, pending } = await useAsyncData<ArtistGraphData>(graphCacheKey, () => $fetch<ArtistGraphData>("/api/content/graph", {
   query: {
@@ -139,7 +140,7 @@ const getCircularTexture = async (id: string) => {
 function zoomOnNode(n: NodeObject | undefined, jump: boolean = false) {
   if(n) {
     if(!jump) {
-      showLinks.value = false
+      showLinks.value = alwaysShowLinks.value
       currentNode.value = n as ArtistGraphNode
 
       graph.value?.linkColor(link => {
@@ -212,6 +213,16 @@ function refreshLinks() {
       return sourceId === currentId || targetId === currentId ? "#00cfff" : "#ffffff";
     } else return "#ffffff"
   });
+}
+
+function showAllLinks() {
+  showLinks.value = true
+  if(currentNode.value) alwaysShowLinks.value = true
+}
+
+function hideAllLinks() {
+  showLinks.value = false
+  if(currentNode.value) alwaysShowLinks.value = false
 }
 
 function getNodeImageUrl(node: ArtistGraphNode): string | undefined {
@@ -363,11 +374,11 @@ onMounted(() => mountGraph(graphData.value!!))
     <div class="absolute left-4 bottom-4 z-22 rounded-box border border-white/5 backdrop-blur-2xl w-43">
       <ul class="menu bg-transparent w-full">
         <li>
-          <a v-if="showLinks" @click="showLinks = false">
+          <a v-if="showLinks" @click="hideAllLinks()">
             <EyeSlashIcon />
             Hide all links
           </a>
-          <a v-else @click="showLinks = true">
+          <a v-else @click="showAllLinks()">
             <EyeIcon />
             Show all links
           </a>
