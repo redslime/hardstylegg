@@ -116,7 +116,7 @@ export function getScheduleForGame(typeId: number, gameId: number | undefined): 
     })
 }
 
-export async function getFriendlyName(dayId: number, format: string = 'LLL d'): Promise<string> {
+export async function getFriendlyName(dayId: number, format: string = 'LLLL d'): Promise<string> {
     const schedule = (await getDashboardData()).schedule
     const baseDate: DateTime = DateTime.fromISO(schedule.baseDate.toString())
     const nextDay = baseDate.plus({ days: dayId - 1 });

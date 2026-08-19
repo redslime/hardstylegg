@@ -25,7 +25,7 @@ export function getBaseDate(): DateTime {
 
 export function getFriendlyName(dayId: number): string {
     const date = BASE_DATE.plus({ days: dayId - 1 });
-    return date.toFormat('LLL d');
+    return date.toFormat('LLLL d');
 }
 
 export async function getPackedDayData(): Promise<PackedDayData> {

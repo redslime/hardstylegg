@@ -23,7 +23,7 @@ export async function getYesterdayGame(): Promise<GameContainer> {
     return getArchiveGame(todayId - 1)
 }
 
-export async function getDayFriendlyName(dayId: number, format: string = 'LLL d'): Promise<string> {
+export async function getDayFriendlyName(dayId: number, format: string = 'LLLL d'): Promise<string> {
     if(baseDate === null) {
         baseDate = (await loadData()).baseDate
     }
