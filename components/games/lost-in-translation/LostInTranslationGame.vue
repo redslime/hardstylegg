@@ -33,7 +33,7 @@ watch(finished, () => showTranslated.value = false)
   <GameTitle :gameDef="gameDef" :container="props.container" />
 
   <div class="flex flex-col items-center w-full">
-    <div class="text-2xl md:text-3xl text-center mb-4 text-balance" v-if="finished">{{ track.getDisplayName() }}</div>
+    <div class="text-2xl text-center mb-4 text-balance" v-if="finished">{{ track.getDisplayName() }}</div>
     <div role="tablist" class="tabs tabs-lift" v-if="finished">
       <a role="tab" class="tab" :class="{'tab-active font-semibold': showTranslated }" @click="showTranslated = true">Translation</a>
       <a role="tab" class="tab" :class="{'tab-active font-semibold': !showTranslated }" @click="showTranslated = false">Original</a>
@@ -52,8 +52,8 @@ watch(finished, () => showTranslated.value = false)
     </div>
 
     <div class="mt-5 text-center" v-if="finished">
-      <p class="font-semibold text-xl">Translation chain:</p>
-      <p class="text-base-content/90">{{ props.container.translationChain }}</p>
+      <p class="font-semibold text-lg">Translation chain:</p>
+      <p class="text-base-content/90 text-xs tracking-tighter">{{ props.container.translationChain }}</p>
     </div>
 
     <div class="flex w-full justify-center items-center mt-5" v-if="!finished">
