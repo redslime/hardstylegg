@@ -13,6 +13,7 @@ import WordleString from "~/components/games/wordle/WordleString.vue";
 // Wordle core game code see https://github.com/yyx990803/vue-wordle, adjusted a lot
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.WordleDef
+const isMobile = inject<boolean>('isMobile')
 const emit = defineEmits<{ onFinish: [state: GameState] }>()
 const props = defineProps({
   state: { type: Number as PropType<GameState>, required: true },
@@ -246,7 +247,12 @@ watch(gameFinished, () => reportBoard(state.value === GameState.SUCCEEDED))
     <WordleString :guess="props.container.artist.name" :solution="props.container.artist.name" />
   </template>
 
-  <WordleKeyboard @key="onKey" :letterStates="letterStates" :ready="!pending" v-if="!gameFinished" />
+
+  <Teleport to="#bottom-dock" :disabled="!isMobile">
+    <WordleKeyboard @key="onKey" :letterStates="letterStates" :ready="!pending" v-if="!gameFinished" />
+  </Teleport>
+
+  <div class="h-70" v-if="isMobile" />
 </template>
 
 <style scoped>

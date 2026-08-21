@@ -29,7 +29,7 @@ function press(key: string) {
 </script>
 
 <template>
-  <div id="keyboard" class="w-full sm:w-4/5 md:2/3">
+  <div id="keyboard" class="w-full md:w-4/5 lg:2/3">
     <div class="row" v-for="(row, i) in rows">
       <div class="spacer" v-if="i === 1"></div>
       <button
