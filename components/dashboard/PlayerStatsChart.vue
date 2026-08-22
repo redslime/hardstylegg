@@ -63,11 +63,6 @@ const options = ref<ApexOptions>(baseOptions)
 let series = reactive([{}])
 const valid = computed(() => playerStats.value && Object.keys(playerStats.value).length > 0)
 
-function map(count: number): number | null {
-  if(count === 0) return null
-  return count
-}
-
 watch(playerStats, (d: PlayerStatsContainer | undefined) => {
   if(!d) return
 
@@ -86,9 +81,9 @@ watch(playerStats, (d: PlayerStatsContainer | undefined) => {
     }
   }
 
-  const startedData = Object.values(d).map(v => map(v.played))
-  const completedData = Object.values(d).map(v => map(v.completed))
-  const onAppData = Object.values(d).map(v => map(v.onApp))
+  const startedData = Object.values(d).map(v => v.played)
+  const completedData = Object.values(d).map(v => v.completed)
+  const onAppData = Object.values(d).map(v => v.onApp)
 
   series = [
     {
@@ -116,6 +111,7 @@ watch(playerStats, (d: PlayerStatsContainer | undefined) => {
         <button v-for="range in PLAYER_STATS_RANGE_OPTIONS" :key="range"
             class="btn btn-primary btn-xs join-item"
             :class="{'btn-outline': store.statsRange !== range}"
+            v-if="valid"
             @click="store.statsRange = range">
           {{ range }}
         </button>
