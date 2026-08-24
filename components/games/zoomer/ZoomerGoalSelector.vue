@@ -3,6 +3,7 @@ import {type Artist, type Festival, festivalOptions, type ZoomerType} from "~/ty
 import {capitalize, getYearsInbetween, getYearsUntilToday} from "~/utils/utils";
 import ZoomOutIcon from "~/components/icons/ZoomOutIcon.vue";
 import type {FlatArtist} from "~/types/content";
+import ArtistPicker from "~/components/dashboard/ArtistPicker.vue";
 
 const { target, game, step } = defineProps({
   target: { type: Object as PropType<ZoomerType>, required: false },
@@ -111,7 +112,7 @@ onMounted(() => {
     <template v-else>
       <template v-if="goal.id === 'artist'">
 
-        <ArtistInput @onSelected="finishArtist"
+        <ArtistInput @onSelected="finishArtist" v-if="game"
            v-slot="{ inputBindings, inputEvents, errorFlash, successFlash }" >
           <fieldset class="fieldset flex gap-2 justify-center">
             <label class="w-full input" :class="{ 'border-error': errorFlash, 'border-success': successFlash }">
@@ -123,7 +124,7 @@ onMounted(() => {
           </fieldset>
         </ArtistInput>
 
-        <button class="btn btn-soft btn-success" v-if="!game" :disabled="goal.name.trim().length < 1" @click="finish()">Continue</button>
+        <ArtistPicker v-else @selected="a => finishArtist(a.toFlatArtist(), (_: boolean) => true)" />
 
         <Teleport to="#side-dock" :disabled="!isMobile">
           <div class="text-center" :class="{'mt-5': !isMobile}" v-if="!finished">
