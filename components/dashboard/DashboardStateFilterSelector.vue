@@ -16,7 +16,7 @@ function getStyle(state: StateFilter): string {
 }
 
 function change(clicked: StateFilter) {
-  document.activeElement?.blur()
+  (document.activeElement as HTMLElement)?.blur()
 
   if(!disabled) {
     state.value = clicked
@@ -33,10 +33,10 @@ function change(clicked: StateFilter) {
         {{ state }}
       </div>
       <ul tabindex="-1" class="dropdown-content menu bg-base-300 rounded-box z-10 w-52 p-2 shadow-sm">
-        <li v-for="state in Object.values(StateFilter).filter(s => s !== state)" :key="state" @click="change(state as StateFilter)">
+        <li v-for="option in options" :key="option" @click="change(option as StateFilter)">
           <a>
-            <div class="status" :class="getStyle(state as StateFilter)"></div>
-            {{ state }}
+            <div class="status" :class="getStyle(option as StateFilter)"></div>
+            {{ option }}
           </a>
          </li>
       </ul>

@@ -16,7 +16,7 @@ const total = computed<number>(() => slice.value?.totalCount ?? 0)
 const lastPage = computed<number>(() => Math.ceil(total.value / limit.value))
 const renderKey = ref(0)
 
-const { data: slice, pending, error } = useAsyncData<InboxSlice>(() => $fetch(`/api/dashboard/inbox`, {
+const { data: slice, pending, error } = useAsyncData<InboxSlice>(() => $fetch<InboxSlice>(`/api/dashboard/inbox`, {
     query: {
       limit: limit.value,
       offset: offset.value

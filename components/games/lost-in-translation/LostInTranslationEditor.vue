@@ -41,11 +41,11 @@ watchOnce(data, () => instances.value = data.value)
         <div class="flex gap-3">
           <fieldset class="fieldset mt-2 w-1/2">
             <legend class="fieldset-legend">Original lyrics</legend>
-            <textarea class="textarea w-full" rows="20" placeholder="Enter original lyrics..." v-model="editing.textOriginal"></textarea>
+            <textarea class="textarea w-full" rows="20" placeholder="Enter original lyrics..." v-model="editing.textOriginal as string"></textarea>
           </fieldset>
           <fieldset class="fieldset mt-2 w-1/2">
             <legend class="fieldset-legend">Translated lyrics</legend>
-            <textarea class="textarea w-full" rows="20" placeholder="Enter translated lyrics..." v-model="editing.textTranslated"></textarea>
+            <textarea class="textarea w-full" rows="20" placeholder="Enter translated lyrics..." v-model="editing.textTranslated as string"></textarea>
           </fieldset>
         </div>
 

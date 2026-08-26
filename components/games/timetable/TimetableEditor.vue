@@ -40,11 +40,11 @@ async function add() {
   const end = addOneHour(lastEnd)
 
   if(editing.value!!.items.length === 0) {
-    editing.value!!.items.push({name: "", begin: "12:00", end: "13:00", hidden: false})
+    editing.value!!.items.push({name: "", begin: "12:00", end: "13:00", hidden: false, context: null})
     editing.value!!.color_bg = "#3ABDF8"
     editing.value!!.color_text = "#010D15"
   } else {
-    editing.value!!.items.push({name: "", begin: lastEnd, end: end, hidden: false})
+    editing.value!!.items.push({name: "", begin: lastEnd, end: end, hidden: false, context: null})
   }
 
   editingItem.value = editing.value!!.items[editing.value!!.items.length - 1]

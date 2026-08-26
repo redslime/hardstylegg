@@ -90,7 +90,7 @@ function update() {
         </div>
 
         <label class="flex label mt-8">
-          <input v-model="editing.showNames" class="checkbox checkbox-success" type="checkbox" checked="checked" />
+          <input v-model="editing.showNames" class="checkbox checkbox-success" type="checkbox" :checked="true" />
           Show names
         </label>
 

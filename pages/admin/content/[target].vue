@@ -7,12 +7,21 @@ import BaseTrackCard from "~/components/dashboard/content/BaseTrackCard.vue";
 import ArtistCard from "~/components/dashboard/content/ArtistCard.vue";
 import {useSearchableList} from "~/composables/useSearchableList";
 import {getDashboardAlbums, getDashboardArtists, getDashboardTracks} from "~/utils/dashboard";
+import {type RichAlbum, RichArtist, RichTrack} from "~/types/content.ts";
 
 definePageMeta({
   middleware: ["authenticated"],
 })
 
 type SearchTarget = "albums" | "artists" | "tracks"
+type PageConfig = {
+  key: string,
+  title: string,
+  fuseKeys: string[],
+  minQueryLength: number,
+  getSearchText: (item: any) => string,
+  load: () => Promise<RichAlbum[] | RichArtist[] | RichTrack[]>
+}
 
 const route = useRoute()
 const queryParam = computed<string | undefined>(() => route.query.q as string | undefined)
@@ -29,7 +38,7 @@ const target = computed<SearchTarget>(() => {
   })
 })
 
-const pageConfig = computed(() => {
+const pageConfig = computed<PageConfig>(() => {
   switch (target.value) {
     case "albums":
       return {

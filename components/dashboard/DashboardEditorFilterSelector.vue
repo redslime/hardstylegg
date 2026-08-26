@@ -6,8 +6,8 @@ const editors = (await getDashboardData()).editors
 const editor = defineModel<Editor | undefined>('editor', { required: true })
 
 function change(clicked: Editor | undefined) {
-  editor.value = clicked
-  document.activeElement?.blur()
+  editor.value = clicked;
+  (document.activeElement as HTMLElement)?.blur()
 }
 </script>
 

@@ -23,7 +23,6 @@ export function mdYoutubePlugin(md: MarkdownIt) {
 
     function youtubeEmbed(videoId: string) {
         const safeId = extractVideoId(videoId).replace(/[^a-zA-Z0-9_-]/g, '')
-        console.log("safeId: ", safeId, " videoId: ", videoId, "")
 
         return `
       <div class="youtube-embed">

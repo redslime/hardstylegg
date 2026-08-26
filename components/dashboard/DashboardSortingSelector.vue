@@ -7,7 +7,7 @@ const { disabled } = defineProps({
 })
 
 function change(clicked: SortMode) {
-  document.activeElement?.blur()
+  (document.activeElement as HTMLElement)?.blur()
 
   if(!disabled) {
     mode.value = clicked
