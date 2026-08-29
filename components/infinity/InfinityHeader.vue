@@ -2,10 +2,10 @@
 import {type GameData, GameState} from "~/types/models";
 import InfinityIcon from "~/components/icons/InfinityIcon.vue";
 
-const { gameData, currentIndex } = defineProps({
-  gameData: { type: Array as PropType<GameData[]>, required: true },
-  currentIndex: { type: Number, required: true },
-})
+const { gameData, currentIndex } = defineProps<{
+  gameData: GameData[],
+  currentIndex: number
+}>()
 
 const total = computed<number>(() => gameData.length)
 const percentage = computed<number>(() => {

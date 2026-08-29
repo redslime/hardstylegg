@@ -5,10 +5,10 @@ import {nextTick} from "vue";
 
 const { $leaflet: L } = useNuxtApp()
 const emit = defineEmits<{ click: [item: HighlightMapItem] }>()
-const { init, interact } = defineProps({
-  init: { type: Object as PropType<CountryHighlightMapItem> },
-  interact: { type: Boolean, default: true }
-})
+const { init, interact = true } = defineProps<{
+  init?: CountryHighlightMapItem,
+  interact?: boolean
+}>()
 
 const highlighted = ref<CountryHighlightMapItem | undefined>(init)
 const mapContainer = ref<HTMLElement | null>(null)

@@ -3,9 +3,9 @@ import {getIcon} from "~/utils/icons";
 import type {DashboardData, DashboardItem} from "~/types/models";
 
 const route = useRoute()
-const { dashboardData } = defineProps({
-  dashboardData: { type: Object as PropType<DashboardData>, required: true },
-})
+const { dashboardData } = defineProps<{
+  dashboardData: DashboardData
+}>()
 
 const groups = dashboardData.groups
 

@@ -1,11 +1,11 @@
 <script setup lang="ts" generic="T extends EditorContainer">
 import type {ClientGameDef} from "~/utils/game/ClientGameDef";
 
-const { gameDef, container, dashboard } = defineProps({
-  gameDef: { type: Object as PropType<ClientGameDef<T>>, required: true },
-  container: { type: Object as PropType<T>, required: true },
-  dashboard: { type: Boolean, default: false }
-})
+const { gameDef, container, dashboard = false } = defineProps<{
+  gameDef: ClientGameDef<T>
+  container: T
+  dashboard?: boolean
+}>()
 const title = computed(() => dashboard ? gameDef.getDashboardHeaderTitle(container as T) : gameDef.getIconPreviewTitle(container as T))
 const details = inject<boolean>('details')
 </script>

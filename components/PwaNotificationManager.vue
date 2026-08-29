@@ -1,8 +1,8 @@
 <script setup lang="ts">
 const { canInstall, promptInstall } = usePwaInstall();
-const { title } = defineProps({
-  title: { type: String, default: "Don't miss the next challenge!" }
-})
+const { title = "Don't miss the next challenge!" } = defineProps<{
+  title?: string
+}>()
 const permissionStatus = ref<NotificationPermission | 'unsupported'>('default');
 const shouldShow = computed(() => permissionStatus.value === 'default' || canInstall.value)
 

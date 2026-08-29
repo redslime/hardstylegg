@@ -15,11 +15,11 @@ const config = useRuntimeConfig()
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.HeardleDef
 const emit = defineEmits<{ onFinish: [state: GameState] }>()
-const props = defineProps({
-  state: { type: Number as PropType<GameState>, required: true },
-  position: { type: Number as PropType<number>, required: true },
-  container: { type: Object as PropType<HeardleContainer>, required: true }
-})
+const props = defineProps<{
+  state: GameState,
+  position: number,
+  container: HeardleContainer
+}>()
 
 const state = computed(() => props.state)
 const gameFinished = computed(() => state.value == GameState.SUCCEEDED || state.value == GameState.FAILED)

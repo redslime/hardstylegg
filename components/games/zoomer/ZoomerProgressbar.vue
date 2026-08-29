@@ -2,10 +2,12 @@
 import Checkmark from "~/components/icons/Checkmark.vue";
 import Xmark from "~/components/icons/Xmark.vue";
 
-const props = defineProps({
-  step: { type: Number, required: true },
-  action: { type: Function as PropType<(index: number) => void>, required: false },
-  finished: { type: Boolean, default: false }
+const props = withDefaults(defineProps<{
+  step: number,
+  action?: (index: number) => void,
+  finished?: boolean
+}>(), {
+  finished: false,
 })
 const step = computed(() => props.step)
 const score = ref<State[]>([]);

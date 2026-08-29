@@ -6,9 +6,9 @@ import PlayIcon from "~/components/icons/PlayIcon.vue";
 import PauseIcon from "~/components/icons/PauseIcon.vue";
 
 const segment = defineModel<{start: number, end: number}>('segment', { required: true })
-const { previewUrl } = defineProps({
-  previewUrl: { type: String, required: true }
-})
+const { previewUrl } = defineProps<{
+  previewUrl: string
+}>()
 
 const containerRef = ref<HTMLElement | null>(null)
 const playing = ref<boolean>(false)

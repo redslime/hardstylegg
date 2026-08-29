@@ -8,11 +8,11 @@ const MAX_SHARED: number = 100
 const { data: infinityPreview } = await useAsyncData(() => getInfinityPreview(), { lazy: true })
 
 const { $gameRegistry } = useNuxtApp();
-const props = defineProps({
-  shareCode: { type: String, required: false },
-  typeEncoding: { type: String, required: false },
-  years: { type: Object as PropType<{ start: number; end: number }>, required: false}
-})
+const props = defineProps<{
+  shareCode?: string,
+  typeEncoding?: string,
+  years?: { start: number; end: number }
+}>()
 
 const emit = defineEmits<{
   done: [container: InfinityRequestContainer | { code: string }]

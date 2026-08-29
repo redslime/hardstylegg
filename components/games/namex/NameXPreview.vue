@@ -3,10 +3,10 @@ import type {NameXContainer} from "~/types/gameModels";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.NameXDef
-const { instance, pointer } = defineProps({
-  instance: { type: Object as PropType<NameXContainer>, required: true },
-  pointer: { type: Boolean, default: true }
-})
+const { instance, pointer = true } = defineProps<{
+  instance: NameXContainer,
+  pointer?: boolean
+}>()
 </script>
 
 <template>

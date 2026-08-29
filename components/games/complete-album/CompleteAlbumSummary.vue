@@ -2,10 +2,10 @@
 import type {CompleteAlbumContainer, CompleteAlbumItem} from "~/types/gameModels";
 import type {GameReportFlat} from "~/types/models";
 
-const { container, reports } = defineProps({
-  container: { type: Object as PropType<CompleteAlbumContainer>, required: true },
-  reports: { type: Array as PropType<GameReportFlat[]>, required: true }
-})
+const { container, reports } = defineProps<{
+  container: CompleteAlbumContainer,
+  reports: GameReportFlat[]
+}>()
 
 function getPercentage(item: CompleteAlbumItem) {
   const total = reports.length

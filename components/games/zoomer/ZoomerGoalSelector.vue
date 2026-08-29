@@ -5,12 +5,12 @@ import ZoomOutIcon from "~/components/icons/ZoomOutIcon.vue";
 import type {FlatArtist} from "~/types/content";
 import ArtistPicker from "~/components/dashboard/ArtistPicker.vue";
 
-const { target, game, step } = defineProps({
-  target: { type: Object as PropType<ZoomerType>, required: false },
-  game: { type: Boolean, required: false },
-  step: { type: Number, required: false, default: 0 },
-  finished: { type: Boolean, required: false },
-})
+const { target, game, step = 0, finished } = defineProps<{
+  target?: ZoomerType,
+  game?: boolean,
+  step?: number,
+  finished?: boolean
+}>()
 const goal = ref<ZoomerType>()
 const emit = defineEmits<{
   selectFestival: [festival: Festival],

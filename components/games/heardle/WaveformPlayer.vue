@@ -3,9 +3,9 @@ import {ref} from "vue";
 import {useWaveSurfer} from "@meersagor/wavesurfer-vue";
 import type {HeardleContainer} from "~/types/gameModels";
 
-const { container } = defineProps({
-  container: { type: Object as PropType<HeardleContainer>, required: true }
-})
+const { container } = defineProps<{
+  container: HeardleContainer
+}>()
 const config = useRuntimeConfig()
 const containerRef = ref<HTMLElement | null>(null)
 const skeleton = ref<boolean>(true)

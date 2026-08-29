@@ -10,11 +10,11 @@ const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.NameXDef
 const isMobile = inject<boolean>('isMobile')
 const emit = defineEmits<{ onFinish: [state: GameState] }>()
-const props = defineProps({
-  state: { type: Number as PropType<GameState>, required: true },
-  position: { type: Number as PropType<number>, required: true },
-  container: { type: Object as PropType<NameXContainer>, required: true }
-})
+const props = defineProps<{
+  state: GameState,
+  position: number,
+  container: NameXContainer
+}>()
 
 const type = computed(() => props.container.items.type)
 const state = computed(() => props.state)

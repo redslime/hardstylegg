@@ -6,10 +6,10 @@ import type {PuzzleItem} from "~/utils/game/impl/ClientPuzzleGame";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.PuzzleDef
-const { container, reports } = defineProps({
-  container: { type: Object as PropType<PuzzleContainer>, required: true },
-  reports: { type: Array as PropType<GameReportFlat[]>, required: true }
-})
+const { container, reports } = defineProps<{
+  container: PuzzleContainer,
+  reports: GameReportFlat[]
+}>()
 const poolElements = ref<PuzzleItem[]>(gameDef.calculatePoolItems(container))
 </script>
 

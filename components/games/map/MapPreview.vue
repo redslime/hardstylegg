@@ -4,10 +4,10 @@ import PinIcon from "~/components/icons/PinIcon.vue";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.MapDef
-const { instance, pointer } = defineProps({
-  instance: { type: Object as PropType<MapContainer>, required: true },
-  pointer: { type: Boolean, default: true }
-})
+const { instance, pointer = true } = defineProps<{
+  instance: MapContainer,
+  pointer?: boolean
+}>()
 
 const countryName = computed(() => gameDef.getGoalName(instance))
 </script>

@@ -3,9 +3,9 @@ import type {GameData} from "~/types/models";
 import {debug} from "~/utils/utils";
 
 const { $gameRegistry } = useNuxtApp();
-const { gameData } = defineProps({
-  gameData: { type: Object as PropType<GameData[]>, required: true }
-})
+const { gameData } = defineProps<{
+  gameData: GameData[]
+}>()
 
 debug("Preloading...")
 

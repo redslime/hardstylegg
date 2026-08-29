@@ -3,10 +3,10 @@ import type {LostInTranslationContainer} from "~/types/gameModels";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.LostInTranslationDef
-const { instance, pointer } = defineProps({
-  instance: { type: Object as PropType<LostInTranslationContainer>, required: true },
-  pointer: { type: Boolean, default: true }
-})
+const { instance, pointer = true } = defineProps<{
+  instance: LostInTranslationContainer,
+  pointer?: boolean
+}>()
 </script>
 
 <template>

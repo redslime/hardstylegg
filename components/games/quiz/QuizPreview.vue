@@ -3,10 +3,10 @@ import type {QuizContainer} from "~/types/gameModels";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.QuizDef
-const { instance, pointer } = defineProps({
-  instance: { type: Object as PropType<QuizContainer>, required: true },
-  pointer: { type: Boolean, default: true }
-})
+const { instance, pointer = true } = defineProps<{
+  instance: QuizContainer,
+  pointer?: boolean
+}>()
 </script>
 
 <template>

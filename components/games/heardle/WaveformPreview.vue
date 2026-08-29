@@ -4,9 +4,9 @@ import {useWaveSurfer, useWaveSurferRegions, useWaveSurferTimeline} from "@meers
 import type {RegionParams} from "wavesurfer.js/plugins/regions";
 import type {HeardleContainer} from "~/types/gameModels";
 
-const { container } = defineProps({
-  container: { type: Object as PropType<HeardleContainer>, required: true }
-})
+const { container } = defineProps<{
+  container: HeardleContainer
+}>()
 const config = useRuntimeConfig()
 const containerRef = ref<HTMLElement | null>(null)
 const skeleton = ref<boolean>(true)

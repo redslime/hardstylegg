@@ -2,10 +2,10 @@
 import type {GameReportFlat} from "~/types/models";
 import type {TimelineContainer} from "~/types/gameModels";
 
-const { container, reports } = defineProps({
-  container: { type: Object as PropType<TimelineContainer>, required: true },
-  reports: { type: Array as PropType<GameReportFlat[]>, required: true }
-})
+const { container, reports } = defineProps<{
+  container: TimelineContainer,
+  reports: GameReportFlat[]
+}>()
 const goal = computed(() => container.goal)
 </script>
 

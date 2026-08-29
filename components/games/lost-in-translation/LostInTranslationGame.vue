@@ -7,11 +7,11 @@ import {BaseTrack, FlatTrack} from "~/types/content";
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.LostInTranslationDef
 const emit = defineEmits<{ onFinish: [state: GameState] }>()
-const props = defineProps({
-  state: { type: Number as PropType<GameState>, required: true },
-  position: { type: Number as PropType<number>, required: true },
-  container: { type: Object as PropType<LostInTranslationContainer>, required: true }
-})
+const props = defineProps<{
+  state: GameState,
+  position: number,
+  container: LostInTranslationContainer
+}>()
 
 const currentIndex = inject<number>('currentIndex')
 const finished = computed(() => props.state == GameState.SUCCEEDED || props.state == GameState.FAILED)

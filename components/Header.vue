@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import {getGameContainer, isGameActive} from "~/utils/game";
 
-const { showTheme } = defineProps({
-  showTheme: { type: Boolean, default: true }
-})
+const { showTheme = true } = defineProps<{
+  showTheme?: boolean
+}>()
 const { data: gameData } = showTheme
     ? await useAsyncData('header-container', () => getGameContainer(), { lazy: true })
     : { data: ref(null) }

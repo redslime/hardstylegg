@@ -10,11 +10,11 @@ const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.ArtworkDef
 const emit = defineEmits<{ onFinish: [state: GameState] }>()
 const details = inject<boolean>('details')
-const props = defineProps({
-  state: { type: Number as PropType<GameState>, required: true },
-  position: { type: Number as PropType<number>, required: true },
-  container: { type: Object as PropType<ArtworkContainer>, required: true }
-})
+const props = defineProps<{
+  state: GameState,
+  position: number,
+  container: ArtworkContainer
+}>()
 
 const state = computed(() => props.state)
 const finished = computed(() => state.value == GameState.SUCCEEDED || state.value == GameState.FAILED)

@@ -19,9 +19,9 @@ const editing = defineModel<T | undefined>('editing', {
   default: undefined,
 })
 
-const { gameDef } = defineProps({
-  gameDef: { type: Object as PropType<ClientGameDef<T>>, required: true },
-})
+const { gameDef } = defineProps<{
+  gameDef: ClientGameDef<T>
+}>()
 
 const emit = defineEmits<{
   saved: [],

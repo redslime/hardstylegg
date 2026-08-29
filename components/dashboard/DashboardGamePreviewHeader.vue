@@ -1,15 +1,15 @@
-<script setup lang="ts">
+<script setup lang="ts" generic="T extends EditorContainer">
 import {getDashboardData, getScheduleForGame} from "~/utils/dashboard";
 import type {ScheduleDay} from "~/types/models";
 import type {ClientGameDef} from "~/utils/game/ClientGameDef";
 import LightBulbIcon from "~/components/icons/LightBulbIcon.vue";
 
 const emit = defineEmits<{ clicked: [] }>()
-const { gameDef, container, pointer } = defineProps({
-  gameDef: { type: Object as PropType<ClientGameDef<any>>, required: true },
-  container: { type: Object as PropType<{ id?: number, created_by?: number, context: string | null }>, required: true },
-  pointer: { type: Boolean, default: true }
-})
+const { gameDef, container, pointer = true } = defineProps<{
+  gameDef: ClientGameDef<T>,
+  container: T,
+  pointer?: boolean
+}>()
 
 const dashboardData = await getDashboardData()
 const scheduleData = computed<ScheduleDay | undefined>(() => getScheduleForGame(gameDef.id, container.id))
@@ -53,7 +53,7 @@ function click() {
       <div class="badge badge-neutral badge-xs font-mono">
         Created by {{ editor?.name }}
       </div>
-      <div class="badge badge-info badge-soft badge-xs font-mono px-0 tooltip" data-tip="has context" v-if="hasContext"><LightBulbIcon :size="'size-4'" /></div>
+      <div class="badge badge-info badge-soft badge-xs font-mono px-0 tooltip" data-tip="has context" v-if="hasContext"><LightBulbIcon :size="4" /></div>
     </div>
     <div class="flex flex-wrap gap-2">
       <slot>

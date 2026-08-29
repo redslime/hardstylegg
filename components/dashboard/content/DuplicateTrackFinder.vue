@@ -3,9 +3,9 @@ import {type BaseTrack, RichTrack} from "~/types/content";
 import {findDuplicates} from "~/utils/duplicates";
 import BaseTrackCard from "~/components/dashboard/content/BaseTrackCard.vue";
 
-const { tracks } = defineProps({
-  tracks: { type: Array as PropType<RichTrack[]>, required: true }
-})
+const { tracks } = defineProps<{
+  tracks: RichTrack[]
+}>()
 const duplicates = computed<Record<string, RichTrack[]>>(() => findDuplicates(tracks))
 const problemDuplicates = computed<Record<string, RichTrack[]>>(() => Object.fromEntries(Object.entries(duplicates.value)
     .filter(([_, tracks]) => tracks.filter(t => !t.hidden).length - tracks.filter(t => t.hidden).length > 0)))

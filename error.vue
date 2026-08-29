@@ -2,9 +2,9 @@
 import Header from "~/components/Header.vue";
 import type {NuxtError} from '#app'
 
-const { error } = defineProps({
-  error: Object as () => NuxtError,
-})
+const { error } = defineProps<{
+  error?: NuxtError
+}>()
 </script>
 
 <template>

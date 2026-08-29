@@ -3,11 +3,11 @@ import {RichArtist, type RichTrack} from "~/types/content";
 import SquaresIcon from "~/components/icons/SquaresIcon.vue";
 import ListBulletIcon from "~/components/icons/ListBulletIcon.vue";
 
-const { artist, tracks, pending } = defineProps({
-  artist: { type: Object as PropType<RichArtist>, required: true },
-  tracks: { type: Array as PropType<RichTrack[] | undefined>, required: true },
-  pending: { type: Boolean, required: true }
-})
+const { artist, tracks, pending } = defineProps<{
+  artist: RichArtist,
+  tracks: RichTrack[] | undefined,
+  pending: boolean
+}>()
 const emit = defineEmits<{
   selected: [artist: RichArtist, track: RichTrack]
 }>()

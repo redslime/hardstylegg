@@ -3,10 +3,10 @@ import type {OrderContainer} from "~/types/gameModels";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.OrderDef
-const { instance, pointer } = defineProps({
-  instance: { type: Object as PropType<OrderContainer>, required: true },
-  pointer: { type: Boolean, default: true }
-})
+const { instance, pointer = true } = defineProps<{
+  instance: OrderContainer,
+  pointer?: boolean
+}>()
 </script>
 
 <template>

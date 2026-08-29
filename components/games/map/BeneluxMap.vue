@@ -15,12 +15,12 @@ const { $leaflet: L } = useNuxtApp()
 
 export type HighlightItem = { id: number, icon: DivIcon, marker: Marker }
 
-const { init, interact, debug, osm } = defineProps({
-  init: { type: Object as PropType<EventHighlightMapItem> },
-  interact: { type: Boolean, default: true },
-  debug: { type: Boolean, default: import.meta.env.DEV },
-  osm: { type: Boolean, default: import.meta.env.DEV }
-})
+const { init, interact = true, debug = import.meta.env.DEV, osm = import.meta.env.DEV } = defineProps<{
+  init: EventHighlightMapItem,
+  interact?: boolean,
+  debug?: boolean,
+  osm?: boolean
+}>()
 const emit = defineEmits<{ click: [item: HighlightMapItem] }>()
 
 const loading = ref<boolean>(true)

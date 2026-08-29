@@ -12,9 +12,11 @@ interface SearchResult extends SearchableResult<FlatArtist> {
   highlighted: string
 }
 
-const props = defineProps({
-  xl: { type: Boolean, required: false },
-  limit: { type: Number, default: 5 },
+const props = withDefaults(defineProps<{
+  xl?: boolean,
+  limit?: number
+}>(), {
+  limit: 5,
 })
 const isMobile = inject<boolean>("isMobile")
 const fetchProgress = ref(0)

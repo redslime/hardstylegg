@@ -6,10 +6,10 @@ import PlayIcon from "~/components/icons/PlayIcon.vue";
 import PauseIcon from "~/components/icons/PauseIcon.vue";
 
 const duration = defineModel<number>('duration', { required: true })
-const { previewUrl, disabled } = defineProps({
-  previewUrl: { type: String, required: true },
-  disabled: { type: Boolean, default: false }
-})
+const { previewUrl, disabled = false } = defineProps<{
+  previewUrl: string,
+  disabled?: boolean
+}>()
 
 const containerRef = ref<HTMLElement | null>(null)
 const playing = ref<boolean>(false)

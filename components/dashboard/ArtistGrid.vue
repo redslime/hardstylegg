@@ -15,13 +15,13 @@ interface SearchResult {
 const emit = defineEmits<{
   selected: [artist: RichArtist]
 }>()
-const { items, title, selectable, existing } = defineProps({
-  items: { type: Array as PropType<RichArtist[]>, required: true },
-  title: { type: String, default: "Select" },
-  hideTitle: { type: Boolean, default: false },
-  selectable: { type: Boolean, default: true },
-  existing: { type: Array as PropType<string[]>, default: [] }
-})
+const { items, title = "Select", hideTitle = false, selectable = true, existing = [] } = defineProps<{
+  items: RichArtist[],
+  title?: string,
+  hideTitle?: boolean,
+  selectable?: boolean,
+  existing?: string[]
+}>()
 
 const editingModal = ref<HTMLDialogElement | null>();
 const editingItem = ref<RichArtist | null>(null);

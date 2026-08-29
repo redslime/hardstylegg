@@ -7,9 +7,9 @@ import {MdPreview} from "md-editor-v3";
 import 'md-editor-v3/lib/style.css';
 
 const isMobile = inject<boolean>('isMobile')
-const { container } = defineProps({
-  container: { type: Object as PropType<AnyGameContainer>, required: true }
-})
+const { container } = defineProps<{
+  container: AnyGameContainer
+}>()
 
 const box = useTemplateRef('box')
 const isVisible = ref(true)

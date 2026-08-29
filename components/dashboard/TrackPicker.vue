@@ -4,15 +4,23 @@ import {getDashboardAlbums, getDashboardTracks} from "~/utils/dashboard";
 import TrackAlbumGrid from "~/components/dashboard/TrackAlbumGrid.vue";
 import {RichAlbum, RichTrack} from "~/types/content";
 
-const { albums, title, disabled, style, button, filter } = defineProps({
-  albums: { type: Boolean, default: false },
-  title: { type: String, default: "Select" },
-  disabled: { type: Boolean, default: false },
-  existing: { type: Array as PropType<string[]>, default: [] },
-  style: { type: String, default: "" },
-  button: { type: Boolean, default: true },
-  filter: { type: Function as PropType<(item: RichTrack | RichAlbum) => boolean>, default: (item: RichTrack | RichAlbum) => !item.hidden }
-})
+const {
+  albums = false,
+  title = "Select",
+  disabled = false,
+  existing = [],
+  style = "",
+  button = true,
+  filter = (item: RichTrack | RichAlbum) => !item.hidden
+} = defineProps<{
+  albums?: boolean,
+  title?: string,
+  disabled?: boolean,
+  existing?: string[],
+  style?: string,
+  button?: boolean,
+  filter?: (item: RichTrack | RichAlbum) => boolean
+}>()
 const emit = defineEmits<{
   selected: [track: RichTrack | RichAlbum]
 }>()

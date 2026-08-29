@@ -3,10 +3,10 @@ import type {GameReportFlat} from "~/types/models";
 import type {TimetableContainer, TimetableItem} from "~/types/gameModels";
 import TimetableGenerator from "~/components/games/timetable/TimetableGenerator.vue";
 
-const { container, reports } = defineProps({
-  container: { type: Object as PropType<TimetableContainer>, required: true },
-  reports: { type: Array as PropType<GameReportFlat[]>, required: true }
-})
+const { container, reports } = defineProps<{
+  container: TimetableContainer,
+  reports: GameReportFlat[]
+}>()
 
 function getPercentage(item: TimetableItem) {
   const total = reports.length

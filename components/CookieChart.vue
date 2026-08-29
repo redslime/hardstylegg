@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type {AvgScoresContainer, CookieDayMemory} from "~/types/models";
 
-const { scores, cookie } = defineProps({
-  scores: { type: Object as PropType<AvgScoresContainer>, required: true },
-  cookie: { type: Object as PropType<CookieDayMemory[]>, required: true }
-})
+const { scores, cookie } = defineProps<{
+  scores: AvgScoresContainer,
+  cookie: CookieDayMemory[]
+}>()
 
 const userScores = scores.dayIds.map(id => {
   const day = cookie.find(c => c.day === id)

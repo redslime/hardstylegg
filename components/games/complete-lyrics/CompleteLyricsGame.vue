@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import {GameState} from "~/types/models";
-import type {PropType} from 'vue'
 import {computed, reactive, watch} from 'vue'
 import type {CompleteLyricsContainer} from "~/types/gameModels";
 import {FlatTrack} from "~/types/content";
@@ -14,11 +13,11 @@ interface LinePartText { isInput: false; text: string }
 type LinePart = LinePartInput | LinePartText
 
 const emit = defineEmits<{ onFinish: [state: GameState] }>()
-const props = defineProps({
-  state: { type: Number as PropType<GameState>, required: true },
-  position: { type: Number as PropType<number>, required: true },
-  container: { type: Object as PropType<CompleteLyricsContainer>, required: true }
-})
+const props = defineProps<{
+  state: GameState,
+  position: number,
+  container: CompleteLyricsContainer
+}>()
 
 const state = computed(() => props.state)
 const finished = computed(() => state.value == GameState.SUCCEEDED || state.value == GameState.FAILED)

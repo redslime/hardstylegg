@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import type {PropType} from "vue";
 import {RichAlbum, RichArtist, RichTrack} from "~/types/content";
 import EyeSlashIcon from "~/components/icons/EyeSlashIcon.vue";
 import {updateDashboardAlbum, updateDashboardTrack} from "~/utils/dashboard";
@@ -9,9 +8,9 @@ import PlusIcon from "~/components/icons/PlusIcon.vue";
 import {addRecentArtist, getRecentArtists} from "~/utils/contentCache";
 
 const { user } = useUserSession()
-const { item } = defineProps({
-  item: { type: Object as PropType<RichAlbum | RichTrack>, required: true }
-})
+const { item } = defineProps<{
+  item: RichAlbum | RichTrack
+}>()
 const emit = defineEmits<{ updated: [item: RichAlbum | RichTrack] }>()
 const isAlbum = computed<boolean>(() => item instanceof RichAlbum)
 const imgLoaded = ref<boolean>(false)

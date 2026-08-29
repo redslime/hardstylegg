@@ -4,10 +4,10 @@ import WordleString from "~/components/games/wordle/WordleString.vue";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.WordleDef
-const { instance, pointer } = defineProps({
-  instance: { type: Object as PropType<WordleContainer>, required: true },
-  pointer: { type: Boolean, default: true }
-})
+const { instance, pointer = true } = defineProps<{
+  instance: WordleContainer,
+  pointer?: boolean
+}>()
 </script>
 
 <template>

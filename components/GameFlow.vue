@@ -45,11 +45,11 @@ const lastReportCookie = useCookie<CookieLastReportMemory | undefined>("lastRepo
   default: () => undefined
 })
 
-const props = defineProps({
-  gameEnv: { type: Number as PropType<GameEnvironment>, required: true },
-  gameData: { type: Object as PropType<GameContainer>, required: true },
-  cookie: { type: Object as PropType<CookieDayMemory[]> }
-})
+const props = defineProps<{
+  gameEnv: GameEnvironment,
+  gameData: GameContainer,
+  cookie?: CookieDayMemory[]
+}>()
 
 const config = useRuntimeConfig()
 const archiveStore = useArchiveStore()

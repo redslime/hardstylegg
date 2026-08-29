@@ -3,10 +3,10 @@ import type {ArtworkContainer} from "~/types/gameModels";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.ArtworkDef
-const { instance, pointer } = defineProps({
-  instance: { type: Object as PropType<ArtworkContainer>, required: true },
-  pointer: { type: Boolean, default: true }
-})
+const { instance, pointer = true } = defineProps<{
+  instance: ArtworkContainer,
+  pointer?: boolean
+}>()
 
 const spotifyLoaded = ref(false)
 const localLoaded = ref(false)

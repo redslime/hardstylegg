@@ -2,10 +2,10 @@
 import type {NavigatorContainer} from "~/types/gameModels";
 import type {GameReportFlat} from "~/types/models";
 
-const { container, reports } = defineProps({
-  container: { type: Object as PropType<NavigatorContainer>, required: true },
-  reports: { type: Array as PropType<GameReportFlat[]>, required: true }
-})
+const { container, reports } = defineProps<{
+  container: NavigatorContainer,
+  reports: GameReportFlat[]
+}>()
 </script>
 
 <template>

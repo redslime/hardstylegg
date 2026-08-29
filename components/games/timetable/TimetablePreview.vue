@@ -3,10 +3,10 @@ import type {TimetableContainer} from "~/types/gameModels";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.TimetableDef
-const { instance, pointer } = defineProps({
-  instance: { type: Object as PropType<TimetableContainer>, required: true },
-  pointer: { type: Boolean, default: true }
-})
+const { instance, pointer = true } = defineProps<{
+  instance: TimetableContainer,
+  pointer?: boolean
+}>()
 </script>
 
 <template>

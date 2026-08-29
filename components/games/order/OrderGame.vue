@@ -11,11 +11,11 @@ const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.OrderDef
 const isMobile = inject<boolean>('isMobile')
 const emit = defineEmits<{ onFinish: [state: GameState] }>()
-const props = defineProps({
-  state: { type: Number as PropType<GameState>, required: true },
-  position: { type: Number as PropType<number>, required: true },
-  container: { type: Object as PropType<OrderContainer>, required: true }
-})
+const props = defineProps<{
+  state: GameState,
+  position: number,
+  container: OrderContainer
+}>()
 
 const state = computed(() => props.state)
 const finished = computed(() => state.value == GameState.SUCCEEDED || state.value == GameState.FAILED)

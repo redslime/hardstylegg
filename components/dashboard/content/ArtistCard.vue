@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import type {PropType} from "vue";
 import type {RichArtist} from "~/types/content";
 
-const { artist, clickable } = defineProps({
-  artist: { type: Object as PropType<RichArtist | undefined>, required: true },
-  clickable: { type: Boolean, default: true },
-})
+const { artist, clickable = true } = defineProps<{
+  artist: RichArtist | undefined,
+  clickable?: boolean
+}>()
 const imgLoaded = ref<boolean>(false)
 
 function navigate() {

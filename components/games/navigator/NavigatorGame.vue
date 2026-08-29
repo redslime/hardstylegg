@@ -17,11 +17,11 @@ export interface NavigatorStep {
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.NavigatorDef
 const emit = defineEmits<{ onFinish: [state: GameState] }>()
-const props = defineProps({
-  state: { type: Number as PropType<GameState>, required: true },
-  position: { type: Number as PropType<number>, required: true },
-  container: { type: Object as PropType<NavigatorContainer>, required: true }
-})
+const props = defineProps<{
+  state: GameState,
+  position: number,
+  container: NavigatorContainer
+}>()
 const isMobile = inject<boolean>('isMobile')
 const finished = computed(() => props.state == GameState.SUCCEEDED || props.state == GameState.FAILED)
 

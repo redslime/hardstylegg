@@ -5,15 +5,15 @@ import {GameState} from "~/types/models";
 import Xmark from "~/components/icons/Xmark.vue";
 import type {OptionalNavigatorStep} from "~/components/games/navigator/NavigatorGame.vue";
 
-const { stepsLeft, currentStep, state, from, to, steps, flipTooltip } = defineProps({
-  stepsLeft: { type: Number, required: true },
-  currentStep: { type: Number, required: true },
-  state: { type: Number as PropType<GameState>, required: true },
-  from: { type: Object as PropType<RichArtist>, required: true },
-  to: { type: Object as PropType<RichArtist>, required: true },
-  steps: { type: Array as PropType<OptionalNavigatorStep[]>, required: true },
-  flipTooltip: { type: Boolean, default: false }
-})
+const { stepsLeft, currentStep, state, from, to, steps, flipTooltip = false } = defineProps<{
+  stepsLeft: number,
+  currentStep: number,
+  state: GameState,
+  from: RichArtist,
+  to: RichArtist,
+  steps: OptionalNavigatorStep[],
+  flipTooltip?: boolean
+}>()
 const isMobile = inject<boolean>('isMobile')
 const summary = inject<boolean>("summary", false)
 </script>

@@ -3,9 +3,9 @@ import SpotifyIcon from "~/components/icons/SpotifyIcon.vue";
 import YouTubeIcon from "~/components/icons/YouTubeIcon.vue";
 import {FlatAlbum, FlatTrack} from "~/types/content";
 
-const { track } = defineProps({
-  track: { type: Object as PropType<FlatTrack | FlatAlbum>, required: true}
-})
+const { track } = defineProps<{
+  track: FlatTrack | FlatAlbum
+}>()
 
 const isYouTube = track.isYouTube()
 const url = computed<string>(() => track.getPlayUrl())

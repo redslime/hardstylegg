@@ -3,10 +3,10 @@ import {type Schedule, type ScheduleDay} from "~/types/models";
 import {GAMES_PER_DAY} from "~/utils/dashboard";
 import {zipIds} from "~/utils/utils";
 
-const { day, schedule } = defineProps({
-  day: { type: Object as PropType<ScheduleDay>, required: true },
-  schedule: { type: Object as PropType<Schedule>, required: true }
-})
+const { day, schedule } = defineProps<{
+  day: ScheduleDay,
+  schedule: Schedule
+}>()
 const isToday = computed(() => day.day === schedule.todayId);
 const isReady = computed(() => day.gameIds.length === day.typeIds.length && day.gameIds.length >= GAMES_PER_DAY);
 const isPlaying = computed(() => isToday.value && day.gameIds.length === day.typeIds.length && day.gameIds.length >= GAMES_PER_DAY);

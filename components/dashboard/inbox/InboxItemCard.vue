@@ -8,12 +8,12 @@ import EyeSlashIcon from "~/components/icons/EyeSlashIcon.vue";
 import RemapIcon from "~/components/icons/RemapIcon.vue";
 import ArtistPicker from "~/components/dashboard/ArtistPicker.vue";
 
-const { item, artists, day, selectDay } = defineProps({
-  item: { type: Object as PropType<InboxItem>, required: true },
-  artists: { type: Array as PropType<RichArtist[]>, required: true },
-  day: { type: String, required: true },
-  selectDay: { type: String, required: true }
-})
+const { item, artists, day, selectDay } = defineProps<{
+  item: InboxItem,
+  artists: RichArtist[],
+  day: string,
+  selectDay: string
+}>()
 const emit = defineEmits<{
   submit: [item: InboxItem],
   discard: [item: InboxItem],

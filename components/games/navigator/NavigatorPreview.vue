@@ -3,10 +3,10 @@ import type {NavigatorContainer} from "~/types/gameModels";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.NavigatorDef
-const { instance, pointer } = defineProps({
-  instance: { type: Object as PropType<NavigatorContainer>, required: true },
-  pointer: { type: Boolean, default: true }
-})
+const { instance, pointer = true } = defineProps<{
+  instance: NavigatorContainer,
+  pointer?: boolean
+}>()
 </script>
 
 <template>

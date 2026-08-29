@@ -3,9 +3,9 @@ import {type GameContainer} from "~/types/models";
 import {getDayFriendlyName} from "~/utils/archive";
 import {useArchiveStore} from "~/stores/archive.ts";
 
-const { container } = defineProps({
-  container: { type: Object as PropType<GameContainer>, required: true }
-})
+const { container } = defineProps<{
+  container: GameContainer
+}>()
 const emit = defineEmits<{ click: [] }>()
 const friendly = await getDayFriendlyName(container.dayId, "LLLL d")
 const { lastDayId, hasPlayed: _hasPlayed, getGameScore } = useArchiveStore()

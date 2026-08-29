@@ -5,9 +5,9 @@ import PlusIcon from "~/components/icons/PlusIcon.vue";
 import ArtistPicker from "~/components/dashboard/ArtistPicker.vue";
 import {isValidDate} from "~/utils/utils";
 
-const { album } = defineProps({
-  album: { type: Object as PropType<RichAlbum>, required: true }
-})
+const { album } = defineProps<{
+  album: RichAlbum
+}>()
 const emit = defineEmits<{
   edited: [track: RichAlbum]
 }>()

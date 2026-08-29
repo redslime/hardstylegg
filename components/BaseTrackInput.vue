@@ -12,12 +12,12 @@ interface SearchResult extends SearchableResult<BaseTrack> {
   highlighted: string
 }
 
-const { xl, isAlbums, titleOnly, limit } = defineProps({
-  xl: { type: Boolean, required: false },
-  isAlbums: { type: Boolean, default: false },
-  titleOnly: { type: Boolean, default: false },
-  limit: { type: Number, default: 5 },
-})
+const { xl, isAlbums = false, titleOnly = false, limit = 5 } = defineProps<{
+  xl?: boolean,
+  isAlbums?: boolean,
+  titleOnly?: boolean,
+  limit?: number
+}>()
 
 const isMobile = inject<boolean>("isMobile")
 const fetchProgress = ref(0)

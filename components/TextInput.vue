@@ -2,9 +2,9 @@
 import {computed, ref} from "vue"
 import {useSelectableSearchInput} from "~/composables/useSelectableSearchInput"
 
-const props = defineProps({
-  xl: { type: Boolean, required: false }
-})
+const props = defineProps<{
+  xl?: boolean
+}>()
 
 const isMobile = inject<boolean>("isMobile")
 const query = ref("")

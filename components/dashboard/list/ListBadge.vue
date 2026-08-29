@@ -2,10 +2,10 @@
 import type {List} from "~/types/models";
 import ListIcon from "~/components/dashboard/list/ListIcon.vue";
 
-const { list, clickable } = defineProps({
-  list: { type: Object as PropType<List>, required: true },
-  clickable: { type: Boolean, default: true },
-})
+const { list, clickable = true } = defineProps<{
+  list: List,
+  clickable?: boolean
+}>()
 const url = computed<string | undefined>(() => clickable ? `/admin/list/${list.id}` : undefined)
 </script>
 

@@ -2,10 +2,10 @@
 import type {GameReportFlat} from "~/types/models";
 import type {NameXContainer} from "~/types/gameModels";
 
-const { container, reports } = defineProps({
-  container: { type: Object as PropType<NameXContainer>, required: true },
-  reports: { type: Array as PropType<GameReportFlat[]>, required: true }
-})
+const { container, reports } = defineProps<{
+  container: NameXContainer,
+  reports: GameReportFlat[]
+}>()
 
 function getPercentage(index: number) {
   const total = reports.length

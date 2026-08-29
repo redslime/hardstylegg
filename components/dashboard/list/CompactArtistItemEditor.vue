@@ -4,9 +4,9 @@ import LightBulbIcon from "~/components/icons/LightBulbIcon.vue";
 
 const item = defineModel<RichArtist>('item', { required: true })
 const context = defineModel<string | undefined>('context', { required: true })
-const { editing: listEditing } = defineProps({
-  editing: { type: Boolean, default: false }
-})
+const { editing: listEditing = false } = defineProps<{
+  editing?: boolean
+}>()
 const emit = defineEmits<{ remove: [] }>()
 
 const force = ref<boolean>(false)
@@ -37,7 +37,7 @@ watch(context, val => {
                :class="{'cursor-pointer': listEditing}"
                @click="tryEdit()" v-if="context || force">
             <span class="indicator-item indicator-middle indicator-start badge badge-info rounded-full px-0">
-              <LightBulbIcon :size="'size-4'" />
+              <LightBulbIcon :size="4" />
             </span>
             <p class="text-sm" v-if="context && !editing">
               {{ context }}

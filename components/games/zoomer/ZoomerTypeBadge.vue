@@ -2,10 +2,10 @@
 import type {ZoomerType} from "~/types/zoomerModels";
 import {capitalize} from "~/utils/utils";
 
-const { type, style } = defineProps({
-  type: { type: Object as PropType<ZoomerType>, required: true },
-  style: { type: String, required: false, default: "badge-info badge-soft" },
-})
+const { type, style = "badge-info badge-soft" } = defineProps<{
+  type: ZoomerType,
+  style?: string
+}>()
 const badgeStyle = computed(() => [style])
 </script>
 

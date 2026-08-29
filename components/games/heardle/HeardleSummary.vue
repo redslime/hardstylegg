@@ -3,10 +3,10 @@ import type {GameReportFlat} from "~/types/models";
 import type {HeardleContainer} from "~/types/gameModels";
 import WaveformEditor from "~/components/games/heardle/WaveformEditor.vue";
 
-const { container, reports } = defineProps({
-  container: { type: Object as PropType<HeardleContainer>, required: true },
-  reports: { type: Array as PropType<GameReportFlat[]>, required: true }
-})
+const { container, reports } = defineProps<{
+  container: HeardleContainer,
+  reports: GameReportFlat[]
+}>()
 
 const sourceUrl = computed(() => {
   return "/heardle/" + container.src + ".mp3"

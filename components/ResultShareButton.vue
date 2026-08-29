@@ -5,7 +5,7 @@ import CopyIcon from "~/components/icons/CopyIcon.vue";
 const copied = ref<boolean>(false)
 
 defineProps<{
-  action: (() => void)
+  action: () => void
 }>()
 </script>
 

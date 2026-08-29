@@ -3,12 +3,12 @@ import SearchIcon from "~/components/icons/SearchIcon.vue";
 
 const query = defineModel<string>("query", {default: ""})
 
-defineProps({
-  placeholder: { type: String, default: "Search" },
-  resultCount: { type: Number, default: 0 },
-  minQueryLength: { type: Number, default: 5 },
-  showHint: { type: Boolean, default: false }
-})
+const { placeholder = "Search", resultCount = 0, minQueryLength = 5, showHint = false } = defineProps<{
+  placeholder?: string,
+  resultCount?: number,
+  minQueryLength?: number,
+  showHint?: boolean
+}>()
 </script>
 
 <template>

@@ -2,9 +2,9 @@
 import {RichArtist} from "~/types/content";
 import ArrowPathIcon from "~/components/icons/ArrowPathIcon.vue";
 
-const { artist } = defineProps({
-  artist: { type: Object as PropType<RichArtist>, required: true }
-})
+const { artist } = defineProps<{
+  artist: RichArtist
+}>()
 const emit = defineEmits<{
   updatedImage: [image: string | null]
 }>()

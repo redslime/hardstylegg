@@ -6,9 +6,9 @@ const input = defineModel<string | undefined | null>('input', { required: true }
 const markdown = ref<string>(input.value ?? '')
 const hasInput = computed(() => (input.value?.trim().length ?? 0) > 0)
 const opened = ref<boolean>(hasInput.value)
-const { hasItems } = defineProps({
-  hasItems: { type: Boolean, default: false }
-})
+const { hasItems = false } = defineProps<{
+  hasItems?: boolean
+}>()
 
 watch(markdown, () => input.value = markdown.value)
 </script>

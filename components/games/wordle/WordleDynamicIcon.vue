@@ -1,8 +1,8 @@
 <script setup lang="ts">
 
-const { board } = defineProps({
-  board: { type: String, required: true }
-})
+const { board } = defineProps<{
+  board: string
+}>()
 
 const rows = computed<string[]>(() => board?.split(","))
 const lastRow = computed(() => rows.value.length-1)

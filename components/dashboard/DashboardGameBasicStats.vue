@@ -2,9 +2,9 @@
 import type {GameReportFlat} from "~/types/models";
 import ChartBarIcon from "~/components/icons/ChartBarIcon.vue";
 
-const { gameReports } = defineProps({
-  gameReports: { type: Object as PropType<GameReportFlat[]>, required: true }
-})
+const { gameReports } = defineProps<{
+  gameReports: GameReportFlat[]
+}>()
 const valid = computed(() => gameReports.length > 0)
 const successRate = computed(() => Math.round(gameReports.filter(r => r.success).length / gameReports.length * 100))
 const hasAttempts = computed(() => gameReports.some(r => r.attempts !== null))

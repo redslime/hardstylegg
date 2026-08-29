@@ -7,10 +7,10 @@ const { user } = useUserSession()
 const confirmed = ref<boolean>(false)
 const deletingModal = ref<HTMLDialogElement | undefined>()
 const deletingResponse = ref<boolean | undefined>()
-const { editing, typeId } = defineProps({
-  editing: { type: Object as PropType<{ id?: number, created_by?: number }>, required: true },
-  typeId: { type: Number , required: true },
-})
+const { editing, typeId } = defineProps<{
+  editing: { id?: number, created_by?: number },
+  typeId: number
+}>()
 const scheduleData = computed<ScheduleDay | undefined>(() => getScheduleForGame(typeId, editing?.id))
 const disabled = computed<boolean>(() => scheduleData.value !== undefined)
 const example = computed<boolean>(() => editing?.id === 1)

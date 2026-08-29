@@ -15,11 +15,11 @@ const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.WordleDef
 const isMobile = inject<boolean>('isMobile')
 const emit = defineEmits<{ onFinish: [state: GameState] }>()
-const props = defineProps({
-  state: { type: Number as PropType<GameState>, required: true },
-  position: { type: Number as PropType<number>, required: true },
-  container: { type: Object as PropType<WordleContainer>, required: true }
-})
+const props = defineProps<{
+  state: GameState,
+  position: number,
+  container: WordleContainer
+}>()
 
 const fetchProgress = ref<number>(0)
 const { data: artists, pending } = await useAsyncData<FlatArtist[]>('artists-flat', () => getArtists((p) => {

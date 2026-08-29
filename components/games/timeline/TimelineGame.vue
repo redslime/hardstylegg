@@ -12,11 +12,11 @@ const maxYear = 2025
 
 const isMobile = inject<boolean>('isMobile')
 const emit = defineEmits<{ onFinish: [state: GameState] }>()
-const props = defineProps({
-  state: { type: Number as PropType<GameState>, required: true },
-  position: { type: Number as PropType<number>, required: true },
-  container: { type: Object as PropType<TimelineContainer>, required: true }
-})
+const props = defineProps<{
+  state: GameState,
+  position: number,
+  container: TimelineContainer
+}>()
 watch(() => props.state, state => {
   if(state == GameState.SUCCEEDED || state == GameState.FAILED) {
     selectedYear.value = goal.value

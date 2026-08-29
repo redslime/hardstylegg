@@ -8,9 +8,9 @@ import DuplicateTrackFinder from "~/components/dashboard/content/DuplicateTrackF
 import {useAsyncData} from "#app";
 import {getDashboardTracks} from "~/utils/dashboard";
 
-const { artist } = defineProps({
-  artist: { type: Object as PropType<RichArtist>, required: true }
-})
+const { artist } = defineProps<{
+  artist: RichArtist
+}>()
 const emit = defineEmits<{
   edited: [track: RichArtist]
 }>()

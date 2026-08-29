@@ -3,10 +3,10 @@ import type {TimelineContainer} from "~/types/gameModels";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.TimelineDef
-const { instance, pointer } = defineProps({
-  instance: { type: Object as PropType<TimelineContainer>, required: true },
-  pointer: { type: Boolean, default: true }
-})
+const { instance, pointer = true } = defineProps<{
+  instance: TimelineContainer,
+  pointer?: boolean
+}>()
 </script>
 
 <template>

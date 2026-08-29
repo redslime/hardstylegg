@@ -2,9 +2,10 @@
 import {StateFilter} from "~/types/models";
 
 const state = defineModel<StateFilter>('state', { required: true })
-const { disabled } = defineProps({
-  disabled: { type: Boolean, default: false }
-})
+const { disabled = false } = defineProps<{
+  disabled?: boolean
+}>()
+const options = computed<StateFilter[]>(() => Object.values(StateFilter).filter(s => s !== state.value))
 
 function getStyle(state: StateFilter): string {
   switch (state) {

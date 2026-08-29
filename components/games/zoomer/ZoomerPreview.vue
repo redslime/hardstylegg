@@ -5,10 +5,10 @@ import CameraIcon from "~/components/icons/CameraIcon.vue";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.ZoomerDef
-const { instance, pointer } = defineProps({
-  instance: { type: Object as PropType<ZoomerContainer>, required: true },
-  pointer: { type: Boolean, default: true }
-})
+const { instance, pointer = true } = defineProps<{
+  instance: ZoomerContainer,
+  pointer?: boolean
+}>()
 </script>
 
 <template>

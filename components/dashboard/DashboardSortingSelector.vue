@@ -2,9 +2,9 @@
 import {SortMode} from "~/types/models";
 
 const mode = defineModel<SortMode>('mode', { required: true })
-const { disabled } = defineProps({
-  disabled: { type: Boolean, default: false }
-})
+const { disabled = false } = defineProps<{
+  disabled?: boolean
+}>()
 
 function change(clicked: SortMode) {
   (document.activeElement as HTMLElement)?.blur()

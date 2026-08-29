@@ -9,9 +9,9 @@ const { $gameRegistry } = useNuxtApp();
 const emit = defineEmits<{
   select: [obj: { data: AnyGameContainer, typeId: number }]
 }>()
-const { typeId } = defineProps({
-  typeId: { type: Number, required: true }
-})
+const { typeId } = defineProps<{
+  typeId: number
+}>()
 const { data, pending, error, clear } = await useAsyncData<AnyGameContainers>(() => {
   return $gameRegistry.findGameById(typeId)!!.getAllInstances()
 }, { lazy: true })

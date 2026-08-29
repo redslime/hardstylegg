@@ -2,10 +2,10 @@
 import {LetterState} from "~/utils/game/impl/ClientWordleGame";
 import BackspaceIcon from "~/components/icons/BackspaceIcon.vue";
 
-const { letterStates, ready } = defineProps({
-  letterStates: { type: Object as PropType<Record<string, LetterState>>, required: true },
-  ready: { type: Boolean, required: true }
-})
+const { letterStates, ready } = defineProps<{
+  letterStates: Record<string, LetterState>,
+  ready: boolean
+}>()
 const emit = defineEmits<{
   key: [key: string]
 }>()

@@ -3,9 +3,9 @@ import type {TimetableContainer, TimetableItem} from "~/types/gameModels";
 import {computed} from "vue";
 
 const items = defineModel<TimetableItem[]>('items', { required: true })
-const { container } = defineProps({
-  container: { type: Object as PropType<TimetableContainer>, required: true }
-})
+const { container } = defineProps<{
+  container: TimetableContainer
+}>()
 
 const title = computed(() => container.title)
 const colorBg = computed(() => container.color_bg)

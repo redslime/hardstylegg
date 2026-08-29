@@ -3,11 +3,13 @@ import {RichAlbum, RichTrack} from "~/types/content";
 import BaseTrackCard from "~/components/dashboard/content/BaseTrackCard.vue";
 import ArrowTopRightOpenIcon from "~/components/icons/ArrowTopRightOpenIcon.vue";
 
-const props = defineProps({
-  isAlbum: { type: Boolean, required: true },
-  items: { type: Object as PropType<RichAlbum[] | RichTrack[] | undefined>, required: true },
-  count: { type: Number },
-  frontpage: { type: Boolean, default: false },
+const props = withDefaults(defineProps<{
+  isAlbum: boolean,
+  items: RichAlbum[] | RichTrack[] | undefined,
+  count?: number,
+  frontpage?: boolean
+}>(), {
+  frontpage: false,
 })
 const isAlbum = computed(() => props.isAlbum)
 const items = computed(() => props.items)

@@ -5,10 +5,10 @@ import LoadLazy from "../../LoadLazy.vue";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.HeardleDef
-const { instance, pointer } = defineProps({
-  instance: { type: Object as PropType<HeardleContainer>, required: true },
-  pointer: { type: Boolean, default: true }
-})
+const { instance, pointer = true } = defineProps<{
+  instance: HeardleContainer,
+  pointer?: boolean
+}>()
 </script>
 
 <template>

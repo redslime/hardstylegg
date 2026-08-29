@@ -2,10 +2,10 @@
 import type {NuxtError} from "#app";
 import {FetchError} from "ofetch";
 
-const { pending, error } = defineProps({
-  pending: { type: Boolean, required: true },
-  error: { type: Object as PropType<NuxtError | FetchError>}
-})
+const { pending, error } = defineProps<{
+  pending: boolean,
+  error?: NuxtError | FetchError
+}>()
 </script>
 
 <template>

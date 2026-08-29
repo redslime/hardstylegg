@@ -4,10 +4,10 @@ import type {GameReportFlat} from "~/types/models";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.CompleteLyricsDef
-const { container, reports } = defineProps({
-  container: { type: Object as PropType<CompleteLyricsContainer>, required: true },
-  reports: { type: Array as PropType<GameReportFlat[]>, required: true }
-})
+const { container, reports } = defineProps<{
+  container: CompleteLyricsContainer,
+  reports: GameReportFlat[]
+}>()
 </script>
 
 <template>

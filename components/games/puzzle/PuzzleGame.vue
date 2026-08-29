@@ -11,11 +11,11 @@ const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.PuzzleDef
 const isMobile = inject<boolean>('isMobile')
 const emit = defineEmits<{ onFinish: [state: GameState] }>()
-const props = defineProps({
-  state: { type: Number as PropType<GameState>, required: true },
-  position: { type: Number as PropType<number>, required: true },
-  container: { type: Object as PropType<PuzzleContainer>, required: true }
-})
+const props = defineProps<{
+  state: GameState,
+  position: number,
+  container: PuzzleContainer
+}>()
 const finished = computed(() => props.state == GameState.SUCCEEDED || props.state == GameState.FAILED)
 
 const cardsRef = useTemplateRef('cards')

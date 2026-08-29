@@ -4,14 +4,14 @@ import {getDashboardArtists} from "~/utils/dashboard";
 import {RichArtist} from "~/types/content";
 import ArtistGrid from "~/components/dashboard/ArtistGrid.vue";
 
-const { title, disabled, style, button, filter } = defineProps({
-  title: { type: String, default: "Select" },
-  disabled: { type: Boolean, default: false },
-  existing: { type: Array as PropType<string[]>, default: [] },
-  style: { type: String, default: "" },
-  button: { type: Boolean, default: true },
-  filter: { type: Function as PropType<(artist: RichArtist) => boolean>, default: () => true }
-})
+const { title = "Select", disabled = false, existing = [], style = "", button = true, filter = () => true } = defineProps<{
+  title?: string,
+  disabled?: boolean,
+  existing?: string[],
+  style?: string,
+  button?: boolean,
+  filter?: (artist: RichArtist) => boolean
+}>()
 const emit = defineEmits<{
   selected: [artist: RichArtist]
 }>()

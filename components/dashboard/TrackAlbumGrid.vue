@@ -15,14 +15,14 @@ interface SearchResult {
 const emit = defineEmits<{
   selected: [track: RichTrack]
 }>()
-const { items, albums, title, selectable, existing } = defineProps({
-  items: { type: Array as PropType<RichTrack[] | RichAlbum[]>, required: true },
-  albums: { type: Boolean, default: false },
-  title: { type: String, default: "Select" },
-  hideTitle: { type: Boolean, default: false },
-  selectable: { type: Boolean, default: true },
-  existing: { type: Array as PropType<string[]>, default: [] }
-})
+const { items, albums = false, title = "Select", hideTitle = false, selectable = true, existing = [] } = defineProps<{
+  items: RichTrack[] | RichAlbum[],
+  albums?: boolean,
+  title?: string,
+  hideTitle?: boolean,
+  selectable?: boolean,
+  existing?: string[]
+}>()
 
 const mode = albums ? "album" : "track"
 

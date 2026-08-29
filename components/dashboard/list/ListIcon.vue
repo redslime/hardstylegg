@@ -2,9 +2,9 @@
 import type {List} from "~/types/models";
 import {icons} from "~/components/icons";
 
-const { list } = defineProps({
-  list: { type: Object as PropType<List>, required: true },
-})
+const { list } = defineProps<{
+  list: List
+}>()
 </script>
 
 <template>

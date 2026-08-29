@@ -2,10 +2,10 @@
 import type {QuizAnswer, QuizContainer} from "~/types/gameModels";
 import type {GameReportFlat} from "~/types/models";
 
-const { container, reports } = defineProps({
-  container: { type: Object as PropType<QuizContainer>, required: true },
-  reports: { type: Array as PropType<GameReportFlat[]>, required: true }
-})
+const { container, reports } = defineProps<{
+  container: QuizContainer,
+  reports: GameReportFlat[]
+}>()
 
 function getAnswerShare(id: number): number {
   return Math.round(reports.filter(r => r.itemsClicked.includes(id)).length / reports.length * 100)

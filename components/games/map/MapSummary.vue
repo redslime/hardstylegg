@@ -7,10 +7,10 @@ import {type CountryHighlightMapItem, EventHighlightMapItem} from "~/utils/game/
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.MapDef
-const { container, reports } = defineProps({
-  container: { type: Object as PropType<MapContainer>, required: true },
-  reports: { type: Array as PropType<GameReportFlat[]>, required: true }
-})
+const { container, reports } = defineProps<{
+  container: MapContainer,
+  reports: GameReportFlat[]
+}>()
 const goalName = computed(() => gameDef.getGoalName(container))
 </script>
 

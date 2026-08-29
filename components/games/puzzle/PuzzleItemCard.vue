@@ -7,11 +7,13 @@ const draggingTitle = defineModel<boolean>('draggingTitle', { required: true });
 const draggingArtist = defineModel<boolean>('draggingArtist', { required: true });
 const elementMoving = defineModel<PuzzleItem | null>('elementMoving', { required: true });
 
-const props = defineProps({
-  tracks: { type: Array as PropType<RichTrack[]>, required: true },
-  findItem: { type: Function as PropType<(itemId: number) => PuzzleItem | null>, required: true },
-  startMovingItem: { type: Function as PropType<(item: PuzzleItem | null) => void>, required: true },
-  movedItemId: { type: Number as PropType<number | null>, required: false, default: null }
+const props = withDefaults(defineProps<{
+  tracks: RichTrack[],
+  findItem: (itemId: number) => PuzzleItem | null,
+  startMovingItem: (item: PuzzleItem | null) => void,
+  movedItemId?: number | null
+}>(), {
+  movedItemId: null,
 })
 
 const emit = defineEmits<{

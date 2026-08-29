@@ -5,10 +5,10 @@ import type {List} from "~/types/models";
 import ListBadge from "~/components/dashboard/list/ListBadge.vue";
 
 const { user } = useUserSession()
-const { item, linkedLists } = defineProps({
-  item: { type: Object as PropType<RichAlbum | RichTrack>, required: true },
-  linkedLists: { type: Array as PropType<List[]>, default: () => [] }
-})
+const { item, linkedLists = [] } = defineProps<{
+  item: RichAlbum | RichTrack,
+  linkedLists?: List[]
+}>()
 const isAlbum = computed<boolean>(() => item instanceof RichAlbum)
 const editUrl = computed<string>(() => isAlbum.value ? `/admin/content/album/${item.sid}/edit` : `/admin/content/track/${item.sid}/edit`)
 </script>

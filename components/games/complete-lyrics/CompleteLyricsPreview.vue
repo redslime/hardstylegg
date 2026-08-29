@@ -3,10 +3,10 @@ import type {CompleteLyricsContainer} from "~/types/gameModels";
 
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.CompleteLyricsDef
-const { instance, pointer } = defineProps({
-  instance: { type: Object as PropType<CompleteLyricsContainer>, required: true },
-  pointer: { type: Boolean, default: true }
-})
+const { instance, pointer = true } = defineProps<{
+  instance: CompleteLyricsContainer,
+  pointer?: boolean
+}>()
 </script>
 
 <template>

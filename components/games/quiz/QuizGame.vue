@@ -7,11 +7,11 @@ import {countItem, countOption} from "~/utils/game";
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.QuizDef
 const emit = defineEmits<{ onFinish: [state: GameState] }>()
-const props = defineProps({
-  state: { type: Number as PropType<GameState>, required: true },
-  position: { type: Number as PropType<number>, required: true },
-  container: { type: Object as PropType<QuizContainer>, required: true }
-})
+const props = defineProps<{
+  state: GameState,
+  position: number,
+  container: QuizContainer
+}>()
 
 const state = computed(() => props.state)
 const answers = ref<QuizAnswer[]>(shuffleArray(props.container.items))

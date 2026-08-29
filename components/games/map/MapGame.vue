@@ -8,11 +8,11 @@ import BeneluxMap from "~/components/games/map/BeneluxMap.vue";
 const { $gameRegistry } = useNuxtApp();
 const gameDef = $gameRegistry.MapDef
 const emit = defineEmits<{ onFinish: [state: GameState] }>()
-const props = defineProps({
-  state: { type: Number as PropType<GameState>, required: true },
-  position: { type: Number as PropType<number>, required: true },
-  container: { type: Object as PropType<MapContainer>, required: true }
-})
+const props = defineProps<{
+  state: GameState,
+  position: number,
+  container: MapContainer
+}>()
 const isMobile = inject<boolean>('isMobile')
 const currentIndex = inject<number>('currentIndex')
 const summary = inject<boolean>("summary", false)

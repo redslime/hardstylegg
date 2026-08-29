@@ -1,8 +1,8 @@
 <script setup lang="ts">
-const { solution, guess } = defineProps({
-  solution: { type: String, required: true },
-  guess: { type: String, required: true }
-})
+const { solution, guess } = defineProps<{
+  solution: string,
+  guess: string
+}>()
 
 const solutionLetters = computed<string[]>(() => solution.split(""))
 const guessLetters = computed<string[]>(() => guess.split(""))
