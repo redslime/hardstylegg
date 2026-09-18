@@ -18,6 +18,9 @@ if(query.c) {
   width = 650
 }
 
+definePageMeta({
+  layout: "hero",
+});
 useHead({
   meta: [
     { property: 'og:description', content: desc },
