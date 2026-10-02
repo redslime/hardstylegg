@@ -11,7 +11,8 @@ const adapter = new PrismaMariaDb({
     user: DB_USER,
     password: DB_PASSWORD,
     connectTimeout: 5_000,
-    idleTimeout: 300
+    idleTimeout: 300,
+    allowPublicKeyRetrieval: true
 })
 export const prisma = globalForPrisma.prisma || new PrismaClient({ adapter })
 
