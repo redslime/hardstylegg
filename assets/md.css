@@ -69,6 +69,7 @@
 .md-preview-custom :deep(li) {
     display: list-item !important;
     margin-bottom: 0.25rem !important;
+    word-break: break-word;
 }
 
 .md-preview-custom :deep(p), .md-editor-custom :deep(p) {
