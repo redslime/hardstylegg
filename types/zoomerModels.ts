@@ -51,6 +51,10 @@ export const festivalOptions = <Festival[]>[
         options: {
             stage: ["Sportpaleis", "Lotto Arena"]
         }
+    },
+    {
+        name: "Hard Bass",
+        years: [2001, 2019]
     }
 ]
 
