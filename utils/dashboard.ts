@@ -29,12 +29,15 @@ export async function getDashboardTracks(skipHidden: boolean = false): Promise<R
     }
 }
 
-export function updateDashboardTrack(track: RichTrack) {
+export function updateDashboardTrack(track: RichTrack, skipArtist: boolean = false) {
     if(tracks !== null) {
         const index = tracks.findIndex(t => t.sid === track.sid)
         if(index !== -1) tracks.splice(index, 1)
         tracks.push(track)
-        tracks.flatMap(t => t.artists).forEach(a => updateDashboardArtist(a))
+
+        if(!skipArtist) {
+            tracks.flatMap(t => t.artists).forEach(a => updateDashboardArtist(a))
+        }
     }
 }
 
@@ -56,6 +59,7 @@ export function updateDashboardAlbum(album: RichAlbum) {
         if(index !== -1) albums.splice(index, 1)
         albums.push(album)
         albums.flatMap(t => t.artists).forEach(a => updateDashboardArtist(a))
+        albums.flatMap(t => t.tracks).forEach(t => updateDashboardTrack(t, true))
         albums.flatMap(t => t.tracks).flatMap(t => t.artists).forEach(a => updateDashboardArtist(a))
     }
 }
@@ -68,18 +72,23 @@ export async function getDashboardArtists(): Promise<RichArtist[]> {
 }
 
 export function updateDashboardArtist(artist: RichArtist) {
+    let newArtist = false
     if(artists !== null) {
         const index = artists.findIndex(a => a.id === artist.id)
         if(index !== -1) artists.splice(index, 1)
+        newArtist = index === -1
         artists.push(artist)
     }
-    if(tracks !== null) {
-        tracks.filter(t => t.artists.map(a => a.id).includes(artist.id))
-            .forEach(t => t.artists.filter(a => a.id === artist.id).forEach(m => m.name = artist.name))
-    }
-    if(albums !== null) {
-        albums.filter(a => a.artists.map(a => a.id).includes(artist.id))
-            .forEach(a => a.artists.filter(a => a.id === artist.id).forEach(m => m.name = artist.name))
+
+    if(!newArtist) {
+        if(tracks !== null) {
+            tracks.filter(t => t.artists.map(a => a.id).includes(artist.id))
+                .forEach(t => t.artists.filter(a => a.id === artist.id).forEach(m => m.name = artist.name))
+        }
+        if(albums !== null) {
+            albums.filter(a => a.artists.map(a => a.id).includes(artist.id))
+                .forEach(a => a.artists.filter(a => a.id === artist.id).forEach(m => m.name = artist.name))
+        }
     }
 }
 
