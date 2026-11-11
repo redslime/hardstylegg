@@ -25,7 +25,7 @@ async function loadKeys(): Promise<KeyCache> {
     try {
         keys = {
             tracks: `${track}${trackArtist}${artist}`,
-            albums: `${album}${albumArtist}${artist}`,
+            albums: `${album}${albumArtist}${artist}${track}${trackArtist}`,
             artists: artist,
             lists: `${lists}${listItems}`,
             graph: trackArtist
