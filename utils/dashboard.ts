@@ -29,15 +29,11 @@ export async function getDashboardTracks(skipHidden: boolean = false): Promise<R
     }
 }
 
-export function updateDashboardTrack(track: RichTrack, skipArtist: boolean = false) {
+export function updateDashboardTrack(track: RichTrack) {
     if(tracks !== null) {
         const index = tracks.findIndex(t => t.sid === track.sid)
         if(index !== -1) tracks.splice(index, 1)
         tracks.push(track)
-
-        if(!skipArtist) {
-            tracks.flatMap(t => t.artists).forEach(a => updateDashboardArtist(a))
-        }
     }
 }
 
@@ -59,8 +55,6 @@ export function updateDashboardAlbum(album: RichAlbum) {
         if(index !== -1) albums.splice(index, 1)
         albums.push(album)
         albums.flatMap(t => t.artists).forEach(a => updateDashboardArtist(a))
-        albums.flatMap(t => t.tracks).forEach(t => updateDashboardTrack(t, true))
-        albums.flatMap(t => t.tracks).flatMap(t => t.artists).forEach(a => updateDashboardArtist(a))
     }
 }
 
