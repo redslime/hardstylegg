@@ -84,6 +84,12 @@ function getStructure(user: User): DashboardGroup[] {
         url: "/admin/import/track"
     })
 
+    adminItems.push({
+        name: "Import album",
+        icon: "CloudArrowDownIcon",
+        url: "/admin/import/album"
+    })
+
     // game items
     getGames().forEach(game => {
         gameItems.push({

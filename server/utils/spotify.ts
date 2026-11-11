@@ -1,4 +1,4 @@
-import {SpotifyApi} from "@spotify/web-api-ts-sdk";
+import {type Page, SpotifyApi} from "@spotify/web-api-ts-sdk";
 
 let api: SpotifyApi | null = null
 
@@ -57,4 +57,23 @@ export async function requestWithRetry<T>(fn: () => Promise<T>, maxRetries = 5):
             throw err;
         }
     }
+}
+
+export async function fetchAllPages<T>(page: Page<T>): Promise<T[]> {
+    const items: T[] = [...page.items]
+    let nextUrl = page.next
+
+    while(nextUrl !== null) {
+        try {
+            const url = nextUrl.replace("https://api.spotify.com/v1/", "")
+            const nextPage = await requestWithRetry(() => getSpotifyApi().makeRequest<Page<T>>("GET", url))
+            items.push(...nextPage.items)
+            nextUrl = nextPage.next
+        } catch (err: any) {
+            console.error("Spotify API error for page:", nextUrl, err)
+            throw err
+        }
+    }
+
+    return items
 }

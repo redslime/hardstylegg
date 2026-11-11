@@ -1,5 +1,5 @@
 import {createError, defineEventHandler, getQuery} from 'h3'
-import {getSpotifyApi, requestWithRetry} from "~/server/utils/spotify";
+import {fetchAllPages, getSpotifyApi} from "~/server/utils/spotify";
 import type {Artist, SimplifiedAlbum, SimplifiedArtist, SimplifiedTrack} from "@spotify/web-api-ts-sdk";
 import prisma from "~/lib/prisma";
 import type {InboxAlbum, InboxArtist, InboxTrack} from "~/types/models";
@@ -52,29 +52,19 @@ export default defineEventHandler(async (event) => {
 
         const albums: InboxAlbum[] = []
         const tracks: InboxTrack[] = []
+        const request = await getSpotifyApi().artists.albums(artistId as string, "album,single")
+        const allAlbums = await fetchAllPages<SimplifiedAlbum>(request)
 
-        let total = 1 // cause the while to run at least once
-        let collected = 0
-        let offset = 0
+        for(const album of allAlbums) {
+            const tracksRequest = await getSpotifyApi().albums.tracks(album.id)
+            const albumTracks = await fetchAllPages<SimplifiedTrack>(tracksRequest)
 
-        while(collected < total) {
-            const data = await requestWithRetry(() => getSpotifyApi().artists.albums(artistId as string, "album,single", undefined, 50, offset))
-            total = data.total
-
-            for (const item of data.items) {
-                const childItems = await requestWithRetry(() => getSpotifyApi().albums.tracks(item.id))
-
-                if(item.album_type === "album") {
-                    albums.push(mapAlbum(item, childItems.items))
-                }
-
-                tracks.push(...childItems.items.map(track => mapTrack(track, item)))
+            if(album.album_type === "album") {
+                albums.push(mapAlbum(album, albumTracks))
             }
 
-            collected += data.items.length
-            offset += data.items.length
+            tracks.push(...albumTracks.map(t => mapTrack(t, album)))
         }
-
         tracks.sort((a, b) => b.date.getTime() - a.date.getTime())
 
         // insert artist
