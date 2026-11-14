@@ -20,6 +20,7 @@ export default defineNuxtConfig({
         '/admin/**': { ssr: false, appLayout: 'dashboard' },
         '/archive': { ssr: false },
         '/graph': { ssr: false },
+        '/releases/**': { ssr: false }
     },
 
     vite: {

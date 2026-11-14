@@ -8,8 +8,10 @@ import PlusIcon from "~/components/icons/PlusIcon.vue";
 import {addRecentArtist, getRecentArtists} from "~/utils/contentCache";
 
 const { user } = useUserSession()
-const { item } = defineProps<{
-  item: RichAlbum | RichTrack
+const { item, preview = false, exactDate = false } = defineProps<{
+  item: RichAlbum | RichTrack,
+  preview?: boolean,
+  exactDate?: boolean
 }>()
 const emit = defineEmits<{ updated: [item: RichAlbum | RichTrack] }>()
 const isAlbum = computed<boolean>(() => item instanceof RichAlbum)
@@ -35,28 +37,28 @@ async function toggleHidden() {
 }
 
 function openMenu(event: PointerEvent) {
-  if(user.value.admin) {
+  if(!preview && user.value.admin) {
     menuPosition.value = {left: event.pageX, top: event.pageY}
     showMenu.value = true
   }
 }
 
 function openArtistMenu(event: PointerEvent, artist: RichArtist) {
-  if(user.value.admin) {
+  if(!preview && user.value.admin) {
     menuPosition.value = {left: event.pageX, top: event.pageY}
     showArtistMenu.value = artist
   }
 }
 
 async function removeArtist(artist: RichArtist) {
-  if(item) {
+  if(!preview && item) {
     item.artists = item.artists.filter(a => a.id !== artist.id)
     await save()
   }
 }
 
 async function addArtist(artist: RichArtist) {
-  if(item && !item.artists.map(a => a.id).includes(artist.id)) {
+  if(!preview && item && !item.artists.map(a => a.id).includes(artist.id)) {
     item.artists.push(artist)
     addRecentArtist(artist)
     await save()
@@ -95,13 +97,22 @@ async function editItem() {
     })
   }
 }
+
+function clickItem() {
+  if (preview) return
+  if (isAlbum) {
+    navigateTo(`/admin/content/album/${item.sid}`)
+  } else {
+    navigateTo(`/admin/content/track/${item.sid}`)
+  }
+}
 </script>
 
 <template>
-  <div class="rounded-lg shadow p-2 flex flex-col justify-start
-      border border-neutral/50 transition-colors hover:border-primary cursor-pointer"
-       :class="{ 'bg-base-300': !item.hidden, 'bg-black/50 border-dashed': item.hidden }"
-      @click="isAlbum ? navigateTo(`/admin/content/album/${item.sid}`) : navigateTo(`/admin/content/track/${item.sid}`)"
+  <div class="rounded-lg shadow p-2 flex flex-col justify-start border border-neutral/50 transition-colors"
+       :class="{ 'bg-base-300': !item.hidden, 'bg-black/50 border-dashed': item.hidden,
+        'hover:border-primary cursor-pointer': !preview }"
+      @click="clickItem()"
       @contextmenu.prevent="openMenu">
     <div class="h-[130px] w-[130px]">
       <div v-if="!imgLoaded && item.image" class="skeleton w-full h-full rounded-xl inset-0"></div>
@@ -124,19 +135,40 @@ async function editItem() {
       </div>
       <div class="text-sm opacity-70">
         <template v-for="(artist, index) in item.artists" :key="index">
-          <span class="hover:underline hover:text-white cursor-pointer" @contextmenu.prevent.stop="e => openArtistMenu(e, artist)">
+          <span class="hover:underline hover:text-white cursor-pointer"
+                @contextmenu.prevent.stop="e => openArtistMenu(e, artist)"
+                v-if="!preview">
             <NuxtLink :to="`/admin/content/artist/${artist.id}`">
               {{ artist.getDisplayName() }}
             </NuxtLink>
           </span>
+
+          <span v-else>
+            {{ artist.getDisplayName() }}
+          </span>
+
           <span v-if="index !== item.artists.length-1"> & </span>
         </template>
       </div>
       <div class="text-xs opacity-70">
-        <span class="hover:underline hover:text-white cursor-pointer">
+        <span class="hover:underline hover:text-white cursor-pointer" v-if="!preview">
           <NuxtLink :to="`/admin/content/year/${item.year}`">
-            {{ item.year }}
+            <template v-if="exactDate">
+              {{ item.getFriendlyDate() }}
+            </template>
+            <template v-else>
+              {{ item.year }}
+            </template>
           </NuxtLink>
+        </span>
+
+        <span v-else>
+          <template v-if="exactDate">
+            {{ item.getFriendlyDate() }}
+          </template>
+          <template v-else>
+            {{ item.year }}
+          </template>
         </span>
       </div>
       <div class="badge badge-neutral badge-xs tooltip" v-if="item.hidden"

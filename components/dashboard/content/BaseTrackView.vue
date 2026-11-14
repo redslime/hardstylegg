@@ -7,13 +7,19 @@ const props = withDefaults(defineProps<{
   isAlbum: boolean,
   items: RichAlbum[] | RichTrack[] | undefined,
   count?: number,
-  frontpage?: boolean
+  frontpage?: boolean,
+  releasePage?: boolean
 }>(), {
   frontpage: false,
+  releasePage: false
 })
 const isAlbum = computed(() => props.isAlbum)
 const items = computed(() => props.items)
 const count = computed(() => props.count ?? (items.value?.length ?? 0))
+const months = computed(() => [...new Set(items.value?.map(i => i.date?.getMonth()) ?? [])])
+
+const monthNames = [ "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December" ];
 </script>
 
 <template>
@@ -36,12 +42,31 @@ const count = computed(() => props.count ?? (items.value?.length ?? 0))
       </NuxtLink>
     </h2>
 
-    <div class="flex flex-wrap gap-2 mt-2">
-      <template v-for="item in items" :key="item.sid" v-if="items">
-        <BaseTrackCard :item="item" />
+    <template v-if="items">
+      <template v-if="months && months.length > 0 && releasePage && !isAlbum">
+        <template v-for="month in months" :key="month">
+          <div class="flex gap-1 items-center flex-0 my-6 ml-4">
+            <h2 class="text-xl">{{ monthNames[month] }}</h2>
+            <hr class="grow">
+          </div>
+
+          <div class="flex flex-wrap gap-2 mt-2">
+            <template v-for="item in items.filter(t => t.date?.getMonth() === month)" :key="item.sid">
+              <BaseTrackCard :item="item" :preview="props.releasePage" :exactDate="props.releasePage" />
+            </template>
+          </div>
+        </template>
       </template>
 
-      <template v-for="index in 10" :key="index" v-else>
+      <div class="flex flex-wrap gap-2 mt-2" v-else>
+        <template v-for="item in items" :key="item.sid">
+          <BaseTrackCard :item="item" :preview="props.releasePage" :exactDate="props.releasePage" />
+        </template>
+      </div>
+    </template>
+
+    <div class="flex flex-wrap gap-2 mt-2" v-else>
+      <template v-for="index in 10" :key="index">
         <div class="flex flex-col gap-1 p-2 border border-neutral/0">
           <div class="skeleton h-[130px] w-[130px]"></div>
           <div class="skeleton h-5 w-[130px]"></div>
