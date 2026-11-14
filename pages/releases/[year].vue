@@ -12,6 +12,7 @@ definePageMeta({
 const route = useRoute()
 const year = computed<number>(() => Number(route.params.year as string))
 const v = await getCacheParam("tracks")
+const isMobile = inject<boolean>('isMobile')
 const { data: content } = await useFetch<{ tracks: RichTrack[], albums: RichAlbum[] }>(`/api/content/year/${year.value}` + v, { lazy: true })
 const albumData = computed(() => content.value?.albums?.map(a => RichAlbum.fromJson(a)) ?? undefined)
 const trackData = computed(() => content.value?.tracks?.map(t => RichTrack.fromJson(t)) ?? undefined)
@@ -35,8 +36,8 @@ const tracks = computed<RichTrack[] | undefined>(() => {
     </div>
 
     <div class="flex flex-col p-5 gap-3">
-      <BaseTrackView :isAlbum="true" :items="albums" :releasePage="true" />
-      <BaseTrackView :isAlbum="false" :items="tracks" :releasePage="true" />
+      <BaseTrackView :isAlbum="true" :items="albums" :releasePage="true" :compact="isMobile" />
+      <BaseTrackView :isAlbum="false" :items="tracks" :releasePage="true" :compact="isMobile" />
     </div>
   </div>
 </template>

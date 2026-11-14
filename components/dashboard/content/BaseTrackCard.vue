@@ -8,10 +8,11 @@ import PlusIcon from "~/components/icons/PlusIcon.vue";
 import {addRecentArtist, getRecentArtists} from "~/utils/contentCache";
 
 const { user } = useUserSession()
-const { item, preview = false, exactDate = false } = defineProps<{
+const { item, preview = false, exactDate = false, compact = false } = defineProps<{
   item: RichAlbum | RichTrack,
   preview?: boolean,
-  exactDate?: boolean
+  exactDate?: boolean,
+  compact?: boolean
 }>()
 const emit = defineEmits<{ updated: [item: RichAlbum | RichTrack] }>()
 const isAlbum = computed<boolean>(() => item instanceof RichAlbum)
@@ -114,12 +115,12 @@ function tryEditTitle() {
 </script>
 
 <template>
-  <div class="rounded-lg shadow p-2 flex flex-col justify-start border border-neutral/50 transition-colors"
+  <div class="rounded-lg shadow p-2 flex  border border-neutral/50 transition-colors"
        :class="{ 'bg-base-300': !item.hidden, 'bg-black/50 border-dashed': item.hidden,
-        'hover:border-primary cursor-pointer': !preview }"
+        'hover:border-primary cursor-pointer': !preview, 'flex-row items-center gap-2 grow': compact, 'flex-col': !compact }"
       @click="clickItem()"
       @contextmenu.prevent="openMenu">
-    <div class="h-[130px] w-[130px]">
+    <div :class="{ 'h-32.5 w-32.5': !compact, 'h-20 w-20': compact }">
       <div v-if="!imgLoaded && item.image" class="skeleton w-full h-full rounded-xl inset-0"></div>
       <img class="w-full overflow-hidden object-cover max-h-[200px] rounded-xl"
            @load="imgLoaded = true" loading="lazy" decoding="async" :src="item.getImageUrl()" v-if="item.image" alt="" />

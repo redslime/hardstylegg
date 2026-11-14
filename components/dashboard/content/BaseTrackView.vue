@@ -8,10 +8,12 @@ const props = withDefaults(defineProps<{
   items: RichAlbum[] | RichTrack[] | undefined,
   count?: number,
   frontpage?: boolean,
-  releasePage?: boolean
+  releasePage?: boolean,
+  compact?: boolean
 }>(), {
   frontpage: false,
-  releasePage: false
+  releasePage: false,
+  compact: false
 })
 const isAlbum = computed(() => props.isAlbum)
 const items = computed(() => props.items)
@@ -52,7 +54,7 @@ const monthNames = [ "January", "February", "March", "April", "May", "June",
 
           <div class="flex flex-wrap gap-2 mt-2">
             <template v-for="item in items.filter(t => t.date?.getMonth() === month)" :key="item.sid">
-              <BaseTrackCard :item="item" :preview="props.releasePage" :exactDate="props.releasePage" />
+              <BaseTrackCard :item="item" :preview="props.releasePage" :exactDate="props.releasePage" :compact="compact" />
             </template>
           </div>
         </template>
@@ -60,7 +62,7 @@ const monthNames = [ "January", "February", "March", "April", "May", "June",
 
       <div class="flex flex-wrap gap-2 mt-2" v-else>
         <template v-for="item in items" :key="item.sid">
-          <BaseTrackCard :item="item" :preview="props.releasePage" :exactDate="props.releasePage" />
+          <BaseTrackCard :item="item" :preview="props.releasePage" :exactDate="props.releasePage" :compact="compact" />
         </template>
       </div>
     </template>
