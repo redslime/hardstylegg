@@ -106,6 +106,11 @@ function clickItem() {
     navigateTo(`/admin/content/track/${item.sid}`)
   }
 }
+
+function tryEditTitle() {
+  if(preview) return
+  editTitle.value = true
+}
 </script>
 
 <template>
@@ -123,7 +128,7 @@ function clickItem() {
       </div>
     </div>
     <div class="max-w-[130px]">
-      <div class="text-sm font-semibold" @click.stop="editTitle = true">
+      <div class="text-sm font-semibold" @click.stop="tryEditTitle()">
         <template v-if="editTitle">
           <input type="text" class="input input-xs" autofocus v-model="item.title" @keydown.enter="saveTitle()" @focusout="saveTitle()" />
         </template>
