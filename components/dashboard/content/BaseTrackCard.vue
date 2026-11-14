@@ -101,7 +101,7 @@ async function editItem() {
 
 function clickItem() {
   if (preview) return
-  if (isAlbum) {
+  if (isAlbum.value) {
     navigateTo(`/admin/content/album/${item.sid}`)
   } else {
     navigateTo(`/admin/content/track/${item.sid}`)
