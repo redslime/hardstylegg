@@ -3,6 +3,7 @@ import ChevronLeftIcon from "~/components/icons/ChevronLeftIcon.vue";
 import ChevronRightArrow from "~/components/icons/ChevronRightArrow.vue";
 import BaseTrackView from "~/components/dashboard/content/BaseTrackView.vue";
 import {RichAlbum, RichTrack} from "~/types/content.ts";
+import {getCacheParam} from "~/utils/cacheKeys.ts";
 
 definePageMeta({
   layout: 'plain'
@@ -10,7 +11,8 @@ definePageMeta({
 
 const route = useRoute()
 const year = computed<number>(() => Number(route.params.year as string))
-const { data: content } = await useFetch<{ tracks: RichTrack[], albums: RichAlbum[] }>(`/api/content/year/${year.value}`, { lazy: true })
+const v = await getCacheParam("tracks")
+const { data: content } = await useFetch<{ tracks: RichTrack[], albums: RichAlbum[] }>(`/api/content/year/${year.value}` + v, { lazy: true })
 const albumData = computed(() => content.value?.albums?.map(a => RichAlbum.fromJson(a)) ?? undefined)
 const trackData = computed(() => content.value?.tracks?.map(t => RichTrack.fromJson(t)) ?? undefined)
 
