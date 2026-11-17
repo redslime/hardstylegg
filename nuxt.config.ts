@@ -59,6 +59,9 @@ export default defineNuxtConfig({
         replace: {
             'import * as process': 'import * as processUnused',
         },
+        externals: {
+            external: ['harfbuzzjs'],
+        },
     },
 
     modules: ['nuxt-auth-utils', '@vite-pwa/nuxt', '@pinia/nuxt'],
